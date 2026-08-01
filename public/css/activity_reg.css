@@ -1,0 +1,416 @@
+/* ======== ROOT VARIABLES & RESET ======== */
+:root {
+    --primary-color: #1a531a;
+    --secondary-color: #d4a373;
+    --danger-color: #e63946;
+    --text-dark: #2b2d42;
+    --text-light: #8d99ae;
+    --bg-light: #fefae0;
+    --white: #ffffff;
+    --font-main: 'Poppins', sans-serif;
+    --font-arabic: 'Amiri', serif;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-light);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* ======== LAYOUT LANDSCAPE CARD ======== */
+.auth-card-container {
+    width: 100%;
+    max-width: 1000px;
+    min-height: 620px;
+    background-color: var(--white);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    display: flex;
+    overflow: hidden;
+}
+
+/* ======== LAYOUT 1: KIRI (SEKOLAH BRANDING) ======== */
+.auth-brand-side {
+    flex: 1.1;
+    background-image: url('https://images.unsplash.com/photo-1609511910243-7058df241d72?q=80&w=1200&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    padding: 50px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: var(--white);
+}
+
+.brand-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(26, 83, 26, 0.93) 0%, rgba(10, 35, 10, 0.85) 100%);
+    z-index: 1;
+}
+
+.brand-content {
+    position: relative;
+    z-index: 2;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 30px;
+}
+
+.brand-logo i {
+    color: var(--secondary-color);
+    font-size: 2rem;
+}
+
+.basmalah {
+    font-family: var(--font-arabic);
+    font-size: 1.8rem;
+    color: var(--secondary-color);
+    margin-bottom: 10px;
+}
+
+.brand-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 15px;
+}
+
+.brand-content h2 .highlight {
+    color: var(--secondary-color);
+}
+
+.brand-desc {
+    font-size: 0.95rem;
+    font-weight: 300;
+    opacity: 0.9;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.brand-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+}
+
+.feature-item i {
+    color: var(--secondary-color);
+}
+
+/* ======== LAYOUT 2: KANAN (FORM LOGIN/SIGN UP) ======== */
+.auth-form-side {
+    flex: 1;
+    padding: 50px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: var(--white);
+}
+
+/* Tab Switcher (Masuk / Daftar) */
+.tab-navigation {
+    display: flex;
+    background-color: #f1f3f5;
+    padding: 5px;
+    border-radius: 50px;
+    margin-bottom: 30px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px 0;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.tab-btn.active {
+    background-color: var(--white);
+    color: var(--primary-color);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Form Wrappers */
+.form-wrapper {
+    display: none;
+}
+
+.form-wrapper.active {
+    display: block;
+    animation: fadeIn 0.4s ease;
+}
+
+.form-header {
+    margin-bottom: 25px;
+}
+
+.form-header h3 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.form-header p {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-top: 5px;
+}
+
+/* Custom Input Group */
+.input-group {
+    position: relative;
+    margin-bottom: 18px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+    font-size: 0.95rem;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Styling Input & Select */
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 14px 16px 14px 45px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    font-family: var(--font-main);
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    transition: var(--transition);
+}
+
+/* Khusus Styling Element Select (Dropdown Gender) */
+.input-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%208d99ae' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    background-color: var(--white);
+    box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.15);
+}
+
+/* Option Dropdown Styling */
+.input-group select option {
+    background-color: var(--white);
+    color: var(--text-dark);
+    padding: 10px;
+}
+
+/* Form Options (Remember me & Forgot pass) */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    margin-bottom: 22px;
+}
+
+.remember-me {
+    color: var(--text-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.forgot-pass {
+    color: var(--primary-color);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.forgot-pass:hover {
+    color: var(--secondary-color);
+}
+
+/* Button Submit */
+.btn-submit {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-submit:hover {
+    background-color: #123d12;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(26, 83, 26, 0.25);
+}
+
+.back-home {
+    display: inline-block;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    text-decoration: none;
+    margin-top: 20px;
+    transition: var(--transition);
+}
+
+.back-home:hover {
+    color: var(--primary-color);
+}
+
+/* ======== ALERT / TOAST POPUP ERROR (SLIDE IN FROM RIGHT) ======== */
+.alert-danger {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    
+    min-width: 300px;
+    max-width: 420px;
+    padding: 16px 20px;
+    
+    background-color: var(--white);
+    border-left: 5px solid var(--danger-color);
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    
+    color: var(--text-dark);
+    font-size: 0.88rem;
+    
+    /* Animasi Slide dari Kanan ke Kiri saat Muncul */
+    animation: slideInRight 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.alert-danger p {
+    margin: 0;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Pembatas jika terdapat lebih dari 1 error */
+.alert-danger p + p {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #e2e8f0;
+}
+
+/* Animasi Keluar (Slide-Out) */
+.alert-danger.fade-out {
+    animation: slideOutRight 0.4s ease forwards;
+}
+
+/* ======== KEYFRAME ANIMATIONS ======== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(110%); /* Mulai meluncur dari luar kanan layar */
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0); /* Berhenti di posisi kanan atas */
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(120%);
+    }
+}
+
+/* ======== RESPONSIVE UNTUK HP / TABLET ======== */
+@media (max-width: 850px) {
+    .auth-card-container {
+        flex-direction: column;
+        max-width: 500px;
+        min-height: auto;
+    }
+
+    .auth-brand-side {
+        padding: 40px 30px;
+        text-align: center;
+    }
+
+    .brand-logo {
+        justify-content: center;
+    }
+
+    .brand-features {
+        display: none; /* Sembunyikan poin di HP agar tidak terlalu panjang */
+    }
+
+    .auth-form-side {
+        padding: 40px 30px;
+    }
+
+    /* Penyesuaian ukuran Toast di HP */
+    .alert-danger {
+        top: 16px;
+        right: 16px;
+        left: 16px;
+        min-width: auto;
+        max-width: none;
+    }
+}

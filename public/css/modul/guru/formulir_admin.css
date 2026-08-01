@@ -1,0 +1,333 @@
+/* ==========================================================================
+   RESET & VARIABLES
+   ========================================================================== */
+:root {
+    --primary-color: #0f766e;        /* Deep Emerald / Teal */
+    --primary-hover: #0d9488;
+    --primary-light: #f0fdf4;
+    --accent-color: #0284c7;         /* Soft Blue */
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --bg-page: #f8fafc;
+    --bg-card: #ffffff;
+    --border-color: #e2e8f0;
+    --border-focus: #0f766e;
+    --danger-color: #ef4444;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    line-height: 1.6;
+    padding: 30px 20px;
+}
+
+/* ==========================================================================
+   CONTAINER & TOPBAR HEADER
+   ========================================================================== */
+.form-guru-container {
+    max-width: 920px;
+    margin: 0 auto;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    background: var(--bg-card);
+    padding: 20px 28px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.topbar-title h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.topbar-title p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background-color: #f1f5f9;
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+}
+
+.btn-back:hover {
+    background-color: #e2e8f0;
+    color: var(--primary-color);
+}
+
+/* ==========================================================================
+   CARD & FORM LAYOUT
+   ========================================================================== */
+.card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    color: #ffffff;
+    padding: 18px 28px;
+}
+
+.card-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#formGuru {
+    padding: 28px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: span 2;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.required {
+    color: var(--danger-color);
+}
+
+/* ==========================================================================
+   INPUT WRAPPER & INPUT ELEMENTS
+   ========================================================================== */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 14px;
+    color: var(--text-muted);
+    font-size: 1rem;
+    pointer-events: none;
+    transition: var(--transition);
+}
+
+.input-wrapper input[type="text"],
+.input-wrapper input[type="url"],
+.input-wrapper input[type="date"],
+.input-wrapper select,
+.input-wrapper textarea {
+    width: 100%;
+    padding: 12px 14px 12px 42px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--text-main);
+    background-color: #fafafa;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    outline: none;
+    transition: var(--transition);
+}
+
+.input-wrapper textarea {
+    min-height: 100px;
+    resize: vertical;
+    padding-top: 12px;
+}
+
+/* Hover & Focus state */
+.input-wrapper input:hover,
+.input-wrapper select:hover,
+.input-wrapper textarea:hover {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+}
+
+.input-wrapper input:focus,
+.input-wrapper select:focus,
+.input-wrapper textarea:focus {
+    background-color: #ffffff;
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+}
+
+.input-wrapper input:focus + i,
+.input-wrapper select:focus + i,
+.input-wrapper textarea:focus + i {
+    color: var(--primary-color);
+}
+
+/* Styling Dropdown Option */
+.input-wrapper select {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2064748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px;
+}
+
+/* ==========================================================================
+   PHOTO PREVIEW CONTAINER
+   ========================================================================== */
+.photo-preview-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.avatar-preview {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #f1f5f9;
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.avatar-preview i {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+}
+
+.avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ==========================================================================
+   FORM ACTIONS & BUTTONS
+   ========================================================================== */
+.form-actions {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+}
+
+.btn-reset, .btn-save {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-reset {
+    background-color: #f1f5f9;
+    color: var(--text-muted);
+}
+
+.btn-reset:hover {
+    background-color: #e2e8f0;
+    color: var(--text-main);
+}
+
+.btn-save {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(15, 118, 110, 0.2);
+}
+
+.btn-save:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(15, 118, 110, 0.3);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+@media (max-width: 768px) {
+    body {
+        padding: 16px 10px;
+    }
+
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .btn-back {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full-width {
+        grid-column: span 1;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .btn-reset, .btn-save {
+        width: 100%;
+        justify-content: center;
+    }
+}

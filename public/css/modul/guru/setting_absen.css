@@ -1,0 +1,478 @@
+/* ==========================================================================
+   HRIS GURU & ADMIN — Modul Pengaturan Presensi
+   Gaya "Modern-Klasik Islami Premium"
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&display=swap');
+
+:root {
+  /* Colors */
+  --navy-900: #0D2818;
+  --navy-800: #163822;
+  --navy-700: #214E32;
+  --navy-050: #EAF2EC;
+
+  --gold-600: #B38728;
+  --gold-500: #CFA138;
+  --gold-200: #EAD397;
+  --gold-100: #F7EFCF;
+
+  --cream: #F4F1EA;
+  --paper: #FFFFFF;
+
+  --ink-900: #1C241E;
+  --ink-600: #4B584F;
+  --ink-400: #7A8A7F;
+  --line: #E1DDD2;
+
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-arabic: 'Amiri', serif;
+  --font-sans: 'Poppins', -apple-system, sans-serif;
+
+  --sidebar-w: 260px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow-card: 0 4px 20px rgba(13, 40, 24, 0.05);
+  --shadow-hover: 0 8px 30px rgba(13, 40, 24, 0.09);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--ink-900);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   MAIN LAYOUT & SIDEBAR FIX
+   ========================================================================== */
+
+.main-wrapper {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+.presensi-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 40px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ==========================================================================
+   BANNER ISLAMI HEADER
+   ========================================================================== */
+
+.islamic-banner {
+  background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 100%);
+  border-radius: var(--radius-lg);
+  padding: 28px 36px;
+  color: var(--paper);
+  box-shadow: var(--shadow-card);
+  border-top: 4px solid var(--gold-500);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.islamic-banner::after {
+  content: '';
+  position: absolute;
+  right: -30px;
+  bottom: -50px;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(207, 161, 56, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.bismillah-text {
+  font-family: var(--font-arabic);
+  font-size: 26px;
+  color: var(--gold-200);
+  margin-bottom: 6px;
+}
+
+.banner-title h2 {
+  margin: 0 0 4px;
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.banner-title p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--gold-100);
+  opacity: 0.9;
+}
+
+.banner-badge {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(234, 211, 151, 0.3);
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--gold-200);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   GRID PANEL & CARDS
+   ========================================================================== */
+
+.presensi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.card-panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-panel:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.panel-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Header Inside Card */
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.panel-header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.panel-header-title i {
+  font-size: 20px;
+  color: var(--gold-600);
+  background: var(--navy-050);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel-header-title h4 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--navy-900);
+}
+
+.panel-header-title small {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  color: var(--ink-400);
+  margin-top: 1px;
+}
+
+.badge-hint {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--navy-800);
+  background: var(--gold-100);
+  border: 1px solid var(--gold-200);
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ==========================================================================
+   PETA LEAFLET & FORM INPUT
+   ========================================================================== */
+
+#map-setting {
+  width: 100%;
+  height: 290px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  margin-bottom: 18px;
+  z-index: 1;
+}
+
+.form-group-row {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group.short-input {
+  flex: 0.6;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--navy-900);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-group label i {
+  color: var(--gold-600);
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--ink-900);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 3px rgba(207, 161, 56, 0.15);
+}
+
+.input-with-suffix {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-suffix .suffix {
+  position: absolute;
+  right: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-400);
+}
+
+.readonly-input {
+  background: var(--cream);
+  color: var(--ink-600);
+  font-weight: 600;
+  border-style: dashed;
+}
+
+.coordinate-info-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--navy-050);
+  border: 1px solid rgba(33, 78, 50, 0.2);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--navy-800);
+  margin-top: 10px;
+}
+
+.coordinate-info-box i {
+  color: var(--navy-700);
+  font-size: 15px;
+}
+
+/* ==========================================================================
+   SCHEDULE ROW (JADWAL SENIN - SABTU)
+   ========================================================================== */
+
+.schedule-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.schedule-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--cream);
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  transition: background 0.2s ease;
+}
+
+.schedule-row:hover {
+  background: var(--paper);
+  border-color: var(--gold-200);
+}
+
+.jumat-highlight {
+  background: var(--gold-100);
+  border-color: var(--gold-200);
+}
+
+.day-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy-900);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100px;
+}
+
+.day-label i {
+  color: var(--gold-600);
+}
+
+.time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.time-field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.time-field small {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--ink-400);
+  letter-spacing: 0.5px;
+}
+
+.time-inputs .form-control {
+  padding: 6px 10px;
+  width: 105px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.time-inputs .separator {
+  color: var(--ink-400);
+  font-size: 12px;
+  margin-top: 12px;
+}
+
+/* ==========================================================================
+   BUTTON & ACTION FOOTER
+   ========================================================================== */
+
+.action-footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.btn-save {
+  width: 100%;
+  padding: 14px 20px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--navy-800);
+  color: var(--paper);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(13, 40, 24, 0.2);
+  transition: all 0.2s ease;
+}
+
+.btn-save:hover {
+  background: var(--navy-900);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(13, 40, 24, 0.3);
+}
+
+/* ==========================================================================
+   RESPONSIF DESIGN
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+  .presensi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 992px) {
+  .main-wrapper {
+    margin-left: 0;
+  }
+  .presensi-container {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .islamic-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  
+  .form-group-row {
+    flex-direction: column;
+  }
+  
+  .schedule-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .time-inputs {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

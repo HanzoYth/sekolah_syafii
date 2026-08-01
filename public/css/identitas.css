@@ -1,0 +1,438 @@
+/* ==========================================================================
+   HRIS GURU & ADMIN — Halaman Input Khusus Full-Width
+   Gaya "Modern-Klasik Islami Premium"
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&display=swap');
+
+:root {
+  --navy-900: #0D2818;
+  --navy-800: #163822;
+  --navy-700: #214E32;
+  --navy-050: #EAF2EC;
+
+  --gold-600: #B38728;
+  --gold-500: #CFA138;
+  --gold-200: #EAD397;
+  --gold-100: #F7EFCF;
+
+  --cream: #F4F1EA;
+  --paper: #FFFFFF;
+
+  --ink-900: #1C241E;
+  --ink-600: #4B584F;
+  --ink-400: #7A8A7F;
+  --line: #E1DDD2;
+
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-arabic: 'Amiri', serif;
+  --font-sans: 'Poppins', -apple-system, sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow-card: 0 8px 30px rgba(13, 40, 24, 0.06);
+  --shadow-hover: 0 12px 35px rgba(13, 40, 24, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--cream);
+  color: var(--ink-900);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   FULL PAGE WRAPPER (TANPA SIDEBAR)
+   ========================================================================== */
+
+.full-page-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+
+
+.form-card-container {
+  width: 100%;
+  max-width: 900px;
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ==========================================================================
+   ISLAMIC BANNER HEADER
+   ========================================================================== */
+
+.islamic-banner {
+  background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 100%);
+  border-radius: var(--radius-md);
+  padding: 24px 30px;
+  color: var(--paper);
+  border-top: 4px solid var(--gold-500);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.islamic-banner::after {
+  content: '';
+  position: absolute;
+  right: -30px;
+  bottom: -40px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(207, 161, 56, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.bismillah-text {
+  font-family: var(--font-arabic);
+  font-size: 24px;
+  color: var(--gold-200);
+  margin-bottom: 4px;
+}
+
+.banner-title h2 {
+  margin: 0 0 4px;
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.banner-title p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--gold-100);
+  opacity: 0.9;
+}
+
+.banner-badge {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(234, 211, 151, 0.3);
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold-200);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   FORM SECTIONS & INPUTS
+   ========================================================================== */
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.section-title i {
+  color: var(--gold-600);
+  font-size: 16px;
+}
+
+.section-title h4 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--navy-900);
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy-900);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-group label i {
+  color: var(--gold-600);
+}
+
+.form-control {
+  width: 100%;
+  padding: 11px 14px;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  color: var(--ink-900);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 3px rgba(207, 161, 56, 0.15);
+}
+
+.input-action-group {
+  display: flex;
+  gap: 8px;
+}
+
+.readonly-input {
+  background: var(--cream);
+  color: var(--ink-600);
+  font-weight: 600;
+  border-style: dashed;
+}
+
+.btn-generate {
+  padding: 0 16px;
+  background: var(--gold-500);
+  color: var(--navy-900);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.btn-generate:hover {
+  background: var(--gold-600);
+  color: #FFFFFF;
+}
+
+/* ==========================================================================
+   CUSTOM CHECKBOX CARDS (SANGAT INTERAKTIF)
+   ========================================================================== */
+
+.checkbox-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.custom-checkbox-card {
+  position: relative;
+  cursor: pointer;
+}
+
+.custom-checkbox-card input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.card-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  transition: all 0.25s ease;
+}
+
+.checkbox-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  color: var(--ink-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.25s ease;
+  border: 1px solid var(--line);
+}
+
+.checkbox-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.checkbox-text .title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--navy-900);
+}
+
+.checkbox-text small {
+  font-size: 11px;
+  color: var(--ink-400);
+  line-height: 1.3;
+}
+
+.check-indicator {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--ink-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  font-size: 11px;
+  transition: all 0.25s ease;
+}
+
+/* Hover State */
+.custom-checkbox-card:hover .card-content {
+  border-color: var(--gold-200);
+  background: var(--paper);
+}
+
+/* Active Checked State */
+.custom-checkbox-card input[type="checkbox"]:checked + .card-content {
+  background: var(--navy-050);
+  border-color: var(--navy-700);
+  box-shadow: 0 4px 12px rgba(33, 78, 50, 0.08);
+}
+
+.custom-checkbox-card input[type="checkbox"]:checked + .card-content .checkbox-icon {
+  background: var(--navy-800);
+  color: var(--gold-200);
+  border-color: var(--navy-800);
+}
+
+.custom-checkbox-card input[type="checkbox"]:checked + .card-content .check-indicator {
+  background: var(--navy-700);
+  border-color: var(--navy-700);
+  color: #FFFFFF;
+}
+
+/* ==========================================================================
+   FOOTER ACTIONS
+   ========================================================================== */
+
+.form-actions-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.btn-cancel {
+  padding: 12px 20px;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 600;
+  background: transparent;
+  color: var(--ink-600);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+  background: var(--cream);
+  color: var(--navy-900);
+}
+
+.btn-save {
+  padding: 12px 24px;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 600;
+  background: var(--navy-800);
+  color: var(--paper);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(13, 40, 24, 0.2);
+  transition: all 0.2s ease;
+}
+
+.btn-save:hover {
+  background: var(--navy-900);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(13, 40, 24, 0.3);
+}
+
+.hide{
+  display: none;
+}
+
+
+/* Responsive Grid */
+@media (max-width: 768px) {
+  .form-grid-2, .checkbox-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .islamic-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .form-actions-footer {
+    flex-direction: column-reverse;
+  }
+
+  .btn-save, .btn-cancel {
+    width: 100%;
+    justify-content: center;
+  }
+}

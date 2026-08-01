@@ -1,0 +1,290 @@
+/* ==========================================================================
+   HRIS GURU — Modul Verifikasi OTP
+   Gaya "modern-klasik Islami": Hijau Zamrud + Emas + Parchment
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap');
+
+:root {
+  /* --- Warna Utama (Hijau Zamrud Islami) --- */
+  --navy-900: #0D2818;
+  --navy-800: #163822;
+  --navy-700: #214E32;
+  --navy-050: #EAF2EC;
+
+  /* --- Warna Aksen (Emas Kaligrafi) --- */
+  --gold-600: #B38728;
+  --gold-500: #CFA138;
+  --gold-200: #EAD397;
+  --gold-100: #F7EFCF;
+
+  /* --- Latar Belakang & Paper --- */
+  --cream: #F4F1EA;
+  --paper: #FFFFFF;
+
+  /* --- Tinta & Border --- */
+  --ink-900: #1C241E;
+  --ink-600: #4B584F;
+  --ink-400: #7A8A7F;
+  --line: #E1DDD2;
+
+  /* --- Tipografi --- */
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-arabic: 'Amiri', serif;
+  --font-sans: 'Poppins', -apple-system, sans-serif;
+
+  /* --- Radius & Shadow --- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-card: 0 4px 12px rgba(13, 40, 24, 0.05), 0 16px 36px rgba(13, 40, 24, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  background: var(--cream);
+  color: var(--ink-900);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   OTP CONTAINER & CARD
+   ========================================================================== */
+
+.otp-wrapper {
+  width: 100%;
+  max-width: 480px;
+  padding: 20px;
+}
+
+.otp-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-top: 5px solid var(--gold-500);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  box-shadow: var(--shadow-card);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Aksesoris Lingkaran Background */
+.otp-card::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(207, 161, 56, 0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   HEADER SECTION
+   ========================================================================== */
+
+.bismillah-text {
+  font-family: var(--font-arabic);
+  font-size: 24px;
+  color: var(--gold-600);
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.icon-badge {
+  width: 56px;
+  height: 56px;
+  background: var(--navy-050);
+  color: var(--navy-800);
+  border: 1px solid var(--navy-700);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+.otp-header h2 {
+  margin: 0 0 8px;
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--navy-900);
+}
+
+.otp-header p {
+  margin: 0 0 28px;
+  font-size: 13px;
+  color: var(--ink-600);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   INPUT DIGIT OTP
+   ========================================================================== */
+
+.otp-inputs {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.otp-field {
+  width: 50px;
+  height: 58px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--line);
+  background: var(--cream);
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--navy-900);
+  text-align: center;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.otp-field:focus {
+  border-color: var(--gold-500);
+  background: var(--paper);
+  box-shadow: 0 0 0 3px rgba(207, 161, 56, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Placeholder styling */
+.otp-field::placeholder {
+  color: var(--ink-400);
+  opacity: 0.5;
+}
+
+/* ==========================================================================
+   TIMER & INFO
+   ========================================================================== */
+
+.otp-timer-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  font-size: 12.5px;
+  color: var(--ink-600);
+  background: var(--navy-050);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid #D4E3D8;
+}
+
+.otp-timer-info p {
+  margin: 0;
+}
+
+.btn-resend {
+  color: var(--navy-800);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--navy-800);
+  transition: color 0.2s;
+}
+
+.btn-resend:hover {
+  color: var(--gold-600);
+  border-bottom-color: var(--gold-600);
+}
+
+.timer-badge {
+  font-weight: 600;
+  color: var(--gold-600);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ==========================================================================
+   BUTTON & FOOTER
+   ========================================================================== */
+
+.btn-verify {
+  width: 100%;
+  padding: 15px;
+  background: var(--navy-800);
+  color: var(--paper);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(13, 40, 24, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-verify:hover {
+  background: var(--navy-900);
+  transform: translateY(-1px);
+}
+
+.otp-footer {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.otp-footer a {
+  color: var(--ink-600);
+  font-size: 12.5px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s;
+}
+
+.otp-footer a:hover {
+  color: var(--navy-800);
+}
+
+/* ==========================================================================
+   RESPONSIF
+   ========================================================================== */
+
+@media (max-width: 480px) {
+  .otp-card {
+    padding: 28px 20px;
+  }
+
+  .otp-inputs {
+    gap: 6px;
+  }
+
+  .otp-field {
+    width: 42px;
+    height: 50px;
+    font-size: 20px;
+  }
+
+  .otp-timer-info {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}
