@@ -47,7 +47,7 @@
             <!-- Kiri: Teks -->
             <div class="hero-content" data-aos="fade-right" data-aos-duration="1000">
                 <p class="basmalah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
-                <h1>Mencetak Generasi Rabbani Bagus<span class="highlight">Al-Qur'an</span></h1>
+                <h1>Mencetak Generasi Rabbani Berakhlak<span class="highlight">Al-Qur'an</span></h1>
                 <p>Pendidikan Al-Qur'an terpadu dengan metode modern untuk mendidik generasi yang mencintai dan mengamalkan Al-Qur'an sesuai pemahaman salafus shalih.</p>
                 <div class="hero-btns">
                     <a href="#program" class="btn-primary">Pelajari Program</a>
