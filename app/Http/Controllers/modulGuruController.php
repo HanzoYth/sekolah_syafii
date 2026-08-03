@@ -8,6 +8,7 @@ use App\Models\master_waktu_absen_guru;
 use App\Models\master_absen_guru;
 use App\Models\guru;
 use App\Models\cabang_guru;
+use App\Models\jenis_sekolah;
 use Illuminate\Support\Carbon;
 
 class modulGuruController extends Controller
@@ -15,10 +16,10 @@ class modulGuruController extends Controller
     //ini tampilan dashaboard guru dan admin
     function tampilan_dashboard(){
         if (session("hasLogin")){
+            Carbon::setLocale("id");
             $sudah_absen = master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("guru_id",session("id"))->exists();
             $total_kehadiran_bulanan = master_absen_guru::where("guru_id",session("id"))->whereMonth("tgl_masuk",now()->month)->count();
             $jumlah_terlambat_menit = master_absen_guru::where("guru_id",session("id"))->sum("terlambat_menit");
-            $data_waktu_sekarang = master_waktu_absen_guru::where("id",now()->dayOfWeekIso)->exists();
             $total_hadir_sekarang = master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->count();
             $total_data_guru = guru::count();
 
@@ -31,7 +32,7 @@ class modulGuruController extends Controller
 
             $total_data_guru_pengampu_tahfiz =
                 guru::where('pengampu_tahfiz', 1)->count();
-            $nama_hari = $data_waktu_sekarang ? "rabu" : "rabu";
+            $nama_hari = Carbon::now()->translatedFormat("l");
             $tanggal = Carbon::now()->translatedFormat("d M Y");
             $waktu_masuk = $sudah_absen ? master_absen_guru::where("guru_id",session("id"))->where("tgl_masuk",now()->format("Y-m-d"))->first()->waktu_masuk : "00:00:00";
             $waktu_keluar = master_absen_guru::where("guru_id",session("id"))->where("tgl_masuk",now()->format("Y-m-d"))->where("waktu_keluar","!=",Carbon::parse("00:00:00"))->exists()? master_absen_guru::where("guru_id",session("id"))->where("tgl_masuk",now()->format("Y-m-d"))->first()->waktu_keluar: "00:00:00";
@@ -70,19 +71,27 @@ class modulGuruController extends Controller
     //ini fitur2 untuk guru
     function tampilan_formulirGuru(){
         $data_cabang = cabang_guru::all();
+        $data_sekolah = jenis_sekolah::all();
         return view("/modul/guru/formulir_guru",[
-            "cabang" => $data_cabang
+            "cabang" => $data_cabang,
+            "sekolah" => $data_sekolah
         ]);
     }
 
     function tampilan_presensiAbsen(){
+        Carbon::setLocale("id");
+        $data_guru = guru::where("id",(int) session("id"))->first();
+        $cabang = cabang_guru::find((int) $data_guru->cabang_id);
+        $lokasi = master_lokasi_absen_guru::where("cabang_id",$cabang->id)->first();
+        $waktu = master_waktu_absen_guru::where("cabang_id",$cabang->id)->where("hari",strtolower(Carbon::now()->translatedFormat("l")))->first();
+
         $hari = now()->dayOfWeekIso;
         if ($hari == 7){
             return back()->with("eror","waduhh endak bisa absen hari ahad");
         }
 
         $waktu_sekarang = Carbon::now();
-        $waktu_keluar_absen = Carbon::parse(master_waktu_absen_guru::find($hari)->waktu_keluar);
+        $waktu_keluar_absen = Carbon::parse($waktu->waktu_keluar);
         $sudah_absen = master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("guru_id",session("id"))->exists();
 
         if ($sudah_absen){
@@ -94,8 +103,7 @@ class modulGuruController extends Controller
         }
 
         if (session("hasLogin")){
-            $lokasi = master_lokasi_absen_guru::find(1);
-            return view("modul/guru/g/presensi_absen",["lokasi" => $lokasi]);
+            return view("modul/guru/g/presensi_absen",["lokasi" => $lokasi,"cabang" => $cabang]);
         }
         return redirect("/reg");
     }
@@ -116,7 +124,7 @@ class modulGuruController extends Controller
             "pengampu_tahfiz" => (int) $request->pengampu,
             "kepala_sekolah" => 0,
             "cabang_id" => $request->cabang_id,
-            "sekolah_id" => 2,
+            "sekolah_id" => $request->sekolah_id,
             "user_id" => (int) session("id_akun"),
         ]);
         $data_guru = guru::where("nig", $request->nig)->first();
@@ -127,12 +135,13 @@ class modulGuruController extends Controller
     }
 
     //ini tampilan fitur2 sebagai admin
-    function tampilan_settingAbsen(){
+    function tampilan_settingAbsen($id){
         if (session("hasLogin")){
-            $lokasi = master_lokasi_absen_guru::find(1);
-            $waktu = master_waktu_absen_guru::all();
+            $cabang = cabang_guru::find($id);
+            $lokasi = master_lokasi_absen_guru::where("cabang_id", $id)->first();
+            $waktu = master_waktu_absen_guru::where("cabang_id",$id)->get();
     
-            return view("modul/guru/a/setting_absen",['lokasi' => $lokasi,'waktu'=>$waktu]);
+            return view("modul/guru/a/setting_absen",['lokasi' => $lokasi,'waktu'=>$waktu,'id' => $id,'cabang' => $cabang]);
         }
         return redirect("/reg");
     }

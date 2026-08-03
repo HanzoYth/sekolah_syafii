@@ -77,15 +77,18 @@
             <div class="card-panel">
                 <div class="panel-header">
                     <h4><i class="fa-solid fa-map-location-dot"></i> Peta Lokasi Presensi</h4>
-                    <span class="badge-date"><i class="fa-solid fa-building-flag"></i> Kota Palu</span>
+                    <!-- Badge Cabang Dinamis -->
+                    <span class="badge-date">
+                        <i class="fa-solid fa-building-flag"></i> {{ $cabang->nama_cabang ?? 'Kota Palu' }}
+                    </span>
                 </div>
                 
                 <div id="map"></div>
 
                 <div class="coordinate-box">
-                    <input type="hidden" id="latitude" value="{{ $lokasi->latitude }}">
-                    <input type="hidden" id="longitude" value="{{ $lokasi->longitude }}">
-                    <input type="hidden" id="radius" value="{{ $lokasi->radius }}">
+                    <input type="hidden" id="latitude" value="{{ $lokasi->latitude}}">
+                    <input type="hidden" id="longitude" value="{{ $lokasi->longitude}}">
+                    <input type="hidden" id="radius" value="{{ $lokasi->radius}}">
                     <div class="coord-item">Latitude: <span id="user-lat">Mengambil...</span></div>
                     <div class="coord-item">Longitude: <span id="user-lng">Mengambil...</span></div>
                 </div>
@@ -113,7 +116,7 @@
                     @csrf
                     <input type="hidden" name="latitude" id="input-lat">
                     <input type="hidden" name="longitude" id="input-lng">
-                    <input type="hidden" name="id" value="{{session('id')}}" id="input-lng">
+                    <input type="hidden" name="id" value="{{ session('id') }}" id="input-id">
 
                     <button class="btn-absen btn-masuk" id="absen">
                         <i class="fa-solid fa-right-to-bracket"></i> ABSEN MASUK

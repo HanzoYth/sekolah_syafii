@@ -1,0 +1,358 @@
+/* ======== ROOT VARIABLES (EMERALD & GOLD THEME) ======== */
+:root {
+    --cg-primary: #0f3822;        /* Deep Emerald */
+    --cg-primary-light: #164e2e;  /* Vibrant Emerald */
+    --cg-accent: #d4af37;          /* Gold Accent */
+    --cg-accent-hover: #b89228;
+    --cg-dark: #121814;
+    --cg-bg-dashboard: #f4f7f5;
+    --cg-card-bg: #ffffff;
+    --cg-text-main: #2b2d42;
+    --cg-text-muted: #8d99ae;
+    --cg-border-color: #e2e8f0;
+    --cg-radius: 14px;
+    --cg-transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    --cg-shadow: 0 10px 25px rgba(15, 56, 34, 0.06);
+
+    /* Presence Status Colors */
+    --status-hadir-bg: #e8f5e9;
+    --status-hadir-text: #2e7d32;
+    --status-hadir-border: #a5d6a7;
+
+    --status-izin-bg: #e3f2fd;
+    --status-izin-text: #1565c0;
+    --status-izin-border: #90caf9;
+
+    --status-sakit-bg: #fff8e1;
+    --status-sakit-text: #f57f17;
+    --status-sakit-border: #ffe082;
+
+    --status-alpa-bg: #ffebee;
+    --status-alpa-text: #c62828;
+    --status-alpa-border: #ef9a9a;
+
+    --sidebar-width: 260px;
+}
+
+/* ======== GLOBAL LAYOUT STRUCTURE ======== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--cg-bg-dashboard);
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: var(--cg-text-main);
+}
+
+.dashboard-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.absen-wrapper {
+    flex: 1;
+    min-width: 0;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin-left: var(--sidebar-width);
+    transition: var(--cg-transition);
+}
+
+/* ======== TOPBAR / HEADER ======== */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--cg-card-bg);
+    padding: 20px 30px;
+    border-radius: var(--cg-radius);
+    box-shadow: var(--cg-shadow);
+}
+
+.topbar-title h2 {
+    font-size: 1.5rem;
+    color: var(--cg-primary);
+    font-weight: 700;
+    margin: 0 0 4px 0;
+}
+
+.topbar-title p {
+    font-size: 0.85rem;
+    color: var(--cg-text-muted);
+    margin: 0;
+}
+
+/* Tombol Tandai Semua Hadir */
+.btn-bulk-present {
+    background: linear-gradient(135deg, var(--cg-primary) 0%, var(--cg-primary-light) 100%);
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 6px 18px rgba(15, 56, 34, 0.25);
+    transition: var(--cg-transition);
+}
+
+.btn-bulk-present:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(15, 56, 34, 0.38);
+    background: linear-gradient(135deg, var(--cg-primary-light) 0%, #1c623b 100%);
+}
+
+/* ======== CARD & DATA TABLE ======== */
+.card {
+    background: var(--cg-card-bg);
+    border-radius: var(--cg-radius);
+    padding: 25px;
+    box-shadow: var(--cg-shadow);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--cg-border-color);
+}
+
+.card-header h3 {
+    font-size: 1.1rem;
+    color: var(--cg-primary);
+    margin: 0;
+}
+
+/* Form Search Nama Guru */
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--cg-text-muted);
+    font-size: 0.9rem;
+}
+
+.search-input-wrapper input {
+    padding: 10px 16px 10px 38px;
+    border: 1px solid var(--cg-border-color);
+    border-radius: 10px;
+    background-color: #f8faf9;
+    font-size: 0.88rem;
+    color: var(--cg-text-main);
+    outline: none;
+    width: 240px;
+    transition: var(--cg-transition);
+}
+
+.search-input-wrapper input:focus {
+    border-color: var(--cg-primary);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(15, 56, 34, 0.1);
+}
+
+.btn-search {
+    background: var(--cg-accent);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: var(--cg-transition);
+}
+
+.btn-search:hover {
+    background: var(--cg-accent-hover);
+}
+
+/* Table Design */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.data-table th, 
+.data-table td {
+    padding: 14px 16px;
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+.data-table th {
+    background-color: #f8faf9;
+    color: var(--cg-primary);
+    font-weight: 600;
+    border-bottom: 2px solid var(--cg-border-color);
+}
+
+.data-table tr {
+    border-bottom: 1px solid var(--cg-border-color);
+    transition: var(--cg-transition);
+}
+
+.data-table tr:hover {
+    background-color: #fcfdfe;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Badges & Tags */
+.nig-badge {
+    background-color: #f0f4f1;
+    color: var(--cg-primary);
+    font-family: monospace;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+}
+
+.branch-tag {
+    background-color: #eef2f0;
+    color: var(--cg-primary-light);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Custom Select Absensi Status */
+.select-presence-wrapper {
+    display: inline-block;
+}
+
+.select-presence {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    transition: var(--cg-transition);
+    text-align: center;
+}
+
+/* Dynamic Status Styling */
+.select-presence.status-hadir {
+    background-color: var(--status-hadir-bg);
+    color: var(--status-hadir-text);
+    border: 1px solid var(--status-hadir-border);
+}
+
+.select-presence.status-izin {
+    background-color: var(--status-izin-bg);
+    color: var(--status-izin-text);
+    border: 1px solid var(--status-izin-border);
+}
+
+.select-presence.status-sakit {
+    background-color: var(--status-sakit-bg);
+    color: var(--status-sakit-text);
+    border: 1px solid var(--status-sakit-border);
+}
+
+.select-presence.status-alpa {
+    background-color: var(--status-alpa-bg);
+    color: var(--status-alpa-text);
+    border: 1px solid var(--status-alpa-border);
+}
+
+/* Card Footer & Simpan Button */
+.card-footer {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid var(--cg-border-color);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-save-attendance {
+    background: var(--cg-primary);
+    color: #ffffff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--cg-transition);
+    box-shadow: 0 4px 12px rgba(15, 56, 34, 0.15);
+}
+
+.btn-save-attendance:hover {
+    background: var(--cg-primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(15, 56, 34, 0.25);
+}
+
+.title-with-date {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.date-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: rgba(99, 102, 241, 0.1);
+    color: #4f46e5;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+} /* <--- PERBAIKAN: Kurung tutup ini sebelumnya hilang */
+
+.date-badge i {
+    font-size: 0.8rem;
+}
+
+/* ======== RESPONSIVE BREAKPOINTS ======== */
+@media (max-width: 992px) {
+    .absen-wrapper { margin-left: 0; padding: 20px; }
+}
+
+@media (max-width: 768px) {
+    .topbar { flex-direction: column; align-items: flex-start; gap: 15px; }
+    .btn-bulk-present { width: 100%; justify-content: center; }
+    .card-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+    .search-form { width: 100%; }
+    .search-input-wrapper { flex: 1; }
+    .search-input-wrapper input { width: 100%; }
+}

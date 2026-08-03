@@ -104,6 +104,20 @@
                             </div>
                         </div>
 
+                        <!-- jenis sekolah -->
+                        <div class="form-group">
+                            <label for="cabangSekolah">Jenis Sekolah <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <select id="cabangSekolah" name="sekolah_id" required>
+                                    <option value="" disabled selected>-- Pilih jenis sekolah --</option>
+                                    @foreach($sekolah as $value)
+                                        <option value="{{$value->id}}">{{$value->jenis}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
                         <!-- 6. URL FOTO & PREVIEW -->
                         <div class="form-group full-width">
                             <label for="urlFoto">URL Foto Profil</label>

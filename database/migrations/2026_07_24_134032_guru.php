@@ -26,7 +26,7 @@ return new class extends Migration
             $table->boolean("koordinator_tahfiz")->default(0);
             $table->boolean("pengampu_tahfiz")->default(0);
             $table->boolean("kepala_sekolah")->default(0);
-            $table->unsignedBigInteger("cabang_id");
+            $table->foreignId("cabang_id")->constrained("cabang_guru")->cascadeOnDelete();
             $table->foreignId("sekolah_id")->constrained("jenis_sekolah")->cascadeOnDelete();
             $table->foreignId("user_id")->constrained("akun")->cascadeOnDelete();
             });

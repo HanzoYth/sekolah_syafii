@@ -51,19 +51,36 @@
                                     <th>No</th>
                                     <th>Nama Cabang</th>
                                     <th>Tanggal Dibuat</th>
+                                    <th>Status</th> <!-- KELOLA STATUS -->
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="branchTableBody">
                                 @foreach($data as $value)
                                     <tr>
-                                        <input type="hidden" value="{{$value->id}}" id="id">
+                                        <input type="hidden" value="{{$value->id}}" class="branch-id">
                                         <td>{{$no}}</td>
-                                        <td>{{$value->nama_cabang}}</td>
+                                        <td class="branch-name">{{$value->nama_cabang}}</td>
                                         <td>{{Carbon\Carbon::parse($value->creted_at)->translatedFormat('d M Y')}}</td>
+                                        
+                                        <!-- STATUS BADGE -->
+                                        <td>
+                                            @if(isset($value->aktif) && !$value->aktif)
+                                                <span class="status-badge inactive">
+                                                    <i class="fa-solid fa-circle-xmark"></i> Nonaktif
+                                                </span>
+                                            @else
+                                                <span class="status-badge active">
+                                                    <i class="fa-solid fa-circle-check"></i> Aktif
+                                                </span>
+                                            @endif
+                                        </td>
+
                                         <td>
                                             <button class="btn-action edit" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                                            <button class="btn-action delete" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                                            <button class="btn-action deactivate btn-deactivate-trigger" title="Nonaktifkan Cabang">
+                                                <i class="fa-solid fa-power-off"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                     <p style="display: none;">{{$no++}}</p>
@@ -100,7 +117,7 @@
                         <label for="namaCabang">Nama Cabang <span class="required">*</span></label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-school"></i>
-                            <input type="text" id="namaCabang" name = "nama_cabang" placeholder="Contoh: Cabang Surabaya" required autocomplete="off">
+                            <input type="text" id="namaCabang" name="nama_cabang" placeholder="Contoh: Cabang Surabaya" required autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -117,24 +134,55 @@
         </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- MODAL POPUP KONFIRMASI NONAKTIFKAN CABANG -->
+    <!-- ========================================== -->
+    <div class="modal-overlay" id="modalDeactivate">
+        <div class="modal-card modal-confirm-card">
+            <div class="confirm-icon-wrapper">
+                <div class="pulse-ring"></div>
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="confirm-body">
+                <h3>Rubah Status Cabang?</h3>
+                <p>Apakah Anda yakin ingin merubah status <strong id="targetBranchName">Cabang Ini</strong>?</p>
+                <span class="confirm-notice">status Cabang yang dirubah akan mempengaruhi para ustadz/h yang bersangkutan dengan Cabang ini.</span>
+            </div>
+            <div class="confirm-footer">
+                <button type="button" class="btn-cancel-confirm" id="btnCancelDeactivate">Batal</button>
+                <a href="#" id="btnConfirmDeactivate" class="btn-deactivate-action">
+                    <i class="fa-solid fa-power-off"></i> Ya, ubah status
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- JAVASCRIPT INTERAKSI MODAL -->
     <script>
+        // Modal Tambah Cabang
         const btnOpenModal = document.getElementById('btnOpenModal');
         const btnCloseModal = document.getElementById('btnCloseModal');
         const btnCancelModal = document.getElementById('btnCancelModal');
         const modalBranch = document.getElementById('modalBranch');
         const formAddBranch = document.getElementById('formAddBranch');
         const namaCabangInput = document.getElementById('namaCabang');
-        const btnDelete = document.querySelectorAll(".delete");
-        const inpId = document.querySelectorAll("#id");
 
-        // Buka Modal
+        // Modal Nonaktifkan
+        const modalDeactivate = document.getElementById('modalDeactivate');
+        const btnCancelDeactivate = document.getElementById('btnCancelDeactivate');
+        const btnConfirmDeactivate = document.getElementById('btnConfirmDeactivate');
+        const targetBranchName = document.getElementById('targetBranchName');
+        const btnDeactivateTriggers = document.querySelectorAll('.btn-deactivate-trigger');
+
+        const tombol_edit = document.querySelectorAll(".edit")
+
+        // Buka Modal Tambah
         btnOpenModal.addEventListener('click', () => {
             modalBranch.classList.add('active');
             namaCabangInput.focus();
         });
 
-        // Tutup Modal
+        // Tutup Modal Tambah
         const closeModal = () => {
             modalBranch.classList.remove('active');
             formAddBranch.reset();
@@ -143,21 +191,43 @@
         btnCloseModal.addEventListener('click', closeModal);
         btnCancelModal.addEventListener('click', closeModal);
 
-        // Tutup modal jika klik di luar modal card
         modalBranch.addEventListener('click', (e) => {
-            if (e.target === modalBranch) {
-                closeModal();
-            }
+            if (e.target === modalBranch) closeModal();
         });
 
-        btnDelete.forEach((item,idx) => {
-            item.addEventListener('click',() => {
-                window.location.href = "/gr/hpcb/" + inpId[idx].value
+        // Event Modal Konfirmasi Nonaktifkan
+        btnDeactivateTriggers.forEach((button) => {
+            button.addEventListener('click', (e) => {
+                const row = e.target.closest('tr');
+                const branchId = row.querySelector('.branch-id').value;
+                const branchName = row.querySelector('.branch-name').innerText;
+
+                // Set nama cabang di teks modal & atur URL redirect
+                targetBranchName.innerText = `"${branchName}"`;
+                btnConfirmDeactivate.href = "/gr/nkt/" + branchId;
+
+                // Tampilkan modal
+                modalDeactivate.classList.add('active');
             });
         });
 
+        // Tutup Modal Nonaktifkan
+        const closeDeactivateModal = () => {
+            modalDeactivate.classList.remove('active');
+        };
 
+        btnCancelDeactivate.addEventListener('click', closeDeactivateModal);
 
+        modalDeactivate.addEventListener('click', (e) => {
+            if (e.target === modalDeactivate) closeDeactivateModal();
+        });
+
+        tombol_edit.forEach((item) => {
+            item.addEventListener('click',(e) => {
+                const row = e.target.closest("tr");
+                window.location.href = "/gr/sta/" + row.querySelector('.branch-id').value;
+            })
+        })
     </script>
 </body>
 </html>

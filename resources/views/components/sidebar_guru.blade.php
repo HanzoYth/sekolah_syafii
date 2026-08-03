@@ -79,12 +79,52 @@
                                 <span>Dashboard Admin</span>
                             </a>
                         </li>
-                        <li class="menu-item">
-                            <a href="#data-guru">
-                                <i class="fa-solid fa-users-gear"></i>
-                                <span>Kelola Data Guru</span>
-                            </a>
+
+                        <!-- SUBMENU MASTER DATA (REPLACEMENT FOR PENGATURAN ABSENSI) -->
+                        <li class="menu-item has-submenu">
+                            <details class="submenu-wrapper">
+                                <summary class="menu-link">
+                                    <div class="menu-link-content">
+                                        <i class="fa-solid fa-database"></i>
+                                        <span>Master Data</span>
+                                    </div>
+                                    <i class="fa-solid fa-chevron-down submenu-icon"></i>
+                                </summary>
+                                <ul class="submenu-list">
+                                    <li class="submenu-item">
+                                        <a href="/gr/cb">
+                                            <i class="fa-solid fa-school"></i>
+                                            <span>Cabang Sekolah</span>
+                                        </a>
+                                    </li>
+                                    <li class="submenu-item">
+                                        <a href="#data-guru">
+                                            <i class="fa-solid fa-users-gear"></i>
+                                            <span>Kelola Data Guru</span>
+                                        </a>
+                                    </li>
+                                    <li class="submenu-item">
+                                        <a href="/gr/klab">
+                                            <i class="fa-solid fa-clipboard-user"></i>
+                                            <span>Kelola Absen Guru</span>
+                                        </a>
+                                    </li>
+                                    <li class="submenu-item">
+                                        <a href="#gaji">
+                                            <i class="fa-solid fa-money-bill-wave"></i>
+                                            <span>Gaji</span>
+                                        </a>
+                                    </li>
+                                    <li class="submenu-item">
+                                        <a href="/gr/tgm">
+                                            <i class="fa-solid fa-calendar-day"></i>
+                                            <span>Tanggal Merah</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </details>
                         </li>
+
                         <li class="menu-item">
                             <a href="#jabatan">
                                 <i class="fa-solid fa-sitemap"></i>
@@ -95,18 +135,6 @@
                             <a href="#jenis-guru">
                                 <i class="fa-solid fa-user-tag"></i>
                                 <span>Jenis Status Guru</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="/gr/cb">
-                                <i class="fa-solid fa-sliders"></i>
-                                <span>Pengaturan Absensi</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="#penggajian">
-                                <i class="fa-solid fa-calculator"></i>
-                                <span>Kelola Penggajian</span>
                             </a>
                         </li>
                         <li class="menu-item">

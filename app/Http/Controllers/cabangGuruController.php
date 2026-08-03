@@ -34,13 +34,13 @@ class cabangGuruController extends Controller
             "cabang_id" => cabang_guru::where("nama_cabang",$request->nama_cabang)->first()->id,
         ]);
 
-        $hari = ["senin","selasa","rabu","kamis","jumat","sabtu"];
+        $hari = ["senin","selasa","rabu","kamis","jumat","sabtu","minggu"];
 
         for ($i = 0; $i < count($hari) ;$i++){
             master_waktu_absen_guru::create([
                 "hari" => $hari[$i],
-                "waktu_masuk" => Carbon::parse("07:00:00")->translatedFormat("H:i:s"),
-                "waktu_keluar" => Carbon::parse("16:00:00")->translatedFormat("H:i:s"),
+                "waktu_masuk" => $i == 6 ? Carbon::parse("00:00:00")->translatedFormat("H:i:s"): Carbon::parse("07:00:00")->translatedFormat("H:i:s"),
+                "waktu_keluar" => $i == 6 ? Carbon::parse("00:00:00")->translatedFormat("H:i:s"): Carbon::parse("14:00:00")->translatedFormat("H:i:s"),
                 "current_at" => now(),
                 "cabang_id" => cabang_guru::where("nama_cabang",$request->nama_cabang)->first()->id,
             ]);
@@ -48,8 +48,11 @@ class cabangGuruController extends Controller
         return redirect("/gr/cb");
     }
 
-    function HapusCabang($id){
-        cabang_guru::destroy((int) $id);
+    function nonAktikanCabang($id){
+        $data_cabang = cabang_guru::find($id);
+        $data_cabang->aktif = !$data_cabang->aktif;
+        $data_cabang->save();
+
         return back();
     }
 }

@@ -6,14 +6,27 @@ use Illuminate\Http\Request;
 use App\Models\master_absen_guru;
 use App\Models\master_lokasi_absen_guru;
 use App\Models\master_waktu_absen_guru;
+use App\Models\cabang_guru;
+use App\Models\guru;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Redirect;
 
 class MasterAbsenController extends Controller
 {
-    function SettingAbsenGuru(Request $request) {
-        $lokasi = master_lokasi_absen_guru::find(1);
-        $waktu = master_waktu_absen_guru::all();
+
+    function tampilan_kelolaAbsenGuru(){
+        $data_guru = guru::all();
+        $data_absen_id_guru_hari_ini = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->pluck("guru_id")->toArray();
+        return view("modul/guru/a/kelola_absen_guru",[
+            "data_guru" => $data_guru,
+            "data_absen_id_guru" => $data_absen_id_guru_hari_ini
+        ]);
+    }
+
+    function SettingAbsenGuru(Request $request,$id) {
+        $cabang = cabang_guru::find((int) $id);
+        $lokasi = master_lokasi_absen_guru::where("cabang_id",(int) $id)->first();
+        $waktu = master_waktu_absen_guru::where("cabang_id",(int) $id)->get();
         $masuk = [
             $request->jam_masuk_senin,
             $request->jam_masuk_selasa,
@@ -21,6 +34,7 @@ class MasterAbsenController extends Controller
             $request->jam_masuk_kamis,
             $request->jam_masuk_jumat,
             $request->jam_masuk_sabtu,
+            $request->jam_masuk_minggu,
         ];
         $keluar = [
             $request->jam_keluar_senin,
@@ -29,6 +43,7 @@ class MasterAbsenController extends Controller
             $request->jam_keluar_kamis,
             $request->jam_keluar_jumat,
             $request->jam_keluar_sabtu,
+            $request->jam_keluar_minggu,
         ];
 
         // ini untuk lokasi
@@ -38,23 +53,28 @@ class MasterAbsenController extends Controller
         $lokasi->longitude = $request->longitude;
         $lokasi->current_at = now();
 
-        $lokasi->save();
+        //ini untuk cabang
+        $cabang->nama_cabang = $request->nama_cabang;
 
+        //ini untuk waktu
         for ($i=0;$i < count($waktu);$i++){
             $waktu[$i]->waktu_masuk = $masuk[$i];
             $waktu[$i]->waktu_keluar = $keluar[$i];
             $waktu[$i]->current_at = now();
             $waktu[$i]->save();
         }
-
-        return redirect("/gr/sta");
+        $lokasi->save();
+        $cabang->save();
+            
+        return back();
     }
 
     function addAbsenGuru(){
-        $hari = now()->dayOfWeekIso;
+        Carbon::setLocale("id");
+        $data_guru = guru::find((int) session("id"));
+        $hari = Carbon::now()->translatedFormat("l");
         $waktu_absen = Carbon::now();
-        $waktu_jadwal = Carbon::parse(master_waktu_absen_guru::find($hari)->waktu_masuk);
-        
+        $waktu_jadwal = Carbon::parse(master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->waktu_masuk);
         $terlambat = $waktu_jadwal->diffInMinutes($waktu_absen);
         
         if (!$waktu_absen->greaterThan($waktu_jadwal)){
@@ -67,14 +87,14 @@ class MasterAbsenController extends Controller
             "tgl_masuk" => now()->format("Y:m:d"),
             "status_kehadiran" => "h",
             "terlambat_menit" => $terlambat,
+            "cabang_id" => cabang_guru::find(guru::find((int) session("id"))->cabang_id)->id,
             "guru_id" => session("id"),
             "lokasi_id" => 1,
-            "waktu_id" => $hari
+            "waktu_id" => master_waktu_absen_guru::where("cabang_id",$data_guru->id)->where("hari",strtolower($hari))->id
         ]);
 
         return redirect("/gr/das");
     }
-
     function keluarAbsenGuru(){
         $data = master_absen_guru::where("guru_id",session("id"))->where("tgl_masuk",now()->format("Y-m-d"))->first();
 
@@ -89,4 +109,5 @@ class MasterAbsenController extends Controller
 
         return redirect("/gr/das");
     }
+
 }

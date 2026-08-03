@@ -140,6 +140,7 @@ class akunController extends Controller
         session()->put("id",$user->id);
         session()->put("nama",$user->nama);
 
+
         return redirect("/mod");
     }
 

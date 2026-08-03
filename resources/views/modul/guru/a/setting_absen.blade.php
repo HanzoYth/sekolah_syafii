@@ -36,7 +36,7 @@
                 </div>
             </div>
 
-            <form action="/gr/crtabs" method="POST" id="form-pengaturan-absensi">
+            <form action="/gr/crtabs/{{$id}}" method="POST" id="form-pengaturan-absensi">
                 @csrf
                 <div class="presensi-grid">
                     
@@ -56,8 +56,12 @@
                         <!-- Peta Leaflet -->
                         <div id="map-setting"></div>
 
-                        <!-- Input Nama Tempat & Radius -->
+                        <!-- Input Nama Cabang, Nama Tempat & Radius -->
                         <div class="form-group-row">
+                            <div class="form-group">
+                                <label for="nama_cabang"><i class="fa-solid fa-store"></i> Nama Cabang</label>
+                                <input type="text" id="nama_cabang" name="nama_cabang" class="form-control" placeholder="Contoh: Cabang Pusat" value="{{ $cabang->nama_cabang}}" required>
+                            </div>
                             <div class="form-group">
                                 <label for="nama_lokasi"><i class="fa-solid fa-building"></i> Nama Lokasi / Gedung</label>
                                 <input type="text" id="nama_lokasi" name="nama_lokasi" class="form-control" placeholder="Contoh: Gedung Utama Sekolah" value="{{$lokasi->nama_lokasi}}" required>
@@ -79,7 +83,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="longitude"><i class="fa-solid fa-location-crosshairs"></i> Longitude</label>
-                                <input type="text" id="longitude" name="longitude" class="form-control readonly-input" value="{{$lokasi->longitude}}"  required>
+                                <input type="text" id="longitude" name="longitude" class="form-control readonly-input" value="{{$lokasi->longitude}}" required>
                             </div>
                         </div>
 
@@ -195,6 +199,21 @@
                                         <div class="time-field">
                                             <small>Pulang</small>
                                             <input type="time" name="jam_keluar_sabtu" value="{{$waktu[5]->waktu_keluar}}" class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Hari Sabtu -->
+                                <div class="schedule-row" style="display: none;">
+                                    <div class="day-label"><i class="fa-regular fa-calendar-check"></i> minggu</div>
+                                    <div class="time-inputs">
+                                        <div class="time-field">
+                                            <small>Masuk</small>
+                                            <input type="time" name="jam_masuk_minggu" value="{{$waktu[6]->waktu_masuk}}" class="form-control" required>
+                                        </div>
+                                        <span class="separator"><i class="fa-solid fa-arrow-right-long"></i></span>
+                                        <div class="time-field">
+                                            <small>Pulang</small>
+                                            <input type="time" name="jam_keluar_minggu" value="{{$waktu[6]->waktu_keluar}}" class="form-control" required>
                                         </div>
                                     </div>
                                 </div>

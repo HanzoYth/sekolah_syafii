@@ -9,6 +9,7 @@ use App\Http\Controllers\MasterAbsenController;
 use App\Http\Controllers\otpController;
 use App\Http\Controllers\cabangGuruController;
 use App\Http\Controllers\adminController;
+use App\Http\Controllers\tanggalMerahController;
 // ini route untuk halaman modul dan welcome
 Route::get("/",[PageController::class,"tampilan_welcome"]);
 Route::get("/mod",[PageController::class,"tampilan_modul"]);
@@ -26,16 +27,25 @@ Route::get("/reg/logout",[akunController::class,"logout"]);
 // ini route untuk halaman modul guru
 Route::get('/gr/das',[modulGuruController::class,"tampilan_dashboard"]);
 Route::get('/gr/abs',[modulGuruController::class,"tampilan_presensiAbsen"]);
-Route::get('/gr/sta',[modulGuruController::class,"tampilan_settingAbsen"]);
+Route::get('/gr/sta/{id}',[modulGuruController::class,"tampilan_settingAbsen"]);
 Route::get('/gr/lpabs',[modulGuruController::class,"tampilan_laporanAbsen"]);
 Route::get('/gr/frgr',[modulGuruController::class,"tampilan_formulirGuru"]);
 Route::get('/gr/cb',[cabangGuruController::class,"tampilanCabangGuru"]);
 Route::post('/gr/tbgr',[modulGuruController::class,"tambahGuru"]);
 
+//kelola absen guru admin
+Route::get('/gr/klab',[MasterAbsenController::class,"tampilan_kelolaAbsenGuru"]);
+
+//ini untuk tanggall merah
+Route::get("/gr/tgm",[tanggalMerahController::class,"tampilan_tanggalMerah"]);
+Route::post("/gr/tbgm",[tanggalMerahController::class,"tambahTanggalMerah"]);
+Route::post("/gr/edgm/{id}",[tanggalMerahController::class,"editTanggalMerah"]);
+Route::get("/gr/hpgm/{id}",[tanggalMerahController::class,"hapusTanggalMerah"]);
 
 //ini seting cabang
 Route::post("/gr/tcb",[cabangGuruController::class,"TambahCabang"]);
-Route::get("/gr/hpcb/{id}",[cabangGuruController::class,"HapusCabang"]);
+Route::get("/gr/nkt/{id}",[cabangGuruController::class,"nonAktikanCabang"]);
+
 
 //ini otp
 Route::get("/gr/totp",[otpController::class,"tampilanOtp"]);
@@ -43,7 +53,7 @@ Route::post("/gr/otp",[otpController::class,"createOtp"]);
 Route::post("/gr/ckotp",[otpController::class,"cekOtp"]);
 
 //ini setting absen
-Route::post('/gr/crtabs',[MasterAbsenController::class,"SettingAbsenGuru"]);
+Route::post('/gr/crtabs/{id}',[MasterAbsenController::class,"SettingAbsenGuru"]);
 Route::get('/gr/acabs',[MasterAbsenController::class,"addAbsenGuru"]);
 Route::get('/gr/klabs',[MasterAbsenController::class,"keluarAbsenGuru"]);
 
