@@ -76,6 +76,7 @@
                                     $cabang = App\Models\cabang_guru::where("id",$value->cabang_id)->first();
                                 @endphp
                                 <tr>
+                                    <input type="hidden" value="{{$value->id}}" name="id_guru_{{$value->id}}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td><span class="nig-badge">{{$value->nig}}</span></td>
                                     <td class="teacher-name">
@@ -86,7 +87,7 @@
                                         @if ($data_absen_guru->status_kehadiran == "h")
                                             <td class="text-center">
                                                 <div class="select-presence-wrapper">
-                                                    <select class="select-presence status-hadir" name="status">
+                                                    <select class="select-presence status-hadir" name="status_{{$value->id}}">
                                                         <option value="h" selected>Hadir</option>
                                                         <option value="i">Izin</option>
                                                         <option value="s">Sakit</option>
@@ -97,7 +98,7 @@
                                         @elseif ($data_absen_guru->status_kehadiran == "s")
                                             <td class="text-center">
                                                 <div class="select-presence-wrapper">
-                                                    <select class="select-presence status-hadir" name="status">
+                                                    <select class="select-presence status-hadir" name="status_{{$value->id}}">
                                                         <option value="h">Hadir</option>
                                                         <option value="i">Izin</option>
                                                         <option value="s" selected>Sakit</option>
@@ -108,7 +109,7 @@
                                         @elseif ($data_absen_guru->status_kehadiran == "i")
                                             <td class="text-center">
                                                 <div class="select-presence-wrapper">
-                                                    <select class="select-presence status-hadir" name="status">
+                                                    <select class="select-presence status-hadir" name="status_{{$value->id}}">
                                                         <option value="h">Hadir</option>
                                                         <option value="i" selected>Izin</option>
                                                         <option value="s">Sakit</option>
@@ -119,7 +120,7 @@
                                         @else 
                                             <td class="text-center">
                                                 <div class="select-presence-wrapper">
-                                                    <select class="select-presence status-hadir" name="status">
+                                                    <select class="select-presence status-hadir" name="status_{{$value->id}}">
                                                         <option value="h">Hadir</option>
                                                         <option value="i">Izin</option>
                                                         <option value="s">Sakit</option>
@@ -131,7 +132,7 @@
                                     @else
                                         <td class="text-center">
                                             <div class="select-presence-wrapper">
-                                                <select class="select-presence status-hadir" name="status">
+                                                <select class="select-presence status-hadir" name="status_{{$value->id}}">
                                                     <option value="h">Hadir</option>
                                                     <option value="i">Izin</option>
                                                     <option value="s">Sakit</option>

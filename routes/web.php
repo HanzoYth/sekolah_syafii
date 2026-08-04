@@ -9,7 +9,9 @@ use App\Http\Controllers\MasterAbsenController;
 use App\Http\Controllers\otpController;
 use App\Http\Controllers\cabangGuruController;
 use App\Http\Controllers\adminController;
+use App\Http\Controllers\modulSiakadController;
 use App\Http\Controllers\tanggalMerahController;
+
 // ini route untuk halaman modul dan welcome
 Route::get("/",[PageController::class,"tampilan_welcome"]);
 Route::get("/mod",[PageController::class,"tampilan_modul"]);
@@ -62,3 +64,9 @@ Route::get('/gr/klabs',[MasterAbsenController::class,"keluarAbsenGuru"]);
 //ini admin
 Route::get('/ad/frad',[adminController::class,"tampilan_formulirAdmin"]);
 Route::post('/ad/tbad',[adminController::class,"tambahDataAdmin"]);
+
+//ini dasboard siakad
+Route::get('/sk/das',[modulSiakadController::class,"dashboard_siakad"]);
+
+
+
