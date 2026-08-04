@@ -82,7 +82,7 @@
                     } else {
                         statusElement.className = "location-status status-warn";
                         statusElement.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Anda di luar radius presensi (${Math.round(distance)} meter dari sekolah).`;
-                        // button.setAttribute("disabled","");
+                        button.setAttribute("disabled","");
                     }
 
                     // Fit Bounds agar kedua marker terlihat di peta

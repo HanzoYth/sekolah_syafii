@@ -226,6 +226,9 @@
                      ========================================================================== -->
                 
                 <!-- 1. STATISTIC CARDS -->
+                <input type="hidden" class="latitude" value="{{$data_lokasi->latitude ?? 0}}">
+                <input type="hidden" class="longitude" value="{{$data_lokasi->longitude ?? 0}}">
+                
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon bg-primary-light">
@@ -290,8 +293,8 @@
                                 <div class="status-box status-warning">
                                     <i class="fa-solid fa-circle-check"></i>
                                     <div>
-                                        <h5>belum Absen Masuk</h5>
-                                        <p>anda belum melakukan absen hari ini</p>
+                                        <h5>Belum Absen Masuk</h5>
+                                        <p>Anda belum melakukan absen hari ini</p>
                                     </div>
                                 </div>
                             @endif
@@ -308,13 +311,16 @@
                                 </div>
                             </div>
 
-                            <div class="action-buttons">
+                            <!-- Element untuk Menampilkan Pesan Radius Geolocation -->
+                            <div id="location-status" style="margin-top: 15px; font-size: 0.9rem;"></div>
+
+                            <div class="action-buttons" style="margin-top: 15px;">
                                 @if($sudah_absen && $waktu_keluar == "00:00:00")
-                                    <button class="btn btn-primary" id="btn_keluar">
+                                    <button class="btn btn-primary" id="btn_keluar" data-status = "boleh">
                                         <i class="fa-solid fa-right-from-bracket"></i> Absen Pulang
                                     </button>
                                 @else
-                                    <button class="btn btn-primary" id="btn_keluar" disabled>
+                                    <button class="btn btn-primary" id="btn_keluar" disabled data-status="endak">
                                         <i class="fa-solid fa-right-from-bracket"></i> Absen Pulang
                                     </button>
                                 @endif
@@ -351,61 +357,137 @@
                 </div>
 
                 @endif
-        @if(session('eror'))
-            <div class="alert alert-danger" id="errorToast">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                    <div>
-                        <p>
-                            <i class="fas fa-exclamation-circle" style="color: #e63946;"></i> 
-                            {{ session('eror') }}
-                        </p>
+
+                <!-- FLASH MESSAGES -->
+                @if(session('eror'))
+                    <div class="alert alert-danger" id="errorToast">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                            <div>
+                                <p>
+                                    <i class="fas fa-exclamation-circle" style="color: #e63946;"></i> 
+                                    {{ session('eror') }}
+                                </p>
+                            </div>
+                            <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>
+                        </div>
                     </div>
-                    <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>
-                </div>
-            </div>
-        @endif
-        @if ($errors->any())
-            <div class="alert alert-danger" id="errorToast">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                    <div>
-                        @foreach ($errors->all() as $error)
-                            <p>
-                                <i class="fas fa-exclamation-circle" style="color: #e63946;"></i> 
-                                {{ $error }}
-                            </p>
-                        @endforeach
+                @endif
+
+                @if ($errors->any())
+                    <div class="alert alert-danger" id="errorToast">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                            <div>
+                                @foreach ($errors->all() as $error)
+                                    <p>
+                                        <i class="fas fa-exclamation-circle" style="color: #e63946;"></i> 
+                                        {{ $error }}
+                                    </p>
+                                @endforeach
+                            </div>
+                            <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>
+                        </div>
                     </div>
-                    <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>
-                </div>
-            </div>
-        @endif
+                @endif
+
             </div>
         </main>
     </div>
+
+    <!-- JAVASCRIPT LOGIC -->
     <script>
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(
+                function (position) {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+
+                    const latInput = document.querySelector(".latitude");
+                    const lngInput = document.querySelector(".longitude");
+
+                    // Pastikan elemen koordinat ada (khusus mode guru)
+                    if (!latInput || !lngInput) return;
+
+                    // Menggunakan parseFloat agar angka desimal koordinat tidak hilang
+                    let data_latitude = parseFloat(latInput.value);
+                    let data_longitude = parseFloat(lngInput.value);
+
+                    // Hitung Jarak User ke Sekolah (Haversine Formula)
+                    const distance = calculateDistance(data_latitude, data_longitude, userLat, userLng);
+                    
+                    const statusElement = document.getElementById('location-status');
+                    const button = document.getElementById("btn_keluar");
+
+                    if (distance <= 500) {
+                        if (statusElement) {
+                            statusElement.className = "location-status status-ok";
+                            statusElement.innerHTML = `<i class="fa-solid fa-circle-check" style="color: #2ec4b6;"></i> Anda berada dalam radius presensi (${Math.round(distance)} meter dari sekolah).`;
+                        }
+                        if (button && button.hasAttribute('disabled') && button.dataset.status == "boleh") {
+                            button.removeAttribute("disabled");
+                        }
+                    } else {
+                        if (statusElement) {
+                            statusElement.className = "location-status status-warn";
+                            statusElement.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: #e63946;"></i> Anda di luar radius presensi (${Math.round(distance)} meter dari sekolah).`;
+                        }
+                        if (button && button.dataset.status == "boleh") {
+                            button.setAttribute("disabled", "");
+                        }
+                    }
+                },
+                function (error) {
+                    console.warn("Gagal mendapatkan lokasi: " + error.message);
+                },
+                {
+                    enableHighAccuracy: true
+                }
+            );
+        } else {
+            alert("Browser Anda tidak mendukung Geolocation.");
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // Radius bumi dalam meter
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                    Math.cos(φ1) * Math.cos(φ2) *
+                    Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+            return R * c; 
+        }
+
         function closeToast() {
             const toast = document.getElementById('errorToast');
             if (toast) {
                 toast.classList.add('fade-out');
                 setTimeout(() => {
                     toast.remove();
-                }, 400); // Sesuai durasi animasi slideOutRight
+                }, 400);
             }
         }
 
-        // Otomatis hilangkan error setelah 5 detik
         document.addEventListener('DOMContentLoaded', () => {
+            // Otomatis hilangkan error Toast setelah 5 detik
             const toast = document.getElementById('errorToast');
             if (toast) {
                 setTimeout(() => {
                     closeToast();
-                }, 5000); // 5000ms = 5 detik
+                }, 5000);
+            }
+
+            // Event listener tombol keluar aman dari null reference error
+            const btnKeluar = document.getElementById("btn_keluar");
+            if (btnKeluar) {
+                btnKeluar.addEventListener('click', () => {
+                    window.location.href = "/gr/klabs";
+                });
             }
         });
-
-        document.getElementById("btn_keluar").addEventListener('click',() => {
-            window.location.href = "/gr/klabs";
-        })
     </script>
 </body>
 </html>

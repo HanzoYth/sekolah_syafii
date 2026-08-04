@@ -112,7 +112,7 @@
                 </div>
 
                 <!-- Action Form/Button -->
-                <form action="/gr/otp/" method="POST" class="action-buttons">
+                <form action="/gr/acabs/" method="GET" class="action-buttons">
                     @csrf
                     <input type="hidden" name="latitude" id="input-lat">
                     <input type="hidden" name="longitude" id="input-lng">

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/modul/guru/kelola_absen_guru.css') }}">
+</head>
 <body>
 
 <div class="dashboard-container">
@@ -29,7 +30,7 @@
                 <p>Catat dan kelola kehadiran harian seluruh tenaga pengajar</p>
             </div>
             <!-- TOMBOL AKSI MASSAL -->
-            <button class="btn-bulk-present" id="btnAllPresent">
+            <button type="button" class="btn-bulk-present" id="btnAllPresent">
                 <i class="fa-solid fa-user-check"></i>
                 <span>Tandai Semua Hadir</span>
             </button>
@@ -40,109 +41,118 @@
             <div class="card-header">
                 <h3>Daftar Absensi Guru</h3>
                 
-                <!-- INPUT CARI NAMA GURU & TOMBOL SEARCH -->
-                <form action="#" method="GET" class="search-form" onsubmit="event.preventDefault();">
+                <!-- INPUT CARI NAMA GURU (Bukan form lagi, cukup div biasa) -->
+                <div class="search-form">
                     <div class="search-input-wrapper">
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
                         <input type="text" id="searchGuru" placeholder="Cari nama guru..." autocomplete="off">
                     </div>
-                    <button type="submit" class="btn-search">
+                    <button type="button" class="btn-search">
                         <span>Search</span>
                     </button>
-                </form>
+                </div>
             </div>
 
-            <!-- TABEL ABSENSI -->
-            <div class="table-responsive">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>NIG</th>
-                            <th>Nama Guru</th>
-                            <th>Cabang</th>
-                            <th class="text-center">Status Kehadiran (Aksi)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="absenTableBody">
-                        @foreach ($data_guru as $value)
-                            @php
-                                $data_absen_guru = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",$value->id)->first();
-                                $cabang = App\Models\cabang_guru::where("id",$value->cabang_id)->first();
-                            @endphp
+            <!-- FORM UNTUK MENYIMPAN PERUBAHAN ABSENSI -->
+            <form action="/gr/keabs/" method="POST">
+                @csrf
+                
+                <!-- TABEL ABSENSI -->
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
                             <tr>
-                                <td>1</td>
-                                <td><span class="nig-badge">{{$value->nig}}</span></td>
-                                <td class="teacher-name">
-                                    <strong>{{$value->nama}}</strong>
-                                </td>
-                                <td><span class="branch-tag">{{$cabang->nama_cabang}}</span></td>
-                                @if (in_array($value->id,$data_absen_id_guru))
-                                    @if ($data_absen_guru->status_kehadiran == "h")
+                                <th>No</th>
+                                <th>NIG</th>
+                                <th>Nama Guru</th>
+                                <th>Cabang</th>
+                                <th class="text-center">Status Kehadiran (Aksi)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="absenTableBody">
+                            @foreach ($data_guru as $value)
+                                @php
+                                    $data_absen_guru = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",$value->id)->first();
+                                    $cabang = App\Models\cabang_guru::where("id",$value->cabang_id)->first();
+                                @endphp
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td><span class="nig-badge">{{$value->nig}}</span></td>
+                                    <td class="teacher-name">
+                                        <strong>{{$value->nama}}</strong>
+                                    </td>
+                                    <td><span class="branch-tag">{{$cabang->nama_cabang}}</span></td>
+                                    @if (in_array($value->id,$data_absen_id_guru))
+                                        @if ($data_absen_guru->status_kehadiran == "h")
+                                            <td class="text-center">
+                                                <div class="select-presence-wrapper">
+                                                    <select class="select-presence status-hadir" name="status">
+                                                        <option value="h" selected>Hadir</option>
+                                                        <option value="i">Izin</option>
+                                                        <option value="s">Sakit</option>
+                                                        <option value="a">Alpa</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                        @elseif ($data_absen_guru->status_kehadiran == "s")
+                                            <td class="text-center">
+                                                <div class="select-presence-wrapper">
+                                                    <select class="select-presence status-hadir" name="status">
+                                                        <option value="h">Hadir</option>
+                                                        <option value="i">Izin</option>
+                                                        <option value="s" selected>Sakit</option>
+                                                        <option value="a">Alpa</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                        @elseif ($data_absen_guru->status_kehadiran == "i")
+                                            <td class="text-center">
+                                                <div class="select-presence-wrapper">
+                                                    <select class="select-presence status-hadir" name="status">
+                                                        <option value="h">Hadir</option>
+                                                        <option value="i" selected>Izin</option>
+                                                        <option value="s">Sakit</option>
+                                                        <option value="a">Alpa</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                        @else 
+                                            <td class="text-center">
+                                                <div class="select-presence-wrapper">
+                                                    <select class="select-presence status-hadir" name="status">
+                                                        <option value="h">Hadir</option>
+                                                        <option value="i">Izin</option>
+                                                        <option value="s">Sakit</option>
+                                                        <option value="a" selected>Alpa</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                        @endif
+                                    @else
                                         <td class="text-center">
                                             <div class="select-presence-wrapper">
-                                                <select class="select-presence status-hadir">
-                                                    <option value="hadir" selected>Hadir</option>
-                                                    <option value="izin">Izin</option>
-                                                    <option value="sakit">Sakit</option>
-                                                    <option value="alpa">Alpa</option>
-                                                </select>
-                                            </div>
-                                        </td>
-                                    @elseif ($data_absen_guru->status_kehadiran == "s")
-                                        <td class="text-center">
-                                            <div class="select-presence-wrapper">
-                                                <select class="select-presence status-hadir">
-                                                    <option value="hadir">Hadir</option>
-                                                    <option value="izin">Izin</option>
-                                                    <option value="sakit" selected>Sakit</option>
-                                                    <option value="alpa">Alpa</option>
-                                                </select>
-                                            </div>
-                                        </td>
-                                    @elseif ($data_absen_guru->status_kehadiran == "i")
-                                        <td class="text-center">
-                                            <div class="select-presence-wrapper">
-                                                <select class="select-presence status-hadir">
-                                                    <option value="hadir">Hadir</option>
-                                                    <option value="izin" selected>Izin</option>
-                                                    <option value="sakit">Sakit</option>
-                                                    <option value="alpa">Alpa</option>
-                                                </select>
-                                            </div>
-                                        </td>
-                                    @else 
-                                        <td class="text-center">
-                                            <div class="select-presence-wrapper">
-                                                <select class="select-presence status-hadir">
-                                                    <option value="hadir">Hadir</option>
-                                                    <option value="izin">Izin</option>
-                                                    <option value="sakit">Sakit</option>
-                                                    <option value="alpa" selected>Alpa</option>
+                                                <select class="select-presence status-hadir" name="status">
+                                                    <option value="h">Hadir</option>
+                                                    <option value="i">Izin</option>
+                                                    <option value="s">Sakit</option>
+                                                    <option value="a" selected>Alpa</option>
                                                 </select>
                                             </div>
                                         </td>
                                     @endif
-                                @else
-                                    <td class="text-center">
-                                        <div class="select-presence-wrapper">
-                                            <select class="select-presence status-hadir">
-                                                <option value="hadir">Hadir</option>
-                                                <option value="izin">Izin</option>
-                                                <option value="sakit">Sakit</option>
-                                                <option value="alpa" selected>Alpa</option>
-                                            </select>
-                                        </div>
-                                    </td>
-                                @endif
-                            </tr>
-                        @endforeach
-            <div class="card-footer">
-                <button class="btn-save-attendance">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    <span>Simpan Perubahan Absensi</span>
-                </button>
-            </div>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn-save-attendance">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Simpan Perubahan Absensi</span>
+                    </button>
+                </div>
+            </form>
         </section>
     </main>
 </div>
@@ -167,16 +177,15 @@
                 year: 'numeric' 
             };
             
-            // Output format: "Minggu, 2 Agustus 2026"
             const formattedDate = today.toLocaleDateString('id-ID', options);
             dateElement.textContent = formattedDate;
         }
 
-        renderCurrentDate(); // Jalankan fungsi tanggal
+        renderCurrentDate();
 
         // Fungsi mengubah warna berdasarkan opsi yang dipilih
         function updateSelectStyle(select) {
-            select.classList.remove('status-hadir', 'status-izin', 'status-sakit', 'status-alpa');
+            select.classList.remove('status-hadir', 'status-izin', 'status-sakit', 'status-alpa', 'status-h', 'status-i', 'status-s', 'status-a');
             select.classList.add(`status-${select.value}`);
         }
 
@@ -191,7 +200,7 @@
         // Tombol Ubah Semua Kehadiran ke 'Hadir'
         btnAllPresent.addEventListener('click', function () {
             selectElements.forEach(select => {
-                select.value = 'hadir';
+                select.value = 'h';
                 updateSelectStyle(select);
             });
         });
@@ -215,4 +224,4 @@
 </script>
 
 </body>
-</html>
+</html> 

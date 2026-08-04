@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\master_absen_guru;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Models\otp_guru;
@@ -16,7 +17,7 @@ class otpController extends Controller
         return redirect("/reg");
     }
 
-    function createOtp(Request $request){
+    function createOtp(){
         if (otp_guru::where("guru_id",session("id"))->exists()){
             otp_guru::where("guru_id",session("id"))->delete();
         }
@@ -25,7 +26,7 @@ class otpController extends Controller
         otp_guru::create([
             "kode_otp" => $kode,
             "otp_expired_at" => now()->addMinute(5),
-            "guru_id" => $request->id
+            "guru_id" => session("id")
         ]);
 
         Mail::raw(
@@ -40,11 +41,14 @@ class otpController extends Controller
 
     function cekOtp(Request $request){
         $otp_d = otp_guru::where("guru_id",session('id'))->first();
-
+        $absensi_guru = master_absen_guru::where("guru_id",session("id"))->first();
         if ($request->otp != $otp_d->kode_otp){
             return back();
         }
-        return redirect("/gr/acabs");
+
+        $absensi_guru->status_kehadiran = "h";
+        $absensi_guru->save();
+        return redirect("/gr/das");
     }
 
 

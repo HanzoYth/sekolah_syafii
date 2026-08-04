@@ -17,6 +17,8 @@ class modulGuruController extends Controller
     function tampilan_dashboard(){
         if (session("hasLogin")){
             Carbon::setLocale("id");
+            $data_guru = guru::find((int) session("id"));
+            $data_lokasi = master_lokasi_absen_guru::where("cabang_id",$data_guru->cabang_id)->first();
             $sudah_absen = master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("guru_id",session("id"))->exists();
             $total_kehadiran_bulanan = master_absen_guru::where("guru_id",session("id"))->whereMonth("tgl_masuk",now()->month)->count();
             $jumlah_terlambat_menit = master_absen_guru::where("guru_id",session("id"))->sum("terlambat_menit");
@@ -62,7 +64,8 @@ class modulGuruController extends Controller
                 "jumlah_terlambat_menit" => $jumlah_terlambat_menit,
                 "sudah_absen" => $sudah_absen,
                 "waktu_masuk" => $waktu_masuk,
-                "waktu_keluar" => $waktu_keluar
+                "waktu_keluar" => $waktu_keluar,
+                "data_lokasi" => $data_lokasi
             ]);
         }
         return redirect("/reg");
@@ -85,6 +88,12 @@ class modulGuruController extends Controller
         $lokasi = master_lokasi_absen_guru::where("cabang_id",$cabang->id)->first();
         $waktu = master_waktu_absen_guru::where("cabang_id",$cabang->id)->where("hari",strtolower(Carbon::now()->translatedFormat("l")))->first();
 
+        $cek_belum_pencet_tombol_keluar= master_absen_guru::where("waktu_keluar",Carbon::parse("00:00:00"))->where("guru_id",session("id"))->exists();
+
+        if ($cek_belum_pencet_tombol_keluar){
+            return back()->with("eror","anda belum melukan absen keluar, silahkan melakukan absen keluar terlebih dahulu");
+        }
+
         $hari = now()->dayOfWeekIso;
         if ($hari == 7){
             return back()->with("eror","waduhh endak bisa absen hari ahad");
@@ -92,7 +101,7 @@ class modulGuruController extends Controller
 
         $waktu_sekarang = Carbon::now();
         $waktu_keluar_absen = Carbon::parse($waktu->waktu_keluar);
-        $sudah_absen = master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("guru_id",session("id"))->exists();
+        $sudah_absen = master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("guru_id",session("id"))->where("status_kehadiran","!=","a")->exists();
 
         if ($sudah_absen){
             return back()->with("eror","anda sudah melakukan absen");

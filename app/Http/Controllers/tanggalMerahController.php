@@ -12,7 +12,7 @@ class tanggalMerahController extends Controller
 {
     function tampilan_tanggalMerah(){
         $data_tanggal_merah = tanggal_merah::all();
-        $data_cabang = cabang_guru::all();
+        $data_cabang = cabang_guru::where("aktif",1)->get();
         return view("modul/guru/a/atur_tanggal_merah",["tanggal_merah" => $data_tanggal_merah,"cabang" => $data_cabang,"nomor" => 0]);
     }
 
@@ -30,7 +30,6 @@ class tanggalMerahController extends Controller
             }
             return back();
         }
-
         tanggal_merah::create([
             "tanggal" => Carbon::parse($request->tanggal)->translatedFormat("Y-m-d"),
             "keterangan" => $request->nama_libur,

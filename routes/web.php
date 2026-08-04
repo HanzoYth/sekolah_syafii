@@ -35,6 +35,7 @@ Route::post('/gr/tbgr',[modulGuruController::class,"tambahGuru"]);
 
 //kelola absen guru admin
 Route::get('/gr/klab',[MasterAbsenController::class,"tampilan_kelolaAbsenGuru"]);
+Route::post('/gr/keabs',[MasterAbsenController::class,"addAbsenGuruDenganKelola"]);
 
 //ini untuk tanggall merah
 Route::get("/gr/tgm",[tanggalMerahController::class,"tampilan_tanggalMerah"]);
@@ -49,7 +50,7 @@ Route::get("/gr/nkt/{id}",[cabangGuruController::class,"nonAktikanCabang"]);
 
 //ini otp
 Route::get("/gr/totp",[otpController::class,"tampilanOtp"]);
-Route::post("/gr/otp",[otpController::class,"createOtp"]);
+Route::get("/gr/otp",[otpController::class,"createOtp"]);
 Route::post("/gr/ckotp",[otpController::class,"cekOtp"]);
 
 //ini setting absen

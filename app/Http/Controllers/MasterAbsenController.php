@@ -74,7 +74,7 @@ class MasterAbsenController extends Controller
         $data_guru = guru::find((int) session("id"));
         $hari = Carbon::now()->translatedFormat("l");
         $waktu_absen = Carbon::now();
-        $waktu_jadwal = Carbon::parse(master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->waktu_masuk);
+        $waktu_jadwal = Carbon::parse(master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->first()->waktu_masuk);
         $terlambat = $waktu_jadwal->diffInMinutes($waktu_absen);
         
         if (!$waktu_absen->greaterThan($waktu_jadwal)){
@@ -85,16 +85,49 @@ class MasterAbsenController extends Controller
             "waktu_masuk" => now()->format("H:i:s"),
             "waktu_keluar" => Carbon::parse("00:00:00"),
             "tgl_masuk" => now()->format("Y:m:d"),
-            "status_kehadiran" => "h",
+            "status_kehadiran" => "a",
             "terlambat_menit" => $terlambat,
             "cabang_id" => cabang_guru::find(guru::find((int) session("id"))->cabang_id)->id,
             "guru_id" => session("id"),
             "lokasi_id" => 1,
-            "waktu_id" => master_waktu_absen_guru::where("cabang_id",$data_guru->id)->where("hari",strtolower($hari))->id
+            "waktu_id" => master_waktu_absen_guru::where("cabang_id",$data_guru->id)->where("hari",strtolower($hari))->first()->id
         ]);
 
-        return redirect("/gr/das");
+        return redirect("/gr/otp");
     }
+
+    function addAbsenGuruDenganKelola(Request $request){
+        Carbon::setLocale("id");
+        $data_guru = guru::find(session("id"));
+        $data_cabang = cabang_guru::find($data_guru->cabang_id);
+        $data_waktu = master_waktu_absen_guru::where("cabang_id",$data_cabang->id)->where("hari",strtolower(Carbon::now()->translatedFormat("l")))->first();
+        $data_lokasi = master_lokasi_absen_guru::where("cabang_id",$data_cabang->id)->first();
+        $data_id_guru = guru::all()->pluck("id")->toArray();
+        $data_id_guru_master_absen = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->pluck("guru_id")->toArray();
+        foreach($data_id_guru as $id){  
+            if (in_array($id,$data_id_guru_master_absen)){
+                $data = master_absen_guru::where("guru_id",$id)->first();
+                $data->tgl_masuk = Carbon::now()->translatedFormat("Y-m-d");
+                $data->status_kehadiran = $request->status;
+                $data->save();
+            }else{
+                master_absen_guru::create([
+                    "waktu_masuk" => Carbon::now()->translatedFormat("H:i:s"),
+                    "waktu_keluar" => Carbon::parse("00:00:00"),
+                    "tgl_masuk" => Carbon::now()->translatedFormat("Y-m-d"),
+                    "status_kehadiran" => $request->status,
+                    "terlambat_menit" => 0,
+                    "cabang_id" => $data_cabang->id,
+                    "guru_id" => $data_guru->id,
+                    "lokasi_id" => $data_lokasi->id,
+                    "waktu_id" => $data_waktu->id 
+                ]);
+            }
+            return back();
+        }
+    }
+
+
     function keluarAbsenGuru(){
         $data = master_absen_guru::where("guru_id",session("id"))->where("tgl_masuk",now()->format("Y-m-d"))->first();
 
