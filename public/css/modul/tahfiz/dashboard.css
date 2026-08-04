@@ -1,34 +1,43 @@
-/* Import Sidebar CSS */
+/* ================================================================
+   DASHBOARD TAHFIZ — TEMA ISLAMI ELEGAN
+   ================================================================ */
 @import url('sidebar.css');
 
 /* ======== ROOT VARIABLES & RESET ======== */
 :root {
-    --primary-color: #116853;
+    --primary-color: #0f6b52;
     --primary-dark: #0a4738;
-    --primary-light: #e6f4f0;
-    --primary-gradient: linear-gradient(135deg, #116853 0%, #0d5242 100%);
-    
-    --bg-light: #f8fafc;
-    --white: #ffffff;
-    --text-dark: #0f172a;
-    --text-muted: #64748b;
-    --border-color: #f1f5f9;
-    --border-hover: #cbd5e1;
-    
-    /* Soft Modern Badge Colors */
-    --green-bg: #ecfdf5;
-    --green-text: #047857;
-    --yellow-bg: #fffbeb;
-    --yellow-text: #b45309;
-    --red-bg: #fef2f2;
-    --red-text: #b91c1c;
+    --primary-darker: #073028;
+    --primary-light: #e8f5f0;
+    --primary-gradient: linear-gradient(135deg, #14806a 0%, #0a4738 100%);
 
+    --gold: #c9a227;
+    --gold-light: #f7ecc9;
+    --gold-gradient: linear-gradient(135deg, #e6c85c 0%, #b8912a 100%);
+
+    --bg-light: #f7f8f5;
+    --white: #ffffff;
+    --text-dark: #16241f;
+    --text-muted: #6b7d74;
+    --border-color: #e9efe9;
+    --border-hover: #cfdcd4;
+
+    --green-bg: #eaf7ef;
+    --green-text: #0a7a4a;
+    --yellow-bg: #fdf6e3;
+    --yellow-text: #a5760f;
+    --red-bg: #fdecec;
+    --red-text: #b3261e;
+
+    --font-heading: 'Amiri', serif;
     --font-main: 'Poppins', sans-serif;
-    
-    /* Modern Glass & Elevation Shadows */
-    --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-    --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.04), 0 8px 10px -6px rgba(15, 23, 42, 0.02);
-    --shadow-hover: 0 20px 30px -10px rgba(17, 104, 83, 0.12), 0 10px 12px -5px rgba(0, 0, 0, 0.04);
+
+    --shadow-xs: 0 1px 2px 0 rgba(15, 36, 31, 0.04);
+    --shadow-card: 0 10px 25px -8px rgba(10, 71, 56, 0.10), 0 4px 10px -6px rgba(10, 71, 56, 0.05);
+    --shadow-hover: 0 20px 30px -12px rgba(15, 107, 82, 0.20), 0 8px 14px -6px rgba(0, 0, 0, 0.05);
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
 }
 
 * {
@@ -39,9 +48,13 @@
 
 body {
     font-family: var(--font-main);
-    background-color: var(--bg-light);
     color: var(--text-dark);
     -webkit-font-smoothing: antialiased;
+    /* Motif geometris islami halus sebagai latar */
+    background-color: var(--bg-light);
+    background-image:
+        radial-gradient(circle at 1px 1px, rgba(15, 107, 82, 0.06) 1px, transparent 0);
+    background-size: 26px 26px;
 }
 
 .dashboard-container {
@@ -53,132 +66,87 @@ body {
 .main-content {
     flex: 1;
     padding: 32px;
-    background-color: var(--bg-light);
+    margin-left: 260px; /* selebar .sidebar yang kini fixed */
+    width: calc(100% - 260px);
 }
 
-/* TOPBAR / NAV ATAS */
+/* ======== TOPBAR ======== */
 .topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--white);
-    padding: 18px 30px;
-    border-radius: 16px;
+    background: var(--primary-gradient);
+    padding: 22px 32px;
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
-    border: 1px solid var(--border-color);
     margin-bottom: 28px;
-    backdrop-filter: blur(8px);
-}
-
-.topbar-left h2 {
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    letter-spacing: -0.3px;
-}
-
-.topbar-left p {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    margin-top: 2px;
-}
-
-.topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.search-bar {
     position: relative;
-    display: flex;
-    align-items: center;
+    overflow: hidden;
 }
 
-.search-bar input {
-    padding: 10px 16px 10px 40px;
-    border-radius: 30px;
-    border: 1px solid var(--border-color);
-    background-color: #f1f5f9;
-    font-size: 0.85rem;
-    outline: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 220px;
-}
-
-.search-bar input:focus {
-    width: 280px;
-    border-color: var(--primary-color);
-    background-color: var(--white);
-    box-shadow: 0 0 0 4px rgba(17, 104, 83, 0.1);
-}
-
-.search-bar i {
+/* Ornamen bintang islami di pojok topbar */
+.topbar::after {
+    content: '';
     position: absolute;
-    left: 14px;
-    color: var(--text-muted);
-    font-size: 0.9rem;
+    right: -30px;
+    top: -30px;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(201, 162, 39, 0.18) 0%, transparent 70%);
+    pointer-events: none;
 }
 
-.icon-btn {
+.topbar h2 {
+    font-family: var(--font-heading);
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.3px;
     position: relative;
-    background: #f1f5f9;
-    border: none;
+    z-index: 1;
+}
+
+.topbar h2::before {
+    content: '﷽';
+    display: block;
+    font-family: 'Amiri', serif;
+    font-size: 0.9rem;
+    color: var(--gold);
+    opacity: 0.85;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+}
+
+.topbar-icons {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+}
+
+.topbar-icons i {
     width: 42px;
     height: 42px;
-    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--white);
+    border-radius: 12px;
+    font-size: 1rem;
     cursor: pointer;
-    color: var(--text-dark);
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(4px);
 }
 
-.icon-btn:hover {
-    background-color: var(--primary-light);
-    color: var(--primary-color);
+.topbar-icons i:hover {
+    background: var(--gold);
+    color: var(--primary-darker);
     transform: translateY(-2px);
 }
 
-.icon-btn .badge-dot {
-    position: absolute;
-    top: 9px;
-    right: 9px;
-    width: 8px;
-    height: 8px;
-    background-color: #ef4444;
-    border-radius: 50%;
-    border: 2px solid var(--white);
-}
-
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding-left: 12px;
-    border-left: 1px solid var(--border-color);
-}
-
-.user-profile img {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    object-fit: cover;
-}
-
-.user-profile .user-name {
-    font-size: 0.88rem;
-    font-weight: 600;
-    line-height: 1.2;
-}
-
-.user-profile .user-role {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-}
-
-/* ======== MODERATELY STYLED CARDS (KOTAK-KOTAK) ======== */
+/* ======== STAT CARDS ======== */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -188,55 +156,40 @@ body {
 
 .stat-card {
     background-color: var(--white);
-    padding: 24px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    gap: 18px;
+    padding: 26px 24px;
+    border-radius: var(--radius-lg);
+    text-align: center;
     box-shadow: var(--shadow-card);
     border: 1px solid var(--border-color);
+    border-top: 3px solid var(--gold);
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .stat-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-hover);
-    border-color: rgba(17, 104, 83, 0.2);
+    border-top-color: var(--primary-color);
 }
 
-.stat-icon {
-    width: 54px;
-    height: 54px;
-    border-radius: 16px;
-    background: var(--primary-light);
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.4rem;
-    transition: all 0.3s ease;
-}
-
-.stat-card:hover .stat-icon {
-    background: var(--primary-gradient);
-    color: var(--white);
-}
-
-.stat-info h3 {
-    font-size: 1.65rem;
+.stat-card h3 {
+    font-family: var(--font-heading);
+    font-size: 2.1rem;
     font-weight: 700;
-    color: var(--text-dark);
+    color: var(--primary-dark);
     line-height: 1.1;
 }
 
-.stat-info p {
+.stat-card p {
     font-size: 0.82rem;
     color: var(--text-muted);
-    margin-top: 4px;
+    margin-top: 8px;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-/* SUMMARY & FILTER ROW */
+/* ======== SUMMARY & FILTER ROW ======== */
 .summary-filter-row {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -247,18 +200,19 @@ body {
 .summary-box, .filter-box {
     background-color: var(--white);
     padding: 26px;
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
     border: 1px solid var(--border-color);
 }
 
 .summary-box h4, .filter-box h4 {
-    font-size: 1.05rem;
-    font-weight: 600;
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary-dark);
     margin-bottom: 18px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border-color);
 }
 
 .summary-cards {
@@ -268,30 +222,26 @@ body {
 }
 
 .sum-card {
-    padding: 18px 14px;
-    border-radius: 16px;
+    padding: 20px 14px;
+    border-radius: var(--radius-md);
     text-align: center;
     transition: transform 0.2s ease;
 }
 
-.sum-card:hover {
-    transform: translateY(-2px);
-}
+.sum-card:hover { transform: translateY(-2px); }
 
-.sum-card h3 { font-size: 1.5rem; font-weight: 700; }
-.sum-card p { font-size: 0.78rem; font-weight: 600; margin-top: 4px; }
+.sum-card h3 { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; }
+.sum-card p { font-size: 0.78rem; font-weight: 600; margin-top: 6px; }
 
 .sum-card.green { background-color: var(--green-bg); color: var(--green-text); }
 .sum-card.yellow { background-color: var(--yellow-bg); color: var(--yellow-text); }
 .sum-card.red { background-color: var(--red-bg); color: var(--red-text); }
 
-.filter-group {
-    margin-bottom: 14px;
-}
+.filter-group { margin-bottom: 16px; }
 
 .filter-group label {
     display: block;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 600;
     color: var(--text-muted);
     margin-bottom: 6px;
@@ -301,13 +251,13 @@ body {
 
 .filter-group select, .filter-group input {
     width: 100%;
-    padding: 10px 14px;
-    border-radius: 10px;
+    padding: 11px 14px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--border-color);
     font-size: 0.85rem;
     font-family: var(--font-main);
     outline: none;
-    background-color: #f8fafc;
+    background-color: #fbfbf8;
     color: var(--text-dark);
     transition: all 0.2s ease;
 }
@@ -315,25 +265,28 @@ body {
 .filter-group select:focus, .filter-group input:focus {
     border-color: var(--primary-color);
     background-color: var(--white);
-    box-shadow: 0 0 0 3px rgba(17, 104, 83, 0.1);
+    box-shadow: 0 0 0 3px rgba(15, 107, 82, 0.12);
 }
 
-/* TABLE CARD */
+/* ======== TABLE CARD ======== */
 .table-card {
     background-color: var(--white);
     padding: 26px;
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     margin-bottom: 28px;
     box-shadow: var(--shadow-card);
     border: 1px solid var(--border-color);
 }
 
-.table-card h4 { margin-bottom: 18px; font-weight: 600; font-size: 1.05rem; }
-
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
+.table-card h4 {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 18px;
 }
+
+.table-responsive { width: 100%; overflow-x: auto; }
 
 table {
     width: 100%;
@@ -344,18 +297,17 @@ table {
 }
 
 table th {
-    background-color: #f8fafc;
-    color: var(--text-muted);
-    font-weight: 600;
-    font-size: 0.78rem;
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    font-weight: 700;
+    font-size: 0.76rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     padding: 14px 16px;
-    border-bottom: 1px solid var(--border-color);
 }
 
-table th:first-child { border-radius: 10px 0 0 10px; }
-table th:last-child { border-radius: 0 10px 10px 0; }
+table th:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+table th:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
 
 table td {
     padding: 14px 16px;
@@ -363,13 +315,8 @@ table td {
     color: var(--text-dark);
 }
 
-table tbody tr {
-    transition: background-color 0.2s ease;
-}
-
-table tbody tr:hover {
-    background-color: #f8fafc;
-}
+table tbody tr { transition: background-color 0.2s ease; }
+table tbody tr:hover { background-color: var(--primary-light); }
 
 .badge {
     padding: 6px 12px;
@@ -384,12 +331,10 @@ table tbody tr:hover {
 .badge.success { background-color: var(--green-bg); color: var(--green-text); }
 .badge.danger { background-color: var(--red-bg); color: var(--red-text); }
 
-.badge-text.green { color: #059669; font-weight: 600; font-size: 0.82rem; }
-.badge-text.red { color: #dc2626; font-weight: 600; font-size: 0.82rem; }
+.badge-text.green { color: var(--green-text); font-weight: 600; font-size: 0.82rem; }
+.badge-text.red { color: var(--red-text); font-weight: 600; font-size: 0.82rem; }
 
-/* ======== PEROMBAKAN UTAMA TOMBOL & AKSESIBILITAS ======== */
-
-/* 1. TOMBOL KEMBALI (ULTRA MODERN & INTERAKTIF) */
+/* ======== BUTTONS ======== */
 .btn-back {
     display: inline-flex;
     align-items: center;
@@ -402,37 +347,17 @@ table tbody tr:hover {
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.25s ease;
     box-shadow: var(--shadow-xs);
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-back i {
-    font-size: 0.85rem;
-    transition: transform 0.25s ease;
-    color: var(--text-muted);
 }
 
 .btn-back:hover {
-    background-color: var(--white);
     border-color: var(--primary-color);
     color: var(--primary-color);
-    box-shadow: 0 6px 15px -3px rgba(17, 104, 83, 0.12);
+    box-shadow: 0 6px 15px -3px rgba(15, 107, 82, 0.15);
     transform: translateY(-1px);
 }
 
-.btn-back:hover i {
-    transform: translateX(-4px);
-    color: var(--primary-color);
-}
-
-.btn-back:active {
-    transform: translateY(0);
-    box-shadow: var(--shadow-xs);
-}
-
-/* 2. TOMBOL-TOMBOL LAINNYA */
 .btn-sm, .btn-xs {
     border-radius: 8px;
     border: 1px solid var(--border-color);
@@ -448,28 +373,28 @@ table tbody tr:hover {
 .btn-xs { padding: 5px 12px; font-size: 0.75rem; }
 
 .btn-sm:hover, .btn-xs:hover {
-    background-color: var(--primary-color);
+    background: var(--primary-gradient);
     border-color: var(--primary-color);
     color: var(--white);
-    box-shadow: 0 4px 12px rgba(17, 104, 83, 0.2);
+    box-shadow: 0 4px 12px rgba(15, 107, 82, 0.25);
 }
 
 .btn-outline {
     padding: 12px 28px;
     border-radius: 12px;
-    border: 1px solid var(--primary-color);
+    border: 1px solid var(--gold);
     background-color: transparent;
-    color: var(--primary-color);
-    font-weight: 600;
+    color: var(--gold);
+    font-weight: 700;
     font-size: 0.88rem;
     cursor: pointer;
     transition: all 0.25s ease;
 }
 
 .btn-outline:hover {
-    background: var(--primary-gradient);
-    color: var(--white);
-    box-shadow: 0 8px 20px rgba(17, 104, 83, 0.25);
+    background: var(--gold-gradient);
+    color: var(--primary-darker);
+    box-shadow: 0 8px 20px rgba(201, 162, 39, 0.3);
     transform: translateY(-2px);
 }
 
@@ -495,7 +420,7 @@ table tbody tr:hover {
     background-color: var(--primary-light);
 }
 
-/* DETAIL ROW & BOXES */
+/* ======== DETAIL ROW & BOXES ======== */
 .detail-row {
     display: grid;
     grid-template-columns: 1.2fr 0.8fr;
@@ -505,9 +430,17 @@ table tbody tr:hover {
 .detail-box {
     background-color: var(--white);
     padding: 26px;
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
     border: 1px solid var(--border-color);
+    min-width: 0; /* cegah kartu melebar mengikuti konten (grafik/tabel) */
+    overflow: hidden;
+}
+
+.detail-box h3 {
+    font-family: var(--font-heading);
+    color: var(--primary-dark);
+    font-size: 1.3rem;
 }
 
 .detail-header-tag {
@@ -515,13 +448,13 @@ table tbody tr:hover {
     color: var(--primary-color);
     padding: 6px 14px;
     border-radius: 30px;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
     display: inline-flex;
     align-items: center;
     gap: 6px;
     margin-bottom: 18px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
 }
 
 .detail-action-bar {
@@ -530,6 +463,8 @@ table tbody tr:hover {
     align-items: center;
     margin-bottom: 20px;
 }
+
+.action-right { display: flex; gap: 10px; }
 
 .subtitle-text {
     font-size: 0.82rem;
@@ -548,43 +483,50 @@ table tbody tr:hover {
     margin-top: 24px;
 }
 
-/* DETAIL SISWA SPECIFIC */
+/* ======== DETAIL SISWA ======== */
 .student-profile {
     display: flex;
     align-items: center;
     gap: 16px;
     margin: 18px 0 22px 0;
-    padding: 14px;
-    background-color: #f8fafc;
-    border-radius: 14px;
+    padding: 16px;
+    background-color: var(--primary-light);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--gold);
 }
 
 .student-profile .avatar {
-    width: 52px;
-    height: 52px;
+    width: 54px;
+    height: 54px;
     border-radius: 14px;
     background: var(--primary-gradient);
     color: var(--white);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.3rem;
-    box-shadow: 0 4px 10px rgba(17, 104, 83, 0.2);
+    font-size: 1.35rem;
+    box-shadow: 0 4px 10px rgba(15, 107, 82, 0.25);
 }
 
-.student-info h4 { font-size: 1.05rem; font-weight: 600; }
+.student-info h4 { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); }
 .student-info p { font-size: 0.8rem; color: var(--text-muted); }
 
 .chart-box {
     margin-bottom: 24px;
-    padding: 16px;
+    padding: 18px;
     border: 1px solid var(--border-color);
-    border-radius: 14px;
+    border-radius: var(--radius-md);
+    min-width: 0;
+}
+
+.history-section {
+    overflow-x: auto; /* tabel riwayat scroll sendiri kalau kolomnya sempit, bukan mendorong kartu */
 }
 
 .chart-box h5, .history-section h5 {
     font-size: 0.88rem;
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--primary-dark);
     margin-bottom: 14px;
 }
 
@@ -600,10 +542,10 @@ table tbody tr:hover {
 
 .dummy-chart .bar {
     flex: 1;
-    background: var(--primary-gradient);
+    background: var(--gold-gradient);
     border-radius: 6px 6px 0 0;
     transition: all 0.3s ease;
-    opacity: 0.85;
+    opacity: 0.9;
 }
 
 .dummy-chart .bar:hover {
@@ -621,9 +563,61 @@ table tbody tr:hover {
     margin-top: 8px;
 }
 
-/* HELPER UTILITIES */
+/* ======== HELPER UTILITIES ======== */
 .mt-15 { margin-top: 18px; }
 .mb-10 { margin-bottom: 12px; }
 .text-center { text-align: center; }
-.text-green { color: #10b981; }
+.text-green { color: var(--green-text); }
 .text-sm { font-size: 0.78rem; }
+
+/* ================================================================
+   RESPONSIVE — menyesuaikan tampilan per ukuran layar
+   ================================================================ */
+
+/* Cegah elemen mana pun mendorong lebar layar ke samping.
+   PENTING: sidebar & main-content TIDAK di-wrap, keduanya tetap
+   sejajar di semua ukuran layar. min-width:0 pada main-content
+   yang mencegah tabel/konten lebar memaksa seluruh layout melebar. */
+html, body { max-width: 100%; overflow-x: hidden; }
+.dashboard-container { flex-wrap: nowrap; align-items: flex-start; }
+.main-content { min-width: 0; }
+
+/* Tablet besar / laptop kecil */
+@media (max-width: 1200px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .summary-filter-row { grid-template-columns: 1fr; }
+    .detail-row { grid-template-columns: 1fr; }
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+    .main-content { padding: 20px; }
+    .summary-cards { grid-template-columns: 1fr; }
+}
+
+/* HP */
+@media (max-width: 600px) {
+    .main-content { padding: 14px; }
+
+    .topbar { flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px 20px; }
+    .topbar-icons { align-self: flex-end; }
+
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .stat-card { padding: 18px 14px; }
+    .stat-card h3 { font-size: 1.5rem; }
+
+    .summary-box, .filter-box, .table-card, .detail-box { padding: 18px; }
+
+    .detail-action-bar { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .action-right { flex-wrap: wrap; gap: 8px; }
+
+    .bottom-btns { flex-direction: column; }
+    .bottom-btns .btn-action-outline { width: 100%; justify-content: center; }
+
+    .student-profile { flex-wrap: wrap; }
+}
+
+/* HP kecil */
+@media (max-width: 380px) {
+    .stats-grid { grid-template-columns: 1fr; }
+}

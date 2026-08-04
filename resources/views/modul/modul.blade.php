@@ -44,7 +44,7 @@
             </a>
 
             <!-- KOTAK 2: MODUL TAHFIDZ -->
-            <a href="tahfidz-dashboard.html" class="module-card tahfidz">
+            <a href='/tf/das' class="module-card tahfidz">
                 <div class="icon-wrapper">
                     <i class="fa-solid fa-quran"></i>
                 </div>

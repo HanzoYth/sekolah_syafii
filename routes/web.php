@@ -10,6 +10,8 @@ use App\Http\Controllers\otpController;
 use App\Http\Controllers\cabangGuruController;
 use App\Http\Controllers\adminController;
 use App\Http\Controllers\tanggalMerahController;
+use App\Http\Controllers\modulTahfidzController;
+use App\Http\Controllers\kelasHalaqahController;
 // ini route untuk halaman modul dan welcome
 Route::get("/",[PageController::class,"tampilan_welcome"]);
 Route::get("/mod",[PageController::class,"tampilan_modul"]);
@@ -62,3 +64,9 @@ Route::get('/gr/klabs',[MasterAbsenController::class,"keluarAbsenGuru"]);
 //ini admin
 Route::get('/ad/frad',[adminController::class,"tampilan_formulirAdmin"]);
 Route::post('/ad/tbad',[adminController::class,"tambahDataAdmin"]);
+
+//ini route untuk dasboard tahfiz
+Route::get('/tf/das',[modulTahfidzController::class,"dashboard_tahfidz"]);
+Route::get('/tf/kls',[kelasHalaqahController::class,"kelas_halaqah"]);
+
+

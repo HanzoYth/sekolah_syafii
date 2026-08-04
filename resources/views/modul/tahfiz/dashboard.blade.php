@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Koordinator - Tahfiz Digital</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Amiri (islami/elegan) + Poppins (body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/modul/tahfiz/dashboard.css') }}">
@@ -13,12 +13,13 @@
 <body>
 
     <div class="dashboard-container">
-        
+
         <!-- WADAH TEMPLATE SIDEBAR -->
-            <x-sidebar_tahfiz />
+        <x-sidebar_tahfiz />
 
         <!-- MAIN CONTENT -->
         <main class="main-content">
+
             <!-- TOPBAR / HEADER -->
             <header class="topbar">
                 <h2>Selamat datang, Koordinator</h2>
@@ -290,14 +291,5 @@
         </main>
     </div>
 
-    <!-- SCRIPT MEMANGGIL SIDEBAR TEMPLATE -->
-    <script>
-        fetch('sidebar.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('sidebar-container').innerHTML = data;
-            })
-            .catch(error => console.error('Gagal memuat sidebar:', error));
-    </script>
 </body>
 </html>

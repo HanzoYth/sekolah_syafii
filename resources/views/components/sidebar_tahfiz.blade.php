@@ -6,8 +6,8 @@
         <span>Tahfiz Digital</span>
     </div>
     <ul class="nav-list">
-        <li class="active"><a href="#"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
-        <li><a href="#"><i class="fa-solid fa-school"></i> Kelas & Halaqah</a></li>
+        <li class="active"><a href="/tf/das"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+        <li><a href="/tf/kls"><i class="fa-solid fa-school"></i> Kelas & Halaqah</a></li>
         <li><a href="#"><i class="fa-solid fa-users"></i> Siswa</a></li>
         <li><a href="#"><i class="fa-solid fa-file-lines"></i> Laporan Harian</a></li>
         <li><a href="#"><i class="fa-solid fa-calendar-week"></i> Rekap Mingguan</a></li>
