@@ -18,7 +18,7 @@ class modulGuruController extends Controller
         if (session("hasLogin")){
             Carbon::setLocale("id");
             $data_guru = guru::find((int) session("id"));
-            $data_lokasi = master_lokasi_absen_guru::where("cabang_id",$data_guru->cabang_id)->first();
+            // $data_lokasi = master_lokasi_absen_guru::where("cabang_id",$data_guru->cabang_id)->first();
             $sudah_absen = master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("guru_id",session("id"))->exists();
             $total_kehadiran_bulanan = master_absen_guru::where("guru_id",session("id"))->whereMonth("tgl_masuk",now()->month)->count();
             $jumlah_terlambat_menit = master_absen_guru::where("guru_id",session("id"))->sum("terlambat_menit");
@@ -65,7 +65,7 @@ class modulGuruController extends Controller
                 "sudah_absen" => $sudah_absen,
                 "waktu_masuk" => $waktu_masuk,
                 "waktu_keluar" => $waktu_keluar,
-                "data_lokasi" => $data_lokasi
+                // "data_lokasi" => $data_lokasi
             ]);
         }
         return redirect("/reg");

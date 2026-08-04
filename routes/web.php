@@ -9,9 +9,14 @@ use App\Http\Controllers\MasterAbsenController;
 use App\Http\Controllers\otpController;
 use App\Http\Controllers\cabangGuruController;
 use App\Http\Controllers\adminController;
+use App\Http\Controllers\modulSiakadController;
 use App\Http\Controllers\tanggalMerahController;
+<<<<<<< HEAD
 use App\Http\Controllers\modulTahfidzController;
 use App\Http\Controllers\kelasHalaqahController;
+=======
+
+>>>>>>> 2b0e80b56c555be2b6129325cfbf27580a577521
 // ini route untuk halaman modul dan welcome
 Route::get("/",[PageController::class,"tampilan_welcome"]);
 Route::get("/mod",[PageController::class,"tampilan_modul"]);
@@ -65,8 +70,14 @@ Route::get('/gr/klabs',[MasterAbsenController::class,"keluarAbsenGuru"]);
 Route::get('/ad/frad',[adminController::class,"tampilan_formulirAdmin"]);
 Route::post('/ad/tbad',[adminController::class,"tambahDataAdmin"]);
 
+<<<<<<< HEAD
 //ini route untuk dasboard tahfiz
 Route::get('/tf/das',[modulTahfidzController::class,"dashboard_tahfidz"]);
 Route::get('/tf/kls',[kelasHalaqahController::class,"kelas_halaqah"]);
+=======
+//ini dasboard siakad
+Route::get('/sk/das',[modulSiakadController::class,"dashboard_siakad"]);
+
+>>>>>>> 2b0e80b56c555be2b6129325cfbf27580a577521
 
 

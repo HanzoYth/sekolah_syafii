@@ -98,24 +98,24 @@ class MasterAbsenController extends Controller
 
     function addAbsenGuruDenganKelola(Request $request){
         Carbon::setLocale("id");
-        $data_guru = guru::find(session("id"));
-        $data_cabang = cabang_guru::find($data_guru->cabang_id);
-        $data_waktu = master_waktu_absen_guru::where("cabang_id",$data_cabang->id)->where("hari",strtolower(Carbon::now()->translatedFormat("l")))->first();
-        $data_lokasi = master_lokasi_absen_guru::where("cabang_id",$data_cabang->id)->first();
         $data_id_guru = guru::all()->pluck("id")->toArray();
         $data_id_guru_master_absen = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->pluck("guru_id")->toArray();
         foreach($data_id_guru as $id){  
+            $data_guru = guru::find((int) $request->input("id_guru_{$id}"));
+            $data_cabang = cabang_guru::where("id",(int) $data_guru->cabang_id)->first();
+            $data_waktu = master_waktu_absen_guru::where("cabang_id",$data_cabang->id)->where("hari",strtolower(Carbon::now()->translatedFormat("l")))->first();
+            $data_lokasi = master_lokasi_absen_guru::where("cabang_id",$data_cabang->id)->first();
             if (in_array($id,$data_id_guru_master_absen)){
                 $data = master_absen_guru::where("guru_id",$id)->first();
                 $data->tgl_masuk = Carbon::now()->translatedFormat("Y-m-d");
-                $data->status_kehadiran = $request->status;
+                $data->status_kehadiran = $request->input("status_{$id}");
                 $data->save();
             }else{
                 master_absen_guru::create([
                     "waktu_masuk" => Carbon::now()->translatedFormat("H:i:s"),
                     "waktu_keluar" => Carbon::parse("00:00:00"),
                     "tgl_masuk" => Carbon::now()->translatedFormat("Y-m-d"),
-                    "status_kehadiran" => $request->status,
+                    "status_kehadiran" => $request->input("status_{$id}"),
                     "terlambat_menit" => 0,
                     "cabang_id" => $data_cabang->id,
                     "guru_id" => $data_guru->id,
