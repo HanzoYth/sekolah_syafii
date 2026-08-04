@@ -98,7 +98,7 @@
                                         </a>
                                     </li>
                                     <li class="submenu-item">
-                                        <a href="#data-guru">
+                                        <a href="/gr/klgr">
                                             <i class="fa-solid fa-users-gear"></i>
                                             <span>Kelola Data Guru</span>
                                         </a>
@@ -123,19 +123,6 @@
                                     </li>
                                 </ul>
                             </details>
-                        </li>
-
-                        <li class="menu-item">
-                            <a href="#jabatan">
-                                <i class="fa-solid fa-sitemap"></i>
-                                <span>Data Jabatan</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="#jenis-guru">
-                                <i class="fa-solid fa-user-tag"></i>
-                                <span>Jenis Status Guru</span>
-                            </a>
                         </li>
                         <li class="menu-item">
                             <a href="#persetujuan-izin">

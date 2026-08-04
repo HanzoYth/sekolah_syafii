@@ -116,9 +116,9 @@
                                         </div>
 
                                         <!-- Logo Exit (Jam Masuk - Keluar) -->
-                                        <div class="meta-item" title="Jam Masuk">
+                                        <div class="meta-item" title="Jam Masuk/Jam Keluar">
                                             <i class="fa-solid fa-right-from-bracket icon-exit"></i>
-                                            <span>{{\Carbon\Carbon::parse($value->waktu_masuk)->format("H:i")}} WITA</span>
+                                            <span>{{\Carbon\Carbon::parse($value->waktu_masuk)->format("H:i")}}/{{\Carbon\Carbon::parse($value->waktu_keluar)->format("H:i")}} WITA</span>
                                         </div>
 
                                         <!-- Terlambat -->

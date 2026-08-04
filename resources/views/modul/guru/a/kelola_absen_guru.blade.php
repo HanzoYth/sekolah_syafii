@@ -207,8 +207,8 @@
         });
 
         // Pencarian Nama Guru secara Real-time
-        searchInput.addEventListener('keyup', function () {
-            const query = this.value.toLowerCase();
+        document.querySelector(".btn-search").addEventListener('click', function () {
+            const query = searchInput.value.toLowerCase();
 
             tableRows.forEach(row => {
                 const nameText = row.querySelector('.teacher-name').innerText.toLowerCase();

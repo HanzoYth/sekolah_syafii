@@ -21,7 +21,6 @@ return new class extends Migration
             $table->boolean("aktif")->default(1);
             $table->foreignId("kelas_id")->nullable()->constrained("kelas")->nullOnDelete();
             $table->foreignId("tahun_ajaran_id")->nullable()->constrained("tahun_ajaran")->nullOnDelete();
-            $table->foreignId("wali_murid_id")->nullable()->constrained("wali_murid")->nullOnDelete();
             $table->foreignId("user_id")->nullable()->constrained("akun")->nullOnDelete();
             $table->timestamps();
         });

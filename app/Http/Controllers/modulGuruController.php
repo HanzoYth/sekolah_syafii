@@ -17,8 +17,8 @@ class modulGuruController extends Controller
     function tampilan_dashboard(){
         if (session("hasLogin")){
             Carbon::setLocale("id");
-            $data_guru = guru::find((int) session("id"));
-            // $data_lokasi = master_lokasi_absen_guru::where("cabang_id",$data_guru->cabang_id)->first();
+            $data_guru = session("role") == "g" ? guru::find((int) session("id")) : null;
+            $data_lokasi = session("role") == "g" ? master_lokasi_absen_guru::where("cabang_id",$data_guru->cabang_id)->first() : null;
             $sudah_absen = master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("guru_id",session("id"))->exists();
             $total_kehadiran_bulanan = master_absen_guru::where("guru_id",session("id"))->whereMonth("tgl_masuk",now()->month)->count();
             $jumlah_terlambat_menit = master_absen_guru::where("guru_id",session("id"))->sum("terlambat_menit");
@@ -65,7 +65,7 @@ class modulGuruController extends Controller
                 "sudah_absen" => $sudah_absen,
                 "waktu_masuk" => $waktu_masuk,
                 "waktu_keluar" => $waktu_keluar,
-                // "data_lokasi" => $data_lokasi
+                "data_lokasi" => $data_lokasi
             ]);
         }
         return redirect("/reg");
@@ -88,7 +88,7 @@ class modulGuruController extends Controller
         $lokasi = master_lokasi_absen_guru::where("cabang_id",$cabang->id)->first();
         $waktu = master_waktu_absen_guru::where("cabang_id",$cabang->id)->where("hari",strtolower(Carbon::now()->translatedFormat("l")))->first();
 
-        $cek_belum_pencet_tombol_keluar= master_absen_guru::where("waktu_keluar",Carbon::parse("00:00:00"))->where("guru_id",session("id"))->exists();
+        $cek_belum_pencet_tombol_keluar= master_absen_guru::where("waktu_keluar",Carbon::parse("00:00:00"))->where("status_kehadiran","!=","a")->where("guru_id",session("id"))->exists();
 
         if ($cek_belum_pencet_tombol_keluar){
             return back()->with("eror","anda belum melukan absen keluar, silahkan melakukan absen keluar terlebih dahulu");
@@ -158,6 +158,17 @@ class modulGuruController extends Controller
     function tampilan_laporanAbsen(){
         $data_absen_guru = master_absen_guru::all();
         return view("modul/guru/a/laporan_absen",["data" => $data_absen_guru]);
+    }
+
+    function tampilan_kelolaGuru(){
+        $data = guru::all();
+        return view("modul/guru/a/kelola_data_guru",[
+            "data_guru" => $data
+        ]);
+    }
+
+    function tampilan_editGuru(){
+        return view("modul/guru/a/edit_guru");
     }
 
 }

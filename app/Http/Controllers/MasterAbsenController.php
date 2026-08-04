@@ -70,8 +70,12 @@ class MasterAbsenController extends Controller
     }
 
     function addAbsenGuru(){
-        Carbon::setLocale("id");
+        $cek_data_guru = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",session("id"))->exists();
         $data_guru = guru::find((int) session("id"));
+        if ($cek_data_guru){
+            return redirect("/gr/otp");
+        }
+        Carbon::setLocale("id");
         $hari = Carbon::now()->translatedFormat("l");
         $waktu_absen = Carbon::now();
         $waktu_jadwal = Carbon::parse(master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->first()->waktu_masuk);
@@ -90,7 +94,7 @@ class MasterAbsenController extends Controller
             "cabang_id" => cabang_guru::find(guru::find((int) session("id"))->cabang_id)->id,
             "guru_id" => session("id"),
             "lokasi_id" => 1,
-            "waktu_id" => master_waktu_absen_guru::where("cabang_id",$data_guru->id)->where("hari",strtolower($hari))->first()->id
+            "waktu_id" => master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->first()->id
         ]);
 
         return redirect("/gr/otp");
@@ -106,7 +110,7 @@ class MasterAbsenController extends Controller
             $data_waktu = master_waktu_absen_guru::where("cabang_id",$data_cabang->id)->where("hari",strtolower(Carbon::now()->translatedFormat("l")))->first();
             $data_lokasi = master_lokasi_absen_guru::where("cabang_id",$data_cabang->id)->first();
             if (in_array($id,$data_id_guru_master_absen)){
-                $data = master_absen_guru::where("guru_id",$id)->first();
+                $data = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",$id)->first();
                 $data->tgl_masuk = Carbon::now()->translatedFormat("Y-m-d");
                 $data->status_kehadiran = $request->input("status_{$id}");
                 $data->save();
@@ -123,8 +127,8 @@ class MasterAbsenController extends Controller
                     "waktu_id" => $data_waktu->id 
                 ]);
             }
-            return back();
         }
+        return back();
     }
 
 
@@ -132,10 +136,6 @@ class MasterAbsenController extends Controller
         $data = master_absen_guru::where("guru_id",session("id"))->where("tgl_masuk",now()->format("Y-m-d"))->first();
 
         $waktu_sekarang = Carbon::now();
-        if(!$waktu_sekarang->greaterThan(Carbon::parse(master_waktu_absen_guru::where("id",now()->dayOfWeekIso)->first()->waktu_keluar))){
-            return back()->with("eror","maaf belum waktunya pulang");
-        }
-
 
         $data->waktu_keluar = $waktu_sekarang;
         $data->save();
