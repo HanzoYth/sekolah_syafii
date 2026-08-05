@@ -107,7 +107,7 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="action-buttons">
-                                        <a href="/gr/edgr" class="btn-action btn-edit" title="Edit Data">
+                                        <a href="/gr/edgr/{{$value->id}}" class="btn-action btn-edit" title="Edit Data">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
                                         <button class="btn-action btn-deactivate btn-trigger-modal" title="Nonaktifkan Guru">

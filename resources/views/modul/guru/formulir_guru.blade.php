@@ -33,11 +33,10 @@
                 <div class="card-header">
                     <h3><i class="fa-solid fa-user-plus"></i> Formulir Bio Data Guru</h3>
                 </div>
-
-                <form id="formGuru" action="/gr/tbgr" method="POST">
+                <!-- DITAMBAHKAN enctype="multipart/form-data" UNTUK UPLOAD FILE -->
+                <form id="formGuru" action="/gr/tbgr" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-grid">
-                        
                         <!-- 1. NAMA LENGKAP -->
                         <div class="form-group">
                             <label for="namaGuru">Nama Lengkap <span class="required">*</span></label>
@@ -46,7 +45,6 @@
                                 <input type="text" id="namaGuru" name="nama" placeholder="Contoh: Ustadz Ahmad, S.Pd." required autocomplete="off">
                             </div>
                         </div>
-
                         <!-- 2. NOMOR NIG -->
                         <div class="form-group">
                             <label for="nomorNig">Nomor Induk Guru (NIG) <span class="required">*</span></label>
@@ -55,7 +53,6 @@
                                 <input type="text" id="nomorNig" name="nig" placeholder="Contoh: 19920812202401" required autocomplete="off">
                             </div>
                         </div>
-
                         <!-- 3. TEMPAT LAHIR -->
                         <div class="form-group">
                             <label for="tempatLahir">Tempat Lahir <span class="required">*</span></label>
@@ -64,7 +61,6 @@
                                 <input type="text" id="tempatLahir" name="tempat_lahir" placeholder="Contoh: Jakarta" required autocomplete="off">
                             </div>
                         </div>
-
                         <!-- 4. TANGGAL LAHIR -->
                         <div class="form-group">
                             <label for="tanggalLahir">Tanggal Lahir <span class="required">*</span></label>
@@ -73,7 +69,6 @@
                                 <input type="date" id="tanggalLahir" name="tanggal_lahir" required>
                             </div>
                         </div>
-
                         <!-- 5. PENDIDIKAN TERAKHIR -->
                         <div class="form-group">
                             <label for="pendidikanTerakhir">Pendidikan Terakhir <span class="required">*</span></label>
@@ -89,7 +84,6 @@
                                 </select>
                             </div>
                         </div>
-
                         <!-- CABANG -->
                         <div class="form-group">
                             <label for="cabangSekolah">Cabang Sekolah <span class="required">*</span></label>
@@ -103,13 +97,12 @@
                                 </select>
                             </div>
                         </div>
-
-                        <!-- jenis sekolah -->
+                        <!-- JENIS SEKOLAH -->
                         <div class="form-group">
-                            <label for="cabangSekolah">Jenis Sekolah <span class="required">*</span></label>
+                            <label for="jenisSekolah">Jenis Sekolah <span class="required">*</span></label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-building-columns"></i>
-                                <select id="cabangSekolah" name="sekolah_id" required>
+                                <select id="jenisSekolah" name="sekolah_id" required>
                                     <option value="" disabled selected>-- Pilih jenis sekolah --</option>
                                     @foreach($sekolah as $value)
                                         <option value="{{$value->id}}">{{$value->jenis}}</option>
@@ -117,14 +110,13 @@
                                 </select>
                             </div>
                         </div>
-
-                        <!-- 6. URL FOTO & PREVIEW -->
+                        <!-- 6. UPLOAD FOTO & PREVIEW (DIUBAH MENJADI FILE INPUT) -->
                         <div class="form-group full-width">
-                            <label for="urlFoto">URL Foto Profil</label>
+                            <label for="inputFoto">Foto Profil</label>
                             <div class="photo-preview-container">
-                                <div class="input-wrapper" style="flex: 1;">
+                                <div class="input-wrapper file-input-wrapper" style="flex: 1;">
                                     <i class="fa-solid fa-image"></i>
-                                    <input type="text" id="urlFoto" name="url_foto" placeholder="https://example.com/foto.jpg" autocomplete="off">
+                                    <input type="file" id="inputFoto" name="foto">
                                 </div>
                                 <div class="avatar-preview" id="avatarPreview">
                                     <i class="fa-solid fa-user"></i>
@@ -159,7 +151,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- 9. CHECKBOX KELOMPOK 2 (PERAN TAHFIZ) -->
                         <div class="form-group full-width">
                             <div class="checkbox-section">
@@ -178,7 +169,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
                     <!-- BUTTON ACTIONS -->
@@ -192,9 +182,7 @@
 
             </div>
         </section>
-
     </div>
-
     <!-- JAVASCRIPT LOGIC -->
     <script>
         // Fungsi Helper Mutual Exclusion (Hanya 1 Pilihan yang Aktif)
@@ -207,8 +195,8 @@
                         list.forEach(other => {
                             if (other !== this) {
                                 other.checked = false;
-                                other.value = 0
-                            };
+                                other.value = 0;
+                            }
                         });
                     }
                 });
@@ -218,6 +206,21 @@
         // Penerapan Mutual Exclusion untuk masing-masing kelompok
         makeExclusive('.chk-kepegawaian');
         makeExclusive('.chk-tahfiz');
+
+        // Handling Preview Gambar & Reset
+        const inputFoto = document.getElementById('inputFoto');
+        const avatarPreview = document.getElementById('avatarPreview');
+
+        inputFoto.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    avatarPreview.innerHTML = `<img src="${event.target.result}" alt="Preview Foto">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
         // Reset Handler
         document.getElementById('btnReset').addEventListener('click', () => {

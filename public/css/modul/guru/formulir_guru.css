@@ -161,6 +161,7 @@ body {
 .input-wrapper input[type="text"],
 .input-wrapper input[type="url"],
 .input-wrapper input[type="date"],
+.input-wrapper input[type="file"],
 .input-wrapper select,
 .input-wrapper textarea {
     width: 100%;
@@ -179,6 +180,33 @@ body {
     min-height: 100px;
     resize: vertical;
     padding-top: 12px;
+}
+
+/* Styling Khusus Input File & File Selector Button */
+.input-wrapper input[type="file"] {
+    padding-top: 9px;
+    padding-bottom: 9px;
+    cursor: pointer;
+}
+
+.input-wrapper input[type="file"]::file-selector-button {
+    background-color: #f1f5f9;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 12px;
+    transition: var(--transition);
+}
+
+.input-wrapper input[type="file"]::file-selector-button:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
 /* Hover & Focus state */

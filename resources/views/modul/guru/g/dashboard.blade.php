@@ -32,7 +32,9 @@
                         <span class="badge-dot"></span>
                     </button>
                     <div class="user-profile">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" alt="Foto Profil">
+                        @if (session("role") == "g")
+                            <img src="{{ route('file.show',$data_guru->url_foto )}}" alt="Foto Profil">
+                        @endif
                         <div class="user-info">
                             <span class="name">{{ session('nama') }}</span>
                             <span class="role">{{ session('role') == 'a' ? 'Administrator Modul Guru' : 'Guru Tetap / Wali Kelas' }}</span>

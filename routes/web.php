@@ -13,6 +13,7 @@ use App\Http\Controllers\modulSiakadController;
 use App\Http\Controllers\tanggalMerahController;
 use App\Http\Controllers\modulTahfidzController;
 use App\Http\Controllers\kelasHalaqahController;
+use Illuminate\Support\Facades\Storage;
 
 // ini route untuk halaman modul dan welcome
 Route::get("/",[PageController::class,"tampilan_welcome"]);
@@ -51,7 +52,6 @@ Route::get("/gr/hpgm/{id}",[tanggalMerahController::class,"hapusTanggalMerah"]);
 Route::post("/gr/tcb",[cabangGuruController::class,"TambahCabang"]);
 Route::get("/gr/nkt/{id}",[cabangGuruController::class,"nonAktikanCabang"]);
 
-
 //ini otp
 Route::get("/gr/totp",[otpController::class,"tampilanOtp"]);
 Route::get("/gr/otp",[otpController::class,"createOtp"]);
@@ -64,11 +64,19 @@ Route::get('/gr/klabs',[MasterAbsenController::class,"keluarAbsenGuru"]);
 
 //ini kelola guru
 Route::get('/gr/klgr',[modulGuruController::class,"tampilan_kelolaGuru"]);
-Route::get('/gr/edgr',[modulGuruController::class,"tampilan_editGuru"]);
+Route::get('/gr/edgr/{id}',[modulGuruController::class,"tampilan_editGuru"]);
 
 //ini admin
 Route::get('/ad/frad',[adminController::class,"tampilan_formulirAdmin"]);
 Route::post('/ad/tbad',[adminController::class,"tambahDataAdmin"]);
+
+//ini router file
+Route::get('file/{path}',function ($path) {
+    if (!Storage::exists($path)){
+        abort(404);
+    }
+    return Storage::response($path);
+})->where('path','.*')->name('file.show');
 
 //----------------------------------------------------------------------------------
 

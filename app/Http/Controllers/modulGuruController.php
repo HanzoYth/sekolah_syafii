@@ -10,6 +10,7 @@ use App\Models\guru;
 use App\Models\cabang_guru;
 use App\Models\jenis_sekolah;
 use Illuminate\Support\Carbon;
+use App\Models\akun;
 
 class modulGuruController extends Controller
 {
@@ -65,7 +66,8 @@ class modulGuruController extends Controller
                 "sudah_absen" => $sudah_absen,
                 "waktu_masuk" => $waktu_masuk,
                 "waktu_keluar" => $waktu_keluar,
-                "data_lokasi" => $data_lokasi
+                "data_lokasi" => $data_lokasi,
+                "data_guru" => $data_guru
             ]);
         }
         return redirect("/reg");
@@ -118,6 +120,11 @@ class modulGuruController extends Controller
     }
 
     function tambahGuru(Request $request){
+        $request->validate([
+            "foto" => "required|file|mimes:jpg,jpeg,png:max:2048"
+        ]);
+
+        $path = $request->file("foto")->store("uploads");
         guru::create([
             "nama" => $request->nama,
             "nig" => "$request->nig",
@@ -126,7 +133,7 @@ class modulGuruController extends Controller
             "agama" => "islam",
             "alamat" => $request->alamat,
             "pendidikan_terakhir" => "kosong",
-            "url_foto" => $request->url_foto,
+            "url_foto" => $path,
             "guru_honor" => (int) $request->honor,
             "guru_tetap" => (int) $request->tetap,
             "koordinator_tahfiz" => (int) $request->koordinator,
@@ -165,10 +172,19 @@ class modulGuruController extends Controller
         return view("modul/guru/a/kelola_data_guru",[
             "data_guru" => $data
         ]);
-    }
+    }   
 
-    function tampilan_editGuru(){
-        return view("modul/guru/a/edit_guru");
+    function tampilan_editGuru($id){
+        $data_guru = guru::find($id);
+        $data_cabang = cabang_guru::all();
+        $data_sekolah = jenis_sekolah::all();
+        $data_akun = akun::find((int) $data_guru->cabang_id);
+        return view("modul/guru/a/edit_guru",[
+            "data_guru" => $data_guru,
+            "data_cabang" => $data_cabang,
+            "data_sekolah" => $data_sekolah,
+            "data_akun" => $data_akun
+        ]);
     }
 
 }
