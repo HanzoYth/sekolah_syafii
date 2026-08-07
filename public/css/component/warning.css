@@ -1,0 +1,76 @@
+/* ======== ALERT / TOAST POPUP ERROR (SLIDE IN FROM RIGHT) ======== */
+.alert-danger {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    
+    min-width: 300px;
+    max-width: 420px;
+    padding: 16px 20px;
+    
+    background-color: #ffffff;
+    border-left: 5px solid #e63946;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    
+    color: #2b2d42;
+    font-size: 0.88rem;
+    
+    /* Animasi Slide dari Kanan ke Kiri saat Muncul */
+    animation: slideInRight 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.alert-danger p {
+    margin: 0;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Pembatas jika terdapat lebih dari 1 error */
+.alert-danger p + p {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #e2e8f0;
+}
+
+/* Animasi Keluar (Slide-Out) */
+.alert-danger.fade-out {
+    animation: slideOutRight 0.4s ease forwards;
+}
+
+/* ======== KEYFRAMES UNTUK FLASH MESSAGE ======== */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(110%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(120%);
+    }
+}
+
+/* ======== RESPONSIVE TOAST ON MOBILE ======== */
+@media (max-width: 850px) {
+    .alert-danger {
+        top: 16px;
+        right: 16px;
+        left: 16px;
+        min-width: auto;
+        max-width: none;
+    }
+}

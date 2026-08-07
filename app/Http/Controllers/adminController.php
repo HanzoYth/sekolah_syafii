@@ -13,6 +13,12 @@ class adminController extends Controller
     }
 
     function tambahDataAdmin(Request $request){
+        $request->validate([
+            "foto" => 'required|file|mimes:jpg,jpeg,png|max:2048'
+        ]);
+
+        $path_foto = $request->file("foto")->store('uploads');
+
         admin::create([
             "nama" => $request->nama,
             "nig" => $request->nig,
@@ -21,7 +27,7 @@ class adminController extends Controller
             "agama" => "islam",
             "alamat" => $request->alamat,
             "pendidikan_terakhir" => $request->pendidikan_terakhir,
-            "url_foto" => $request->url_foto,
+            "url_foto" => $path_foto,
             "user_id" => (int) session("id_akun")
         ]);
         $data_admin = admin::where("nig",$request->nig)->first();

@@ -9,6 +9,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{asset('css/modul/guru/laporan_absensi.css')}}">
+    
+    <style>
+        /* Style pembantu untuk elemen tersembunyi */
+        .d-none {
+            display: none !important;
+        }
+        
+        .holiday-banner {
+            background-color: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+        
+        .holiday-banner i {
+            font-size: 1.25rem;
+        }
+    </style>
 </head>
 <body>
 
@@ -87,6 +111,14 @@
                         </div>
                     </div>
                 </div>
+        
+                <!-- ELEMEN INFO TANGGAL MERAH / HARI LIBUR (TERSEMBUNYI BY DEFAULT) -->
+                <div id="holiday-alert" class="holiday-banner {{$cek ? '' : 'd-none'}}" role="alert">
+                    <i class="fa-solid fa-calendar-xmark"></i>
+                    <div>
+                        <strong>Informasi:</strong> Hari ini / Tanggal yang dipilih merupakan <span id="holiday-title">Tanggal Merah</span>.
+                    </div>
+                </div>
 
                 <!-- 2. DAFTAR NAMA-NAMA GURU (ABSENSI) -->
                 <div class="card">
@@ -130,17 +162,17 @@
                                         <!-- Tanggal -->
                                         <div class="meta-item" title="Tanggal Absen">
                                             <i class="fa-regular fa-calendar icon-date"></i>
-                                            <span class="tanggal" data-tanggal = "{{$value->tgl_masuk}}">{{ \Carbon\Carbon::parse($value->tgl_masuk)->translatedFormat('d M Y') }}</span>
+                                            <span class="tanggal" data-tanggal="{{$value->tgl_masuk}}">{{ \Carbon\Carbon::parse($value->tgl_masuk)->translatedFormat('d M Y') }}</span>
                                         </div>
 
                                         <!-- Status -->
                                         @if ($value->status_kehadiran == 'h')
                                             <div class="meta-item meta-item-status" id="status_kehadiran">
-                                                <span class="status-tag tag-success" data-sts = "h">Hadir</span>
+                                                <span class="status-tag tag-success" data-sts="h">Hadir</span>
                                             </div>
                                         @elseif ($value->status_kehadiran == "i" || $value->status_kehadiran == "s")
                                             <div class="meta-item meta-item-status">
-                                                <span class="status-tag tag-info" data-sts = {{$value->status_kehadiran == "i" ? "i" : "s"}}>{{$value->status_kehadiran == "i" ? "Izin" : "Sakit"}}</span>
+                                                <span class="status-tag tag-info" data-sts="{{$value->status_kehadiran == "i" ? "i" : "s"}}">{{$value->status_kehadiran == "i" ? "Izin" : "Sakit"}}</span>
                                             </div>
                                         @else
                                             <div class="meta-item meta-item-status">
@@ -156,6 +188,6 @@
             </div>
         </main>
     </div>
-    <script src="{{'/js/modul/guru/laporan_absen.js'}}"></script>
+    <script src="{{ asset('js/modul/guru/laporan_absen.js') }}"></script>
 </body>
 </html>

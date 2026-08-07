@@ -9,10 +9,13 @@ use App\Http\Controllers\MasterAbsenController;
 use App\Http\Controllers\otpController;
 use App\Http\Controllers\cabangGuruController;
 use App\Http\Controllers\adminController;
+use App\Http\Controllers\dataSiswaController;
 use App\Http\Controllers\modulSiakadController;
 use App\Http\Controllers\tanggalMerahController;
 use App\Http\Controllers\modulTahfidzController;
+use App\Http\Controllers\dataWalasController;
 use App\Http\Controllers\kelasHalaqahController;
+use Illuminate\Support\Facades\Storage;
 
 // ini route untuk halaman modul dan welcome
 Route::get("/",[PageController::class,"tampilan_welcome"]);
@@ -27,11 +30,13 @@ Route::get('/reg',[akunController::class,"tampilan"]);
 Route::post('/reg/sign',[akunController::class,"sign_in"]);
 Route::post('/reg/login',[akunController::class,"login"]);
 Route::get("/reg/logout",[akunController::class,"logout"]);
+Route::get("/reg/nakt/{id}",[akunController::class,"nonAktifkanAkun"]);
 
 // ini route untuk halaman modul guru
-Route::get('/gr/das',[modulGuruController::class,"tampilan_dashboard"]);
+Route::get('/gr/das',[modulGuruController::class,"tampilan_dashboardGuru"]);
 Route::get('/gr/abs',[modulGuruController::class,"tampilan_presensiAbsen"]);
 Route::get('/gr/sta/{id}',[modulGuruController::class,"tampilan_settingAbsen"]);
+Route::get('/gr/dasa',[modulGuruController::class,"tampilan_dashboardAdmin"]);
 Route::get('/gr/lpabs',[modulGuruController::class,"tampilan_laporanAbsen"]);
 Route::get('/gr/frgr',[modulGuruController::class,"tampilan_formulirGuru"]);
 Route::get('/gr/cb',[cabangGuruController::class,"tampilanCabangGuru"]);
@@ -64,7 +69,8 @@ Route::get('/gr/klabs',[MasterAbsenController::class,"keluarAbsenGuru"]);
 
 //ini kelola guru
 Route::get('/gr/klgr',[modulGuruController::class,"tampilan_kelolaGuru"]);
-Route::get('/gr/edgr',[modulGuruController::class,"tampilan_editGuru"]);
+Route::get('/gr/edgr/{id}',[modulGuruController::class,"tampilan_editGuru"]);
+Route::post('/gr/updgr',[modulGuruController::class,"update_dataGuru"]);
 
 //ini admin
 Route::get('/ad/frad',[adminController::class,"tampilan_formulirAdmin"]);
@@ -78,8 +84,19 @@ Route::post('/ad/tbad',[adminController::class,"tambahDataAdmin"]);
 //ini route untuk dasboard tahfiz
 Route::get('/tf/das',[modulTahfidzController::class,"dashboard_tahfidz"]);
 Route::get('/tf/kls',[kelasHalaqahController::class,"kelas_halaqah"]);
+
+
 //ini dasboard siakad
 Route::get('/sk/das',[modulSiakadController::class,"dashboard_siakad"]);
+Route::get('/sk/ds',[dataSiswaController::class,"data_siswa"]);
+Route::get('/sk/dw',[dataWalasController::class,"data_walas"]);
 
 
 
+
+Route::get('/file/{path}', function ($path) {
+    if (!Storage::exists($path)) {
+        abort(404);
+    }
+    return Storage::response($path); // otomatis set header mime-type yang benar
+})->where('path', '.*')->name('file.show');

@@ -88,7 +88,7 @@ class akunController extends Controller
             }
         }
 
-        if ($identitas->jenis_role == "g" && cabang_guru::count() == 0){
+        if ($identitas->jenis_role == "g" && cabang_guru::where("aktif",1)->count() == 0){
             return back()->with("eror","maaf cabang belum di buat admin");
         }
 
@@ -125,6 +125,10 @@ class akunController extends Controller
             return back()->with("eror","coba periksa username dan password anda lalu isi kembali"); 
         }
 
+        if (!akun::where("username",$request->username)->first()->aktif){
+            return back()->with("eror","akun yang anda gunakan sudah endak aktif");
+        }
+
         $akun = akun::where("username",$request->username)->first();
         $identitas = $akun->identitas()->first()->jenis_role; 
         $user = null;
@@ -148,5 +152,12 @@ class akunController extends Controller
         session()->flush();
 
         return redirect("/");
+    }
+
+    function nonAktifkanAkun($id){
+        $data_akun = akun::find((int) $id);
+        $data_akun->aktif = 0;
+        $data_akun->save();
+        return back();
     }
 }

@@ -1,0 +1,548 @@
+/* =====================================================================
+   DATA WALI KELAS (WALAS) — PAGE STYLES
+   File ini MELANJUTKAN token desain dari dashboard_siakad.css.
+   Layout dan struktur visual dibedakan penuh dari data_siswa.css.
+   ===================================================================== */
+
+/* =====================================================================
+   1. PAGE HEADER (Vertical Strip & Floating Info Style)
+   ===================================================================== */
+.walas-page-header {
+    background: var(--surface-white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    transition: var(--transition);
+}
+
+/* Accent Strip vertikal tebal di sisi kiri menggantikan top-border */
+.walas-page-header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 8px;
+    background: linear-gradient(180deg, var(--gold-accent) 0%, var(--primary-emerald) 100%);
+}
+
+.walas-header-left {
+    padding-left: 10px;
+    flex: 1;
+}
+
+.walas-breadcrumb {
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.walas-breadcrumb span { 
+    color: var(--primary-emerald);
+}
+
+.walas-page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--emerald-deep, #052A1B);
+    letter-spacing: -0.3px;
+    margin: 0;
+}
+
+.walas-page-header p {
+    font-size: 0.84rem;
+    color: var(--text-light);
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+/* Ornamen Bismillah Mengambang di Kanan (Badge Style) */
+.walas-bismillah-badge {
+    background: linear-gradient(135deg, var(--emerald-light) 0%, #E6F4EA 100%);
+    border: 1px solid var(--emerald-glow);
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.walas-bismillah-badge .bismillah-text {
+    font-family: var(--font-display, 'Amiri', serif);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-emerald);
+    line-height: 1.2;
+}
+
+.walas-bismillah-badge .bismillah-sub {
+    font-size: 0.68rem;
+    color: var(--gold-hover);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* =====================================================================
+   2. QUICK STATS (Asymmetric / Hero Card Layout)
+   ===================================================================== */
+.walas-stats-container {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+/* Hero Card (Kartu Utama Walas Aktif) */
+.walas-stat-hero {
+    background: linear-gradient(135deg, var(--primary-emerald) 0%, var(--emerald-dark) 100%);
+    border-radius: var(--radius-lg);
+    padding: 1.4rem;
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.walas-stat-hero::after {
+    content: "";
+    position: absolute;
+    right: -20px;
+    bottom: -20px;
+    width: 120px;
+    height: 120px;
+    background: rgba(212, 175, 55, 0.12);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.walas-stat-hero .hero-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--gold-soft, #E7C978);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.walas-stat-hero .hero-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 8px 0;
+    line-height: 1;
+}
+
+.walas-stat-hero .hero-desc {
+    font-size: 0.76rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Kartu Sekunder Walas */
+.walas-stat-mini {
+    background: var(--surface-white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: var(--transition);
+}
+
+.walas-stat-mini:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--gold-accent);
+}
+
+.walas-stat-mini .mini-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.walas-stat-mini .mini-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.walas-stat-mini:nth-child(2) .mini-icon {
+    background: linear-gradient(135deg, #FFFBF0 0%, #FEF3C7 100%);
+    color: var(--gold-hover);
+}
+
+.walas-stat-mini:nth-child(3) .mini-icon {
+    background: linear-gradient(135deg, var(--azure-light) 0%, #DBEAFE 100%);
+    color: var(--azure);
+}
+
+.walas-stat-mini .mini-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-top: 10px;
+}
+
+.walas-stat-mini .mini-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* =====================================================================
+   3. INTEGRATED CONTROL PANEL (Combined Header, Action & Search)
+   ===================================================================== */
+.walas-panel-wrapper {
+    background: var(--surface-white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.walas-control-header {
+    padding: 1.2rem 1.4rem;
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--bg-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.walas-control-header .panel-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.walas-control-header h4 {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--emerald-deep, #052A1B);
+    margin: 0;
+}
+
+.walas-control-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.walas-filter-row {
+    padding: 1rem 1.4rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 12px;
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.walas-search-input {
+    position: relative;
+}
+
+.walas-search-input input {
+    width: 100%;
+    padding: 9px 12px 9px 36px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-light);
+    font-size: 0.84rem;
+    color: var(--text-dark);
+    outline: none;
+    transition: var(--transition);
+}
+
+.walas-search-input input:focus {
+    background: #ffffff;
+    border-color: var(--primary-emerald);
+    box-shadow: 0 0 0 3px var(--emerald-glow);
+}
+
+.walas-search-input .icon-search {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.walas-select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-light);
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    outline: none;
+    transition: var(--transition);
+}
+
+.walas-select:focus {
+    background: #ffffff;
+    border-color: var(--primary-emerald);
+    box-shadow: 0 0 0 3px var(--emerald-glow);
+}
+
+/* Button Tambah Walas */
+.btn-emerald-add {
+    background: linear-gradient(135deg, var(--primary-emerald) 0%, var(--emerald-dark) 100%);
+    color: #ffffff;
+    border: none;
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 3px 10px rgba(11, 107, 74, 0.25);
+    transition: var(--transition);
+}
+
+.btn-emerald-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(11, 107, 74, 0.38);
+}
+
+/* =====================================================================
+   4. WALAS SPECIFIC TABLE & CELL STYLES
+   ===================================================================== */
+/* Frame Profil Walas Dalam Tabel */
+.walas-profile-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.walas-avatar-frame {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm); /* Kotak rounded khusus walas (beda dari siswa yang lingkaran) */
+    background: linear-gradient(135deg, var(--emerald-light), #ffffff);
+    border: 1.5px solid var(--gold-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-emerald);
+    font-weight: 800;
+    font-size: 1.1rem;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.walas-avatar-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.walas-info .walas-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.walas-info .walas-nip {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-family: monospace;
+    margin-top: 1px;
+}
+
+/* Badge Kelas Binaan */
+.kelas-binaan-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    background: #FFFBF0;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    color: var(--emerald-deep);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.kelas-binaan-badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold-accent);
+}
+
+/* Status Walas (Aktif / Non-Aktif) */
+.walas-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+}
+
+.walas-status.active {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.walas-status.inactive {
+    background: #FEE2E2;
+    color: var(--danger);
+}
+
+/* Action Group Khusus Walas (Tampilan Pill Group) */
+.walas-action-group {
+    display: inline-flex;
+    background: var(--bg-light);
+    padding: 3px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+}
+
+.walas-btn-action {
+    border: none;
+    background: transparent;
+    padding: 5px 8px;
+    border-radius: 4px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: var(--transition);
+}
+
+.walas-btn-action:hover {
+    background: #ffffff;
+    color: var(--primary-emerald);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.walas-btn-action.delete:hover {
+    color: var(--danger);
+}
+
+/* =====================================================================
+   5. WALAS GRID / CARD VIEW (Opsional untuk Mode Kartu Profil Walas)
+   ===================================================================== */
+.walas-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    padding: 1.4rem;
+}
+
+.walas-profile-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.2rem;
+    text-align: center;
+    position: relative;
+    transition: var(--transition);
+}
+
+.walas-profile-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--gold-accent);
+}
+
+.walas-profile-card .card-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-sm);
+    margin: 0 auto 10px auto;
+    border: 2px solid var(--gold-accent);
+}
+
+.walas-profile-card h5 {
+    font-size: 0.94rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 2px;
+}
+
+.walas-profile-card p {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+/* =====================================================================
+   6. PAGINATION FOOTER
+   ===================================================================== */
+.walas-footer-pagination {
+    padding: 1rem 1.4rem;
+    background: var(--bg-light);
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.walas-footer-pagination .page-info {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+/* =====================================================================
+   7. RESPONSIVE BREAKPOINTS
+   ===================================================================== */
+@media (max-width: 1024px) {
+    .walas-stats-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .walas-filter-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .walas-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .walas-bismillah-badge {
+        text-align: left;
+        width: 100%;
+    }
+    
+    .walas-control-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

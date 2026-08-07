@@ -85,7 +85,9 @@
                                 <td>1</td>
                                 <td>
                                     <div class="teacher-profile">
-                                        <div class="avatar-circle">AD</div>
+                                        <div class="avatar-circle">
+                                            <img src="{{route('file.show', $value->url_foto)}}" alt="">
+                                        </div>
                                         <div class="teacher-detail">
                                             <strong>{{$value->nama}}</strong>
                                             <small>{{$data_akun->email}}</small>
@@ -107,12 +109,18 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="action-buttons">
-                                        <a href="/gr/edgr" class="btn-action btn-edit" title="Edit Data">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </a>
-                                        <button class="btn-action btn-deactivate btn-trigger-modal" title="Nonaktifkan Guru">
-                                            <i class="fa-solid fa-user-xmark"></i>
-                                        </button>
+                                        @if ($data_akun->aktif)
+                                            <a href="/gr/edgr/{{$value->id}}" class="btn-action btn-edit" title="Edit Data">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </a>
+                                            <button class="btn-action btn-deactivate btn-trigger-modal" title="Nonaktifkan Guru" data-akun-guru = "{{$data_akun->id}}">
+                                                <i class="fa-solid fa-user-xmark"></i>
+                                            </button>
+                                        @else
+                                            <button class="btn-action btn-deactivate btn-trigger-modal" title="Nonaktifkan Guru" disabled>
+                                                <i class="fa-solid fa-user-xmark"></i>
+                                            </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -182,6 +190,7 @@
         const btnCancelModal = document.getElementById('btnCancelModal');
         const btnConfirmDeactivate = document.getElementById('btnConfirmDeactivate');
         let selectedRow = null;
+        let selectedId = null;
 
         // Buka modal saat tombol nonaktifkan diklik
         document.querySelectorAll('.btn-trigger-modal').forEach(button => {
@@ -189,7 +198,10 @@
                 const row = this.closest('tr');
                 selectedRow = row;
                 const teacherName = row.getAttribute('data-nama');
-                
+
+
+                selectedId = button.getAttribute('data-akun-guru');
+                console.log(selectedId);
                 modalTeacherName.textContent = teacherName;
                 modal.classList.add('active');
             });
@@ -198,6 +210,7 @@
         // Tutup Modal
         function closeModal() {
             modal.classList.remove('active');
+            // selectedId = null;
             selectedRow = null;
         }
 
@@ -224,7 +237,13 @@
                 closeModal();
             }
         });
-    });
+        document.querySelector(".btn-modal-confirm").addEventListener("click",() => {
+            console.log(selectedId);
+            if (selectedId != null) {
+                window.location.href = "/reg/nakt/"+parseInt(selectedId);
+            }
+        })
+    }); 
 </script>
 
 </body>

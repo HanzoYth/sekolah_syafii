@@ -31,7 +31,7 @@
         <div class="module-grid">
             
             <!-- KOTAK 1: MODUL SIAKAD -->
-            <a href="siakad-dashboard.html" class="module-card siakad">
+            <a href="/sk/das" class="module-card siakad">
                 <div class="icon-wrapper">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
@@ -56,7 +56,7 @@
                 </div>
             </a>
 
-            <a href="/gr/das" class="module-card guru">
+            <a href="{{session('role') == 'a' ? '/gr/dasa' : '/gr/das'}}" class="module-card guru">
                 <div class="icon-wrapper">
                     <i class="fa-solid fa-chalkboard-user"></i>
                 </div>

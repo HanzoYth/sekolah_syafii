@@ -1,25 +1,29 @@
 /* =====================================================================
-   SIAKAD DIGITAL — SIDEBAR (Elegance Edition)
-   Menyesuaikan struktur blade: .brand-logo/.brand-text, .sidebar-menu,
+   SIAKAD DIGITAL — SIDEBAR (Modern Islamic School Edition v3)
+   Struktur blade TIDAK berubah: .brand-logo/.brand-text, .sidebar-menu,
    .menu-header, .icon (emoji), .sidebar-footer/.btn-logout
-   Token warna & radius mengikuti dashboard-siakad Elegance Edition.
+   Versi ini menambah efek berkilau (sparkle/shine) dan nuansa islamik
+   yang lebih hidup & modern — cocok untuk web sekolah SD.
+   Murni tampilan, tidak ada class baru yang wajib ditambahkan di blade.
    ===================================================================== */
 
 :root {
     /* -- Emerald Family -- */
-    --emerald-950: #062820;
+    --emerald-950: #052019;
     --emerald-900: #0a3c30;
-    --emerald-800: #0d5242;
-    --emerald-700: #116853;
-    --emerald-500: #1f8a6f;
+    --emerald-850: #0c4738;
+    --emerald-800: #0e5745;
+    --emerald-700: #14735c;
+    --emerald-500: #22a082;
     --emerald-200: #cfe6dd;
     --emerald-100: #e7f2ee;
 
     /* -- Gold Accent Family -- */
     --gold-600: #936512;
     --gold-500: #c9a227;
-    --gold-400: #d8b237;
-    --gold-300: #e6be68;
+    --gold-400: #e0b93f;
+    --gold-300: #f0cd6e;
+    --gold-200: #f6e0a3;
     --gold-100: #fbf3e4;
 
     /* -- Semantic -- */
@@ -33,7 +37,7 @@
     /* -- Shape -- */
     --radius-lg: 20px;
     --radius-md: 14px;
-    --radius-sm: 10px;
+    --radius-sm: 12px;
     --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -48,22 +52,76 @@
     top: 0;
     display: flex;
     flex-direction: column;
-    background: linear-gradient(180deg, var(--emerald-950) 0%, var(--emerald-900) 55%, var(--emerald-800) 100%);
+    background:
+        radial-gradient(circle at 88% -8%, rgba(240, 205, 110, 0.16), transparent 42%),
+        radial-gradient(circle at -10% 60%, rgba(34, 160, 130, 0.18), transparent 40%),
+        linear-gradient(180deg, var(--emerald-950) 0%, var(--emerald-900) 45%, var(--emerald-850) 75%, var(--emerald-800) 100%);
     color: rgba(255, 255, 255, 0.85);
     padding: 26px 0 20px;
-    box-shadow: 8px 0 28px rgba(6, 40, 32, 0.18);
+    box-shadow:
+        8px 0 28px rgba(6, 40, 32, 0.22),
+        inset -1px 0 0 rgba(240, 205, 110, 0.1);
     z-index: 100;
     overflow: hidden;
 }
 
-/* Tekstur motif bintang Islami, sangat halus, di seluruh badan sidebar */
+/* Bingkai tipis keemasan di sisi kanan sidebar, kesan mihrab bercahaya */
+.sidebar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(240, 205, 110, 0.45) 15%,
+        rgba(240, 205, 110, 0.45) 85%,
+        transparent 100%);
+}
+
+/* Tekstur motif bintang & bulan sabit Islami, tampil lebih hidup */
 .sidebar::before {
     content: "";
     position: absolute;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23e6be68' stroke-width='1' opacity='0.06'%3E%3Cpath d='M32 4 L40 24 L60 24 L44 36 L50 56 L32 44 L14 56 L20 36 L4 24 L24 24 Z'/%3E%3C/g%3E%3C/svg%3E");
-    background-size: 72px 72px;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23f0cd6e' stroke-width='1' opacity='0.10'%3E%3Cpath d='M50 8 L59 34 L86 34 L64 50 L73 76 L50 60 L27 76 L36 50 L14 34 L41 34 Z'/%3E%3Ccircle cx='50' cy='50' r='34' /%3E%3Cpath d='M78 16 a8 8 0 1 0 0.1 0' /%3E%3C/g%3E%3C/svg%3E");
+    background-size: 110px 110px;
     pointer-events: none;
+    animation: driftPattern 90s linear infinite;
+}
+
+@keyframes driftPattern {
+    from { background-position: 0 0; }
+    to { background-position: 400px 400px; }
+}
+
+/* Taburan bintang kecil berkelip di badan sidebar, kesan langit malam yang lembut */
+.sidebar-menu {
+    position: relative;
+}
+
+.sidebar-menu::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        radial-gradient(1.5px 1.5px at 20px 40px, rgba(240, 205, 110, 0.9), transparent),
+        radial-gradient(1.5px 1.5px at 90px 120px, rgba(255, 255, 255, 0.8), transparent),
+        radial-gradient(1px 1px at 150px 60px, rgba(240, 205, 110, 0.7), transparent),
+        radial-gradient(1.5px 1.5px at 200px 200px, rgba(255, 255, 255, 0.6), transparent),
+        radial-gradient(1px 1px at 60px 260px, rgba(240, 205, 110, 0.8), transparent);
+    background-repeat: repeat;
+    background-size: 240px 300px;
+    animation: twinkle 4s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.9; }
 }
 
 /* =====================================================================
@@ -76,105 +134,231 @@
     gap: 14px;
     padding: 0 24px 22px;
     margin-bottom: 18px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(240, 205, 110, 0.2);
+}
+
+/* Ornamen garis emas kecil di tengah bawah brand, kesan lengkung mihrab */
+.brand::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -1px;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold-300), transparent);
+    box-shadow: 0 0 10px rgba(240, 205, 110, 0.6);
 }
 
 .brand-logo {
+    position: relative;
     flex-shrink: 0;
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-sm);
-    background: linear-gradient(135deg, var(--gold-400), var(--gold-600));
+    width: 48px;
+    height: 48px;
+    border-radius: 50% 50% 46% 46% / 60% 60% 40% 40%; /* kesan kubah masjid */
+    background: linear-gradient(135deg, var(--gold-200), var(--gold-500) 55%, var(--gold-600));
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.3rem;
-    box-shadow: 0 6px 16px rgba(201, 162, 39, 0.28);
+    font-size: 1.4rem;
+    box-shadow:
+        0 0 0 4px rgba(240, 205, 110, 0.12),
+        0 6px 20px rgba(201, 162, 39, 0.45),
+        inset 0 1px 2px rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: logoGlow 3s ease-in-out infinite;
+}
+
+@keyframes logoGlow {
+    0%, 100% {
+        box-shadow:
+            0 0 0 4px rgba(240, 205, 110, 0.12),
+            0 6px 20px rgba(201, 162, 39, 0.45),
+            inset 0 1px 2px rgba(255, 255, 255, 0.5);
+    }
+    50% {
+        box-shadow:
+            0 0 0 7px rgba(240, 205, 110, 0.18),
+            0 6px 26px rgba(201, 162, 39, 0.6),
+            inset 0 1px 2px rgba(255, 255, 255, 0.6);
+    }
 }
 
 .brand-text h2 {
     margin: 0;
     font-family: var(--font-display);
     color: #ffffff;
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     font-weight: 700;
     letter-spacing: -0.2px;
     line-height: 1.2;
+    text-shadow: 0 1px 10px rgba(240, 205, 110, 0.35);
 }
 
 .brand-text small {
     display: block;
-    margin-top: 2px;
+    margin-top: 3px;
     color: var(--gold-300);
     font-size: 0.68rem;
     font-weight: 500;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.5px;
 }
 
 /* =====================================================================
    MENU
    ===================================================================== */
 .sidebar-menu {
-    position: relative;
     flex: 1;
     overflow-y: auto;
     padding: 0 14px;
 }
 
 .sidebar-menu ul {
+    position: relative;
+    z-index: 1;
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
 .menu-header {
+    position: relative;
     font-family: var(--font-body);
     font-size: 0.66rem;
     font-weight: 700;
-    letter-spacing: 1.4px;
-    color: rgba(255, 255, 255, 0.4);
-    padding: 18px 12px 8px;
+    letter-spacing: 1.6px;
+    color: var(--gold-300);
+    opacity: 0.85;
+    padding: 20px 12px 10px;
     text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.sidebar-menu li { margin-bottom: 3px; }
+/* Ornamen belah ketupat kecil berkilau + garis emas sebelum tiap judul grup menu */
+.menu-header::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: var(--gold-300);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+    box-shadow: 0 0 8px rgba(240, 205, 110, 0.8);
+    animation: sparkleDot 2.4s ease-in-out infinite;
+}
+
+@keyframes sparkleDot {
+    0%, 100% { opacity: 0.6; transform: rotate(45deg) scale(0.85); }
+    50% { opacity: 1; transform: rotate(45deg) scale(1.15); }
+}
+
+.menu-header::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(240, 205, 110, 0.4), transparent);
+}
+
+.sidebar-menu li { margin-bottom: 4px; }
 
 .sidebar-menu li a {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 13px;
     padding: 11px 14px;
     border-radius: var(--radius-sm);
-    color: rgba(255, 255, 255, 0.72);
+    color: rgba(255, 255, 255, 0.75);
     font-family: var(--font-body);
     font-size: 0.87rem;
     font-weight: 500;
     text-decoration: none;
-    transition: all 0.2s var(--ease);
+    transition: all 0.25s var(--ease);
+    overflow: hidden;
 }
 
 .sidebar-menu li a .icon {
     flex-shrink: 0;
-    width: 22px;
+    width: 28px;
+    height: 28px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
-    filter: grayscale(20%);
+    font-size: 1.05rem;
+    filter: grayscale(15%);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.25s var(--ease);
 }
 
 .sidebar-menu li a:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.09);
     color: #ffffff;
+    transform: translateX(3px);
+    box-shadow: 0 4px 14px rgba(6, 40, 32, 0.2);
+}
+
+.sidebar-menu li a:hover .icon {
+    background: rgba(240, 205, 110, 0.2);
+    filter: grayscale(0%);
+    transform: scale(1.08);
 }
 
 .sidebar-menu li.active a {
-    background: rgba(230, 190, 104, 0.14);
-    border-left: 3px solid var(--gold-400);
+    background: linear-gradient(90deg, rgba(240, 205, 110, 0.2), rgba(240, 205, 110, 0.05));
+    border-left: 3px solid var(--gold-300);
     padding-left: 11px;
     color: #ffffff;
     font-weight: 600;
-    box-shadow: inset 0 0 0 1px rgba(230, 190, 104, 0.12);
+    box-shadow:
+        inset 0 0 0 1px rgba(240, 205, 110, 0.2),
+        0 4px 16px rgba(6, 40, 32, 0.28);
+}
+
+.sidebar-menu li.active a .icon {
+    background: linear-gradient(135deg, var(--gold-200), var(--gold-600));
+    box-shadow: 0 2px 10px rgba(201, 162, 39, 0.5);
+    filter: none;
+}
+
+/* Kilau bergerak yang lewat berulang pada item aktif */
+.sidebar-menu li.active a::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+    animation: shimmer 3.2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%   { left: -60%; }
+    50%  { left: 120%; }
+    100% { left: 120%; }
+}
+
+/* Kilau sekali-sekali yang menyapu seluruh menu (lembut, tidak ramai) */
+.sidebar-menu li a::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -80%;
+    width: 30%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(240, 205, 110, 0.1), transparent);
+    animation: sweep 8s ease-in-out infinite;
+}
+
+.sidebar-menu li:nth-child(3n) a::before { animation-delay: 1.4s; }
+.sidebar-menu li:nth-child(4n) a::before { animation-delay: 2.8s; }
+.sidebar-menu li:nth-child(5n) a::before { animation-delay: 4.2s; }
+
+@keyframes sweep {
+    0%, 92%, 100% { left: -80%; }
+    96% { left: 120%; }
 }
 
 /* =====================================================================
@@ -184,7 +368,7 @@
     position: relative;
     padding: 16px 24px 0;
     margin-top: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(240, 205, 110, 0.18);
 }
 
 .btn-logout {
@@ -198,14 +382,22 @@
     font-size: 0.87rem;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.2s var(--ease);
+    transition: all 0.25s var(--ease);
+    border: 1px solid transparent;
 }
 
-.btn-logout .icon { width: 22px; display: inline-flex; justify-content: center; }
+.btn-logout .icon {
+    width: 22px;
+    display: inline-flex;
+    justify-content: center;
+}
 
 .btn-logout:hover {
     background: var(--danger-bg);
     color: #ffffff;
+    border-color: rgba(224, 122, 104, 0.35);
+    transform: translateX(3px);
+    box-shadow: 0 4px 14px rgba(224, 122, 104, 0.18);
 }
 
 /* =====================================================================
@@ -214,8 +406,11 @@
 .sidebar-menu::-webkit-scrollbar { width: 4px; }
 .sidebar-menu::-webkit-scrollbar-track { background: transparent; }
 .sidebar-menu::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(240, 205, 110, 0.3);
     border-radius: 999px;
+}
+.sidebar-menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(240, 205, 110, 0.5);
 }
 
 /* =====================================================================
@@ -233,4 +428,10 @@
 
 @media (prefers-reduced-motion: reduce) {
     .sidebar, .sidebar * { transition: none !important; }
-}   
+    .sidebar::before,
+    .sidebar-menu::before,
+    .brand-logo,
+    .menu-header::before,
+    .sidebar-menu li.active a::after,
+    .sidebar-menu li a::before { animation: none !important; }
+}

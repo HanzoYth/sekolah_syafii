@@ -309,75 +309,10 @@ body {
     color: var(--primary-color);
 }
 
-/* ======== ALERT / TOAST POPUP ERROR (SLIDE IN FROM RIGHT) ======== */
-.alert-danger {
-    position: fixed;
-    top: 24px;
-    right: 24px;
-    z-index: 9999;
-    
-    min-width: 300px;
-    max-width: 420px;
-    padding: 16px 20px;
-    
-    background-color: var(--white);
-    border-left: 5px solid var(--danger-color);
-    border-radius: 14px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-    
-    color: var(--text-dark);
-    font-size: 0.88rem;
-    
-    /* Animasi Slide dari Kanan ke Kiri saat Muncul */
-    animation: slideInRight 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-
-.alert-danger p {
-    margin: 0;
-    line-height: 1.5;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* Pembatas jika terdapat lebih dari 1 error */
-.alert-danger p + p {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px dashed #e2e8f0;
-}
-
-/* Animasi Keluar (Slide-Out) */
-.alert-danger.fade-out {
-    animation: slideOutRight 0.4s ease forwards;
-}
-
 /* ======== KEYFRAME ANIMATIONS ======== */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(110%); /* Mulai meluncur dari luar kanan layar */
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0); /* Berhenti di posisi kanan atas */
-    }
-}
-
-@keyframes slideOutRight {
-    from {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    to {
-        opacity: 0;
-        transform: translateX(120%);
-    }
 }
 
 /* ======== RESPONSIVE UNTUK HP / TABLET ======== */
@@ -398,19 +333,10 @@ body {
     }
 
     .brand-features {
-        display: none; /* Sembunyikan poin di HP agar tidak terlalu panjang */
+        display: none;
     }
 
     .auth-form-side {
         padding: 40px 30px;
-    }
-
-    /* Penyesuaian ukuran Toast di HP */
-    .alert-danger {
-        top: 16px;
-        right: 16px;
-        left: 16px;
-        min-width: auto;
-        max-width: none;
     }
 }

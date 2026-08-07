@@ -1,7 +1,5 @@
 /* ==========================================================================
-   HRIS GURU — Dashboard (Admin & Guru)
-   Gaya "modern-klasik Islami": palet hijau zamrud + emas ala manuskrip/arsitektur Islam,
-   dipadukan dengan tipografi serif untuk angka & heading, sans untuk isi.
+   HRIS GURU — Base & Common Components
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&display=swap');
@@ -64,10 +62,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ==========================================================================
-   LAYOUT
-   ========================================================================== */
-
+/* --- Layout --- */
 .app-layout {
   display: flex;
   min-height: 100vh;
@@ -81,10 +76,7 @@ body {
   flex-direction: column;
 }
 
-/* ==========================================================================
-   TOPBAR
-   ========================================================================== */
-
+/* --- Topbar --- */
 .topbar {
   display: flex;
   align-items: center;
@@ -197,10 +189,7 @@ body {
   color: var(--ink-400);
 }
 
-/* ==========================================================================
-   CONTENT BODY
-   ========================================================================== */
-
+/* --- Content Body --- */
 .content-body {
   padding: 32px 40px 48px;
   display: flex;
@@ -208,10 +197,7 @@ body {
   gap: 28px;
 }
 
-/* ==========================================================================
-   STAT CARDS
-   ========================================================================== */
-
+/* --- Stat Cards --- */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -249,13 +235,10 @@ body {
 
 .bg-primary-light { background: var(--navy-050); }
 .text-primary { color: var(--navy-800); }
-
 .bg-warning-light { background: var(--warning-bg); }
 .text-warning { color: var(--warning); }
-
 .bg-info-light { background: var(--info-bg); }
 .text-info { color: var(--info); }
-
 .bg-success-light { background: var(--success-bg); }
 .text-success { color: var(--success); }
 
@@ -289,10 +272,7 @@ body {
   color: var(--ink-400);
 }
 
-/* ==========================================================================
-   DASHBOARD GRID (Presensi + Pengumuman / Admin Dashboard)
-   ========================================================================== */
-
+/* --- Card Base --- */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
@@ -362,149 +342,7 @@ body {
   border-bottom-color: var(--gold-600);
 }
 
-/* --- Widget Presensi Guru --- */
-
-.status-box {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 18px;
-  border-radius: var(--radius-md);
-  margin-bottom: 22px;
-}
-
-.status-box i {
-  font-size: 26px;
-}
-
-.status-box h5 {
-  margin: 0 0 2px;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.status-box p {
-  margin: 0;
-  font-size: 13px;
-  color: var(--ink-600);
-}
-
-.status-success {
-  background: var(--success-bg);
-  border: 1px solid #C4DCCB;
-}
-
-.status-success i {
-  color: var(--success);
-}
-
-.status-success h5 {
-  color: var(--success);
-}
-
-.status-warning {
-  background: var(--warning-bg);
-  border: 1px solid #C4DCCB;
-}
-
-.status-warning i {
-  color: var(--warning);
-}
-
-.status-warning h5 {
-  color: var(--warning);
-}
-
-
-
-.time-tracker {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  padding: 20px 12px;
-  margin-bottom: 22px;
-  background: var(--cream);
-  border: 1px dashed var(--line);
-  border-radius: var(--radius-md);
-}
-
-.time-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  min-width: 120px;
-}
-
-.time-title {
-  font-size: 12px;
-  color: var(--ink-600);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.time-value {
-  font-family: var(--font-serif);
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--navy-900);
-  font-variant-numeric: tabular-nums;
-}
-
-.time-divider {
-  color: var(--gold-500);
-  font-size: 15px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 14px;
-}
-
-.btn {
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  padding: 13px 18px;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: var(--radius-sm);
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-}
-
-.btn-primary {
-  background: var(--navy-800);
-  color: var(--paper);
-  box-shadow: 0 4px 12px rgba(22, 56, 34, 0.25);
-}
-
-.btn-primary:hover {
-  background: var(--navy-900);
-  transform: translateY(-1px);
-}
-
-.btn-primary:focus-visible {
-  outline: 2px solid var(--gold-500);
-  outline-offset: 2px;
-}
-
-.btn-disabled,
-.btn:disabled {
-  background: var(--cream);
-  color: var(--ink-400);
-  border-color: var(--line);
-  cursor: not-allowed;
-}
-
 /* --- Widget Pengumuman --- */
-
 .announcement-list {
   display: flex;
   flex-direction: column;
@@ -557,236 +395,81 @@ body {
   line-height: 1.5;
 }
 
-/* ==========================================================================
-   ELEMEN KHUSUS DASHBOARD ADMIN
-   ========================================================================== */
-
-.admin-presensi-summary {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.admin-presensi-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  background: var(--cream);
-  padding: 16px;
-  border-radius: var(--radius-md);
-  border: 1px dashed var(--line);
-  text-align: center;
-}
-
-.presensi-stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.presensi-stat-item .stat-num {
-  font-family: var(--font-serif);
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.presensi-stat-item .stat-desc {
-  font-size: 11.5px;
-  color: var(--ink-600);
-  font-weight: 500;
-}
-
-.payroll-summary-box {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.payroll-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-  border-bottom: 1px dashed var(--line);
-  font-size: 13.5px;
-  color: var(--ink-600);
-}
-
-.payroll-row:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.payroll-row strong {
-  font-family: var(--font-serif);
-  font-size: 15px;
-  color: var(--navy-900);
-}
-
-.text-danger {
-  color: var(--danger) !important;
-}
-
-/* ======== ALERT / TOAST POPUP ERROR (SLIDE IN FROM RIGHT) ======== */
+/* --- Toast / Alert Error --- */
 .alert-danger {
-    position: fixed;
-    top: 24px;
-    right: 24px;
-    z-index: 9999;
-    
-    min-width: 320px;
-    max-width: 420px;
-    padding: 16px 20px;
-    
-    background-color: var(--paper); /* Sudah disesuaikan */
-    border-left: 5px solid var(--danger); /* Sudah disesuaikan */
-    border-radius: var(--radius-lg);
-    box-shadow: 0 12px 30px rgba(13, 40, 24, 0.15);
-    
-    color: var(--ink-900); /* Sudah disesuaikan */
-    font-size: 0.88rem;
-    
-    /* Animasi Slide dari Kanan ke Kiri saat Muncul */
-    animation: slideInRight 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  min-width: 320px;
+  max-width: 420px;
+  padding: 16px 20px;
+  background-color: var(--paper);
+  border-left: 5px solid var(--danger);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 30px rgba(13, 40, 24, 0.15);
+  color: var(--ink-900);
+  font-size: 0.88rem;
+  animation: slideInRight 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 .alert-danger p {
-    margin: 0;
-    line-height: 1.5;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  margin: 0;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Pembatas jika terdapat lebih dari 1 error */
 .alert-danger p + p {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px dashed var(--line); /* Disesuaikan ke palet --line */
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
 }
 
-/* Animasi Keluar (Slide-Out) */
 .alert-danger.fade-out {
-    animation: slideOutRight 0.4s ease forwards;
+  animation: slideOutRight 0.4s ease forwards;
 }
 
-/* ======== KEYFRAME ANIMATIONS ======== */
+/* --- Keyframe Animations --- */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(110%); /* Mulai meluncur dari luar kanan layar */
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0); /* Berhenti di posisi kanan atas */
-    }
+  from { opacity: 0; transform: translateX(110%); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideOutRight {
-    from {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    to {
-        opacity: 0;
-        transform: translateX(120%);
-    }
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(120%); }
 }
 
-/* ==========================================================================
-   RESPONSIVE
-   ========================================================================== */
-
+/* --- Responsive Layout Base --- */
 @media (max-width: 1200px) {
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 1024px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
+  .dashboard-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {
-  .main-content {
-    margin-left: 0;
-  }
-
-  .topbar {
-    padding: 16px 20px;
-    flex-wrap: wrap;
-    gap: 14px;
-  }
-
-  .page-title h2 {
-    font-size: 21px;
-  }
-
-  .content-body {
-    padding: 20px 20px 36px;
-    gap: 20px;
-  }
-
-  .user-info {
-    display: none;
-  }
-
-  .user-profile {
-    padding-left: 12px;
-  }
-
-  .card-body {
-    padding: 18px;
-  }
-
-  .time-tracker {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .time-divider {
-    transform: rotate(90deg);
-  }
-
-  .action-buttons {
-    flex-direction: column;
-  }
+  .main-content { margin-left: 0; }
+  .topbar { padding: 16px 20px; flex-wrap: wrap; gap: 14px; }
+  .page-title h2 { font-size: 21px; }
+  .content-body { padding: 20px 20px 36px; gap: 20px; }
+  .user-info { display: none; }
+  .user-profile { padding-left: 12px; }
+  .card-body { padding: 18px; }
 }
 
 @media (max-width: 480px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stat-card {
-    padding: 16px;
-  }
-
-  .topbar-actions {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .announcement-item {
-    flex-direction: column;
-  }
-
-  .badge-date {
-    width: 100%;
-    height: auto;
-    padding: 6px;
-    flex-direction: row;
-    gap: 4px;
-  }
-
-  .admin-presensi-stats {
-    grid-template-columns: 1fr;
-  }
+  .stats-grid { grid-template-columns: 1fr; }
+  .stat-card { padding: 16px; }
+  .topbar-actions { width: 100%; justify-content: space-between; }
+  .announcement-item { flex-direction: column; }
+  .badge-date { width: 100%; height: auto; padding: 6px; flex-direction: row; gap: 4px; }
 }

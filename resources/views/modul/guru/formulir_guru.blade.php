@@ -34,7 +34,8 @@
                     <h3><i class="fa-solid fa-user-plus"></i> Formulir Bio Data Guru</h3>
                 </div>
 
-                <form id="formGuru" action="/gr/tbgr" method="POST">
+                <!-- Tambahkan enctype="multipart/form-data" untuk unggah file -->
+                <form id="formGuru" action="/gr/tbgr" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-grid">
                         
@@ -104,12 +105,12 @@
                             </div>
                         </div>
 
-                        <!-- jenis sekolah -->
+                        <!-- JENIS SEKOLAH -->
                         <div class="form-group">
-                            <label for="cabangSekolah">Jenis Sekolah <span class="required">*</span></label>
+                            <label for="jenisSekolah">Jenis Sekolah <span class="required">*</span></label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-building-columns"></i>
-                                <select id="cabangSekolah" name="sekolah_id" required>
+                                <select id="jenisSekolah" name="sekolah_id" required>
                                     <option value="" disabled selected>-- Pilih jenis sekolah --</option>
                                     @foreach($sekolah as $value)
                                         <option value="{{$value->id}}">{{$value->jenis}}</option>
@@ -118,13 +119,13 @@
                             </div>
                         </div>
 
-                        <!-- 6. URL FOTO & PREVIEW -->
+                        <!-- 6. UPLOAD FOTO & PREVIEW (BAGIAN DIBERBAIKI) -->
                         <div class="form-group full-width">
-                            <label for="urlFoto">URL Foto Profil</label>
+                            <label for="inputFoto">Foto Profil Guru</label>
                             <div class="photo-preview-container">
                                 <div class="input-wrapper" style="flex: 1;">
                                     <i class="fa-solid fa-image"></i>
-                                    <input type="text" id="urlFoto" name="url_foto" placeholder="https://example.com/foto.jpg" autocomplete="off">
+                                    <input type="file" id="inputFoto" name="foto" accept="image/*">
                                 </div>
                                 <div class="avatar-preview" id="avatarPreview">
                                     <i class="fa-solid fa-user"></i>
@@ -207,7 +208,7 @@
                         list.forEach(other => {
                             if (other !== this) {
                                 other.checked = false;
-                                other.value = 0
+                                other.value = 0;
                             };
                         });
                     }
@@ -218,6 +219,21 @@
         // Penerapan Mutual Exclusion untuk masing-masing kelompok
         makeExclusive('.chk-kepegawaian');
         makeExclusive('.chk-tahfiz');
+
+        // Logic Preview Upload Foto
+        const inputFoto = document.getElementById('inputFoto');
+        const avatarPreview = document.getElementById('avatarPreview');
+
+        inputFoto.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Preview Foto" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
         // Reset Handler
         document.getElementById('btnReset').addEventListener('click', () => {

@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="stylesheet" href="./css/activity_reg.css">
+    <link rel="stylesheet" href="{{asset('/css/activity_reg.css')}}">
 </head>
 <body>
 
@@ -121,74 +121,8 @@
 
             <a href="/" class="back-home"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
         </div>
-        @if(session('eror'))
-            <div class="alert alert-danger" id="errorToast">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                    <div>
-                        <p>
-                            <i class="fas fa-exclamation-circle" style="color: #e63946;"></i> 
-                            {{ session('eror') }}
-                        </p>
-                    </div>
-                    <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>
-                </div>
-            </div>
-        @endif
-        @if ($errors->any())
-            <div class="alert alert-danger" id="errorToast">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                    <div>
-                        @foreach ($errors->all() as $error)
-                            <p>
-                                <i class="fas fa-exclamation-circle" style="color: #e63946;"></i> 
-                                {{ $error }}
-                            </p>
-                        @endforeach
-                    </div>
-                    <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>
-                </div>
-            </div>
-        @endif
+        <x-warning />
     </div>
     <!-- JavaScript untuk Switch Tab Form -->
-    <script>
-        function closeToast() {
-            const toast = document.getElementById('errorToast');
-            if (toast) {
-                toast.classList.add('fade-out');
-                setTimeout(() => {
-                    toast.remove();
-                }, 400); // Sesuai durasi animasi slideOutRight
-            }
-        }
-
-        // Otomatis hilangkan error setelah 5 detik
-        document.addEventListener('DOMContentLoaded', () => {
-            const toast = document.getElementById('errorToast');
-            if (toast) {
-                setTimeout(() => {
-                    closeToast();
-                }, 5000); // 5000ms = 5 detik
-            }
-        });
-        function switchTab(type) {
-            const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
-            const tabLoginBtn = document.getElementById('tabLoginBtn');
-            const tabRegisterBtn = document.getElementById('tabRegisterBtn');
-
-            if (type === 'login') {
-                loginForm.classList.add('active');
-                registerForm.classList.remove('active');
-                tabLoginBtn.classList.add('active');
-                tabRegisterBtn.classList.remove('active');
-            } else {
-                registerForm.classList.add('active');
-                loginForm.classList.remove('active');
-                tabRegisterBtn.classList.add('active');
-                tabLoginBtn.classList.remove('active');
-            }
-        }
-    </script>
 </body>
 </html>

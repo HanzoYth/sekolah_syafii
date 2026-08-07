@@ -1,0 +1,443 @@
+/* =====================================================================
+   DATA SISWA — PAGE STYLES
+   File ini MELANJUTKAN token desain dari dashboard_siakad.css
+   (variabel --primary-emerald, --gold-accent, --radius-*, --shadow-*, dst).
+   Pastikan dashboard_siakad.css tetap di-load SEBELUM file ini,
+   karena semua variabel :root didefinisikan di sana.
+   ===================================================================== */
+
+/* =====================================================================
+   PAGE HEADER
+   ===================================================================== */
+.siswa-page-header {
+    background:
+        radial-gradient(circle at 95% -20%, rgba(212, 175, 55, 0.18), transparent 45%),
+        linear-gradient(135deg, var(--primary-emerald) 0%, var(--emerald-dark) 100%);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-left: 5px solid var(--gold-accent);
+    box-shadow: var(--shadow-md);
+    padding: 1.4rem 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    transition: var(--transition);
+}
+
+.siswa-page-header:hover { box-shadow: var(--shadow-lg); }
+
+.siswa-page-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23D4AF37' stroke-width='1' opacity='0.12'%3E%3Cpath d='M30 6 L36 24 L54 24 L40 34 L45 52 L30 42 L15 52 L20 34 L6 24 L24 24 Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 70px 70px;
+    pointer-events: none;
+}
+
+.siswa-breadcrumb {
+    position: relative;
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.3px;
+    margin-bottom: 6px;
+}
+
+.siswa-breadcrumb span { color: var(--gold-soft, #E7C978); }
+
+.siswa-page-header .bismillah-text {
+    display: block;
+    font-family: var(--font-display, 'Amiri', serif);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--gold-soft, #E7C978);
+    margin-bottom: 4px;
+    text-shadow: 0 1px 6px rgba(212, 175, 55, 0.25);
+}
+
+.siswa-page-header h1 {
+    position: relative;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+}
+
+.siswa-page-header p {
+    position: relative;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.75);
+    margin-top: 3px;
+    font-weight: 500;
+}
+
+.siswa-header-actions {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-gold {
+    background: linear-gradient(135deg, var(--gold-soft, #E7C978), var(--gold-accent));
+    color: var(--emerald-deep, #052A1B);
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 0.84rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);
+}
+
+.btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(212, 175, 55, 0.42);
+}
+
+/* =====================================================================
+   QUICK STATS (memakai ulang .stat-card dari dashboard, tambahan warna)
+   ===================================================================== */
+.siswa-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.siswa-stats-grid .stat-card:nth-child(1) .stat-icon {
+    background: linear-gradient(135deg, var(--emerald-light) 0%, #DCFCE7 100%);
+    color: var(--primary-emerald);
+}
+.siswa-stats-grid .stat-card:nth-child(2) .stat-icon {
+    background: linear-gradient(135deg, #FFFBF0 0%, #FEF3C7 100%);
+    color: var(--gold-hover);
+}
+.siswa-stats-grid .stat-card:nth-child(3) .stat-icon {
+    background: linear-gradient(135deg, var(--azure-light) 0%, #DBEAFE 100%);
+    color: var(--azure);
+}
+.siswa-stats-grid .stat-card:nth-child(4) .stat-icon {
+    background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%);
+    color: #7E22CE;
+}
+
+/* =====================================================================
+   FILTER & SEARCH BAR
+   ===================================================================== */
+.siswa-filter-bar {
+    background: var(--surface-white);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.4rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.siswa-search {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+}
+
+.siswa-search input[type="text"] {
+    width: 100%;
+    padding: 10px 14px 10px 40px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-pill);
+    background: var(--bg-light);
+    color: var(--text-dark);
+    font-size: 0.86rem;
+    outline: none;
+    transition: var(--transition);
+}
+
+.siswa-search input[type="text"]:focus {
+    border-color: var(--primary-emerald);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px var(--emerald-glow);
+}
+
+.siswa-search .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.siswa-filter-select {
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-light);
+    color: var(--text-dark);
+    font-size: 0.84rem;
+    font-weight: 600;
+    outline: none;
+    min-width: 150px;
+    transition: var(--transition);
+}
+
+.siswa-filter-select:focus {
+    border-color: var(--primary-emerald);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px var(--emerald-glow);
+}
+
+/* =====================================================================
+   TABLE CARD & KOLOM KHUSUS SISWA
+   ===================================================================== */
+.siswa-table-card {
+    background: var(--surface-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.siswa-table-card .table-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 1.4rem;
+    border-bottom: 1px solid var(--border-subtle);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.siswa-table-card .table-card-head h4 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--primary-emerald);
+}
+
+.siswa-table-card .table-card-head .total-count {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--bg-light);
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-subtle);
+}
+
+/* Kolom siswa: foto + nama + NISN dalam satu sel */
+.siswa-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.siswa-photo {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--emerald-light);
+    color: var(--primary-emerald);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border: 2px solid var(--gold-accent);
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.siswa-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+.siswa-cell-info .siswa-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.siswa-cell-info .siswa-nisn {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+/* Tag jenjang: TK / SD / SMP, warna berbeda tiap jenjang */
+.jenjang-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+.jenjang-tag.tk { background: var(--azure-light); color: var(--azure); }
+.jenjang-tag.sd { background: var(--success-bg); color: var(--success); }
+.jenjang-tag.smp { background: #F3E8FF; color: #7E22CE; }
+
+/* Badge jenis kelamin */
+.gender-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* Aksi baris tabel */
+.siswa-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.action-icon-btn {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background: var(--bg-light);
+    color: var(--primary-emerald);
+    cursor: pointer;
+    font-size: 0.82rem;
+    transition: var(--transition);
+}
+
+.action-icon-btn:hover {
+    background: var(--primary-emerald);
+    border-color: var(--primary-emerald);
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+.action-icon-btn.danger:hover {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: #ffffff;
+}
+
+.action-icon-btn.gold:hover {
+    background: var(--gold-accent);
+    border-color: var(--gold-accent);
+    color: #ffffff;
+}
+
+/* =====================================================================
+   PAGINATION
+   ===================================================================== */
+.siswa-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.4rem;
+    border-top: 1px solid var(--border-subtle);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.siswa-pagination .pagination-info {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.pagination-list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.pagination-list a,
+.pagination-list span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 6px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.pagination-list a:hover {
+    background: var(--emerald-light);
+    color: var(--primary-emerald);
+    border-color: var(--emerald-glow);
+}
+
+.pagination-list .active span,
+.pagination-list li.active span {
+    background: linear-gradient(135deg, var(--gold-accent), var(--gold-hover));
+    color: #ffffff;
+    border-color: var(--gold-accent);
+}
+
+/* =====================================================================
+   EMPTY STATE
+   ===================================================================== */
+.siswa-empty-state {
+    text-align: center;
+    padding: 3.5rem 1.5rem;
+}
+
+.siswa-empty-state .empty-icon {
+    font-size: 2.4rem;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+.siswa-empty-state h5 {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+}
+
+.siswa-empty-state p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+/* =====================================================================
+   RESPONSIVE
+   ===================================================================== */
+@media (max-width: 1180px) {
+    .siswa-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 992px) {
+    .siswa-page-header { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 640px) {
+    .siswa-stats-grid { grid-template-columns: 1fr; }
+    .siswa-filter-bar { flex-direction: column; align-items: stretch; }
+    .siswa-filter-select { width: 100%; }
+}

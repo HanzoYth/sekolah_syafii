@@ -116,7 +116,7 @@ class MasterAbsenController extends Controller
                 $data->save();
             }else{
                 master_absen_guru::create([
-                    "waktu_masuk" => Carbon::now()->translatedFormat("H:i:s"),
+                    "waktu_masuk" => Carbon::parse("00:00:00"),
                     "waktu_keluar" => Carbon::parse("00:00:00"),
                     "tgl_masuk" => Carbon::now()->translatedFormat("Y-m-d"),
                     "status_kehadiran" => $request->input("status_{$id}"),

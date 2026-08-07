@@ -34,7 +34,8 @@
                     <h3><i class="fa-solid fa-user-plus"></i> Formulir Bio Data admin</h3>
                 </div>
 
-                <form id="formGuru" action="/ad/tbad" method="POST">
+                <!-- Tambahkan enctype="multipart/form-data" untuk unggah file -->
+                <form id="formGuru" action="/ad/tbad" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-grid">
                         
@@ -73,6 +74,7 @@
                                 <input type="date" id="tanggalLahir" name="tanggal_lahir" required>
                             </div>
                         </div>
+
                         <!-- 6. PENDIDIKAN TERAKHIR -->
                         <div class="form-group">
                             <label for="pendidikanTerakhir">Pendidikan Terakhir <span class="required">*</span></label>
@@ -89,13 +91,13 @@
                             </div>
                         </div>
 
-                        <!-- 7. URL FOTO & PREVIEW -->
+                        <!-- 7. UPLOAD FOTO & PREVIEW (DIBERBAIKI) -->
                         <div class="form-group full-width">
-                            <label for="urlFoto">URL Foto Profil</label>
+                            <label for="inputFoto">Foto Profil Admin</label>
                             <div class="photo-preview-container">
                                 <div class="input-wrapper" style="flex: 1;">
                                     <i class="fa-solid fa-image"></i>
-                                    <input type="text" id="urlFoto" name="url_foto" placeholder="https://example.com/foto.jpg" autocomplete="off">
+                                    <input type="file" id="inputFoto" name="foto" accept="image/*">
                                 </div>
                                 <div class="avatar-preview" id="avatarPreview">
                                     <i class="fa-solid fa-user"></i>
@@ -130,22 +132,19 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        const urlFotoInput = document.getElementById('urlFoto');
+        const inputFoto = document.getElementById('inputFoto');
         const avatarPreview = document.getElementById('avatarPreview');
         const defaultAvatarHtml = '<i class="fa-solid fa-user"></i>';
 
-        // Live Preview Foto via URL
-        urlFotoInput.addEventListener('input', function() {
-            const url = this.value.trim();
-            if (url !== '') {
-                const img = new Image();
-                img.src = url;
-                img.onload = () => {
-                    avatarPreview.innerHTML = `<img src="${url}" alt="Preview Foto">`;
+        // Live Preview Foto File Lokal
+        inputFoto.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Preview Foto" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
                 };
-                img.onerror = () => {
-                    avatarPreview.innerHTML = defaultAvatarHtml;
-                };
+                reader.readAsDataURL(file);
             } else {
                 avatarPreview.innerHTML = defaultAvatarHtml;
             }

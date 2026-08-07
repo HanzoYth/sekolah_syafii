@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap');
 
 /* =====================================================================
    DESIGN SYSTEM & VARIABLES
@@ -7,12 +7,14 @@
     /* Emerald Spectrum */
     --primary-emerald: #0D5C3A;
     --emerald-dark: #083E27;
+    --emerald-deep: #052A1B;
     --emerald-light: #E8F5E9;
     --emerald-glow: rgba(13, 92, 58, 0.12);
 
     /* Gold Accents */
     --gold-accent: #D4AF37;
     --gold-hover: #B89320;
+    --gold-soft: #E7C978;
     --gold-light: #FFFBF0;
     --gold-border: rgba(212, 175, 55, 0.3);
 
@@ -40,6 +42,9 @@
     --text-muted: #64748B;
     --text-light: #94A3B8;
 
+    /* Fonts */
+    --font-display: 'Amiri', 'Plus Jakarta Sans', serif;
+
     /* Borders & Elevated Shadows */
     --border-color: #E2E8F0;
     --border-subtle: #F1F5F9;
@@ -53,6 +58,9 @@
     --radius-sm: 8px;
     --radius-pill: 999px;
     --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Tinggi bar Bismillah, dipakai juga untuk offset sidebar sticky */
+    --bismillah-bar-h: 42px;
 }
 
 /* =====================================================================
@@ -76,13 +84,74 @@ a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
 
 /* =====================================================================
-   LAYOUT SHELL
+   BISMILLAH BAR — pita hijau di paling atas halaman
+   Tambahkan markup ini tepat di atas .dashboard-container pada layout:
+
+   <div class="bismillah-bar">
+       <span class="bismillah-arabic">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
+       <span class="bismillah-divider"></span>
+       <span class="bismillah-latin">Bismillahirrahmanirrahim</span>
+   </div>
    ===================================================================== */
-.dashboard-container {
+.bismillah-bar {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    height: var(--bismillah-bar-h);
     display: flex;
-    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: linear-gradient(90deg, var(--emerald-deep) 0%, var(--primary-emerald) 50%, var(--emerald-deep) 100%);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+    box-shadow: 0 2px 10px rgba(5, 42, 27, 0.25);
+    overflow: hidden;
 }
 
+/* motif bintang islami tipis di sepanjang bar */
+.bismillah-bar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%23D4AF37' stroke-width='1' opacity='0.14'%3E%3Cpath d='M20 4 L24 16 L36 16 L26 22 L30 34 L20 27 L10 34 L14 22 L4 16 L16 16 Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 40px 40px;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.bismillah-arabic {
+    position: relative;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--gold-soft);
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 6px rgba(212, 175, 55, 0.3);
+}
+
+.bismillah-divider {
+    position: relative;
+    width: 1px;
+    height: 16px;
+    background: rgba(212, 175, 55, 0.4);
+}
+
+.bismillah-latin {
+    position: relative;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    color: rgba(255, 255, 255, 0.72);
+    text-transform: capitalize;
+}
+
+/* Sidebar menempel tepat di bawah bar Bismillah, bukan menimpanya */
+.dashboard-container { display: flex; min-height: 100vh; }
+.dashboard-container .sidebar { top: var(--bismillah-bar-h); height: calc(100vh - var(--bismillah-bar-h)); }
+
+/* =====================================================================
+   LAYOUT SHELL
+   ===================================================================== */
 .main-content {
     flex: 1;
     padding: 2.2rem;
@@ -185,7 +254,10 @@ ul { list-style: none; }
     overflow: hidden;
     flex-wrap: wrap;
     gap: 14px;
+    transition: var(--transition);
 }
+
+.topbar:hover { box-shadow: var(--shadow-md); }
 
 .welcome-text h1 {
     font-size: 1.45rem;
@@ -194,7 +266,12 @@ ul { list-style: none; }
     letter-spacing: -0.3px;
 }
 
-.welcome-text h1 span { color: var(--gold-hover); }
+.welcome-text h1 span {
+    background: linear-gradient(90deg, var(--gold-hover), var(--gold-accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
 
 .welcome-text p {
     font-size: 0.88rem;
@@ -241,7 +318,7 @@ ul { list-style: none; }
     transition: var(--transition);
 }
 
-.topbar-icons i:hover { background: var(--emerald-light); border-color: var(--emerald-glow); }
+.topbar-icons i:hover { background: var(--emerald-light); border-color: var(--emerald-glow); transform: translateY(-2px); }
 
 .icon-bell-wrap { position: relative; }
 
@@ -429,7 +506,10 @@ ul { list-style: none; }
     padding: 14px 16px;
     border-left: 4px solid transparent;
     background: var(--bg-light);
+    transition: var(--transition);
 }
+
+.sum-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
 
 .sum-card h3 { font-size: 1.35rem; font-weight: 800; margin-bottom: 3px; }
 .sum-card p { margin: 0; font-size: 0.74rem; color: var(--text-muted); font-weight: 600; }
@@ -871,6 +951,8 @@ tbody tr:last-child td,
     .stats-grid { grid-template-columns: 1fr; }
     .summary-cards { grid-template-columns: 1fr; }
     .grade-row { grid-template-columns: 80px 1fr 30px; }
+    .bismillah-latin { display: none; }
+    .bismillah-divider { display: none; }
 }
 
 /* =====================================================================

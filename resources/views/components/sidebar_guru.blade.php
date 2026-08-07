@@ -74,7 +74,7 @@
                     <span class="menu-label">ADMINISTRATOR HR</span>
                     <ul class="menu-list">
                         <li class="menu-item">
-                            <a href="/gr/das">
+                            <a href="/gr/dasa">
                                 <i class="fa-solid fa-chart-line"></i>
                                 <span>Dashboard Admin</span>
                             </a>
