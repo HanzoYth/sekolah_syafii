@@ -56,7 +56,6 @@ Route::get("/gr/hpgm/{id}",[tanggalMerahController::class,"hapusTanggalMerah"]);
 Route::post("/gr/tcb",[cabangGuruController::class,"TambahCabang"]);
 Route::get("/gr/nkt/{id}",[cabangGuruController::class,"nonAktikanCabang"]);
 
-
 //ini otp
 Route::get("/gr/totp",[otpController::class,"tampilanOtp"]);
 Route::get("/gr/otp",[otpController::class,"createOtp"]);
@@ -70,11 +69,22 @@ Route::get('/gr/klabs',[MasterAbsenController::class,"keluarAbsenGuru"]);
 //ini kelola guru
 Route::get('/gr/klgr',[modulGuruController::class,"tampilan_kelolaGuru"]);
 Route::get('/gr/edgr/{id}',[modulGuruController::class,"tampilan_editGuru"]);
+<<<<<<< HEAD
 Route::post('/gr/updgr',[modulGuruController::class,"update_dataGuru"]);
+=======
+>>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
 
 //ini admin
 Route::get('/ad/frad',[adminController::class,"tampilan_formulirAdmin"]);
 Route::post('/ad/tbad',[adminController::class,"tambahDataAdmin"]);
+
+//ini router file
+Route::get('file/{path}',function ($path) {
+    if (!Storage::exists($path)){
+        abort(404);
+    }
+    return Storage::response($path);
+})->where('path','.*')->name('file.show');
 
 //----------------------------------------------------------------------------------
 

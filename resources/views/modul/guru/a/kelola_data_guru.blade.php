@@ -109,6 +109,7 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="action-buttons">
+<<<<<<< HEAD
                                         @if ($data_akun->aktif)
                                             <a href="/gr/edgr/{{$value->id}}" class="btn-action btn-edit" title="Edit Data">
                                                 <i class="fa-solid fa-pen-to-square"></i>
@@ -121,6 +122,14 @@
                                                 <i class="fa-solid fa-user-xmark"></i>
                                             </button>
                                         @endif
+=======
+                                        <a href="/gr/edgr/{{$value->id}}" class="btn-action btn-edit" title="Edit Data">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </a>
+                                        <button class="btn-action btn-deactivate btn-trigger-modal" title="Nonaktifkan Guru">
+                                            <i class="fa-solid fa-user-xmark"></i>
+                                        </button>
+>>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
                                     </div>
                                 </td>
                             </tr>

@@ -33,7 +33,13 @@
                         <span class="badge-dot"></span>
                     </button>
                     <div class="user-profile">
+<<<<<<< HEAD
                         <img src="#" alt="Foto Profil">
+=======
+                        @if (session("role") == "g")
+                            <img src="{{ route('file.show',$data_guru->url_foto )}}" alt="Foto Profil">
+                        @endif
+>>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
                         <div class="user-info">
                             <span class="name">Ahmad Dahlan, S.Pd.</span>
                             <span class="role">Guru Tetap / Wali Kelas</span>

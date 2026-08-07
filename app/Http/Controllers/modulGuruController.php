@@ -13,8 +13,12 @@ use App\Models\cabang_guru;
 use App\Models\tanggal_merah;
 use App\Models\jenis_sekolah;
 use Illuminate\Support\Carbon;
+<<<<<<< HEAD
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+=======
+use App\Models\akun;
+>>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
 
 class modulGuruController extends Controller
 {
@@ -35,6 +39,7 @@ class modulGuruController extends Controller
                 $cek_sudah_absen = true;
                 $data_waktu = master_absen_guru::where("guru_id",session("id"))->whereNotIn("status_kehadiran",["a","i","s"])->where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->first();
 
+<<<<<<< HEAD
                 $jam_masuk = Carbon::parse($data_waktu->waktu_masuk)->translatedFormat("H:i:s");
                 $jam_keluar = Carbon::parse($data_waktu->waktu_keluar)->translatedFormat("H:i:s");
 
@@ -48,6 +53,16 @@ class modulGuruController extends Controller
                 "cek_sudah_absen" => $cek_sudah_absen,
                 "jam_masuk" => $jam_masuk,
                 "jam_keluar" => $jam_keluar
+=======
+                // punya guru
+                "total_kehadiran_bulanan" => $total_kehadiran_bulanan,
+                "jumlah_terlambat_menit" => $jumlah_terlambat_menit,
+                "sudah_absen" => $sudah_absen,
+                "waktu_masuk" => $waktu_masuk,
+                "waktu_keluar" => $waktu_keluar,
+                "data_lokasi" => $data_lokasi,
+                "data_guru" => $data_guru
+>>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
             ]);
         }
         return redirect("/reg");
@@ -155,11 +170,18 @@ class modulGuruController extends Controller
 
     function tambahGuru(Request $request){
         $request->validate([
+<<<<<<< HEAD
             "foto" => 'required|file|mimes:jpg,jpeg,png|max:2048'
         ]);
 
         $path_foto = $request->file("foto")->store('uploads');
 
+=======
+            "foto" => "required|file|mimes:jpg,jpeg,png:max:2048"
+        ]);
+
+        $path = $request->file("foto")->store("uploads");
+>>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
         guru::create([
             "nama" => $request->nama,
             "nig" => "$request->nig",
@@ -167,8 +189,13 @@ class modulGuruController extends Controller
             "tanggal_lahir" => Carbon::parse($request->tanggal_lahir)->translatedFormat("Y-m-d"),
             "agama" => "islam",
             "alamat" => $request->alamat,
+<<<<<<< HEAD
             "pendidikan_terakhir" => $request->pendidikan_terakhir,
             "url_foto" => $path_foto,
+=======
+            "pendidikan_terakhir" => "kosong",
+            "url_foto" => $path,
+>>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
             "guru_honor" => (int) $request->honor,
             "guru_tetap" => (int) $request->tetap,
             "koordinator_tahfiz" => (int) $request->koordinator,
@@ -208,10 +235,11 @@ class modulGuruController extends Controller
         return view("modul/guru/a/kelola_data_guru",[
             "data_guru" => $data
         ]);
-    }
+    }   
 
     function tampilan_editGuru($id){
         $data_guru = guru::find($id);
+<<<<<<< HEAD
         $data_cabang = cabang_guru::where("aktif",1)->get();
         $data_jenis_sekolah = jenis_sekolah::all();
         $data_akun = akun::find((int) $data_guru->user_id);
@@ -220,6 +248,15 @@ class modulGuruController extends Controller
             "data_guru" => $data_guru,
             "data_cabang" => $data_cabang,
             "data_jenis_sekolah" => $data_jenis_sekolah,
+=======
+        $data_cabang = cabang_guru::all();
+        $data_sekolah = jenis_sekolah::all();
+        $data_akun = akun::find((int) $data_guru->cabang_id);
+        return view("modul/guru/a/edit_guru",[
+            "data_guru" => $data_guru,
+            "data_cabang" => $data_cabang,
+            "data_sekolah" => $data_sekolah,
+>>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
             "data_akun" => $data_akun
         ]);
     }
