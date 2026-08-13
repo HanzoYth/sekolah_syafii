@@ -14,10 +14,20 @@ use Illuminate\Support\Facades\Redirect;
 class MasterAbsenController extends Controller
 {
 
+    function edit_AbsenGuru($id){
+        $data_guru = guru::where("id",$id)->first();
+        $data_cabang = cabang_guru::where("id",$data_guru->cabang_id)->first();
+        return view("modul/guru/a/edit_absen_guru",[
+            "data_guru" => $data_guru,
+            "data_cabang" => $data_cabang
+        ]);
+    }
+
+    
     function tampilan_kelolaAbsenGuru(){
-            $data_guru = guru::whereHas("getUser", function ($item) {
-                $item->where("aktif",1);
-            })->get();
+        $data_guru = guru::whereHas("getUser", function ($item) {
+            $item->where("aktif",1);
+        })->get();
         $data_absen_id_guru_hari_ini = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->pluck("guru_id")->toArray();
         return view("modul/guru/a/kelola_absen_guru",[
             "data_guru" => $data_guru,

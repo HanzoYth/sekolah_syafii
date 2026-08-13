@@ -73,6 +73,7 @@ Route::post("/gr/ckotp",[otpController::class,"cekOtp"]);
 Route::post('/gr/crtabs/{id}',[MasterAbsenController::class,"SettingAbsenGuru"]);
 Route::get('/gr/acabs',[MasterAbsenController::class,"addAbsenGuru"]);
 Route::get('/gr/klabs',[MasterAbsenController::class,"keluarAbsenGuru"]);
+Route::get('/gr/edklabs/{id}',[MasterAbsenController::class,"edit_AbsenGuru"]);
 
 //ini kelola guru
 Route::get('/gr/klgr',[modulGuruController::class,"tampilan_kelolaGuru"]);

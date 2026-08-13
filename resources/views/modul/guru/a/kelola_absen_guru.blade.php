@@ -87,7 +87,7 @@
                                         @if ($data_absen_guru->status_kehadiran == "h")
                                             <td class="text-center">
                                                 <div class="select-presence-wrapper">
-                                                    <a href="">
+                                                    <a href="/gr/edklabs/{{$value->id}}">
                                                         <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
                                                     </a>
                                                     <select class="select-presence status-hadir" name="status_{{$value->id}}">
@@ -101,7 +101,9 @@
                                         @elseif ($data_absen_guru->status_kehadiran == "s")
                                             <td class="text-center">
                                                 <div class="select-presence-wrapper">
-                                                    <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
+                                                    <a href="/gr/edklabs/{{$value->id}}">
+                                                        <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
+                                                    </a>
                                                     <select class="select-presence status-hadir" name="status_{{$value->id}}">
                                                         <option value="h">Hadir</option>
                                                         <option value="i">Izin</option>
@@ -113,7 +115,9 @@
                                         @elseif ($data_absen_guru->status_kehadiran == "i")
                                             <td class="text-center">
                                                 <div class="select-presence-wrapper">
-                                                    <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
+                                                    <a href="/gr/edklabs/{{$value->id}}">
+                                                        <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
+                                                    </a>
                                                     <select class="select-presence status-hadir" name="status_{{$value->id}}">
                                                         <option value="h">Hadir</option>
                                                         <option value="i" selected>Izin</option>
@@ -125,7 +129,9 @@
                                         @else 
                                             <td class="text-center">
                                                 <div class="select-presence-wrapper">
-                                                    <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
+                                                    <a href="/gr/edklabs/{{$value->id}}">
+                                                        <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
+                                                    </a>
                                                     <select class="select-presence status-hadir" name="status_{{$value->id}}">
                                                         <option value="h">Hadir</option>
                                                         <option value="i">Izin</option>
@@ -137,8 +143,10 @@
                                         @endif
                                     @else
                                         <td class="text-center">
-                                            <div class="select-presence-wrapper">
-                                                <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
+                                            <div class="select-presence-wrapper">                                                    
+                                                <a href="/gr/edklabs/{{$value->id}}">
+                                                        <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
+                                                    </a>
                                                 <select class="select-presence status-hadir" name="status_{{$value->id}}">
                                                     <option value="h">Hadir</option>
                                                     <option value="i">Izin</option>
