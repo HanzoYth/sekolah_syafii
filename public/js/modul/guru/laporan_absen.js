@@ -14,28 +14,73 @@ function filterData(nama,tanggal,status){
             }else{
                 item.classList.add("hide");
             }
-        }
-        if (nama != ""){
-            if (item.querySelector(".details h5").textContent.toLowerCase().includes(nama)){
-                item.classList.remove("hide");
-            }else{
-                item.classList.add("hide");
+        }else{
+            if (nama != ""){
+                if (tanggal != ""){
+                    if (item.querySelector(".details h5").textContent.toLowerCase().includes(nama) && item.querySelector(".tanggal").dataset.tanggal == tanggal){
+                        item.classList.remove("hide");
+                    }else{
+                        item.classList.add("hide")
+                    }
+                }else if (status != ""){
+                    if (item.querySelector(".details h5").textContent.toLowerCase().includes(nama) && item.querySelector(".status-tag").dataset.sts == status){
+                        item.classList.remove("hide");
+                    }else{
+                        item.classList.add("hide")
+                    }
+                }else{
+                    if (item.querySelector(".details h5").textContent.toLowerCase().includes(nama)){
+                        item.classList.remove("hide");
+                    }else{
+                        item.classList.add("hide")
+                    }                
+                }
+
+            }
+            if (tanggal != ""){
+                if (nama != ""){
+                    if (item.querySelector(".details h5").textContent.toLowerCase().includes(nama) && item.querySelector(".tanggal").dataset.tanggal == tanggal){
+                        item.classList.remove("hide");
+                    }else{
+                        item.classList.add("hide")
+                    }
+                }else if (status != ""){
+                    if (item.querySelector(".tanggal").dataset.tanggal == tanggal && item.querySelector(".status-tag").dataset.sts == status){
+                        item.classList.remove("hide");
+                    }else{
+                        item.classList.add("hide")
+                    }
+                }else{
+                    if (item.querySelector(".tanggal").dataset.tanggal == tanggal){
+                        item.classList.remove("hide");
+                    }else{
+                        item.classList.add("hide")
+                    }                
+                }
+            }
+            if (status != ""){
+                if (nama != ""){
+                    if (item.querySelector(".details h5").textContent.toLowerCase().includes(nama) && item.querySelector(".status-tag").dataset.sts == status){
+                        item.classList.remove("hide");
+                    }else{
+                        item.classList.add("hide")
+                    }
+                }else if (tanggal != ""){
+                    if (item.querySelector(".tanggal").dataset.tanggal == tanggal && item.querySelector(".status-tag").dataset.sts == status){
+                        item.classList.remove("hide");
+                    }else{
+                        item.classList.add("hide")
+                    }
+                }else{
+                    if (item.querySelector(".status-tag").dataset.sts == status){
+                        item.classList.remove("hide");
+                    }else{
+                        item.classList.add("hide")
+                    }                
+                }
             }
         }
-        if (tanggal != ""){
-            if (item.querySelector(".tanggal").dataset.tanggal === tanggal){
-                item.classList.remove("hide");
-            }else{
-                item.classList.add("hide");
-            }
-        }
-        if (status != ""){
-            if (item.querySelector(".status-tag").dataset.sts == status){
-                item.classList.remove("hide");
-            }else{
-                item.classList.add("hide");
-            }
-        }
+
     });
     return;
 }

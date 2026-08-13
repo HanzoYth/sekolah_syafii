@@ -15,14 +15,15 @@
 
     <!-- CONTAINER UTAMA -->
     <div class="form-guru-container">
-        
+
+        <x-warning />
         <!-- HEADER / TOPBAR -->
         <header class="topbar">
             <div class="topbar-title">
                 <h2>Tambah Data Guru</h2>
                 <p>Input data pribadi dan status penugasan pengampu</p>
             </div>
-            <a href="javascript:history.back()" class="btn-back">
+            <a href="/reg" class="btn-back">
                 <i class="fa-solid fa-arrow-left"></i> Kembali
             </a>
         </header>
@@ -33,12 +34,7 @@
                 <div class="card-header">
                     <h3><i class="fa-solid fa-user-plus"></i> Formulir Bio Data Guru</h3>
                 </div>
-<<<<<<< HEAD
 
-                <!-- Tambahkan enctype="multipart/form-data" untuk unggah file -->
-=======
-                <!-- DITAMBAHKAN enctype="multipart/form-data" UNTUK UPLOAD FILE -->
->>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
                 <form id="formGuru" action="/gr/tbgr" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-grid">
@@ -50,6 +46,7 @@
                                 <input type="text" id="namaGuru" name="nama" placeholder="Contoh: Ustadz Ahmad, S.Pd." required autocomplete="off">
                             </div>
                         </div>
+
                         <!-- 2. NOMOR NIG -->
                         <div class="form-group">
                             <label for="nomorNig">Nomor Induk Guru (NIG) <span class="required">*</span></label>
@@ -58,6 +55,7 @@
                                 <input type="text" id="nomorNig" name="nig" placeholder="Contoh: 19920812202401" required autocomplete="off">
                             </div>
                         </div>
+
                         <!-- 3. TEMPAT LAHIR -->
                         <div class="form-group">
                             <label for="tempatLahir">Tempat Lahir <span class="required">*</span></label>
@@ -66,6 +64,7 @@
                                 <input type="text" id="tempatLahir" name="tempat_lahir" placeholder="Contoh: Jakarta" required autocomplete="off">
                             </div>
                         </div>
+
                         <!-- 4. TANGGAL LAHIR -->
                         <div class="form-group">
                             <label for="tanggalLahir">Tanggal Lahir <span class="required">*</span></label>
@@ -74,6 +73,7 @@
                                 <input type="date" id="tanggalLahir" name="tanggal_lahir" required>
                             </div>
                         </div>
+
                         <!-- 5. PENDIDIKAN TERAKHIR -->
                         <div class="form-group">
                             <label for="pendidikanTerakhir">Pendidikan Terakhir <span class="required">*</span></label>
@@ -89,6 +89,7 @@
                                 </select>
                             </div>
                         </div>
+
                         <!-- CABANG -->
                         <div class="form-group">
                             <label for="cabangSekolah">Cabang Sekolah <span class="required">*</span></label>
@@ -102,10 +103,7 @@
                                 </select>
                             </div>
                         </div>
-<<<<<<< HEAD
 
-=======
->>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
                         <!-- JENIS SEKOLAH -->
                         <div class="form-group">
                             <label for="jenisSekolah">Jenis Sekolah <span class="required">*</span></label>
@@ -119,24 +117,14 @@
                                 </select>
                             </div>
                         </div>
-<<<<<<< HEAD
 
-                        <!-- 6. UPLOAD FOTO & PREVIEW (BAGIAN DIBERBAIKI) -->
+                        <!-- 6. UPLOAD FOTO & PREVIEW -->
                         <div class="form-group full-width">
                             <label for="inputFoto">Foto Profil Guru</label>
-=======
-                        <!-- 6. UPLOAD FOTO & PREVIEW (DIUBAH MENJADI FILE INPUT) -->
-                        <div class="form-group full-width">
-                            <label for="inputFoto">Foto Profil</label>
->>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
                             <div class="photo-preview-container">
-                                <div class="input-wrapper file-input-wrapper" style="flex: 1;">
+                                <div class="input-wrapper file-input-wrapper">
                                     <i class="fa-solid fa-image"></i>
-<<<<<<< HEAD
                                     <input type="file" id="inputFoto" name="foto" accept="image/*">
-=======
-                                    <input type="file" id="inputFoto" name="foto">
->>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
                                 </div>
                                 <div class="avatar-preview" id="avatarPreview">
                                     <i class="fa-solid fa-user"></i>
@@ -171,6 +159,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <!-- 9. CHECKBOX KELOMPOK 2 (PERAN TAHFIZ) -->
                         <div class="form-group full-width">
                             <div class="checkbox-section">
@@ -203,9 +192,10 @@
             </div>
         </section>
     </div>
+
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Fungsi Helper Mutual Exclusion (Hanya 1 Pilihan yang Aktif)
+        // Helper Mutual Exclusion
         function makeExclusive(selector) {
             const list = document.querySelectorAll(selector);
             list.forEach(checkbox => {
@@ -216,22 +206,16 @@
                             if (other !== this) {
                                 other.checked = false;
                                 other.value = 0;
-<<<<<<< HEAD
-                            };
-=======
                             }
->>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
                         });
                     }
                 });
             });
         }
 
-        // Penerapan Mutual Exclusion untuk masing-masing kelompok
         makeExclusive('.chk-kepegawaian');
         makeExclusive('.chk-tahfiz');
 
-<<<<<<< HEAD
         // Logic Preview Upload Foto
         const inputFoto = document.getElementById('inputFoto');
         const avatarPreview = document.getElementById('avatarPreview');
@@ -241,19 +225,7 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Preview Foto" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-=======
-        // Handling Preview Gambar & Reset
-        const inputFoto = document.getElementById('inputFoto');
-        const avatarPreview = document.getElementById('avatarPreview');
-
-        inputFoto.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    avatarPreview.innerHTML = `<img src="${event.target.result}" alt="Preview Foto">`;
->>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
+                    avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Preview Foto">`;
                 };
                 reader.readAsDataURL(file);
             }

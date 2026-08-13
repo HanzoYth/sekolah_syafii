@@ -9,30 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{asset('css/modul/guru/laporan_absensi.css')}}">
-    
-    <style>
-        /* Style pembantu untuk elemen tersembunyi */
-        .d-none {
-            display: none !important;
-        }
-        
-        .holiday-banner {
-            background-color: #fee2e2;
-            border: 1px solid #fca5a5;
-            color: #991b1b;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.95rem;
-        }
-        
-        .holiday-banner i {
-            font-size: 1.25rem;
-        }
-    </style>
 </head>
 <body>
 
@@ -92,7 +68,7 @@
                                 <label for="status"><i class="fa-solid fa-list-check"></i> Status Kehadiran</label>
                                 <select id="status" name="status" class="form-control">
                                     <option value="">-- Semua Status --</option>
-                                    <option value="h">Hadir (Tepat Waktu)</option>
+                                    <option value="h">Hadir</option>
                                     <option value="i">Izin</option>
                                     <option value="s">Sakit</option>
                                     <option value="a">Tanpa Keterangan</option>
@@ -116,7 +92,7 @@
                 <div id="holiday-alert" class="holiday-banner {{$cek ? '' : 'd-none'}}" role="alert">
                     <i class="fa-solid fa-calendar-xmark"></i>
                     <div>
-                        <strong>Informasi:</strong> Hari ini / Tanggal yang dipilih merupakan <span id="holiday-title">Tanggal Merah</span>.
+                        <strong>Informasi:</strong> Hari ini merupakan <span id="holiday-title">Tanggal Merah</span>.
                     </div>
                 </div>
 

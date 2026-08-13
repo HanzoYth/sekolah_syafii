@@ -15,6 +15,7 @@ use App\Http\Controllers\tanggalMerahController;
 use App\Http\Controllers\modulTahfidzController;
 use App\Http\Controllers\dataWalasController;
 use App\Http\Controllers\kelasHalaqahController;
+use App\Http\Controllers\file_surat;
 use Illuminate\Support\Facades\Storage;
 
 // ini route untuk halaman modul dan welcome
@@ -41,6 +42,12 @@ Route::get('/gr/lpabs',[modulGuruController::class,"tampilan_laporanAbsen"]);
 Route::get('/gr/frgr',[modulGuruController::class,"tampilan_formulirGuru"]);
 Route::get('/gr/cb',[cabangGuruController::class,"tampilanCabangGuru"]);
 Route::post('/gr/tbgr',[modulGuruController::class,"tambahGuru"]);
+
+//kelola gaji guru
+Route::get('/gr/klgjgr',[modulGuruController::class,"tampilan_kelolaGajiGuru"]);         
+Route::get('/gr/edgjgr/{id}',[modulGuruController::class,"tampilan_editGajiGuru"]);        
+Route::post('/gr/spgjgr',[modulGuruController::class,"simpan_PerubahanGajiGuru"]);        
+Route::get('/gr/pbgjgr/{id}',[modulGuruController::class,"publish_GajiGuru"]);        
 
 //kelola absen guru admin
 Route::get('/gr/klab',[MasterAbsenController::class,"tampilan_kelolaAbsenGuru"]);
@@ -69,24 +76,21 @@ Route::get('/gr/klabs',[MasterAbsenController::class,"keluarAbsenGuru"]);
 //ini kelola guru
 Route::get('/gr/klgr',[modulGuruController::class,"tampilan_kelolaGuru"]);
 Route::get('/gr/edgr/{id}',[modulGuruController::class,"tampilan_editGuru"]);
-<<<<<<< HEAD
 Route::post('/gr/updgr',[modulGuruController::class,"update_dataGuru"]);
-=======
->>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
 
 //ini admin
 Route::get('/ad/frad',[adminController::class,"tampilan_formulirAdmin"]);
 Route::post('/ad/tbad',[adminController::class,"tambahDataAdmin"]);
 
-//ini router file
-Route::get('file/{path}',function ($path) {
-    if (!Storage::exists($path)){
-        abort(404);
-    }
-    return Storage::response($path);
-})->where('path','.*')->name('file.show');
-
 //----------------------------------------------------------------------------------
+
+
+//bagiuan surat
+
+Route::get("/slpgj/{id}",[file_surat::class,"cetak_SuratSlipGaji"])->name("Slipgaji.guru");
+// Route::get("/slip",[file_surat::class,"cetak_SuratSlipGajiTes"]);
+
+//-------------------------------------------------------------------------------------
 
 
 
@@ -102,6 +106,8 @@ Route::get('/sk/ds',[dataSiswaController::class,"data_siswa"]);
 Route::get('/sk/dw',[dataWalasController::class,"data_walas"]);
 
 
+
+// Route::get('/tes',[file_surat::class,"testingKirim"]);
 
 
 Route::get('/file/{path}', function ($path) {

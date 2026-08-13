@@ -147,6 +147,7 @@ body {
     position: relative;
     display: flex;
     align-items: center;
+    width: 100%;
 }
 
 .input-wrapper i {
@@ -156,6 +157,7 @@ body {
     font-size: 1rem;
     pointer-events: none;
     transition: var(--transition);
+    z-index: 2;
 }
 
 .input-wrapper input[type="text"],
@@ -183,9 +185,13 @@ body {
 }
 
 /* Styling Khusus Input File & File Selector Button */
+.file-input-wrapper {
+    flex: 1;
+}
+
 .input-wrapper input[type="file"] {
-    padding-top: 9px;
-    padding-bottom: 9px;
+    padding-top: 8px;
+    padding-bottom: 8px;
     cursor: pointer;
 }
 
@@ -193,7 +199,7 @@ body {
     background-color: #f1f5f9;
     color: var(--text-main);
     border: 1px solid var(--border-color);
-    padding: 4px 12px;
+    padding: 5px 12px;
     border-radius: 6px;
     font-family: inherit;
     font-size: 0.8rem;

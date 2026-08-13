@@ -249,7 +249,25 @@ body {
 
 /* Custom Select Absensi Status */
 .select-presence-wrapper {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.select-rule-icon {
+    font-size: 0.95rem;
+    color: var(--cg-primary-light);
+    background-color: rgba(15, 56, 34, 0.08);
+    padding: 8px;
+    border-radius: 8px;
+    transition: var(--cg-transition);
+    cursor: pointer;
+}
+
+.select-presence-wrapper:hover .select-rule-icon {
+    color: var(--cg-accent);
+    background-color: rgba(212, 175, 55, 0.15);
+    transform: scale(1.08);
 }
 
 .select-presence {
@@ -337,7 +355,7 @@ body {
     padding: 4px 12px;
     border-radius: 20px;
     border: 1px solid rgba(99, 102, 241, 0.2);
-} /* <--- PERBAIKAN: Kurung tutup ini sebelumnya hilang */
+}
 
 .date-badge i {
     font-size: 0.8rem;

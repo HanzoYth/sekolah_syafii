@@ -87,6 +87,9 @@
                                         @if ($data_absen_guru->status_kehadiran == "h")
                                             <td class="text-center">
                                                 <div class="select-presence-wrapper">
+                                                    <a href="">
+                                                        <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
+                                                    </a>
                                                     <select class="select-presence status-hadir" name="status_{{$value->id}}">
                                                         <option value="h" selected>Hadir</option>
                                                         <option value="i">Izin</option>
@@ -98,6 +101,7 @@
                                         @elseif ($data_absen_guru->status_kehadiran == "s")
                                             <td class="text-center">
                                                 <div class="select-presence-wrapper">
+                                                    <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
                                                     <select class="select-presence status-hadir" name="status_{{$value->id}}">
                                                         <option value="h">Hadir</option>
                                                         <option value="i">Izin</option>
@@ -109,6 +113,7 @@
                                         @elseif ($data_absen_guru->status_kehadiran == "i")
                                             <td class="text-center">
                                                 <div class="select-presence-wrapper">
+                                                    <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
                                                     <select class="select-presence status-hadir" name="status_{{$value->id}}">
                                                         <option value="h">Hadir</option>
                                                         <option value="i" selected>Izin</option>
@@ -120,6 +125,7 @@
                                         @else 
                                             <td class="text-center">
                                                 <div class="select-presence-wrapper">
+                                                    <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
                                                     <select class="select-presence status-hadir" name="status_{{$value->id}}">
                                                         <option value="h">Hadir</option>
                                                         <option value="i">Izin</option>
@@ -132,6 +138,7 @@
                                     @else
                                         <td class="text-center">
                                             <div class="select-presence-wrapper">
+                                                <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
                                                 <select class="select-presence status-hadir" name="status_{{$value->id}}">
                                                     <option value="h">Hadir</option>
                                                     <option value="i">Izin</option>
@@ -225,4 +232,4 @@
 </script>
 
 </body>
-</html> 
+</html>

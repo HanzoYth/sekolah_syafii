@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Data Guru - Sekolah Al-Qur'an Imam Syafi'i</title>
+    <title>Tambah Data Admin - Sekolah Al-Qur'an Imam Syafi'i</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">  
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- CSS Form Guru -->
+    <!-- CSS Form Admin -->
     <link rel="stylesheet" href="{{ asset('css/modul/guru/formulir_admin.css') }}">
 </head>
 <body>
@@ -19,10 +19,10 @@
         <!-- HEADER / TOPBAR -->
         <header class="topbar">
             <div class="topbar-title">
-                <h2>Tambah Data admin</h2>
+                <h2>Tambah Data Admin</h2>
                 <p>Input data pribadi admin</p>
             </div>
-            <a href="javascript:history.back()" class="btn-back">
+            <a href="/reg" class="btn-back">
                 <i class="fa-solid fa-arrow-left"></i> Kembali
             </a>
         </header>
@@ -31,10 +31,9 @@
         <section class="content-body">
             <div class="card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-user-plus"></i> Formulir Bio Data admin</h3>
+                    <h3><i class="fa-solid fa-user-plus"></i> Formulir Bio Data Admin</h3>
                 </div>
 
-                <!-- Tambahkan enctype="multipart/form-data" untuk unggah file -->
                 <form id="formGuru" action="/ad/tbad" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-grid">
@@ -75,7 +74,7 @@
                             </div>
                         </div>
 
-                        <!-- 6. PENDIDIKAN TERAKHIR -->
+                        <!-- 5. PENDIDIKAN TERAKHIR -->
                         <div class="form-group">
                             <label for="pendidikanTerakhir">Pendidikan Terakhir <span class="required">*</span></label>
                             <div class="input-wrapper">
@@ -91,25 +90,25 @@
                             </div>
                         </div>
 
-                        <!-- 7. UPLOAD FOTO & PREVIEW (DIBERBAIKI) -->
+                        <!-- 6. UPLOAD FOTO & PREVIEW -->
                         <div class="form-group full-width">
                             <label for="inputFoto">Foto Profil Admin</label>
                             <div class="photo-preview-container">
-                                <div class="input-wrapper" style="flex: 1;">
-                                    <i class="fa-solid fa-image"></i>
-                                    <input type="file" id="inputFoto" name="foto" accept="image/*">
-                                </div>
                                 <div class="avatar-preview" id="avatarPreview">
                                     <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-upload"></i>
+                                    <input type="file" id="inputFoto" name="foto" accept="image/*">
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 8. ALAMAT LENGKAP -->
+                        <!-- 7. ALAMAT LENGKAP -->
                         <div class="form-group full-width">
                             <label for="alamat">Alamat Lengkap <span class="required">*</span></label>
                             <div class="input-wrapper">
-                                <i class="fa-solid fa-map-location-dot" style="top: 16px;"></i>
+                                <i class="fa-solid fa-map-location-dot"></i>
                                 <textarea id="alamat" name="alamat" placeholder="Masukkan alamat domisili lengkap..." required></textarea>
                             </div>
                         </div>
@@ -136,13 +135,13 @@
         const avatarPreview = document.getElementById('avatarPreview');
         const defaultAvatarHtml = '<i class="fa-solid fa-user"></i>';
 
-        // Live Preview Foto File Lokal
+        // Live Preview Foto
         inputFoto.addEventListener('change', function() {
             const file = this.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Preview Foto" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                    avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Preview Foto">`;
                 };
                 reader.readAsDataURL(file);
             } else {

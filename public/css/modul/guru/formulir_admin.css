@@ -141,12 +141,13 @@ body {
 }
 
 /* ==========================================================================
-   INPUT WRAPPER & INPUT ELEMENTS
+   INPUT WRAPPER & INPUT ELEMENTS (DIBERBAIKI)
    ========================================================================== */
 .input-wrapper {
     position: relative;
     display: flex;
     align-items: center;
+    width: 100%;
 }
 
 .input-wrapper i {
@@ -156,11 +157,13 @@ body {
     font-size: 1rem;
     pointer-events: none;
     transition: var(--transition);
+    z-index: 1;
 }
 
 .input-wrapper input[type="text"],
 .input-wrapper input[type="url"],
 .input-wrapper input[type="date"],
+.input-wrapper input[type="file"],
 .input-wrapper select,
 .input-wrapper textarea {
     width: 100%;
@@ -175,10 +178,15 @@ body {
     transition: var(--transition);
 }
 
+/* Penyesuaian ikon untuk Textarea */
 .input-wrapper textarea {
     min-height: 100px;
     resize: vertical;
     padding-top: 12px;
+}
+
+.input-wrapper:has(textarea) i {
+    top: 14px;
 }
 
 /* Hover & Focus state */
@@ -197,9 +205,8 @@ body {
     box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
 }
 
-.input-wrapper input:focus + i,
-.input-wrapper select:focus + i,
-.input-wrapper textarea:focus + i {
+/* Mengubah warna ikon saat input di-focus menggunakan :focus-within */
+.input-wrapper:focus-within i {
     color: var(--primary-color);
 }
 
@@ -215,18 +222,48 @@ body {
     background-size: 16px;
 }
 
+/* Styling khusus untuk Input File Upload */
+.input-wrapper input[type="file"] {
+    padding: 8px 12px 8px 42px;
+    cursor: pointer;
+}
+
+.input-wrapper input[type="file"]::file-selector-button {
+    background-color: #f1f5f9;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-right: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.input-wrapper input[type="file"]::file-selector-button:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
 /* ==========================================================================
-   PHOTO PREVIEW CONTAINER
+   PHOTO PREVIEW CONTAINER (DIBERBAIKI)
    ========================================================================== */
 .photo-preview-container {
     display: flex;
     align-items: center;
     gap: 16px;
+    width: 100%;
+}
+
+.photo-preview-container .input-wrapper {
+    flex: 1;
 }
 
 .avatar-preview {
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     background-color: #f1f5f9;
     border: 2px solid var(--border-color);
@@ -235,10 +272,12 @@ body {
     justify-content: center;
     overflow: hidden;
     flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
 }
 
 .avatar-preview i {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     color: var(--text-muted);
 }
 
@@ -320,6 +359,15 @@ body {
 
     .form-group.full-width {
         grid-column: span 1;
+    }
+
+    .photo-preview-container {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+    }
+
+    .avatar-preview {
+        align-self: center;
     }
 
     .form-actions {

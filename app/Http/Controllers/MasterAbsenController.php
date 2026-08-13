@@ -15,7 +15,9 @@ class MasterAbsenController extends Controller
 {
 
     function tampilan_kelolaAbsenGuru(){
-        $data_guru = guru::all();
+            $data_guru = guru::whereHas("getUser", function ($item) {
+                $item->where("aktif",1);
+            })->get();
         $data_absen_id_guru_hari_ini = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->pluck("guru_id")->toArray();
         return view("modul/guru/a/kelola_absen_guru",[
             "data_guru" => $data_guru,
@@ -70,19 +72,22 @@ class MasterAbsenController extends Controller
     }
 
     function addAbsenGuru(){
+        Carbon::setLocale("id");
         $cek_data_guru = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",session("id"))->exists();
         $data_guru = guru::find((int) session("id"));
-        if ($cek_data_guru){
-            return redirect("/gr/otp");
-        }
-        Carbon::setLocale("id");
         $hari = Carbon::now()->translatedFormat("l");
         $waktu_absen = Carbon::now();
         $waktu_jadwal = Carbon::parse(master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->first()->waktu_masuk);
         $terlambat = $waktu_jadwal->diffInMinutes($waktu_absen);
-        
         if (!$waktu_absen->greaterThan($waktu_jadwal)){
             $terlambat = 0;
+        }
+        if ($cek_data_guru){
+            $data = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",session("id"))->first();
+            $data->waktu_masuk = Carbon::now()->translatedFormat("H:i:s");
+            $data->terlambat_menit = $terlambat;
+            $data->save();
+            return redirect("/gr/otp");
         }
 
         master_absen_guru::create([
@@ -133,7 +138,7 @@ class MasterAbsenController extends Controller
 
 
     function keluarAbsenGuru(){
-        $data = master_absen_guru::where("guru_id",session("id"))->where("tgl_masuk",now()->format("Y-m-d"))->first();
+        $data = master_absen_guru::where("waktu_masuk","!=",Carbon::parse("00:00:00"))->where("waktu_keluar",Carbon::parse("00:00:00"))->whereNotIn("status_kehadiran",["a","s","i"])->where("guru_id",session("id"))->first();
 
         $waktu_sekarang = Carbon::now();
 

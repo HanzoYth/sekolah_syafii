@@ -133,14 +133,21 @@ class akunController extends Controller
         $identitas = $akun->identitas()->first()->jenis_role; 
         $user = null;
 
+        session()->put("role",$identitas);
+        session()->put("hasLogin",true);
+        session()->put("id_akun",$akun->id);
         if ($identitas == "g"){
+            if (!guru::where("user_id",$akun->id)->exists()){
+                return redirect("/gr/frgr");
+            }
             $user = guru::where("user_id",$akun->id)->first();
-        }else if ($identitas == "a"){
+        }else if ($identitas == "a"){   
+            if (!admin::where("user_id",$akun->id)->exists()){
+                return redirect("/ad/frad");
+            }
             $user = admin::where("user_id",$akun->id)->first();
         }
         
-        session()->put("role",$identitas);
-        session()->put("hasLogin",true);
         session()->put("id",$user->id);
         session()->put("nama",$user->nama);
 

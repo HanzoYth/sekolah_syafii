@@ -1,0 +1,202 @@
+* {
+    box-sizing: border-box;
+    font-family: "Times New Roman", Times, serif;
+}
+
+body {
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.paper {
+    background-color: #fff;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm 15mm;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    position: relative;
+}
+
+/* Kop Surat */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.logo {
+    width: 75px;
+    height: auto;
+}
+
+.header-text {
+    flex-grow: 1;
+    padding: 0 10px;
+}
+
+.header-text h3 {
+    margin: 0;
+    font-size: 16pt;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.header-text h2 {
+    margin: 2px 0;
+    font-size: 15pt;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.header-text h1 {
+    margin: 0;
+    font-size: 17pt;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.header-address {
+    margin-top: 5px;
+    font-style: italic;
+    font-size: 10pt;
+}
+
+.double-line {
+    border: none;
+    border-top: 3px solid #000;
+    border-bottom: 1px solid #000;
+    height: 3px;
+    margin: 5px 0 25px 0;
+}
+
+/* Judul Surat */
+.title-container {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.title {
+    font-size: 13pt;
+    font-weight: bold;
+    text-decoration: underline;
+    margin: 0;
+}
+
+.nomor {
+    font-size: 11pt;
+    margin-top: 3px;
+}
+
+/* Biodata */
+.section-label {
+    font-size: 11pt;
+    margin-bottom: 10px;
+}
+
+.bio-table {
+    width: 100%;
+    margin-left: 40px;
+    margin-bottom: 15px;
+    border-collapse: collapse;
+}
+
+.bio-table td {
+    padding: 3px 0;
+    font-size: 11pt;
+    vertical-align: top;
+}
+
+.bio-label {
+    width: 100px;
+}
+
+.bio-colon {
+    width: 20px;
+}
+
+/* Tabel Rincian Gaji & Potongan */
+.income-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11pt;
+    margin-bottom: 10px;
+}
+
+.income-table td {
+    padding: 2px 0;
+    vertical-align: top;
+}
+
+.col-roman {
+    width: 30px;
+}
+
+.col-num {
+    width: 35px;
+    text-align: center;
+}
+
+.col-colon {
+    width: 20px;
+    text-align: center;
+}
+
+.col-currency {
+    width: 40px;
+    text-align: left;
+}
+
+.col-amount {
+    width: 100px;
+    text-align: right;
+    padding-right: 80px !important;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.text-right-padded {
+    text-align: right;
+    padding-right: 15px;
+}
+
+.spacer-row {
+    height: 10px;
+}
+
+/* Tanda Tangan */
+.signature-container {
+    margin-top: 30px;
+    float: right;
+    text-align: center;
+    width: 250px;
+    font-size: 11pt;
+}
+
+.signature-space {
+    height: 70px;
+}
+
+.signature-name {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* Pengaturan Cetak */
+@media print {
+    body {
+        background: none;
+        padding: 0;
+    }
+
+    .paper {
+        box-shadow: none;
+        padding: 10mm 15mm;
+        width: 100%;
+    }
+}

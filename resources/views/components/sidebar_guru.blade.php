@@ -55,12 +55,6 @@
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="#riwayat">
-                                <i class="fa-solid fa-timeline"></i>
-                                <span>Riwayat Kepegawaian</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
                             <a href="#pengumuman">
                                 <i class="fa-solid fa-bullhorn"></i>
                                 <span>Pengumuman</span>
@@ -110,7 +104,7 @@
                                         </a>
                                     </li>
                                     <li class="submenu-item">
-                                        <a href="#gaji">
+                                        <a href="/gr/klgjgr">
                                             <i class="fa-solid fa-money-bill-wave"></i>
                                             <span>Gaji</span>
                                         </a>

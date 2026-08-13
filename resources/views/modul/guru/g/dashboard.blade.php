@@ -25,7 +25,7 @@
             <header class="topbar">
                 <div class="page-title">
                     <h2>Dashboard Utama</h2>
-                    <p>Selamat datang kembali, <strong>Ahmad Dahlan, S.Pd.</strong></p>
+                    <p>Selamat datang kembali, <strong>{{$data_guru->nama}}</strong></p>
                 </div>
                 <div class="topbar-actions">
                     <button class="icon-btn" title="Notifikasi">
@@ -33,16 +33,10 @@
                         <span class="badge-dot"></span>
                     </button>
                     <div class="user-profile">
-<<<<<<< HEAD
-                        <img src="#" alt="Foto Profil">
-=======
-                        @if (session("role") == "g")
-                            <img src="{{ route('file.show',$data_guru->url_foto )}}" alt="Foto Profil">
-                        @endif
->>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
+                        <img src="{{ route('file.show',$data_guru->url_foto)}}" alt="Foto Profil">
                         <div class="user-info">
-                            <span class="name">Ahmad Dahlan, S.Pd.</span>
-                            <span class="role">Guru Tetap / Wali Kelas</span>
+                            <span class="name">{{$data_guru->nama}}</span>
+                            <span class="role">{{$data_guru->guru_tetap ? "guru tetap" : "guru honor"}}</span>
                         </div>
                     </div>
                 </div>
@@ -173,7 +167,7 @@
 
                             <!-- Element untuk Menampilkan Pesan Radius Geolocation -->
                             <div id="location-status" style="margin-top: 15px; font-size: 0.9rem;"></div>
-                            @if($cek_sudah_absen)
+                            @if($cek_sudah_absen && $cek_sudah_keluar && !$cek_sudah_absen_oleh_admin)
                                 <div class="action-buttons" style="margin-top: 15px;">
                                     <button class="btn btn-primary" id="btn_keluar" data-status="boleh">
                                         <i class="fa-solid fa-right-from-bracket"></i> Absen Pulang

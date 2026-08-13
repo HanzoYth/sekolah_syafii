@@ -16,7 +16,7 @@
         
         <!-- HEADER & TOMBOL KEMBALI -->
         <div class="edit-header">
-            <a href="kelola-guru.html" class="btn-back">
+            <a href="/gr/klgr" class="btn-back">
                 <i class="fa-solid fa-arrow-left"></i> Kembali
             </a>
             <div class="header-title">
@@ -29,7 +29,7 @@
         <div class="edit-card">
             <form action="/gr/updgr" method="POST" enctype="multipart/form-data">
                 @csrf
-                <input type="hidden" value="{{$id_guru}}" name="id_guru">  
+                <input type="hidden" value="{{$data_guru->id}}" name="id_guru" id="id_guru">  
                 
                 <!-- SECTION 1: FOTO PROFIL & FOTO UPLOAD -->
                 <div class="form-section">
@@ -38,17 +38,7 @@
                     </div>
                     <div class="photo-upload-wrapper">
                         <!-- Tampilan Foto yang Ada Saat Ini -->
-<<<<<<< HEAD
                         <img src="{{route('file.show', $data_guru->url_foto)}}" alt="Foto Profil Guru" class="photo-preview" id="previewFoto" required>
-=======
-                        <img src="{{ route('file.show',$data_guru->url_foto)}}" alt="Foto Profil Guru" class="photo-preview" id="previewFoto">
->>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
-                        
-                        <div class="photo-input-group">
-                            <label for="url_foto">Pilih Foto Baru</label>
-                            <input type="file" id="url_foto" name="url_foto" class="file-input" accept="image/*" onchange="previewImage(event)">
-                            <small class="text-muted">Format: JPG, PNG, atau WEBP (Maksimal 2MB)</small>
-                        </div>
                     </div>
                 </div>
 
@@ -80,11 +70,7 @@
                         <!-- Tanggal Lahir -->
                         <div class="form-group">
                             <label for="tanggal_lahir">Tanggal Lahir</label>
-<<<<<<< HEAD
                             <input type="date" id="tanggal_lahir" name="tanggal_lahir" class="form-control" value="{{$data_guru->tanggal_lahir}}" required>
-=======
-                            <input type="date" id="tanggal_lahir" name="tanggal_lahir" class="form-control" value="{{$data_guru->tgl_lahir}}" required>
->>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
                         </div>
 
                         <!-- Agama -->
@@ -97,21 +83,12 @@
                         <div class="form-group">
                             <label for="pendidikan_terakhir">Pendidikan Terakhir</label>
                             <select id="pendidikan_terakhir" name="pendidikan_terakhir" class="form-control" required>
-<<<<<<< HEAD
                                 <option value="" disabled selected>-- Pilih Pendidikan --</option>
                                 <option value="smp" {{$data_guru->pendidikan_terakhir == 'smp' ? 'selected' : ""}}>SMP / Sederajat</option>
                                 <option value="sma" {{$data_guru->pendidikan_terakhir == 'sma' ? 'selected' : ""}}>SMA / MA / Sederajat</option>
                                 <option value="s1" {{$data_guru->pendidikan_terakhir == 's1' ? 'selected' : ""}}>S1 (Sarjana)</option>
                                 <option value="s2" {{$data_guru->pendidikan_terakhir == 's2' ? 'selected' : ""}}>S2 (Magister)</option>
                                 <option value="s3" {{$data_guru->pendidikan_terakhir == 's3' ? 'selected' : ""}}>S3 (Doktor)</option>
-=======
-                                    <option value="" disabled selected>-- Pilih Pendidikan --</option>
-                                    <option value="smp">SMP / Sederajat</option>
-                                    <option value="sma">SMA / MA / Sederajat</option>
-                                    <option value="s1">S1 (Sarjana)</option>
-                                    <option value="s2">S2 (Magister)</option>
-                                    <option value="s3">S3 (Doktor)</option>
->>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
                             </select>
                         </div>
 
@@ -130,7 +107,6 @@
                     </div>
 
                     <div class="checkbox-grid">
-<<<<<<< HEAD
                         <label class="checkbox-card">
                             <input type="checkbox" name="guru_tetap" value="0" {{$data_guru->guru_tetap ? 'checked' : ""}}>
                             <span>Guru Tetap</span>
@@ -155,67 +131,21 @@
                             <input type="checkbox" name="kepala_sekolah" value="0" {{$data_guru->kepala_sekolah ? 'checked' : ""}}>
                             <span>Kepala Sekolah</span>
                         </label>
-=======
-                        @if ($data_guru->guru_tetap)
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="guru_tetap" value="1" checked>
-                                <span>Guru Tetap</span>
-                            </label>
-                        @else
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="guru_tetap" value="0">
-                                <span>Guru Tetap</span>
-                            </label> 
-                        @endif
+                    </div>
 
-                        @if ($data_guru->guru_honor)
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="guru_honor" value="1" checked>
-                                <span>Guru Honor</span>
-                            </label>
-                        @else
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="guru_honor" value="0">
-                                <span>Guru Honor</span>
-                            </label> 
-                        @endif
-
-                        @if ($data_guru->pengampu_tahfiz)
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="pengampu_tahfiz" value="1" checked>
-                                <span>Pengampu Tahfiz</span>
-                            </label>
-                        @else
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="pengampu_tahfiz" value="0">
-                                <span>Pengampu Tahfiz</span>
-                            </label>
-                        @endif
-                        
-                        @if ($data_guru->koordinator_tahfiz)
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="koordinator_tahfiz" value="1" checked>
-                                <span>Koordinator Tahfiz</span>
-                            </label>
-                        @else
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="koordinator_tahfiz" value="0">
-                                <span>Koordinator Tahfiz</span>
-                            </label>
-                        @endif
-
-                        @if ($data_guru->kepala_sekolah)
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="kepala_sekolah" value="1" checked>
-                                <span>Kepala Sekolah</span>
-                            </label>
-                        @else
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="koordinator_tahfiz" value="0">
-                                <span>Kepala Sekolah</span>
-                            </label>
-                        @endif
->>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
+                    <!-- PENAMBAHAN INPUT TUTUP BUKU -->
+                    <div class="form-grid" style="margin-top: 20px;">
+                        <div class="form-group">
+                            <label for="tutup_buku">Tanggal Tutup Buku Guru</label>
+                            <select id="tutup_buku" name="tutup_buku" class="form-control" required>
+                                <option value="" disabled>-- Pilih Tanggal (1-31) --</option>
+                                @for ($i = 1; $i <= 31; $i++)
+                                    <option value="{{ $i }}" {{ $data_guru->tutup_buku == $i ? 'selected' : '' }}>
+                                        Tanggal {{ $i }}
+                                    </option>
+                                @endfor
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -232,11 +162,7 @@
                             <select id="cabang_id" name="cabang_id" class="form-control" required>
                                 <option value="">-- Pilih Cabang --</option>
                                 @foreach ($data_cabang as $cb)
-<<<<<<< HEAD
                                     <option value="{{$cb->id}}" {{$cb->id == $data_guru->cabang_id ? 'selected' : ''}}>{{$cb->nama_cabang}}</option>
-=======
-                                    <option value="{{$cb->id}}" selected>{{$cb->nama_cabang}}</option>
->>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
                                 @endforeach
                             </select>
                         </div>
@@ -246,13 +172,8 @@
                             <label for="sekolah_id">Unit Sekolah</label>
                             <select id="sekolah_id" name="sekolah_id" class="form-control" required>
                                 <option value="">-- Pilih Sekolah --</option>
-<<<<<<< HEAD
                                 @foreach ($data_jenis_sekolah as $djs)
                                     <option value="{{$djs->id}}" {{$djs->id == $data_guru->sekolah_id ? 'selected' : ''}}>{{$djs->jenis}}</option>
-=======
-                                @foreach ($data_sekolah as $ds)
-                                    <option value="{{$ds->id}}" selected>{{$ds->jenis}}</option>
->>>>>>> e141cbf3358a111b5d7a626006416436fa7e3d20
                                 @endforeach
                             </select>
                         </div>
@@ -297,6 +218,7 @@
         </div>
 
     </div>
+    <x-warning />
 
     <!-- Script Sederhana Preview Foto -->
     <script>
@@ -308,6 +230,7 @@
             }
             reader.readAsDataURL(event.target.files[0]);
         }
+        console.log(document.getElementById("id_guru").value)
 
         //reset
         document.querySelectorAll(".checkbox-card").forEach(item => {

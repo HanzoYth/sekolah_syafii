@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -13,7 +12,9 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
-
+    'fonnte' => [
+        'token' => env('FONNTE_TOKEN'),
+    ],
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
