@@ -13,7 +13,7 @@ use App\Http\Controllers\dataSiswaController;
 use App\Http\Controllers\modulSiakadController;
 use App\Http\Controllers\tanggalMerahController;
 use App\Http\Controllers\modulTahfidzController;
-use App\Http\Controllers\dataWalasController;
+use App\Http\Controllers\dataWalasControll;
 use App\Http\Controllers\kelasHalaqahController;
 use App\Http\Controllers\file_surat;
 use App\Http\Controllers\siswaController;
