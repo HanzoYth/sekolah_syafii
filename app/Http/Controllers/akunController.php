@@ -8,6 +8,7 @@ use App\Models\identitas_rahasia;
 use App\Models\guru;
 use App\Models\admin;
 use App\Models\cabang_guru;
+use App\Models\siswa;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -98,7 +99,6 @@ class akunController extends Controller
             "email" => $request->email,
             "username" => $request->username,
             "noWa" => $request->noWa,
-            "gender" => $request->gender,
             "password" => Hash::make($request->password_confirmation),
             "identity_id" => $identitas->id
         ]);
@@ -111,8 +111,10 @@ class akunController extends Controller
 
         if ($identitas->jenis_role == "g"){
             return redirect("/gr/frgr");
-        }else{
+        }elseif ($identitas->jenis_role == "a"){
             return redirect("/ad/frad");
+        }else{
+            return redirect("/sk/frss");
         }
     }   
 
@@ -146,6 +148,11 @@ class akunController extends Controller
                 return redirect("/ad/frad");
             }
             $user = admin::where("user_id",$akun->id)->first();
+        }else{
+            if (!siswa::where("user_id",$akun->id)->exists()){
+                return redirect("/sk/frss");
+            }
+            $user = siswa::where("user_id",$akun->id)->first();
         }
         
         session()->put("id",$user->id);

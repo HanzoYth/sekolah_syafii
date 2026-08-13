@@ -4,22 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class admin extends Model
+class siswa extends Model
 {
-    protected $table = "admin";
-
-    public $timestamps = false;
+    protected $table = "siswa";
 
     protected $fillable = [
         "nama",
-        "nig",
+        "nis",
         "tempat_lahir",
         "tanggal_lahir",
-        "agama",
-        "alamat",
-        "pendidikan_terakhir",  
         "gender",
+        "alamat",
         "url_foto",
+        "aktif",
+        "kelas_id",
+        "tahun_ajaran_id",
+        "sekolah_id",
         "user_id"
     ];
 }

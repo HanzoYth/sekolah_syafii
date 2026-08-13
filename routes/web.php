@@ -16,6 +16,7 @@ use App\Http\Controllers\modulTahfidzController;
 use App\Http\Controllers\dataWalasController;
 use App\Http\Controllers\kelasHalaqahController;
 use App\Http\Controllers\file_surat;
+use App\Http\Controllers\siswaController;
 use Illuminate\Support\Facades\Storage;
 
 // ini route untuk halaman modul dan welcome
@@ -105,6 +106,11 @@ Route::get('/sk/das',[modulSiakadController::class,"dashboard_siakad"]);
 Route::get('/sk/ds',[dataSiswaController::class,"data_siswa"]);
 Route::get('/sk/dw',[dataWalasController::class,"data_walas"]);
 
+
+
+//siswa
+Route::get("/sk/frss",[siswaController::class,"tampilan_formulirSiswa"]);
+Route::post("/sk/tbss",[siswaController::class,"tambah_siswa"]);
 
 
 // Route::get('/tes',[file_surat::class,"testingKirim"]);

@@ -12,16 +12,16 @@ return new class extends Migration
             $table->id();
             $table->string("nama");
             $table->string("nis")->unique();
-            $table->string("nisn")->nullable();
             $table->string("tempat_lahir")->nullable();
             $table->date("tanggal_lahir")->nullable();
-            $table->enum("jenis_kelamin", ["l", "p"]);
+            $table->enum("gender", ["l", "p"]);
             $table->string("alamat")->nullable();
             $table->string("url_foto")->nullable();
             $table->boolean("aktif")->default(1);
-            $table->foreignId("kelas_id")->nullable()->constrained("kelas")->nullOnDelete();
+            $table->foreignId("kelas_id")->nullable()->constrained("ruang_kelas")->nullOnDelete();
             $table->foreignId("tahun_ajaran_id")->nullable()->constrained("tahun_ajaran")->nullOnDelete();
             $table->foreignId("user_id")->nullable()->constrained("akun")->nullOnDelete();
+            $table->foreignId("sekolah_id")->constrained("jenis_sekolah")->cascadeOnDelete();
             $table->timestamps();
         });
     }

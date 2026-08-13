@@ -26,6 +26,7 @@ class adminController extends Controller
             "tanggal_lahir" => Carbon::parse($request->tanggal_lahir)->translatedFormat("Y-m-d"),
             "agama" => "islam",
             "alamat" => $request->alamat,
+            
             "pendidikan_terakhir" => $request->pendidikan_terakhir,
             "url_foto" => $path_foto,
             "user_id" => (int) session("id_akun")

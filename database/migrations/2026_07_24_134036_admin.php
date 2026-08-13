@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string("alamat");
             $table->string("pendidikan_terakhir");
             $table->string("url_foto");
+            $table->enum("gender",["p","l"]);
             $table->foreignId("user_id")->constrained("akun")->cascadeOnDelete();
         });
     }

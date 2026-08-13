@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string("nama"); // contoh: 2026/2027
             $table->date("tanggal_mulai");
             $table->date("tanggal_selesai");
-            $table->boolean("aktif")->default(0);
+            $table->boolean("aktif")->default(1);
             $table->timestamps();
         });
     }

@@ -97,13 +97,6 @@
                         <input name="noWa" type="text" placeholder="nomor wa" required>
                     </div>
                     <div class="input-group">
-                        <i class="fas fa-user"></i>
-                        <select name="gender" >
-                            <option value="p">Perempuan</option>
-                            <option value="l">Laki-Laki</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
                         <i class="fas fa-lock"></i>
                         <input name="kode" type="text" placeholder="kode identitas" required>
                     </div>

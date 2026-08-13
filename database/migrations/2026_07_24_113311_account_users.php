@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string("email")->unique();
             $table->string("username")->unique();
             $table->string("noWa");
-            $table->enum("gender",["p","l"]);
             $table->string("password");
             $table->boolean("aktif")->default(1);
             $table->foreignId("identity_id")->constrained("identitas_rahasia")->cascadeOnDelete();

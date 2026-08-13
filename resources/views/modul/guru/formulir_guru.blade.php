@@ -103,6 +103,18 @@
                                 </select>
                             </div>
                         </div>
+                        
+                        <div class="form-group">
+                            <label for="jenisKelamin">Jenis Kelamin <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-venus-mars"></i>
+                                <select id="jenisKelamin" name="jenis_kelamin" required>
+                                    <option value="" disabled selected>-- Pilih Jenis Kelamin --</option>
+                                    <option value="l">Laki-laki</option>
+                                    <option value="p">Perempuan</option>
+                                </select>
+                            </div>
+                        </div>
 
                         <!-- JENIS SEKOLAH -->
                         <div class="form-group">
