@@ -104,7 +104,6 @@ Route::get('/tf/kls',[kelasHalaqahController::class,"kelas_halaqah"]);
 //ini dasboard siakad
 Route::get('/sk/das',[modulSiakadController::class,"dashboard_siakad"]);
 Route::get('/sk/ds',[dataSiswaController::class,"data_siswa"]);
-Route::get('/sk/dw',[dataWalasController::class,"data_walas"]);
 
 
 
