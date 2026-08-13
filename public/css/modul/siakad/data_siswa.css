@@ -1,5 +1,5 @@
 /* =====================================================================
-   DATA SISWA — PAGE STYLES
+   DATA PEMBAYARAN — PAGE STYLES
    File ini MELANJUTKAN token desain dari dashboard_siakad.css
    (variabel --primary-emerald, --gold-accent, --radius-*, --shadow-*, dst).
    Pastikan dashboard_siakad.css tetap di-load SEBELUM file ini,
@@ -9,7 +9,7 @@
 /* =====================================================================
    PAGE HEADER
    ===================================================================== */
-.siswa-page-header {
+.bayar-page-header {
     background:
         radial-gradient(circle at 95% -20%, rgba(212, 175, 55, 0.18), transparent 45%),
         linear-gradient(135deg, var(--primary-emerald) 0%, var(--emerald-dark) 100%);
@@ -29,9 +29,9 @@
     transition: var(--transition);
 }
 
-.siswa-page-header:hover { box-shadow: var(--shadow-lg); }
+.bayar-page-header:hover { box-shadow: var(--shadow-lg); }
 
-.siswa-page-header::before {
+.bayar-page-header::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -40,7 +40,7 @@
     pointer-events: none;
 }
 
-.siswa-breadcrumb {
+.bayar-breadcrumb {
     position: relative;
     font-size: 0.74rem;
     font-weight: 600;
@@ -49,9 +49,9 @@
     margin-bottom: 6px;
 }
 
-.siswa-breadcrumb span { color: var(--gold-soft, #E7C978); }
+.bayar-breadcrumb span { color: var(--gold-soft, #E7C978); }
 
-.siswa-page-header .bismillah-text {
+.bayar-page-header .bismillah-text {
     display: block;
     font-family: var(--font-display, 'Amiri', serif);
     font-size: 0.9rem;
@@ -61,7 +61,7 @@
     text-shadow: 0 1px 6px rgba(212, 175, 55, 0.25);
 }
 
-.siswa-page-header h1 {
+.bayar-page-header h1 {
     position: relative;
     font-size: 1.4rem;
     font-weight: 700;
@@ -69,7 +69,7 @@
     letter-spacing: -0.3px;
 }
 
-.siswa-page-header p {
+.bayar-page-header p {
     position: relative;
     font-size: 0.85rem;
     color: rgba(255, 255, 255, 0.75);
@@ -77,7 +77,7 @@
     font-weight: 500;
 }
 
-.siswa-header-actions {
+.bayar-header-actions {
     position: relative;
     display: flex;
     gap: 10px;
@@ -108,34 +108,34 @@
 /* =====================================================================
    QUICK STATS (memakai ulang .stat-card dari dashboard, tambahan warna)
    ===================================================================== */
-.siswa-stats-grid {
+.bayar-stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1.25rem;
     margin-bottom: 2rem;
 }
 
-.siswa-stats-grid .stat-card:nth-child(1) .stat-icon {
+.bayar-stats-grid .stat-card:nth-child(1) .stat-icon {
     background: linear-gradient(135deg, var(--emerald-light) 0%, #DCFCE7 100%);
     color: var(--primary-emerald);
 }
-.siswa-stats-grid .stat-card:nth-child(2) .stat-icon {
+.bayar-stats-grid .stat-card:nth-child(2) .stat-icon {
     background: linear-gradient(135deg, #FFFBF0 0%, #FEF3C7 100%);
     color: var(--gold-hover);
 }
-.siswa-stats-grid .stat-card:nth-child(3) .stat-icon {
+.bayar-stats-grid .stat-card:nth-child(3) .stat-icon {
     background: linear-gradient(135deg, var(--azure-light) 0%, #DBEAFE 100%);
     color: var(--azure);
 }
-.siswa-stats-grid .stat-card:nth-child(4) .stat-icon {
-    background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%);
-    color: #7E22CE;
+.bayar-stats-grid .stat-card:nth-child(4) .stat-icon {
+    background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+    color: var(--danger);
 }
 
 /* =====================================================================
    FILTER & SEARCH BAR
    ===================================================================== */
-.siswa-filter-bar {
+.bayar-filter-bar {
     background: var(--surface-white);
     border-radius: var(--radius-lg);
     padding: 1.1rem 1.4rem;
@@ -148,13 +148,13 @@
     flex-wrap: wrap;
 }
 
-.siswa-search {
+.bayar-search {
     position: relative;
     flex: 1;
     min-width: 220px;
 }
 
-.siswa-search input[type="text"] {
+.bayar-search input[type="text"] {
     width: 100%;
     padding: 10px 14px 10px 40px;
     border: 1px solid var(--border-color);
@@ -166,13 +166,13 @@
     transition: var(--transition);
 }
 
-.siswa-search input[type="text"]:focus {
+.bayar-search input[type="text"]:focus {
     border-color: var(--primary-emerald);
     background: #ffffff;
     box-shadow: 0 0 0 3px var(--emerald-glow);
 }
 
-.siswa-search .search-icon {
+.bayar-search .search-icon {
     position: absolute;
     left: 14px;
     top: 50%;
@@ -182,7 +182,7 @@
     pointer-events: none;
 }
 
-.siswa-filter-select {
+.bayar-filter-select {
     padding: 10px 14px;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
@@ -195,16 +195,16 @@
     transition: var(--transition);
 }
 
-.siswa-filter-select:focus {
+.bayar-filter-select:focus {
     border-color: var(--primary-emerald);
     background: #ffffff;
     box-shadow: 0 0 0 3px var(--emerald-glow);
 }
 
 /* =====================================================================
-   TABLE CARD & KOLOM KHUSUS SISWA
+   TABLE CARD & KOLOM KHUSUS PEMBAYARAN
    ===================================================================== */
-.siswa-table-card {
+.bayar-table-card {
     background: var(--surface-white);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
@@ -212,7 +212,7 @@
     overflow: hidden;
 }
 
-.siswa-table-card .table-card-head {
+.bayar-table-card .table-card-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -222,13 +222,13 @@
     gap: 10px;
 }
 
-.siswa-table-card .table-card-head h4 {
+.bayar-table-card .table-card-head h4 {
     font-size: 1.02rem;
     font-weight: 700;
     color: var(--primary-emerald);
 }
 
-.siswa-table-card .table-card-head .total-count {
+.bayar-table-card .table-card-head .total-count {
     font-size: 0.76rem;
     font-weight: 700;
     color: var(--text-muted);
@@ -238,14 +238,14 @@
     border: 1px solid var(--border-subtle);
 }
 
-/* Kolom siswa: foto + nama + NISN dalam satu sel */
-.siswa-cell {
+/* Kolom siswa: foto + nama + kelas dalam satu sel */
+.bayar-cell {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.siswa-photo {
+.bayar-photo {
     width: 42px;
     height: 42px;
     border-radius: 50%;
@@ -261,48 +261,46 @@
     overflow: hidden;
 }
 
-.siswa-photo img { width: 100%; height: 100%; object-fit: cover; }
+.bayar-photo img { width: 100%; height: 100%; object-fit: cover; }
 
-.siswa-cell-info .siswa-name {
+.bayar-cell-info .bayar-name {
     font-size: 0.88rem;
     font-weight: 700;
     color: var(--text-dark);
 }
 
-.siswa-cell-info .siswa-nisn {
+.bayar-cell-info .bayar-kelas {
     font-size: 0.72rem;
     color: var(--text-muted);
     font-weight: 500;
     margin-top: 2px;
 }
 
-/* Tag jenjang: TK / SD / SMP, warna berbeda tiap jenjang */
-.jenjang-tag {
+/* Nominal pembayaran */
+.bayar-nominal {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* Status badge: lunas / belum bayar / tunggakan */
+.status-badge {
     display: inline-flex;
     align-items: center;
+    gap: 5px;
     padding: 4px 12px;
     border-radius: var(--radius-pill);
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     font-weight: 800;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.3px;
 }
 
-.jenjang-tag.tk { background: var(--azure-light); color: var(--azure); }
-.jenjang-tag.sd { background: var(--success-bg); color: var(--success); }
-.jenjang-tag.smp { background: #F3E8FF; color: #7E22CE; }
-
-/* Badge jenis kelamin */
-.gender-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-muted);
-}
+.status-badge.lunas { background: var(--success-bg); color: var(--success); }
+.status-badge.belum { background: #FFFBF0; color: var(--gold-hover); }
+.status-badge.tunggak { background: #FEE2E2; color: var(--danger); }
 
 /* Aksi baris tabel */
-.siswa-actions {
+.bayar-actions {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -345,7 +343,7 @@
 /* =====================================================================
    PAGINATION
    ===================================================================== */
-.siswa-pagination {
+.bayar-pagination {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -355,7 +353,7 @@
     gap: 10px;
 }
 
-.siswa-pagination .pagination-info {
+.bayar-pagination .pagination-info {
     font-size: 0.78rem;
     color: var(--text-muted);
     font-weight: 500;
@@ -402,25 +400,25 @@
 /* =====================================================================
    EMPTY STATE
    ===================================================================== */
-.siswa-empty-state {
+.bayar-empty-state {
     text-align: center;
     padding: 3.5rem 1.5rem;
 }
 
-.siswa-empty-state .empty-icon {
+.bayar-empty-state .empty-icon {
     font-size: 2.4rem;
     margin-bottom: 12px;
     opacity: 0.5;
 }
 
-.siswa-empty-state h5 {
+.bayar-empty-state h5 {
     font-size: 0.98rem;
     font-weight: 700;
     color: var(--text-dark);
     margin-bottom: 4px;
 }
 
-.siswa-empty-state p {
+.bayar-empty-state p {
     font-size: 0.82rem;
     color: var(--text-muted);
 }
@@ -429,15 +427,15 @@
    RESPONSIVE
    ===================================================================== */
 @media (max-width: 1180px) {
-    .siswa-stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .bayar-stats-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 992px) {
-    .siswa-page-header { flex-direction: column; align-items: flex-start; }
+    .bayar-page-header { flex-direction: column; align-items: flex-start; }
 }
 
 @media (max-width: 640px) {
-    .siswa-stats-grid { grid-template-columns: 1fr; }
-    .siswa-filter-bar { flex-direction: column; align-items: stretch; }
-    .siswa-filter-select { width: 100%; }
+    .bayar-stats-grid { grid-template-columns: 1fr; }
+    .bayar-filter-bar { flex-direction: column; align-items: stretch; }
+    .bayar-filter-select { width: 100%; }
 }

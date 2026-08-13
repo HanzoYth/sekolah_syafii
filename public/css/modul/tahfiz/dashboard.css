@@ -1,26 +1,28 @@
 /* ================================================================
    DASHBOARD TAHFIZ — TEMA ISLAMI ELEGAN
+   (Warna disamakan dengan sidebar tahfiz: emerald + gold,
+   struktur/tata letak TIDAK diubah)
    ================================================================ */
 @import url('sidebar.css');
 
 /* ======== ROOT VARIABLES & RESET ======== */
 :root {
-    --primary-color: #0f6b52;
-    --primary-dark: #0a4738;
-    --primary-darker: #073028;
-    --primary-light: #e8f5f0;
-    --primary-gradient: linear-gradient(135deg, #14806a 0%, #0a4738 100%);
+    --primary-color: #1B6B4F;      /* = --emerald-700 sidebar */
+    --primary-dark: #0B3B2E;       /* = --emerald-900 sidebar */
+    --primary-darker: #07241C;     /* = --emerald-950 sidebar */
+    --primary-light: #E8F2EC;      /* tint terang dari emerald, untuk background lembut */
+    --primary-gradient: linear-gradient(135deg, #24805F 0%, #0B3B2E 100%); /* emerald-600 -> emerald-900 */
 
-    --gold: #c9a227;
-    --gold-light: #f7ecc9;
-    --gold-gradient: linear-gradient(135deg, #e6c85c 0%, #b8912a 100%);
+    --gold: #C9A227;               /* = --gold-500 sidebar */
+    --gold-light: #F4EAC8;         /* = --gold-100 sidebar */
+    --gold-gradient: linear-gradient(135deg, #D8B94A 0%, #C9A227 100%);   /* gold-400 -> gold-500 */
 
-    --bg-light: #f7f8f5;
+    --bg-light: #F7F4EC;           /* = --cream sidebar */
     --white: #ffffff;
     --text-dark: #16241f;
     --text-muted: #6b7d74;
-    --border-color: #e9efe9;
-    --border-hover: #cfdcd4;
+    --border-color: #E7E1D0;
+    --border-hover: #D9CDA8;
 
     --green-bg: #eaf7ef;
     --green-text: #0a7a4a;
@@ -32,9 +34,9 @@
     --font-heading: 'Amiri', serif;
     --font-main: 'Poppins', sans-serif;
 
-    --shadow-xs: 0 1px 2px 0 rgba(15, 36, 31, 0.04);
-    --shadow-card: 0 10px 25px -8px rgba(10, 71, 56, 0.10), 0 4px 10px -6px rgba(10, 71, 56, 0.05);
-    --shadow-hover: 0 20px 30px -12px rgba(15, 107, 82, 0.20), 0 8px 14px -6px rgba(0, 0, 0, 0.05);
+    --shadow-xs: 0 1px 2px 0 rgba(11, 59, 46, 0.04);
+    --shadow-card: 0 10px 25px -8px rgba(11, 59, 46, 0.10), 0 4px 10px -6px rgba(11, 59, 46, 0.05);
+    --shadow-hover: 0 20px 30px -12px rgba(27, 107, 79, 0.20), 0 8px 14px -6px rgba(0, 0, 0, 0.05);
     --radius-lg: 20px;
     --radius-md: 14px;
     --radius-sm: 10px;
@@ -53,7 +55,7 @@ body {
     /* Motif geometris islami halus sebagai latar */
     background-color: var(--bg-light);
     background-image:
-        radial-gradient(circle at 1px 1px, rgba(15, 107, 82, 0.06) 1px, transparent 0);
+        radial-gradient(circle at 1px 1px, rgba(27, 107, 79, 0.06) 1px, transparent 0);
     background-size: 26px 26px;
 }
 
@@ -265,7 +267,7 @@ body {
 .filter-group select:focus, .filter-group input:focus {
     border-color: var(--primary-color);
     background-color: var(--white);
-    box-shadow: 0 0 0 3px rgba(15, 107, 82, 0.12);
+    box-shadow: 0 0 0 3px rgba(27, 107, 79, 0.12);
 }
 
 /* ======== TABLE CARD ======== */
@@ -354,7 +356,7 @@ table tbody tr:hover { background-color: var(--primary-light); }
 .btn-back:hover {
     border-color: var(--primary-color);
     color: var(--primary-color);
-    box-shadow: 0 6px 15px -3px rgba(15, 107, 82, 0.15);
+    box-shadow: 0 6px 15px -3px rgba(27, 107, 79, 0.15);
     transform: translateY(-1px);
 }
 
@@ -376,7 +378,7 @@ table tbody tr:hover { background-color: var(--primary-light); }
     background: var(--primary-gradient);
     border-color: var(--primary-color);
     color: var(--white);
-    box-shadow: 0 4px 12px rgba(15, 107, 82, 0.25);
+    box-shadow: 0 4px 12px rgba(27, 107, 79, 0.25);
 }
 
 .btn-outline {
@@ -505,7 +507,7 @@ table tbody tr:hover { background-color: var(--primary-light); }
     justify-content: center;
     align-items: center;
     font-size: 1.35rem;
-    box-shadow: 0 4px 10px rgba(15, 107, 82, 0.25);
+    box-shadow: 0 4px 10px rgba(27, 107, 79, 0.25);
 }
 
 .student-info h4 { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); }

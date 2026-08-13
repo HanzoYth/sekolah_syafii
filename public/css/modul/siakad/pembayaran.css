@@ -1,0 +1,41 @@
+/* ============================================================
+   CSS DASHBOARD PEMBAYARAN
+   Link di <head> dashboard utama, setelah dasboard.css:
+   <link rel="stylesheet" href="{{ asset('css/modul/siakad/pembayaran.css') }}">
+============================================================ */
+
+.pembayaran-stats {
+    margin-top: 20px;
+}
+
+.pembayaran-filter {
+    margin-top: 15px;
+}
+
+.badge.danger {
+    background-color: #fdecea;
+    color: #c0392b;
+}
+
+.badge.danger i {
+    margin-right: 4px;
+}
+
+/* ============================================================
+   FIX: SIDEBAR MEMENUHI TINGGI KONTEN
+   Supaya .sidebar (position: sticky, align-self: stretch) benar-
+   benar meregang setinggi konten, parent-nya (.dashboard-container)
+   WAJIB display:flex dan .main-content WAJIB ikut melebar (flex: 1).
+   Ditaruh di sini sebagai jaga-jaga kalau aturan ini belum ada
+   di dasboard.css.
+============================================================ */
+.dashboard-container {
+    display: flex;
+    align-items: stretch;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+}

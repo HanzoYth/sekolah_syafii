@@ -1,22 +1,20 @@
 /* ================================================================
-   HALAMAN KELAS & HALAQAH — SATU TEMA DENGAN DASHBOARD
-   (Warna disamakan dengan sidebar tahfiz: emerald + gold,
-   struktur/tata letak TIDAK diubah)
+   HALAMAN PENGAMPU — SATU TEMA DENGAN REKAP BULANAN & LAPORAN HARIAN
    ================================================================ */
 @import url('sidebar.css');
 
 :root {
-    --primary-color: #1B6B4F;      /* = --emerald-700 sidebar */
-    --primary-dark: #0B3B2E;       /* = --emerald-900 sidebar */
-    --primary-darker: #07241C;     /* = --emerald-950 sidebar */
-    --primary-light: #E8F2EC;      /* tint terang dari emerald */
-    --primary-gradient: linear-gradient(135deg, #24805F 0%, #0B3B2E 100%); /* emerald-600 -> emerald-900 */
+    --primary-color: #1B6B4F;
+    --primary-dark: #0B3B2E;
+    --primary-darker: #07241C;
+    --primary-light: #E8F2EC;
+    --primary-gradient: linear-gradient(135deg, #24805F 0%, #0B3B2E 100%);
 
-    --gold: #C9A227;               /* = --gold-500 sidebar */
-    --gold-light: #F4EAC8;         /* = --gold-100 sidebar */
-    --gold-gradient: linear-gradient(135deg, #D8B94A 0%, #C9A227 100%);   /* gold-400 -> gold-500 */
+    --gold: #C9A227;
+    --gold-light: #F4EAC8;
+    --gold-gradient: linear-gradient(135deg, #D8B94A 0%, #C9A227 100%);
 
-    --bg-light: #F7F4EC;           /* = --cream sidebar */
+    --bg-light: #F7F4EC;
     --white: #ffffff;
     --text-dark: #16241f;
     --text-muted: #6b7d74;
@@ -64,7 +62,7 @@ body {
     width: calc(100% - 260px);
 }
 
-/* ======== 1. PAGE HEADER (setara topbar di dashboard) ======== */
+/* ======== 1. PAGE HEADER ======== */
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -188,26 +186,23 @@ body {
     transform: translateY(-1px);
 }
 
-.btn-sm, .btn-xs {
+.btn-xs-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
     border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background-color: var(--white);
-    color: var(--text-dark);
+    border: 1px solid var(--gold);
+    background: transparent;
+    color: var(--gold);
+    font-size: 0.74rem;
+    font-weight: 700;
     cursor: pointer;
-    font-weight: 600;
     transition: all 0.2s ease;
-    box-shadow: var(--shadow-xs);
+    white-space: nowrap;
 }
 
-.btn-sm { padding: 8px 16px; font-size: 0.8rem; }
-.btn-xs { padding: 5px 12px; font-size: 0.75rem; }
-
-.btn-sm:hover, .btn-xs:hover {
-    background: var(--primary-gradient);
-    border-color: var(--primary-color);
-    color: var(--white);
-    box-shadow: 0 4px 12px rgba(27, 107, 79, 0.25);
-}
+.btn-xs-outline:hover { background: var(--gold-gradient); color: var(--primary-darker); }
 
 /* ======== 2. RINGKASAN SINGKAT (QUICK STATS) ======== */
 .quick-stats {
@@ -252,10 +247,13 @@ body {
 .stat-pill h4 { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: var(--primary-dark); }
 .stat-pill p { font-size: 0.76rem; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
 
+.stat-pill.success { border-top-color: var(--green-text); }
+.stat-pill.success i { background: var(--green-bg); color: var(--green-text); }
+.stat-pill.success h4 { color: var(--green-text); }
+
 .stat-pill.alert { border-color: rgba(179, 38, 30, 0.2); border-top-color: var(--red-text); background: var(--red-bg); }
 .stat-pill.alert i { background: rgba(179, 38, 30, 0.12); color: var(--red-text); }
 .stat-pill.alert h4 { color: var(--red-text); }
-.stat-pill.alert:hover { border-top-color: var(--red-text); }
 
 /* ======== 3. TOOLBAR: FILTER & PENCARIAN ======== */
 .toolbar-box {
@@ -275,11 +273,7 @@ body {
 
 .toolbar-box:focus-within { box-shadow: var(--shadow-card); }
 
-.search-field {
-    position: relative;
-    flex: 1;
-    min-width: 220px;
-}
+.search-field { position: relative; flex: 1; min-width: 220px; }
 
 .search-field i {
     position: absolute;
@@ -329,24 +323,13 @@ body {
     box-shadow: 0 0 0 3px rgba(27, 107, 79, 0.12);
 }
 
-/* ======== 4. TABEL HALAQAH ======== */
+/* ======== 4. TABEL PENGAMPU ======== */
 .table-card {
     background: var(--white);
     border-radius: var(--radius-lg);
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-card);
     padding: 24px;
-    transition: box-shadow 0.3s ease;
-}
-
-.table-card h4 {
-    font-family: var(--font-heading);
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-    margin-bottom: 18px;
-    padding-bottom: 12px;
-    border-bottom: 1px dashed var(--border-color);
 }
 
 .table-responsive { width: 100%; overflow-x: auto; }
@@ -372,8 +355,57 @@ table tbody tr { transition: background-color 0.2s ease; }
 table tbody tr:hover { background-color: var(--primary-light); }
 table tbody tr:last-child td { border-bottom: none; }
 
+table tbody tr.row-pending { background-color: rgba(253, 236, 236, 0.35); }
+table tbody tr.row-pending:hover { background-color: var(--red-bg); }
+
+/* Sel identitas pengampu: avatar + nama */
+.person-cell { display: flex; align-items: center; gap: 10px; }
+
+.avatar-sm {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--primary-gradient);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
 .cell-strong { font-weight: 600; color: var(--primary-dark); }
 .cell-empty { color: var(--text-muted); font-style: italic; font-size: 0.82rem; }
+
+/* Badge halaqah yang diampu (bisa lebih dari satu) */
+.halaqah-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+.mini-badge {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.mini-badge.more { background: var(--gold-light); color: var(--gold); }
+
+/* Kontak HP/WA */
+.contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-dark);
+    text-decoration: none;
+    font-size: 0.84rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.contact-link i { color: #25D366; font-size: 0.95rem; }
+.contact-link:hover { color: var(--primary-color); text-decoration: underline; }
 
 .badge {
     padding: 6px 12px;
@@ -388,13 +420,10 @@ table tbody tr:last-child td { border-bottom: none; }
 
 .badge.success { background-color: var(--green-bg); color: var(--green-text); }
 .badge.danger { background-color: var(--red-bg); color: var(--red-text); }
+.badge.cuti { background-color: var(--yellow-bg); color: var(--yellow-text); }
 
-.badge-text.green { color: var(--green-text); font-weight: 600; font-size: 0.82rem; }
-.badge-text.red { color: var(--red-text); font-weight: 600; font-size: 0.82rem; }
-
-/* Mini progress bar capaian halaqah */
 .progress-mini {
-    width: 100px;
+    width: 90px;
     height: 7px;
     background: var(--border-color);
     border-radius: 10px;
@@ -403,12 +432,7 @@ table tbody tr:last-child td { border-bottom: none; }
     vertical-align: middle;
 }
 
-.progress-mini-fill {
-    height: 100%;
-    background: var(--gold-gradient);
-    border-radius: 10px;
-    transition: width 0.4s ease;
-}
+.progress-mini-fill { height: 100%; background: var(--gold-gradient); border-radius: 10px; transition: width 0.4s ease; }
 
 .progress-mini-label {
     display: inline-block;
@@ -419,7 +443,6 @@ table tbody tr:last-child td { border-bottom: none; }
     vertical-align: middle;
 }
 
-/* Ikon aksi baris */
 .action-icons { display: flex; gap: 6px; }
 
 .action-icons button {
@@ -457,7 +480,7 @@ table tbody tr:last-child td { border-bottom: none; }
     box-shadow: 0 4px 12px rgba(201, 162, 39, 0.3);
 }
 
-/* ======== 5. EMPTY STATE ======== */
+/* ======== 8. EMPTY STATE ======== */
 .empty-state {
     text-align: center;
     padding: 60px 20px;
@@ -482,7 +505,7 @@ table tbody tr:last-child td { border-bottom: none; }
 .empty-state h4 { font-family: var(--font-heading); color: var(--primary-dark); font-size: 1.2rem; margin-bottom: 8px; }
 .empty-state p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px; }
 
-/* ======== 6. MODAL TAMBAH/EDIT ======== */
+/* ======== 5. MODAL TAMBAH/EDIT (form kecil) ======== */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -508,15 +531,32 @@ table tbody tr:last-child td { border-bottom: none; }
     border-top: 3px solid var(--gold);
 }
 
+.modal-box-lg { max-width: 900px; }
+
 .modal-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     padding: 20px 24px;
     border-bottom: 1px dashed var(--border-color);
+    gap: 16px;
 }
 
-.modal-header h3 { font-family: var(--font-heading); color: var(--primary-dark); font-size: 1.15rem; font-weight: 700; }
+.modal-header-tag {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    padding: 5px 12px;
+    border-radius: 30px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.modal-header h3 { font-family: var(--font-heading); color: var(--primary-dark); font-size: 1.2rem; font-weight: 700; }
+
+.modal-subtitle { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
 
 .modal-close {
     width: 32px;
@@ -531,6 +571,7 @@ table tbody tr:last-child td { border-bottom: none; }
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .modal-close:hover { background: var(--red-bg); color: var(--red-text); }
@@ -569,6 +610,25 @@ table tbody tr:last-child td { border-bottom: none; }
     box-shadow: 0 0 0 3px rgba(27, 107, 79, 0.1);
 }
 
+.checkbox-list { display: flex; flex-direction: column; gap: 8px; }
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 0.84rem;
+    color: var(--text-dark);
+    cursor: pointer;
+    background: var(--bg-light);
+}
+
+.checkbox-item input { accent-color: var(--primary-color); width: 15px; height: 15px; }
+
+.field-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; font-style: italic; }
+
 .modal-footer {
     display: flex;
     justify-content: flex-end;
@@ -577,12 +637,160 @@ table tbody tr:last-child td { border-bottom: none; }
     border-top: 1px solid var(--border-color);
 }
 
-/* ======== HELPER UTILITIES (selaras dengan dashboard.css) ======== */
-.mt-15 { margin-top: 18px; }
-.mb-10 { margin-bottom: 12px; }
-.text-center { text-align: center; }
-.text-green { color: var(--green-text); }
-.text-sm { font-size: 0.78rem; }
+/* ======== 6 & 7. PANEL DETAIL PENGAMPU (isi modal-box-lg) ======== */
+.detail-pengampu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 22px;
+}
+
+.detail-pengampu-col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+
+.person-profile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background-color: var(--primary-light);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--gold);
+}
+
+.person-profile .avatar {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    background: var(--primary-gradient);
+    color: var(--white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.35rem;
+    box-shadow: 0 4px 10px rgba(27, 107, 79, 0.25);
+    flex-shrink: 0;
+}
+
+.person-info h4 { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); }
+.person-info p { font-size: 0.8rem; color: var(--text-muted); margin: 3px 0 8px 0; }
+
+.info-box {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+}
+
+.info-box h5 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-box h5 i { color: var(--gold); }
+
+/* Baris halaqah diampu + tombol pindahkan — inti fitur alih tugas */
+.assigned-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.assigned-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+.assigned-name { font-size: 0.86rem; font-weight: 600; color: var(--text-dark); }
+.assigned-meta { font-size: 0.76rem; color: var(--text-muted); margin-top: 2px; }
+
+.mini-stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.mini-stat {
+    text-align: center;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+}
+
+.mini-stat h4 { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; }
+.mini-stat p { font-size: 0.74rem; font-weight: 600; margin-top: 4px; }
+
+.mini-stat.green { background: var(--green-bg); }
+.mini-stat.green h4 { color: var(--green-text); }
+.mini-stat.green p { color: var(--green-text); }
+
+.mini-stat.red { background: var(--red-bg); }
+.mini-stat.red h4 { color: var(--red-text); }
+.mini-stat.red p { color: var(--red-text); }
+
+/* Tab switch grafik konsistensi */
+.chart-box {
+    padding: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    min-width: 0;
+}
+
+.tab-switch {
+    display: flex;
+    background: var(--bg-light);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 16px;
+    gap: 4px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 8px 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font-main);
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active { background: var(--white); color: var(--primary-color); box-shadow: var(--shadow-xs); }
+.tab-btn:hover:not(.active) { color: var(--primary-color); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.dummy-chart {
+    height: 130px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 2px dashed var(--border-color);
+    padding-bottom: 5px;
+    gap: 6px;
+}
+
+.dummy-chart .bar {
+    flex: 1;
+    background: var(--gold-gradient);
+    border-radius: 6px 6px 0 0;
+    transition: all 0.3s ease;
+    opacity: 0.9;
+    min-height: 3px;
+}
+
+.dummy-chart .bar:hover { opacity: 1; transform: scaleY(1.03); transform-origin: bottom; }
+
+.chart-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-top: 8px;
+}
 
 /* ======== RESPONSIVE ======== */
 @media (max-width: 1200px) {
@@ -592,6 +800,7 @@ table tbody tr:last-child td { border-bottom: none; }
 @media (max-width: 900px) {
     .quick-stats { grid-template-columns: 1fr; }
     .page-header { align-items: flex-start; }
+    .detail-pengampu-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 600px) {
@@ -603,6 +812,8 @@ table tbody tr:last-child td { border-bottom: none; }
     .table-card { padding: 16px; }
     .toolbar-box { flex-direction: column; align-items: stretch; }
     .form-row { grid-template-columns: 1fr; }
+    .modal-box-lg { max-width: 100%; }
+    .mini-stat-row { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 380px) {

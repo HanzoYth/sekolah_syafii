@@ -12,36 +12,40 @@
     {{-- Font Awesome Icons --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    {{-- Stylesheet dashboard SIAKAD (terpisah dari markup) --}}
+    {{-- Tailwind CSS CDN (Pastikan terhubung agar class Tailwind pada header baru berfungsi) --}}
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    {{-- Stylesheet dashboard SIAKAD --}}
     <link rel="stylesheet" href="{{ asset('css/modul/siakad/dasboard.css') }}">
 </head>
 <body>
 
     <div class="dashboard-container">
 
-        {{-- WADAH TEMPLATE SIDEBAR (gunakan komponen sidebar SIAKAD milikmu) --}}
+        {{-- WADAH TEMPLATE SIDEBAR --}}
         <x-sidebar_siakad />
 
         {{-- MAIN CONTENT --}}
         <main class="main-content">
 
-            {{-- TOPBAR / HEADER --}}
-            <header class="topbar">
-                <div class="topbar-left">
-                    <span class="topbar-eyebrow">Sistem Informasi Akademik &middot; Selasa, 04 Agustus 2026</span>
-                    <h2>Selamat datang, Admin Utama</h2>
-                </div>
-
-                <div class="academic-pill">
-                    <i class="fa-solid fa-calendar-check"></i>
-                    T.A. 2025/2026 &middot; Semester Ganjil
-                </div>
-
-                <div class="topbar-icons">
-                    <div class="icon-bell-wrap">
-                        <i class="fa-regular fa-bell"></i>
+            {{-- HEADER BAR BARU (Islamic Theme with Tailwind) --}}
+            <header class="bg-emerald-900 text-white shadow-md relative overflow-hidden flex-shrink-0 rounded-xl mb-6">
+                <!-- Pattern background Islamic -->
+                <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                
+                <div class="px-6 py-5 relative z-10 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="text-center md:text-left">
+                        <p class="font-arabic text-xl text-amber-400 mb-0.5">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+                        <h1 class="text-xl font-bold tracking-wide text-white flex items-center justify-center md:justify-start gap-2">
+                            Sistem Informasi Data Siswa
+                        </h1>
+                        <p class="text-emerald-200 text-xs">Mewujudkan Generasi Rabbani, Berakhlak Mulia & Berprestasi</p>
                     </div>
-                    <i class="fa-regular fa-user"></i>
+                    <div>
+                        <a href="#" class="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-semibold px-4 py-2 rounded-lg shadow-md text-xs transition-all duration-200 hover:shadow-lg">
+                            <i class="fa-solid fa-user-plus"></i> Tambah Siswa Baru
+                        </a>
+                    </div>
                 </div>
             </header>
 
@@ -407,4 +411,4 @@
     </div>
 
 </body>
-</html> 
+</html>

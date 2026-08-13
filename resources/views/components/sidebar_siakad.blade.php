@@ -4,7 +4,7 @@
     <div class="brand">
         <div class="brand-logo">🕌</div>
         <div class="brand-text">
-            <h2>SIAKAD Islam</h2>
+            <h2>QUR'AN SYAFI'I</h2>
             <small>Sistem Informasi Akademik</small>
         </div>
     </div>
@@ -19,9 +19,8 @@
             @if (session("role") === 'a')
                 <li class="menu-header">ADMINISTRATOR</li>
                 <li><a href='/sk/ds'><span class="icon">👨‍🎓</span> Data Siswa</a></li>
-                <li><a href='/sk/dw'><span class="icon">👨‍🏫</span> Data Wali Kelas</a></li>
-                <li><a href="#"><span class="icon">🏫</span> Data Kelas</a></li>
-                <li><a href="#"><span class="icon">⚙️</span> Pengaturan</a></li>
+                <li><a href='/sk/pb'><span class="icon">📜</span> Pembayaran siswa</a></li>
+                
             @endif
 
             {{-- Role Guru --}}
@@ -36,7 +35,7 @@
             @if (session("role") === 's')
                 <li class="menu-header">MENU SISWA</li>
                 <li><a href="#"><span class="icon">✅</span> Presensi Kehadiran</a></li>
-                <li><a href="#"><span class="icon">📜</span> Nilai Akademik</a></li>
+                <li><a href="#"><span class="icon"📜</span> Nilai Akademik</a></li>
                 <li><a href="#"><span class="icon">📢</span> Pengumuman</a></li>
             @endif
         </ul>
