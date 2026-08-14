@@ -1,47 +1,107 @@
-<link rel="stylesheet" href="{{ asset('css/sidebar/sidebar_siakad.css') }}">
+<div>
+    <!-- SIDEBAR COMPONENT -->
+    <aside class="sidebar" id="sidebar">
+        {{-- CHANGED: CSS khusus siakad, tema mengikuti referensi sidebar_guru.css --}}
+        <link rel="stylesheet" href="{{ asset('css/sidebar/sidebar_siakad.css') }}">
 
-<aside class="sidebar">
-    <div class="brand">
-        <div class="brand-logo">🕌</div>
-        <div class="brand-text">
-            <h2>QUR'AN SYAFI'I</h2>
-            <small>Sistem Informasi Akademik</small>
+        {{-- CHANGED: header ikut struktur sidebar_guru.css (sidebar-header, brand-logo, toggle-btn) --}}
+        <div class="sidebar-header">
+            <div class="brand-logo">
+                <i class="fa-solid fa-mosque"></i>
+                <span>SIAKAD</span>
+            </div>
+            <button class="toggle-btn" id="sidebar-toggle">
+                <i class="fa-solid fa-angles-left"></i>
+            </button>
         </div>
-    </div>
 
-    <nav class="sidebar-menu">
-        <ul>
-            <li class="active">
-                <a href="/sk/das"><span class="icon">📊</span> Dashboard</a>
-            </li>
+        <div class="sidebar-menu-wrapper">
+            {{-- Dashboard: umum untuk semua role --}}
+            <div class="menu-section" id="section-umum">
+                <ul class="menu-list">
+                    <li class="menu-item active">
+                        @if (session('role') == "a")
+                            <a href="/sk/das">
+                                <i class="fa-solid fa-house"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        @elseif (session('role') == "s")
+                            <a href="/sk/dbs">
+                                <i class="fa-solid fa-house"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        @endif
+                    </li>
+                </ul>
+            </div>
 
-            {{-- Role Admin --}}
-            @if (session("role") === 'a')
-                <li class="menu-header">ADMINISTRATOR</li>
-                <li><a href='/sk/ds'><span class="icon">👨‍🎓</span> Data Siswa</a></li>
-                <li><a href='/sk/pb'><span class="icon">📜</span> Pembayaran siswa</a></li>
-                
+            {{-- ================= ROLE ADMIN ================= --}}
+            @if (session('role') === 'a')
+                <div class="menu-section" id="section-admin">
+                    <span class="menu-label">ADMINISTRATOR</span>
+                    <ul class="menu-list">
+                        <li class="menu-item">
+                            <a href="/sk/pb">
+                                <i class="fa-solid fa-file-invoice-dollar"></i>
+                                <span>Slip Pembayaran</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/sk/pr">
+                                <i class="fa-solid fa-id-card"></i>
+                                <span>Profil</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            {{-- ================= ROLE GURU ================= --}}
+            @elseif (session('role') === 'g')
+                <div class="menu-section" id="section-guru">
+                    <span class="menu-label">MENU GURU</span>
+                    <ul class="menu-list">
+                        <li class="menu-item">
+                            <a href="/sk/pb">
+                                <i class="fa-solid fa-file-invoice-dollar"></i>
+                                <span>Slip Pembayaran</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/sk/pr">
+                                <i class="fa-solid fa-id-card"></i>
+                                <span>Profil</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            {{-- ================= ROLE SISWA ================= --}}
+            @elseif (session('role') === 's')
+                <div class="menu-section" id="section-siswa">
+                    <span class="menu-label">MENU SISWA</span>
+                    <ul class="menu-list">
+                        <li class="menu-item">
+                            <a href="/sk/pbs">
+                                <i class="fa-solid fa-file-invoice-dollar"></i>
+                                <span>Slip Pembayaran</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/sk/pfs">
+                                <i class="fa-solid fa-id-card"></i>
+                                <span>Profil</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             @endif
+        </div>
 
-            {{-- Role Guru --}}
-            @if (session("role") === 'g')
-                <li class="menu-header">MENU GURU</li>
-                <li><a href="#"><span class="icon">👥</span> Siswa Ajar</a></li>
-                <li><a href="#"><span class="icon">📅</span> Jadwal Mengajar</a></li>
-                <li><a href="#"><span class="icon">📝</span> Input Nilai</a></li>
-            @endif
-
-            {{-- Role Siswa --}}
-            @if (session("role") === 's')
-                <li class="menu-header">MENU SISWA</li>
-                <li><a href="#"><span class="icon">✅</span> Presensi Kehadiran</a></li>
-                <li><a href="#"><span class="icon"📜</span> Nilai Akademik</a></li>
-                <li><a href="#"><span class="icon">📢</span> Pengumuman</a></li>
-            @endif
-        </ul>
-    </nav>
-
-    <div class="sidebar-footer">
-        <a href='/sk/das' class="btn-logout"><span class="icon">🚪</span> Keluar</a>
-    </div>
-</aside>
+        <div class="sidebar-footer">
+            <a href="/reg/logout" class="logout-btn">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Keluar</span>
+            </a>
+        </div>
+    </aside>
+</div>

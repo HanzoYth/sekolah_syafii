@@ -111,6 +111,9 @@ Route::get('/sk/ds',[dataSiswaController::class,"data_siswa"]);
 //siswa
 Route::get("/sk/frss",[siswaController::class,"tampilan_formulirSiswa"]);
 Route::post("/sk/tbss",[siswaController::class,"tambah_siswa"]);
+Route::get("/sk/dbs",[siswaController::class,"dashboardSiswa"]);
+Route::get("/sk/pbs",[siswaController::class,"pembayaranSiswa"]);
+Route::get("/sk/pfs",[siswaController::class,"profilSiswa"]);
 
 
 // Route::get('/tes',[file_surat::class,"testingKirim"]);

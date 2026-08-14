@@ -1,0 +1,305 @@
+/* ==========================================================================
+   SIAKAD SISWA — Widget & Komponen Dashboard
+   (Tema & struktur mengikuti referensi dashboard_guru.css)
+   Catatan: variabel warna (--radius-md, --success, --warning, --navy-800,
+   --gold-500, --cream, --line, --ink-600, --ink-400, --paper, --font-serif,
+   --font-sans) mengikuti definisi di stylesheet dasar layout (mis. das_ad_gr.css)
+   ========================================================================== */
+
+/* --- Profile Card: identitas siswa, disusun ke bawah (bukan di topbar) --- */
+.profile-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 32px 20px 26px;
+  margin-bottom: 20px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 18px rgba(11, 59, 46, 0.06);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.profile-card:hover {
+  box-shadow: 0 10px 26px rgba(11, 59, 46, 0.1);
+  transform: translateY(-2px);
+}
+
+.avatar-lg {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold-500);
+  box-shadow: 0 0 0 3px var(--cream);
+  transition: transform 0.25s ease;
+}
+
+.profile-card:hover .avatar-lg {
+  transform: scale(1.04);
+}
+
+.profile-card h3 {
+  position: relative;
+  margin: 6px 0 14px;
+  padding-bottom: 12px;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--navy-900);
+}
+
+/* Aksen garis emas tipis di bawah nama, senada motif sidebar */
+.profile-card h3::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 46px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-500), transparent);
+}
+
+.profile-meta {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.profile-meta li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--cream);
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-600);
+}
+
+.profile-meta li i {
+  color: var(--gold-500);
+}
+
+/* --- Avatar Topbar (dipakai jika suatu saat kembali ke layout topbar) --- */
+.avatar-ring {
+  border: 2px solid var(--gold-500);
+  box-shadow: 0 0 0 3px var(--cream);
+}
+
+/* --- Card Header: ikon jadi badge bulat, lebih rapi dari teks polos --- */
+.card-header h4 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-header h4 i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--cream);
+  color: var(--gold-500);
+  font-size: 14px;
+}
+
+.card-header .date-badge {
+  padding: 5px 14px;
+  background: var(--cream);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-600);
+}
+
+.widget-presensi {
+  box-shadow: 0 6px 18px rgba(11, 59, 46, 0.06);
+  transition: box-shadow 0.25s ease;
+}
+
+.widget-presensi:hover {
+  box-shadow: 0 10px 26px rgba(11, 59, 46, 0.1);
+}
+
+/* --- Status Box Pembayaran --- */
+.status-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  margin-bottom: 22px;
+  transition: box-shadow 0.2s ease;
+}
+
+.status-box i {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 20px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.status-box h5 {
+  margin: 0 0 2px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.status-box p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-600);
+}
+
+.status-success {
+  background: var(--success-bg);
+  border: 1px solid #C4DCCB;
+}
+
+.status-success i,
+.status-success h5 {
+  color: var(--success);
+}
+
+.status-warning {
+  background: var(--warning-bg);
+  border: 1px solid #C4DCCB;
+}
+
+.status-warning i,
+.status-warning h5 {
+  color: var(--warning);
+}
+
+/* --- Payment Tracker (Total Tagihan / Sudah Dibayar) --- */
+.time-tracker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px 12px;
+  margin-bottom: 22px;
+  background: var(--cream);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-md);
+}
+
+.time-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 120px;
+}
+
+.time-title {
+  font-size: 12px;
+  color: var(--ink-600);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.time-value {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--navy-900);
+  font-variant-numeric: tabular-nums;
+}
+
+.time-divider {
+  color: var(--gold-500);
+  font-size: 15px;
+}
+
+.tracker-note {
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-600);
+  margin: -12px 0 22px;
+}
+
+/* --- Tombol Aksi --- */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 13px 22px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary {
+  background: var(--navy-800);
+  color: var(--paper);
+  box-shadow: 0 4px 12px rgba(22, 56, 34, 0.25);
+}
+
+.btn-primary:hover {
+  background: var(--navy-900);
+  transform: translateY(-1px);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--gold-500);
+  outline-offset: 2px;
+}
+
+.btn-disabled,
+.btn:disabled {
+  background: var(--cream);
+  color: var(--ink-400);
+  border-color: var(--line);
+  cursor: not-allowed;
+}
+
+/* --- Responsive Siakad --- */
+@media (max-width: 768px) {
+  .time-tracker {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .time-divider {
+    transform: rotate(90deg);
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons .btn {
+    width: 100%;
+  }
+}

@@ -12,6 +12,16 @@ use Illuminate\Http\Request;
 
 class siswaController extends Controller
 {
+    function dashboardSiswa (){
+        return view('/modul/siakad/dashboardSiswa');
+    }
+
+    function pembayaranSiswa (){
+        return view('/modul/siakad/pembayaranSiswa');
+    }
+    function profilSiswa (){
+        return view('/modul/siakad/profilSiswa');
+    }
 
     function tampilan_formulirSiswa(){
         $data_ruang_kelas = ruang_kelas::all();
