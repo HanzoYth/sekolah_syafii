@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     {{-- Stylesheet dashboard SIAKAD (terpisah dari markup) --}}
-    <link rel="stylesheet" href="{{ asset('css/modul/siakad/dasboard.css') }}">
+    <!-- <link rel="stylesheet" href="{{ asset('css/modul/siakad/dasboard.css') }}"> -->
     <link rel="stylesheet" href="{{ asset('css/modul/siakad/pembayaran.css') }}">
 </head>
 <body>

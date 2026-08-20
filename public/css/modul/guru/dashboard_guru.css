@@ -136,6 +136,13 @@
   cursor: not-allowed;
 }
 
+.announcement-text p{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 400px;
+}
+
 /* --- Responsive Guru --- */
 @media (max-width: 768px) {
   .time-tracker {

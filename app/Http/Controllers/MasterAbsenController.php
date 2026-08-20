@@ -15,11 +15,37 @@ class MasterAbsenController extends Controller
 {
 
     function edit_AbsenGuru($id){
+        $Awaldate = Carbon::now()->startOfMonth();
+        $Akhirdate = Carbon::now()->endOfMonth();
+
+        $tanggal = [];
+        Carbon::setLocale("id");
+        for ($date = $Awaldate->copy() ;$date <= $Akhirdate;$date->addDay()){
+            $tanggal[] = (object) [
+                "tanggal_bulan" => $date->translatedFormat("Y-m-d"),
+                "hari" => $date->translatedFormat("l"),
+               
+            ];
+        }
+
+        $bulan = Carbon::now()->translatedFormat("m");
         $data_guru = guru::where("id",$id)->first();
+        $nama_lokasi = master_lokasi_absen_guru::where("id",master_absen_guru::where("guru_id",$id)->first()->lokasi_id)->first()->nama_lokasi;
         $data_cabang = cabang_guru::where("id",$data_guru->cabang_id)->first();
+        $jumlah_hadir = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->count();
+        $jumlah_izin = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","i")->count();
+        $jumlah_sakit = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","s")->count();
+        $jumlah_terlambat = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->sum("terlambat_menit");
         return view("modul/guru/a/edit_absen_guru",[
             "data_guru" => $data_guru,
-            "data_cabang" => $data_cabang
+            "data_cabang" => $data_cabang,
+            "jumlah_hadir" => $jumlah_hadir,
+            "jumlah_izin" => $jumlah_izin,
+            "jumlah_sakit" => $jumlah_sakit,
+            "tanggal" => $tanggal,
+            "terlambat" => $jumlah_terlambat,
+            "id_guru" => $id,
+            "nama_lokasi" => $nama_lokasi
         ]);
     }
 
@@ -28,10 +54,9 @@ class MasterAbsenController extends Controller
         $data_guru = guru::whereHas("getUser", function ($item) {
             $item->where("aktif",1);
         })->get();
-        $data_absen_id_guru_hari_ini = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->pluck("guru_id")->toArray();
+
         return view("modul/guru/a/kelola_absen_guru",[
-            "data_guru" => $data_guru,
-            "data_absen_id_guru" => $data_absen_id_guru_hari_ini
+            "data_guru" => $data_guru
         ]);
     }
 
@@ -124,23 +149,25 @@ class MasterAbsenController extends Controller
             $data_cabang = cabang_guru::where("id",(int) $data_guru->cabang_id)->first();
             $data_waktu = master_waktu_absen_guru::where("cabang_id",$data_cabang->id)->where("hari",strtolower(Carbon::now()->translatedFormat("l")))->first();
             $data_lokasi = master_lokasi_absen_guru::where("cabang_id",$data_cabang->id)->first();
-            if (in_array($id,$data_id_guru_master_absen)){
-                $data = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",$id)->first();
-                $data->tgl_masuk = Carbon::now()->translatedFormat("Y-m-d");
-                $data->status_kehadiran = $request->input("status_{$id}");
-                $data->save();
-            }else{
-                master_absen_guru::create([
-                    "waktu_masuk" => Carbon::parse("00:00:00"),
-                    "waktu_keluar" => Carbon::parse("00:00:00"),
-                    "tgl_masuk" => Carbon::now()->translatedFormat("Y-m-d"),
-                    "status_kehadiran" => $request->input("status_{$id}"),
-                    "terlambat_menit" => 0,
-                    "cabang_id" => $data_cabang->id,
-                    "guru_id" => $data_guru->id,
-                    "lokasi_id" => $data_lokasi->id,
-                    "waktu_id" => $data_waktu->id 
-                ]);
+            if ($request->input("status_{$id}") != "n"){
+                if (in_array($id,$data_id_guru_master_absen)){
+                    $data = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",$id)->first();
+                    $data->tgl_masuk = Carbon::now()->translatedFormat("Y-m-d");
+                    $data->status_kehadiran = $request->input("status_{$id}");
+                    $data->save();
+                }else{
+                    master_absen_guru::create([
+                        "waktu_masuk" => Carbon::parse("00:00:00"),
+                        "waktu_keluar" => Carbon::parse("00:00:00"),
+                        "tgl_masuk" => Carbon::now()->translatedFormat("Y-m-d"),
+                        "status_kehadiran" => $request->input("status_{$id}"),
+                        "terlambat_menit" => 0,
+                        "cabang_id" => $data_cabang->id,
+                        "guru_id" => $data_guru->id,
+                        "lokasi_id" => $data_lokasi->id,
+                        "waktu_id" => $data_waktu->id 
+                    ]);
+                }
             }
         }
         return back();
@@ -148,9 +175,17 @@ class MasterAbsenController extends Controller
 
 
     function keluarAbsenGuru(){
-        $data = master_absen_guru::where("waktu_masuk","!=",Carbon::parse("00:00:00"))->where("waktu_keluar",Carbon::parse("00:00:00"))->whereNotIn("status_kehadiran",["a","s","i"])->where("guru_id",session("id"))->first();
-
+        $data = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->where("waktu_masuk","!=",Carbon::parse("00:00:00"))->where("waktu_keluar",Carbon::parse("00:00:00"))->whereNotIn("status_kehadiran",["a","s","i"])->where("guru_id",session("id"))->first();
+        $data_waktu = master_waktu_absen_guru::where("id",$data->waktu_id)->first();
+        $waktu_keluar = Carbon::parse($data_waktu->waktu_keluar);
         $waktu_sekarang = Carbon::now();
+
+        $terlambat = 0;
+
+        if (!$waktu_sekarang->greaterThan($waktu_keluar)){
+            $terlambat = $waktu_sekarang->diffInMinutes($waktu_keluar);
+            $data->terlambat_menit = $data->terlambat_menit  + $terlambat;
+        }
 
         $data->waktu_keluar = $waktu_sekarang;
         $data->save();

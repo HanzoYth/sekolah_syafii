@@ -1,41 +1,312 @@
 /* ============================================================
-   CSS DASHBOARD PEMBAYARAN
+   CSS DASHBOARD PEMBAYARAN (FIX SIDEBAR OVERLAP & CLEAN UI)
    Link di <head> dashboard utama, setelah dasboard.css:
    <link rel="stylesheet" href="{{ asset('css/modul/siakad/pembayaran.css') }}">
 ============================================================ */
 
-.pembayaran-stats {
-    margin-top: 20px;
+/* Reset Box-Sizing khusus area modul agar kalkulasi width/padding tepat */
+.main-content,
+.main-content * {
+    box-sizing: border-box;
 }
 
-.pembayaran-filter {
-    margin-top: 15px;
+:root {
+    /* Lebar Sidebar (Sesuaikan angka ini jika sidebar kamu 250px / 280px / dll) */
+    --sidebar-width: 260px; 
+
+    --pay-primary: #2563eb;
+    --pay-primary-hover: #1d4ed8;
+    --pay-bg-surface: #ffffff;
+    --pay-text-title: #0f172a;
+    --pay-text-body: #334155;
+    --pay-text-muted: #64748b;
+    --pay-border: #e2e8f0;
+    --pay-radius-lg: 16px;
+    --pay-radius-md: 10px;
+    --pay-radius-sm: 6px;
+    --pay-shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+    --pay-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
 }
 
-.badge.danger {
-    background-color: #fdecea;
-    color: #c0392b;
-}
-
-.badge.danger i {
-    margin-right: 4px;
-}
-
-/* ============================================================
-   FIX: SIDEBAR MEMENUHI TINGGI KONTEN
-   Supaya .sidebar (position: sticky, align-self: stretch) benar-
-   benar meregang setinggi konten, parent-nya (.dashboard-container)
-   WAJIB display:flex dan .main-content WAJIB ikut melebar (flex: 1).
-   Ditaruh di sini sebagai jaga-jaga kalau aturan ini belum ada
-   di dasboard.css.
-============================================================ */
-.dashboard-container {
-    display: flex;
-    align-items: stretch;
-    min-height: 100vh;
-}
-
+/* ------------------------------------------------------------
+   FIX UTAMA: PENCEGAHAN SIDEBAR MENUTUPI KONTEN
+------------------------------------------------------------ */
 .main-content {
-    flex: 1;
+    /* Memberi dorongan ke kanan sebesar lebar sidebar agar tidak tertutup */
+    margin-left: var(--sidebar-width);
+    
+    /* Menghitung lebar bersih sisa layar */
+    width: calc(100% - var(--sidebar-width));
     min-width: 0;
+    flex: 1;
+    
+    /* Spasi internal konten */
+    padding: 28px 32px; 
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--pay-text-body);
+    -webkit-font-smoothing: antialiased;
 }
+
+/* Responsif untuk layar tablet & mobile (jika sidebar berubah mode) */
+@media (max-width: 992px) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px 16px;
+    }
+}
+
+/* ------------------------------------------------------------
+   1. STATISTIK PEMBAYARAN
+------------------------------------------------------------ */
+.pembayaran-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+    margin-bottom: 24px;
+}
+
+.pembayaran-stats .stat-card {
+    background: var(--pay-bg-surface);
+    padding: 22px 20px;
+    border-radius: var(--pay-radius-lg);
+    border: 1px solid var(--pay-border);
+    box-shadow: var(--pay-shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pembayaran-stats .stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--pay-shadow-md);
+    border-color: #cbd5e1;
+}
+
+.pembayaran-stats .stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+/* Color Accent System */
+.pembayaran-stats .stat-card:nth-child(1) .stat-icon { background: #eff6ff; color: #2563eb; }
+.pembayaran-stats .stat-card:nth-child(2) .stat-icon { background: #f0fdf4; color: #16a34a; }
+.pembayaran-stats .stat-card:nth-child(3) .stat-icon { background: #fffbeb; color: #d97706; }
+.pembayaran-stats .stat-card:nth-child(4) .stat-icon { background: #fef2f2; color: #dc2626; }
+
+.pembayaran-stats .stat-card h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--pay-text-title);
+    line-height: 1.2;
+}
+
+.pembayaran-stats .stat-card p {
+    margin: 4px 0 0 0;
+    font-size: 0.82rem;
+    color: var(--pay-text-muted);
+    font-weight: 500;
+}
+
+/* ------------------------------------------------------------
+   2. FILTER PEMBAYARAN
+------------------------------------------------------------ */
+.pembayaran-filter {
+    background: var(--pay-bg-surface);
+    padding: 20px 24px;
+    border-radius: var(--pay-radius-lg);
+    border: 1px solid var(--pay-border);
+    box-shadow: var(--pay-shadow-sm);
+    margin-bottom: 24px;
+}
+
+.pembayaran-filter h4 {
+    margin: 0 0 16px 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--pay-text-title);
+    letter-spacing: -0.2px;
+}
+
+.pembayaran-filter .filter-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.pembayaran-filter label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--pay-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 6px;
+}
+
+.pembayaran-filter select {
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: var(--pay-radius-md);
+    border: 1px solid var(--pay-border);
+    background-color: #f8fafc;
+    color: var(--pay-text-title);
+    font-size: 0.875rem;
+    font-family: inherit;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.pembayaran-filter select:focus {
+    border-color: var(--pay-primary);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* ------------------------------------------------------------
+   3. TABEL DAFTAR PEMBAYARAN
+------------------------------------------------------------ */
+.main-content .table-card {
+    background: var(--pay-bg-surface);
+    padding: 24px;
+    border-radius: var(--pay-radius-lg);
+    border: 1px solid var(--pay-border);
+    box-shadow: var(--pay-shadow-sm);
+}
+
+.main-content .table-card h4 {
+    margin: 0 0 20px 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--pay-text-title);
+    letter-spacing: -0.2px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-content .card-link {
+    font-size: 0.825rem;
+    color: var(--pay-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.main-content .card-link:hover {
+    color: var(--pay-primary-hover);
+    text-decoration: underline;
+}
+
+.main-content .table-responsive {
+    overflow-x: auto;
+    border-radius: var(--pay-radius-md);
+    border: 1px solid var(--pay-border);
+}
+
+.main-content table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.875rem;
+}
+
+.main-content th {
+    background-color: #f8fafc;
+    color: var(--pay-text-muted);
+    font-weight: 600;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--pay-border);
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-size: 0.725rem;
+    letter-spacing: 0.8px;
+}
+
+.main-content td {
+    padding: 14px 16px;
+    color: var(--pay-text-title);
+    border-bottom: 1px solid var(--pay-border);
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.main-content tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.main-content tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* ------------------------------------------------------------
+   4. BADGES & BUTTONS
+------------------------------------------------------------ */
+.main-content .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+.main-content .badge.success { background-color: #dcfce7; color: #15803d; }
+.main-content .badge.warning { background-color: #fef3c7; color: #b45309; }
+.main-content .badge.danger  { background-color: #fee2e2; color: #b91c1c; }
+
+.main-content .btn-sm {
+    padding: 6px 14px;
+    border-radius: var(--pay-radius-sm);
+    border: 1px solid var(--pay-border);
+    background-color: #ffffff;
+    color: var(--pay-text-title);
+    font-size: 0.8rem;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.main-content .btn-sm:hover {
+    background-color: var(--pay-primary);
+    color: #ffffff;
+    border-color: var(--pay-primary);
+}
+
+.main-content .btn-outline {
+    padding: 10px 20px;
+    border-radius: var(--pay-radius-md);
+    border: 1px solid var(--pay-border);
+    background-color: #ffffff;
+    color: var(--pay-text-title);
+    font-size: 0.85rem;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.main-content .btn-outline:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.text-center { text-align: center; }
+.mt-15 { margin-top: 15px; }

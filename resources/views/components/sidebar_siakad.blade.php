@@ -43,13 +43,13 @@
                         <li class="menu-item">
                             <a href="/sk/pb">
                                 <i class="fa-solid fa-file-invoice-dollar"></i>
-                                <span>Slip Pembayaran</span>
+                                <span>Pembayaran</span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="/sk/pr">
+                            <a href="/sk/ds">
                                 <i class="fa-solid fa-id-card"></i>
-                                <span>Profil</span>
+                                <span>Data Siswa</span>
                             </a>
                         </li>
                     </ul>

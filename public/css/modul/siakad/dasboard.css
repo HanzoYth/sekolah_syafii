@@ -4,6 +4,10 @@
    MODERN EMERALD & GOLD DESIGN SYSTEM (V2 - ULTRA PREMIUM)
    ===================================================================== */
 :root {
+    /* Dimensions & Layout Mechanics */
+    --sidebar-width: 270px;
+    --bismillah-bar-h: 46px;
+
     /* Primary Emerald Spectrum */
     --primary-emerald: #0D5C3A;
     --emerald-dark: #073B25;
@@ -62,9 +66,6 @@
     
     /* Animation Timing */
     --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-
-    /* Dimensions */
-    --bismillah-bar-h: 46px;
 }
 
 /* =====================================================================
@@ -148,42 +149,47 @@ ul { list-style: none; }
 }
 
 /* =====================================================================
-   LAYOUT CONTAINER — MEMENUHI KONTEN / LAYAR FULL (100vh)
+   LAYOUT CONTAINER & FIX SIDEBAR OVERLAP
    ===================================================================== */
 .dashboard-container {
     display: flex;
     min-height: calc(100vh - var(--bismillah-bar-h));
     width: 100%;
-    align-items: stretch;
+    position: relative;
 }
 
-.main-content {
-    flex: 1;
-    padding: 2rem;
-    min-height: calc(100vh - var(--bismillah-bar-h));
-    width: calc(100% - 270px);
-    background-color: var(--bg-main);
-}
-
-/* =====================================================================
-   SIDEBAR
-   ===================================================================== */
+/* SIDEBAR FIX */
 .sidebar {
-    width: 270px;
-    min-width: 270px;
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
     background: var(--sidebar-bg);
     color: #ffffff;
     padding: 28px 0;
     display: flex;
     flex-direction: column;
-    position: sticky;
+    position: fixed; /* Menggunakan fixed agar konsisten menempel di samping */
     top: var(--bismillah-bar-h);
+    left: 0;
     height: calc(100vh - var(--bismillah-bar-h));
     box-shadow: var(--shadow-lg);
     z-index: 100;
     border-right: 1px solid rgba(212, 175, 55, 0.15);
 }
 
+/* MAIN CONTENT FIX */
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width); /* Mendorong konten ke kanan sebesar lebar sidebar */
+    width: calc(100% - var(--sidebar-width)); /* Menyesuaikan sisa lebar layar */
+    min-width: 0;
+    padding: 2rem;
+    min-height: calc(100vh - var(--bismillah-bar-h));
+    background-color: var(--bg-main);
+}
+
+/* =====================================================================
+   SIDEBAR INTERNAL STYLES
+   ===================================================================== */
 .sidebar .brand {
     padding: 0 24px 24px 24px;
     font-size: 1.25rem;
@@ -936,9 +942,17 @@ tbody tr:last-child td, .styled-table tbody tr:last-child td { border-bottom: no
 }
 
 @media (max-width: 992px) {
-    .dashboard-container { flex-direction: column; }
-    .sidebar { width: 100%; height: auto; position: relative; top: 0; }
-    .main-content { width: 100%; padding: 1.25rem; }
+    .sidebar { 
+        position: relative; 
+        width: 100%; 
+        height: auto; 
+        top: 0; 
+    }
+    .main-content { 
+        margin-left: 0; 
+        width: 100%; 
+        padding: 1.25rem; 
+    }
     .topbar { flex-direction: column; align-items: flex-start; gap: 14px; }
 }
 

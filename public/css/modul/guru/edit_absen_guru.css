@@ -1,3 +1,8 @@
+/* ==========================================================================
+   CSS DETAIL ABSENSI GURU - EDUHRIS
+   Theme: Dark Emerald Modern
+   ========================================================================== */
+
 :root {
     /* Palette Dark Emerald Modern */
     --primary-color: #064e3b;       /* Dark Emerald */
@@ -12,6 +17,7 @@
     --success-color: #059669;
     --danger-color: #dc2626;
     --warning-color: #d97706;
+    --info-color: #0284c7;
 
     --radius-md: 10px;
     --radius-lg: 16px;
@@ -33,7 +39,7 @@ body {
     overflow-x: hidden;
 }
 
-/* CONTAINER & LAYOUT (TANPA SIDEBAR) */
+/* CONTAINER & LAYOUT */
 .dashboard-container {
     width: 100%;
     min-height: 100vh;
@@ -43,7 +49,7 @@ body {
 
 .main-wrapper {
     width: 100%;
-    max-width: 1100px; /* Maksimal lebar layar agar tetap terpusat dan rapi */
+    max-width: 1100px;
     margin: 0 auto;
     padding: 32px 24px;
     display: flex;
@@ -51,7 +57,7 @@ body {
     gap: 24px;
 }
 
-/* TOPBAR */
+/* TOPBAR HEADER */
 .topbar {
     display: flex;
     justify-content: space-between;
@@ -97,39 +103,6 @@ body {
     margin-top: 2px;
 }
 
-.btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background-color: var(--primary-color);
-    color: #ffffff;
-    padding: 12px 22px;
-    border-radius: var(--radius-md);
-    border: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: 0 2px 8px rgba(6, 78, 59, 0.2);
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-hover);
-}
-
-/* FORM GRID LAYOUT */
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 24px;
-}
-
-.col-12 { grid-column: span 12; }
-.col-8  { grid-column: span 8; }
-.col-7  { grid-column: span 7; }
-.col-5  { grid-column: span 5; }
-.col-4  { grid-column: span 4; }
-
 /* CARD & HEADERS */
 .card {
     background-color: var(--card-bg);
@@ -160,7 +133,7 @@ body {
     font-size: 1.2rem;
 }
 
-.icon-info { background-color: #e0f2fe; color: #0284c7; }
+.icon-info { background-color: #e0f2fe; color: var(--info-color); }
 .icon-income { background-color: var(--primary-light); color: var(--primary-color); }
 
 .card-header h3 {
@@ -176,14 +149,12 @@ body {
 .card-body {
     display: flex;
     flex-direction: column;
-    gap: 18px;
 }
 
-/* GRID INPUT INSIDE CARD */
+/* FORM GRID LAYOUT */
+.col-12 { width: 100%; }
 .grid-cols-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.grid-cols-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 
-/* FORM CONTROL */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -207,91 +178,181 @@ body {
     background-color: #ffffff;
 }
 
-.form-control:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(6, 78, 59, 0.12);
-}
-
 .form-control.readonly {
     background-color: #f8fafc;
     color: var(--text-muted);
     font-weight: 500;
 }
 
-/* DYNAMIC SECTION & ROW */
-.dynamic-section {
-    margin-top: 10px;
-    border-top: 1px dashed var(--border-color);
-    padding-top: 16px;
+/* ==========================================================================
+   STATISTIK RINGKASAN ABSENSI (STAT BOXES)
+   ========================================================================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
 }
 
-.btn-add {
-    background-color: var(--primary-light);
-    color: var(--primary-color);
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
+.stat-box {
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
     gap: 6px;
     transition: var(--transition);
 }
 
-.btn-add:hover {
-    background-color: var(--primary-color);
-    color: #fff;
+.stat-box:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
-.dynamic-list {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+.stat-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.dynamic-row {
-    display: flex;
-    align-items: flex-end;
-    gap: 12px;
+.stat-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+/* Warna Kasus Statistik */
+.stat-hadir {
+    background-color: #ecfdf5;
+    border-color: #a7f3d0;
+}
+.stat-hadir .stat-label { color: #047857; }
+.stat-hadir .stat-value { color: #065f46; }
+
+.stat-izin {
+    background-color: #fffbeb;
+    border-color: #fde68a;
+}
+.stat-izin .stat-label { color: #b45309; }
+.stat-izin .stat-value { color: #92400e; }
+
+.stat-sakit {
+    background-color: #f0f9ff;
+    border-color: #bae6fd;
+}
+.stat-sakit .stat-label { color: #0369a1; }
+.stat-sakit .stat-value { color: #075985; }
+
+.stat-terlambat {
+    background-color: #fef2f2;
+    border-color: #fecaca;
+}
+.stat-terlambat .stat-label { color: #b91c1c; }
+.stat-terlambat .stat-value { color: #991b1b; }
+
+/* ==========================================================================
+   TABEL PRESENSI BULANAN
+   ========================================================================== */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table-presensi {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.table-presensi thead th {
     background-color: #f8fafc;
-    padding: 14px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 14px 18px;
+    border-bottom: 2px solid var(--border-color);
+    white-space: nowrap;
 }
 
-.flex-2 { flex: 2; }
-.align-self-end { align-self: flex-end; }
+.table-presensi tbody td {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
 
-.btn-remove-row {
-    width: 38px;
-    height: 38px;
-    background-color: #fee2e2;
-    color: var(--danger-color);
-    border: none;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    display: flex;
+.table-presensi tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-presensi tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Styling Tanggal Merah / Libur */
+.row-holiday {
+    background-color: #fff1f2 !important;
+}
+
+.row-holiday td {
+    color: #9f1239;
+}
+
+.holiday-label {
+    font-weight: 600;
+    color: #be123c;
+    background-color: #ffe4e6;
+    border-radius: 6px;
+}
+
+/* Elemen Pendukung di Dalam Tabel */
+.time-badge {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    transition: var(--transition);
-    flex-shrink: 0;
+    gap: 6px;
+    background-color: #f1f5f9;
+    color: #334155;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
 }
 
-.btn-remove-row:hover {
-    background-color: var(--danger-color);
-    color: #fff;
+.location-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #475569;
+    font-weight: 500;
 }
 
-/* RESPONSIVE DESIGN */
+/* Badge Status Kehadiran */
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.badge-success { background-color: #d1fae5; color: #047857; }
+.badge-warning { background-color: #fef3c7; color: #b45309; }
+.badge-info { background-color: #e0f2fe; color: #0369a1; }
+.badge-danger { background-color: #fee2e2; color: #b91c1c; }
+.badge-secondary { background-color: #f1f5f9; color: #64748b; }
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (TABLETS & MOBILE)
+   ========================================================================== */
 @media (max-width: 1024px) {
-    .col-12 { grid-column: span 12; }
-    .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
-    .main-wrapper { padding: 20px 16px; }
+    .main-wrapper { 
+        padding: 20px 16px; 
+    }
 
     .topbar {
         flex-direction: column;
@@ -299,27 +360,35 @@ body {
     }
 
     .card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+        flex-direction: row;
+        align-items: center;
     }
 
-    .btn-add {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .grid-cols-3, .grid-cols-2 {
+    .grid-cols-2 {
         grid-template-columns: 1fr;
     }
 
-    .dynamic-row {
-        flex-direction: column;
-        align-items: stretch;
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
     }
 
-    .btn-remove-row {
-        width: 100%;
-        margin-top: 6px;
+    .stat-box {
+        padding: 12px;
+    }
+
+    .stat-value {
+        font-size: 1.2rem;
+    }
+
+    .table-presensi thead th,
+    .table-presensi tbody td {
+        padding: 10px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
     }
 }

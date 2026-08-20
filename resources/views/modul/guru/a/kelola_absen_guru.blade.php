@@ -63,8 +63,10 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>NIG</th>
                                 <th>Nama Guru</th>
+                                <th>Kehadiran</th>
+                                <th>Izin</th>
+                                <th>Sakit</th>
                                 <th>Cabang</th>
                                 <th class="text-center">Status Kehadiran (Aksi)</th>
                             </tr>
@@ -72,43 +74,36 @@
                         <tbody id="absenTableBody">
                             @foreach ($data_guru as $value)
                                 @php
+                                    $cek = App\Models\master_absen_guru::where("guru_id",$value->id)->where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->exists();
                                     $data_absen_guru = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",$value->id)->first();
                                     $cabang = App\Models\cabang_guru::where("id",$value->cabang_id)->first();
+                                    $bulan = Carbon\Carbon::now()->translatedFormat("m");
+                                    $jumlah_kehadiran = App\Models\master_absen_guru::where("guru_id",$value->id)->where("status_kehadiran","h")->whereMonth("tgl_masuk",$bulan)->count();
+                                    $jumlah_izin = App\Models\master_absen_guru::where("guru_id",$value->id)->where("status_kehadiran","i")->whereMonth("tgl_masuk",$bulan)->count();
+                                    $jumlah_sakit = App\Models\master_absen_guru::where("guru_id",$value->id)->where("status_kehadiran","s")->whereMonth("tgl_masuk",$bulan)->count();
                                 @endphp
                                 <tr>
                                     <input type="hidden" value="{{$value->id}}" name="id_guru_{{$value->id}}">
                                     <td>{{ $loop->iteration }}</td>
-                                    <td><span class="nig-badge">{{$value->nig}}</span></td>
                                     <td class="teacher-name">
                                         <strong>{{$value->nama}}</strong>
                                     </td>
+                                    <td><span class="nig-badge">{{$jumlah_kehadiran}}</span></td>
+                                    <td><span class="nig-badge">{{$jumlah_izin}}</span></td>
+                                    <td><span class="nig-badge">{{$jumlah_sakit}}</span></td>
                                     <td><span class="branch-tag">{{$cabang->nama_cabang}}</span></td>
-                                    @if (in_array($value->id,$data_absen_id_guru))
-                                        @if ($data_absen_guru->status_kehadiran == "h")
+                                    @if ($cek)
+                                        @if ($data_absen_guru->status_kehadiran == "s")
                                             <td class="text-center">
                                                 <div class="select-presence-wrapper">
                                                     <a href="/gr/edklabs/{{$value->id}}">
                                                         <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
                                                     </a>
                                                     <select class="select-presence status-hadir" name="status_{{$value->id}}">
-                                                        <option value="h" selected>Hadir</option>
-                                                        <option value="i">Izin</option>
-                                                        <option value="s">Sakit</option>
-                                                        <option value="a">Alpa</option>
-                                                    </select>
-                                                </div>
-                                            </td>
-                                        @elseif ($data_absen_guru->status_kehadiran == "s")
-                                            <td class="text-center">
-                                                <div class="select-presence-wrapper">
-                                                    <a href="/gr/edklabs/{{$value->id}}">
-                                                        <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
-                                                    </a>
-                                                    <select class="select-presence status-hadir" name="status_{{$value->id}}">
+                                                        <option value="n">--tidak ada pilihan--</option>
                                                         <option value="h">Hadir</option>
                                                         <option value="i">Izin</option>
                                                         <option value="s" selected>Sakit</option>
-                                                        <option value="a">Alpa</option>
                                                     </select>
                                                 </div>
                                             </td>
@@ -119,10 +114,10 @@
                                                         <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
                                                     </a>
                                                     <select class="select-presence status-hadir" name="status_{{$value->id}}">
+                                                        <option value="n">--tidak ada pilihan--</option>
                                                         <option value="h">Hadir</option>
                                                         <option value="i" selected>Izin</option>
                                                         <option value="s">Sakit</option>
-                                                        <option value="a">Alpa</option>
                                                     </select>
                                                 </div>
                                             </td>
@@ -133,26 +128,26 @@
                                                         <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
                                                     </a>
                                                     <select class="select-presence status-hadir" name="status_{{$value->id}}">
-                                                        <option value="h">Hadir</option>
+                                                        <option value="n">--tidak ada pilihan--</option>
+                                                        <option value="h" selected>Hadir</option>
                                                         <option value="i">Izin</option>
                                                         <option value="s">Sakit</option>
-                                                        <option value="a" selected>Alpa</option>
                                                     </select>
                                                 </div>
                                             </td>
                                         @endif
                                     @else
                                         <td class="text-center">
-                                            <div class="select-presence-wrapper">                                                    
+                                            <div class="select-presence-wrapper">
                                                 <a href="/gr/edklabs/{{$value->id}}">
-                                                        <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
-                                                    </a>
-                                                <select class="select-presence status-hadir" name="status_{{$value->id}}">
-                                                    <option value="h">Hadir</option>
-                                                    <option value="i">Izin</option>
-                                                    <option value="s">Sakit</option>
-                                                    <option value="a" selected>Alpa</option>
-                                                </select>
+                                                    <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
+                                                </a>
+                                                    <select class="select-presence status-hadir" name="status_{{$value->id}}">
+                                                        <option value="n" selected>--tidak ada pilihan--</option>
+                                                        <option value="h">Hadir</option>
+                                                        <option value="i">Izin</option>
+                                                        <option value="s">Sakit</option>
+                                                    </select>
                                             </div>
                                         </td>
                                     @endif

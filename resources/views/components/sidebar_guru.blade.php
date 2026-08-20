@@ -25,19 +25,13 @@
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="#profil">
-                                <i class="fa-solid fa-id-card"></i>
-                                <span>Profil Saya</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
                             <a href="/gr/abs">
                                 <i class="fa-solid fa-user-check"></i>
                                 <span>Absensi Presensi</span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="#izin">
+                            <a href="/gr/pgjgr">
                                 <i class="fa-solid fa-file-signature"></i>
                                 <span>Pengajuan Izin/Cuti</span>
                             </a>
@@ -49,13 +43,7 @@
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="#dokumen">
-                                <i class="fa-solid fa-folder-open"></i>
-                                <span>Dokumen Saya</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="#pengumuman">
+                            <a href="/gr/pggr">
                                 <i class="fa-solid fa-bullhorn"></i>
                                 <span>Pengumuman</span>
                             </a>
@@ -117,12 +105,6 @@
                                     </li>
                                 </ul>
                             </details>
-                        </li>
-                        <li class="menu-item">
-                            <a href="#persetujuan-izin">
-                                <i class="fa-solid fa-clipboard-check"></i>
-                                <span>Persetujuan Izin</span>
-                            </a>
                         </li>
                         
                         <!-- MENU LAPORAN HR DENGAN SUBMENU -->

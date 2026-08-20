@@ -86,7 +86,7 @@
                                 $data_gaji = App\Models\gaji::where("guru_id",$value->id)->first();
                                 $cek_tunjangan = App\Models\tunjangan::where("guru_id",$value->id)->exists();
                                 $total_tunjangan = 0;
-                                $total_gaji =  $data_gaji->gaji_pokok + $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus- $data_gaji->potongan_tidak_hadir - $data_gaji->potongan_keterlambatan - $data_gaji->kasbon;
+                                $total_gaji =  $data_gaji->gaji_pokok + $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus - $data_gaji->potongan_tidak_hadir - $data_gaji->potongan_keterlambatan - $data_gaji->kasbon;
                                 if ($cek_tunjangan) {
                                     $hasil = App\Models\tunjangan::where("guru_id",$value->id)->sum("nominal");
                                     $total_tunjangan += $hasil;

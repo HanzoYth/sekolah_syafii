@@ -1,0 +1,322 @@
+/* ==========================================================================
+   CSS HALAMAN PENGUMUMAN & MODAL POP-UP (WITH SIDEBAR LAYOUT)
+   Theme: Dark Emerald Modern
+   ========================================================================== */
+:root {
+    --primary-color: #064e3b;
+    --primary-hover: #022c22;
+    --primary-light: #d1fae5;
+    --bg-main: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    
+    --sidebar-width: 260px;
+    --success-color: #059669;
+    --danger-color: #dc2626;
+    --warning-color: #d97706;
+
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    --transition: all 0.25s ease-in-out;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+
+/* LAYOUT CONTAINER */
+.app-container {
+    display: block; /* Menggunakan display block agar aman terhadap fixed element */
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* ==========================================================================
+   PERBAIKAN UTAMA: MAIN CONTENT AREA
+   Diberi margin-left 260px agar terdorong penuh keluar dari area sidebar
+   ========================================================================== */
+.main-content {
+    margin-left: var(--sidebar-width); /* Menggeser konten utama ke kanan selebar sidebar */
+    width: calc(100% - var(--sidebar-width)); /* Lebar pasti sisa layar */
+    min-width: 0;
+    padding: 32px 28px;
+    box-sizing: border-box;
+}
+
+.main-wrapper {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* TOPBAR HEADER */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.topbar-title h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.topbar-title p {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    margin-top: 2px;
+}
+
+/* BUTTONS */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+    background-color: #f1f5f9;
+    color: var(--text-muted);
+}
+
+.btn-secondary:hover {
+    background-color: #e2e8f0;
+    color: var(--text-main);
+}
+
+.btn-icon {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 8px;
+    justify-content: center;
+}
+
+.btn-edit {
+    background-color: #fef3c7;
+    color: var(--warning-color);
+}
+
+.btn-edit:hover {
+    background-color: #fde68a;
+}
+
+.btn-delete {
+    background-color: #fee2e2;
+    color: var(--danger-color);
+}
+
+.btn-delete:hover {
+    background-color: #fecaca;
+}
+
+/* CARD & TABEL */
+.card {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    width: 100%;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table-pengumuman {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.table-pengumuman thead th {
+    background-color: #f8fafc;
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 14px 20px;
+    border-bottom: 2px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.table-pengumuman tbody td {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.table-pengumuman tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-pengumuman tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+.action-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* MODAL POP-UP */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-container {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 500px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-20px);
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.modal-overlay.active .modal-container {
+    transform: translateY(0);
+}
+
+.modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-close:hover {
+    color: var(--danger-color);
+}
+
+.modal-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    outline: none;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(6, 78, 59, 0.1);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    background-color: #f8fafc;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* RESPONSIVE LAYOUT */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px 16px;
+    }
+
+    .modal-container {
+        width: 90%;
+    }
+}

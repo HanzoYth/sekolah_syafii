@@ -33,7 +33,7 @@
                         <span class="badge-dot"></span>
                     </button>
                     <div class="user-profile">
-                        <img src="#" alt="Foto Profil">
+                        <img src="{{ route('file.show',$mydata->url_foto)}}" alt="Foto Profil">
                         <div class="user-info">
                             <span class="name">Administrator</span>
                             <span class="role">Administrator Modul Guru</span>

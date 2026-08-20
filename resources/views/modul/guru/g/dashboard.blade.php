@@ -108,8 +108,8 @@
                             <i class="fa-solid fa-mug-hot text-info"></i>
                         </div>
                         <div class="stat-data">
-                            <span class="label">Sisa Cuti Tahunan</span>
-                            <h3>8 <small>Hari</small></h3>
+                            <span class="label">Jumlah Pengajuan</span>
+                            <h3>0</h3>
                         </div>
                     </div>
 
@@ -187,24 +187,19 @@
                     <div class="card widget-pengumuman">
                         <div class="card-header">
                             <h4><i class="fa-solid fa-bullhorn"></i> Pengumuman Sekolah</h4>
-                            <a href="#" class="link-more">Lihat Semua</a>
+                            <a href="/gr/pggr" class="link-more">Lihat Semua</a>
                         </div>
                         <div class="card-body">
                             <div class="announcement-list">
-                                <div class="announcement-item">
-                                    <div class="badge-date">28 JUL</div>
-                                    <div class="announcement-text">
-                                        <h5>Rapat Persiapan Penilaian Tengah Semester</h5>
-                                        <p>Diharapkan seluruh guru hadir di Ruang Rapat Lt. 2 pukul 13:00 WITA...</p>
+                                @foreach ($data_pengumuman as $value)
+                                    <div class="announcement-item">
+                                        <div class="badge-date">{{Carbon\Carbon::parse($value->tanggal)->translatedFormat("d")}} {{strtoupper(Carbon\Carbon::parse($value->tanggal)->translatedFormat("M"))}}</div>
+                                        <div class="announcement-text">
+                                            <h5>{{$value->judul}}</h5>
+                                            <p>{{$value->isi}}</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="announcement-item">
-                                    <div class="badge-date">01 AGU</div>
-                                    <div class="announcement-text">
-                                        <h5>Pelatihan Kurikulum Operasional Satuan Pendidikan</h5>
-                                        <p>Wajib bagi seluruh Guru Tetap dan Guru Honorarium Yayasan...</p>
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>

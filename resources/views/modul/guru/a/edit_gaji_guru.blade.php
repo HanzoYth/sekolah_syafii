@@ -50,6 +50,7 @@
                     </div>
                 </div>
                 <div class="card-body grid-cols-3">
+                    <input type="hidden" id="jumlahPotonganKehadiran" value="{{$jumlah_hari_aktif - $jumlah_kehadiran}}">
                     <div class="form-group">
                         <label>Nama Guru</label>
                         <input type="text" value="{{$data_guru->nama}}" class="form-control readonly" readonly>
@@ -60,16 +61,16 @@
                     </div>
                     <div class="form-group">
                         <label>Tugas / Jabatan Utama</label>
-                        <input type="text" value="{{$data_wallas}}" class="form-control readonly" readonly>
+                        <input type="text" value="{{$info_jabatan}}" class="form-control readonly" readonly>
                     </div>
                     <div class="form-group">
                         <label>Tugas Tambahan</label>
                         <input type="text" name="tgs_tambahan" value="" class="form-control" placeholder="kosongkan kalau tidak punya tugas tambahan">
                     </div>
                     <div class="form-group">
-                        <label>Jumlah Tidak Hadir (Hari)</label>
+                        <label>Jumlah Hadir (Hari)</label>
                         <div class="input-unit">
-                            <input type="number" id="absenHari" value="{{$jumlah_alpa}}" class="form-control readonly" readonly placeholder="0">
+                            <input type="number" id="absenHari" value="{{$jumlah_kehadiran}}" class="form-control readonly" readonly placeholder="0">
                             <span class="unit-text">Hari</span>
                         </div>
                     </div>
@@ -79,6 +80,10 @@
                             <input type="number" id="telatMenit" value="{{$jumlah_terlambat}}" class="form-control readonly" readonly placeholder="0">
                             <span class="unit-text">Menit</span>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Detail Kehadiran</label>
+                        <input type="text" name="detail_kehadiran" value="{{$jumlah_kehadiran}}/{{$jumlah_hari_aktif}}" class="form-control readonly" readonly>
                     </div>
                 </div>
             </section>
@@ -100,21 +105,21 @@
                             <label>Kafalah Pokok</label>
                             <div class="input-currency">
                                 <span>Rp</span>
-                                <input type="number" name="pokok" id="kafalahPokok" value="{{(int) $data_gaji->gaji_pokok}}" class="form-control calc-income" placeholder="0">
+                                <input type="number" name="pokok" id="kafalahPokok" value="{{(int) $data_gaji->gaji_pokok == 0 ? '' : (int) $data_gaji->gaji_pokok}}" class="form-control calc-income" placeholder="0">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Kafalah Honor</label>
                             <div class="input-currency">
                                 <span>Rp</span>
-                                <input type="number" name="honor" id="kafalahHonor" value="{{(int) $data_gaji->gaji_honor}}" class="form-control calc-income" placeholder="0">
+                                <input type="number" name="honor" id="kafalahHonor" value="{{(int) $data_gaji->gaji_honor == 0 ? '' : (int) $data_gaji->gaji_honor}}" class="form-control calc-income" placeholder="0">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Kafalah Tugas Tambahan</label>
                             <div class="input-currency">
                                 <span>Rp</span>
-                                <input type="number" name="tugas_tambahan" id="kafalahTugasTambahan" value="{{(int) $data_gaji->tugas_tambahan}}" class="form-control calc-income" placeholder="0">
+                                <input type="number" name="tugas_tambahan" id="kafalahTugasTambahan" value="{{(int) $data_gaji->tugas_tambahan == 0 ? '' : (int) $data_gaji->tugas_tambahan}}" class="form-control calc-income" placeholder="0">
                             </div>
                         </div>
                     </div>
@@ -164,18 +169,19 @@
                     <div>
                         <h3>3. Potongan</h3>
                         <p class="subtitle">Penyesuaian keterlambatan & kasbon</p>
+                        <p class="subtitle">Anda Cukup Masukkan Nominal Potongannya Saja Terekecuali Untuk Kasbon</p>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label>Potongan Tidak Hadir</label>
+                        <label>Nominal Potongan Tidak Hadir</label>
                         <div class="input-currency">
                             <span>Rp</span>
                             <input type="number" name="tidak_hadir" id="potonganAbsen" value="40000" class="form-control calc-deduct" placeholder="0">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Potongan Keterlambatan</label>
+                        <label>Nominal Potongan Keterlambatan</label>
                         <div class="input-currency">
                             <span>Rp</span>
                             <input type="number" name="terlambat" id="potonganTelat" value="500" class="form-control calc-deduct" placeholder="0">
@@ -214,14 +220,14 @@
                             <label>Kafalah Tambahan</label>
                             <div class="input-currency">
                                 <span>Rp</span>
-                                <input type="number" name="tambahan" id="kafalahTambahan" value="{{(int) $data_gaji->gaji_tambahan}}" class="form-control calc-bonus" placeholder="0">
+                                <input type="number" name="tambahan" id="kafalahTambahan" value="{{(int) $data_gaji->gaji_tambahan == 0 ? '' : (int) $data_gaji->gaji_tambahan}}" class="form-control calc-bonus" placeholder="0">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Reward / Bonus Kinerja</label>
                             <div class="input-currency">
                                 <span>Rp</span>
-                                <input type="number" name="bonus" id="rewardKafalah" value="{{(int) $data_gaji->bonus}}" class="form-control calc-bonus" placeholder="0">
+                                <input type="number" name="bonus" id="rewardKafalah" value="{{(int) $data_gaji->bonus == 0 ? '' :(int) $data_gaji->bonus}}" class="form-control calc-bonus" placeholder="0">
                             </div>
                         </div>
                     </div>
@@ -333,7 +339,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const totalPendapatan = pokok + honor + tugasTambahan + dynamicTunjanganTotal;
 
         // B. Total Potongan
-        const potAbsen = getVal('potonganAbsen') * parseInt(document.getElementById("absenHari").value);
+        const potAbsen = getVal('potonganAbsen') * parseInt(document.getElementById("jumlahPotonganKehadiran").value);
         const potTelat = getVal('potonganTelat') * parseInt(document.getElementById("telatMenit").value);
         const potKasbon = getVal('potonganKasbon');
         const totalPotongan = potAbsen + potTelat + potKasbon;

@@ -26,19 +26,6 @@
                     <h2>Laporan Absensi Guru</h2>
                     <p>Rekapitulasi dan pemantauan kehadiran guru harian / bulanan</p>
                 </div>
-                <div class="topbar-actions">
-                    <button class="icon-btn" title="Notifikasi">
-                        <i class="fa-regular fa-bell"></i>
-                        <span class="badge-dot"></span>
-                    </button>
-                    <div class="user-profile">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" alt="Foto Profil">
-                        <div class="user-info">
-                            <span class="name">Administrator</span>
-                            <span class="role">Modul Guru</span>
-                        </div>
-                    </div>
-                </div>
             </header>
 
             <!-- CONTENT BODY -->
@@ -109,7 +96,7 @@
                                 <!-- ITEM ABSENSI -->
                                 <div class="attendance-card">
                                     <div class="teacher-info">
-                                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" alt="Foto Guru">
+                                        <img src="{{ route('file.show',$value->getGuru->url_foto)}}" alt="Foto Guru">
                                         <div class="details">
                                             <h5>{{$value->getGuru->nama}}</h5>
                                             <span class="nip">NIP. 19850712 201001 1 002</span>

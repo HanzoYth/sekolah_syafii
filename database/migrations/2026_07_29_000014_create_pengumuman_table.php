@@ -13,7 +13,8 @@ return new class extends Migration
             $table->string("judul");
             $table->text("isi");
             $table->date("tanggal");
-            $table->foreignId("user_id")->constrained("akun")->cascadeOnDelete();
+            $table->foreignId("guru_id")->constrained("guru")->cascadeOnDelete();
+            $table->foreignId("cabang_id")->constrained("cabang_guru")->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -16,6 +16,7 @@ use App\Http\Controllers\modulTahfidzController;
 use App\Http\Controllers\dataWalasControll;
 use App\Http\Controllers\kelasHalaqahController;
 use App\Http\Controllers\file_surat;
+use App\Http\Controllers\pembayaranController;
 use App\Http\Controllers\siswaController;
 use Illuminate\Support\Facades\Storage;
 
@@ -64,6 +65,18 @@ Route::get("/gr/hpgm/{id}",[tanggalMerahController::class,"hapusTanggalMerah"]);
 Route::post("/gr/tcb",[cabangGuruController::class,"TambahCabang"]);
 Route::get("/gr/nkt/{id}",[cabangGuruController::class,"nonAktikanCabang"]);
 
+
+//ini pengajuan
+Route::get("/gr/pgjgr",[modulGuruController::class,"tampilan_pengajuanGuru"]);
+Route::post("/gr/tbpgjgr",[modulGuruController::class,"tambah_pengajuanGuru"]);
+Route::post("/gr/edpgjgr",[modulGuruController::class,"edit_pengajuanGuru"]);
+Route::get("/gr/hppgjgr/{id}",[modulGuruController::class,"hapus_pengajuanGuru"]);
+
+//ini pengumuman
+Route::get("/gr/pggr",[modulGuruController::class,"Tampilan_PengumumanGuru"]);
+Route::post("/gr/tbpggr",[modulGuruController::class,"tambah_pengumumanGuru"]);
+Route::post("/gr/edpggr",[modulGuruController::class,"Edit_pengumumanGuru"]);
+
 //ini otp
 Route::get("/gr/totp",[otpController::class,"tampilanOtp"]);
 Route::get("/gr/otp",[otpController::class,"createOtp"]);
@@ -105,6 +118,7 @@ Route::get('/tf/kls',[kelasHalaqahController::class,"kelas_halaqah"]);
 //ini dasboard siakad
 Route::get('/sk/das',[modulSiakadController::class,"dashboard_siakad"]);
 Route::get('/sk/ds',[dataSiswaController::class,"data_siswa"]);
+Route::get('/sk/pb',[pembayaranController::class,"pembayaran_siswa"]);
 
 
 
