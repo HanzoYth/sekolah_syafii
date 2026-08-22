@@ -119,7 +119,7 @@ Route::get('/tf/kls',[kelasHalaqahController::class,"kelas_halaqah"]);
 Route::get('/sk/das',[modulSiakadController::class,"dashboard_siakad"]);
 Route::get('/sk/ds',[dataSiswaController::class,"data_siswa"]);
 Route::get('/sk/pb',[pembayaranController::class,"pembayaran_siswa"]);
-
+Route::get('/sk/dp',[PembayaranController::class,"detail_pembayaran_siswa"]);
 
 
 //siswa

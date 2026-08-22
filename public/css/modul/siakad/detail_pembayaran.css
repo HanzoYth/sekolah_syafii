@@ -1,0 +1,360 @@
+/* ==========================================
+   PALET WARNA ISLAMI MODERN (SIAKAD)
+   ========================================== */
+:root {
+    --primary-green: #0f5132;      /* Hijau Zamrud Deep */
+    --primary-light: #198754;      /* Hijau Islami Medium */
+    --secondary-gold: #d4af37;     /* Emas Elegan */
+    --gold-light: #fef9e7;         /* Aksensasi Emas Soft */
+    --bg-light: #f4f7f5;           /* Background Abu Soft Hijau */
+    --text-dark: #2c3e50;
+    --text-muted: #6c757d;
+    --border-color: #e2e8f0;
+    
+    --success-bg: #d1e7dd;
+    --success-text: #0f5132;
+    --warning-bg: #fff3cd;
+    --warning-text: #664d03;
+    --danger-bg: #f8d7da;
+    --danger-text: #842029;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    padding: 30px;
+    background-color: var(--bg-light);
+    min-height: 100vh;
+}
+
+/* ==========================================
+   TOPBAR CUSTOM (MENYESUAIKAN LEBAR HALAMAN)
+   ========================================== */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 850px;            /* Samakan persis dengan max-width .detail-wrapper */
+    margin: 0 auto 20px auto;    /* Posisikan di tengah secara horisontal */
+    padding: 15px 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.topbar-left h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--primary-green);
+    font-weight: 600;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary-green);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.88rem;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+    background-color: var(--primary-green);
+    color: #ffffff;
+}
+
+.academic-pill {
+    background-color: var(--gold-light);
+    color: #856404;
+    border: 1px solid var(--secondary-gold);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* ==========================================
+   DETAIL CONTAINER & CARD
+   ========================================== */
+.detail-wrapper {
+    max-width: 850px;
+    margin: 0 auto 30px auto;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(15, 81, 50, 0.08);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+/* HEADER CARD (ISLAMIC MOTIF) */
+.detail-card-header {
+    position: relative;
+    background: linear-gradient(135deg, var(--primary-green) 0%, #08331f 100%);
+    color: #ffffff;
+    padding: 30px 25px;
+    text-align: center;
+    border-bottom: 4px solid var(--secondary-gold);
+}
+
+.basmalah-text {
+    font-family: 'Amiri', serif;
+    font-size: 1.8rem;
+    color: var(--secondary-gold);
+    margin-bottom: 10px;
+    direction: rtl;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.invoice-number {
+    display: block;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    opacity: 0.85;
+    margin-bottom: 12px;
+}
+
+/* STATUS BADGE */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.success { background-color: var(--success-bg); color: var(--success-text); }
+.status-badge.warning { background-color: var(--warning-bg); color: var(--warning-text); }
+.status-badge.danger { background-color: var(--danger-bg); color: var(--danger-text); }
+
+/* BODY DETAIL */
+.detail-card-body {
+    padding: 30px;
+}
+
+.section-block {
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 1.05rem;
+    color: var(--primary-green);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 2px solid #eef2f0;
+    padding-bottom: 8px;
+}
+
+/* INFO GRID */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px 25px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-item .label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+}
+
+.info-item .value {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+}
+
+.info-item .value.bold {
+    font-weight: 600;
+}
+
+/* DIVIDER ISLAMI */
+.divider-islamic {
+    text-align: center;
+    margin: 25px 0;
+    color: var(--secondary-gold);
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/* TABEL RINCIAN */
+.receipt-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.receipt-table th, .receipt-table td {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.receipt-table th {
+    background-color: #f8faf9;
+    color: var(--primary-green);
+    text-align: left;
+}
+
+.text-right { text-align: right !important; }
+.bold { font-weight: 600; }
+
+.receipt-table tfoot td {
+    border-top: 2px solid var(--primary-green);
+    border-bottom: none;
+    padding-top: 15px;
+}
+
+.total-amount {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-green);
+}
+
+/* FOOTER CARD */
+.detail-card-footer {
+    background-color: #fdfdfd;
+    border-top: 1px solid var(--border-color);
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.islamic-quote {
+    font-size: 0.78rem;
+    font-style: italic;
+    color: var(--text-muted);
+    max-width: 420px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.islamic-quote i {
+    color: var(--secondary-gold);
+    font-size: 1rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-islamic-primary, .btn-islamic-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.btn-islamic-primary {
+    background-color: var(--primary-green);
+    color: #ffffff;
+}
+
+.btn-islamic-primary:hover {
+    background-color: #0b3d26;
+}
+
+.btn-islamic-secondary {
+    background-color: #ffffff;
+    color: var(--primary-green);
+    border: 1px solid var(--primary-green);
+}
+
+.btn-islamic-secondary:hover {
+    background-color: #f0f7f4;
+}
+
+/* ==========================================
+   RESPONSIF & PRINT MEDIA QUERY
+   ========================================== */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 15px;
+    }
+
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-card-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-buttons {
+        justify-content: flex-end;
+    }
+}
+
+@media print {
+    .x-sidebar_siakad, .topbar, .action-buttons, .btn-back {
+        display: none !important;
+    }
+    .main-content {
+        padding: 0;
+        background-color: #ffffff;
+    }
+    .detail-wrapper {
+        box-shadow: none;
+        border: none;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+}

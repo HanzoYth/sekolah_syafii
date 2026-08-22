@@ -134,7 +134,7 @@
                                 <td>Rp 350.000</td>
                                 <td>03/08</td>
                                 <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Lunas</span></td>
-                                <td><button class="btn-sm">Detail</button></td>
+                                <td><a href = '/sk/dp'class="btn-sm">Detail</a></td>
                             </tr>
                             <tr>
                                 <td>Siti Aminah</td>
