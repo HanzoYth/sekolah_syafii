@@ -72,7 +72,7 @@
                         <div class="card-body">
                             <div class="status-box status-success">
                                 <i class="fa-solid fa-circle-check"></i>
-                                <div>
+                                <div class="status-info">
                                     <h5>Pembayaran Lunas</h5>
                                     <p>Tidak ada tunggakan untuk periode ini</p>
                                 </div>
@@ -91,7 +91,7 @@
                             </div>
 
                             <div class="action-buttons">
-                                <a href="/sk/pb" class="btn btn-primary">
+                                <a href="/sk/pbs" class="btn btn-primary">
                                     <i class="fa-solid fa-receipt"></i> Lihat Slip Pembayaran
                                 </a>
                             </div>

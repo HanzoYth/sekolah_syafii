@@ -96,6 +96,20 @@
   box-shadow: 0 0 0 3px var(--cream);
 }
 
+/* --- CHANGED: dashboard-grid dipaksa satu kolom penuh, supaya widget
+     (mis. Status Pembayaran) tidak "menggantung" kecil di kiri saat cuma
+     ada 1 widget — sekarang selalu melebar sampai ujung kanan konten --- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  width: 100%;
+}
+
+.widget-presensi {
+  width: 100%;
+}
+
 /* --- Card Header: ikon jadi badge bulat, lebih rapi dari teks polos --- */
 .card-header h4 {
   display: flex;
@@ -133,7 +147,9 @@
   box-shadow: 0 10px 26px rgba(11, 59, 46, 0.1);
 }
 
-/* --- Status Box Pembayaran --- */
+/* --- Status Box Pembayaran ---
+   CHANGED: kembali ke layout sederhana — ikon + judul + deskripsi
+   rata kiri berdekatan (tidak lagi dipisah space-between / badge kanan) --- */
 .status-box {
   display: flex;
   align-items: center;
@@ -154,6 +170,10 @@
   border-radius: 50%;
   font-size: 20px;
   background: rgba(255, 255, 255, 0.55);
+}
+
+.status-info {
+  min-width: 0;
 }
 
 .status-box h5 {

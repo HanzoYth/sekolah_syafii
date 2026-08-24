@@ -108,7 +108,7 @@ Route::post('/ad/tbad',[adminController::class,"tambahDataAdmin"]);
 
 Route::get("/slpgj/{id}",[file_surat::class,"cetak_SuratSlipGaji"])->name("Slipgaji.guru");
 Route::get("/slpgjgr/{id}",[file_surat::class,"tampilan_SuratSlipGaji"])->name("DetailSlipGaji.guru");
-
+Route::get("/sk/ssp",[file_surat::class,"suratSlipPembayaran"]);
 //-------------------------------------------------------------------------------------
 
 
@@ -132,6 +132,8 @@ Route::post("/sk/tbss",[siswaController::class,"tambah_siswa"]);
 Route::get("/sk/dbs",[siswaController::class,"dashboardSiswa"]);
 Route::get("/sk/pbs",[siswaController::class,"pembayaranSiswa"]);
 Route::get("/sk/pfs",[siswaController::class,"profilSiswa"]);
+Route::get("/sk/dsp",[siswaController::class,"DetailSlipPembayaran"]);
+
 
 
 // Route::get('/tes',[file_surat::class,"testingKirim"]);

@@ -22,6 +22,9 @@ class siswaController extends Controller
     function profilSiswa (){
         return view('/modul/siakad/profilSiswa');
     }
+     function DetailSlipPembayaran (){
+        return view('/modul/siakad/detailSlipPembayaran');
+    }
 
     function tampilan_formulirSiswa(){
         $data_ruang_kelas = ruang_kelas::all();

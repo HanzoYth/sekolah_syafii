@@ -118,6 +118,29 @@
   color: var(--warning);
 }
 
+/* --- Tombol Aksi (Lihat Detail / Cetak) ---
+   Bulat dengan efek hover berubah jadi warna solid + icon putih,
+   pola yang sama seperti tombol aksi (btn-print/btn-action) di modul lain. */
+.btn-action-view {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--info-bg, #e0f2fe);
+  color: var(--info, #0369a1);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all 0.25s ease-in-out;
+}
+
+.btn-action-view:hover {
+  background: var(--info, #0369a1);
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
 /* --- Empty State --- */
 .table-empty {
   padding: 48px 20px;

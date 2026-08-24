@@ -142,7 +142,7 @@
                                                 @endif
                                             </td>
                                             <td class="text-center">
-                                                <a href="#" class="btn-action-view" title="Lihat Detail / Cetak">
+                                                <a href="/sk/dsp" class="btn-action-view" title="Lihat Detail / Cetak">
                                                     <i class="fa-solid fa-eye"></i>
                                                 </a>
                                             </td>

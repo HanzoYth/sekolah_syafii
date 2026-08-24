@@ -18,6 +18,12 @@ use Illuminate\Support\Facades\Mail;
 
 class file_surat extends Controller
 {
+
+    function SuratSlipPembayaran (){
+        $pdf = Pdf::loadView("surat/suratSlipPembayaran");
+        return $pdf->download("surat.pdf");
+
+    }
     function tampilan_SuratSlipGaji($id){
         $guru = guru::where("id",session("id"))->first();
         $data_gaji = riwayat_gaji::where("id",$id)->first();
