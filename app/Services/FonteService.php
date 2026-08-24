@@ -28,9 +28,6 @@ class FonteService{
 
 
         if (!$result["status"] ?? false){
-            dd([
-                "tes" => $nomor
-            ]);
             Log::error("gagal kirim wa nya bos", [
                 "nomor" => $nomor,
                 "respon" => $result

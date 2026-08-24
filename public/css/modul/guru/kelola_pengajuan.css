@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CSS HALAMAN PENGAJUAN GURU & MODAL POP-UP (WITH SIDEBAR LAYOUT)
+   CSS HALAMAN PERSETUJUAN GURU & MODAL POP-UP (WITH SIDEBAR LAYOUT)
    Theme: Dark Emerald Modern
    ========================================================================== */
 :root {
@@ -125,6 +125,16 @@ body {
     background-color: #b91c1c;
 }
 
+.btn-success {
+    background-color: var(--success-color);
+    color: #ffffff;
+}
+
+.btn-success:hover {
+    background-color: #047857;
+}
+
+/* BUTTON ICON ACTIONS */
 .btn-icon {
     width: 34px;
     height: 34px;
@@ -142,21 +152,21 @@ body {
     background-color: #bae6fd;
 }
 
-.btn-edit {
-    background-color: #fef3c7;
-    color: var(--warning-color);
+.btn-accept {
+    background-color: #d1fae5;
+    color: var(--success-color);
 }
 
-.btn-edit:hover {
-    background-color: #fde68a;
+.btn-accept:hover {
+    background-color: #a7f3d0;
 }
 
-.btn-delete {
+.btn-reject {
     background-color: #fee2e2;
     color: var(--danger-color);
 }
 
-.btn-delete:hover {
+.btn-reject:hover {
     background-color: #fecaca;
 }
 
@@ -224,6 +234,7 @@ body {
     background-color: #fef3c7;
     color: #b45309;
 }
+
 .badge-success {
     background-color: #d1fae5;
     color: #047857;
@@ -238,6 +249,7 @@ body {
     background-color: #fef3c7;
     color: #b45309;
 }
+
 .action-group {
     display: flex;
     align-items: center;

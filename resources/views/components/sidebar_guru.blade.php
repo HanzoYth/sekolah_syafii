@@ -37,7 +37,7 @@
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="#payroll">
+                            <a href="/gr/slpgjgr">
                                 <i class="fa-solid fa-file-invoice-dollar"></i>
                                 <span>Slip Gaji</span>
                             </a>
@@ -125,7 +125,7 @@
                                         </a>
                                     </li>
                                     <li class="submenu-item">
-                                        <a href="#laporan-pengajuan">
+                                        <a href="/gr/apgjgr">
                                             <i class="fa-solid fa-file-circle-check"></i>
                                             <span>Laporan Pengajuan</span>
                                         </a>

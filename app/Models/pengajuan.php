@@ -9,7 +9,7 @@ class pengajuan extends Model
     protected $table = "pengajuan";
 
     protected $fillable = [
-        "jenis_pengajuan",
+        "status_pengajuan",
         "isi",
         "konfirmasi",
         "guru_id"

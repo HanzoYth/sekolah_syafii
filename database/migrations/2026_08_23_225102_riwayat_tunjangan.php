@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create("pengajuan",function (Blueprint $table) {
+        Schema::create("riwayat_tunjangan",function(Blueprint $table){
             $table->id();
-            $table->enum("status_pengajuan",["s","i"]);
-            $table->string("isi");
-            $table->enum("konfirmasi",["t","d","b"])->default("b");
-            $table->foreignId("guru_id")->constrained("guru")->cascadeOnDelete();   
+            $table->string("nama_tunjangan");
+            $table->decimal("nominal",15,2);
             $table->timestamps();
-        }); 
+            $table->foreignId("guru_id")->constrained("guru")->cascadeOnDelete();
+        });
     }
 
     /**
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists("pengajuan");
+        Schema::dropIfExists("riwayat_tunjangan");
     }
 };

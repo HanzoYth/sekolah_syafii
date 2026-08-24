@@ -17,6 +17,8 @@ use App\Models\wallas;
 use App\Models\kelas;
 use App\Models\pengajuan;
 use App\Models\pengumuman;
+use App\Models\riwayat_gaji;
+use App\Models\riwayat_tunjangan;
 use App\Models\tunjangan;
 use App\Services\FonteService;
 use Illuminate\Support\Carbon;
@@ -26,6 +28,8 @@ use Illuminate\Support\Facades\Validator;
 class modulGuruController extends Controller
 {
     //ini tampilan dashaboard guru dan admin
+
+
     function tampilan_dashboardGuru(){
         if (session("hasLogin")){
             Carbon::setLocale("id");
@@ -395,6 +399,36 @@ class modulGuruController extends Controller
         return redirect("/gr/klgr");
     }
 
+
+    function tambah_riwayatGajiGuru($id_guru,$gaji_pokok,$gaji_honor,$gaji_tugas_tambahan,$potongan_tidak_hadir,$potongan_keterlambatan,$kasbon,$gaji_tambahan,$bonus){
+        riwayat_gaji::create([
+            "gaji_pokok" => $gaji_pokok,
+            "gaji_honor" => $gaji_honor,
+            "gaji_tugas_tambahan" => $gaji_tugas_tambahan,
+            "potongan_tidak_hadir" => $potongan_tidak_hadir,
+            "potongan_keterlambatan" => $potongan_keterlambatan,
+            "kasbon" => $kasbon,
+            "gaji_tambahan" => $gaji_tambahan,
+            "bonus" => $bonus,
+            "guru_id" => $id_guru  
+        ]);
+    }
+
+    function tambah_riwayatTunjanganGuru($id_guru,$nama_tunjangan,$nominal){
+        riwayat_tunjangan::create([
+            "nama_tunjangan" => $nama_tunjangan,
+            "nominal" => $nominal,
+            "guru_id" => $id_guru
+        ]);
+    }
+
+    function tampilan_slipGaji(){
+        $data_riwayat_gaji = riwayat_gaji::where("guru_id",session("id"))->get();
+        return view("modul/guru/g/slip_gaji",[
+            "data_riwayat_gaji" => $data_riwayat_gaji
+        ]);
+    }
+
     function tampilan_kelolaGajiGuru(){
         if (session("hasLogin")){
             $data_guru = guru::whereHas("getUser",function ($item) {
@@ -500,9 +534,16 @@ class modulGuruController extends Controller
     function publish_GajiGuru($id){
         $WA_guru = guru::where("id",(int) $id)->first()->getUser;
         $data_gaji = gaji::where("guru_id",(int) $id)->first();
+        $data_tunjangan = tunjangan::where("guru_id",$id)->get();
         $data_gaji->publish = 1;
         $data_gaji->save();
+
+        $this->tambah_riwayatGajiGuru($id,$data_gaji->gaji_pokok,$data_gaji->gaji_honor,$data_gaji->gaji_tugas_tambahan,$data_gaji->potongan_tidak_hadir,$data_gaji->potongan_keterlambatan,$data_gaji->kasbon,$data_gaji->gaji_tambahan,$data_gaji->bonus);
         
+        foreach($data_tunjangan as $value){
+            $this->tambah_riwayatTunjanganGuru($value->guru_id,$value->nama_tunjangan,$value->nominal);
+        }
+
         $kirim_pesan = new FonteService();
         $kirim_pesan->sendMassage($WA_guru->noWa,"tolong perhatikan email anda untuk melihat lampiran slip gaji anda, kalau akun email anda sudah endak aktif chat admin yang bersangkutan");
 
@@ -569,6 +610,13 @@ class modulGuruController extends Controller
             "data_pengajuan" => $data_pengajuan,
         ]);
     }
+    
+    function tampilan_pengajuanGuruA(){
+        $data_pengajuan = pengajuan::all();
+        return view("modul/guru/a/kelola_pengajuan",[
+            "data_pengajuan" => $data_pengajuan
+        ]);
+    }
 
     function tambah_pengajuanGuru(Request $request){
         pengajuan::create([
@@ -595,6 +643,23 @@ class modulGuruController extends Controller
         $data_pengajuan = pengajuan::where("id", $id)->first();
 
         $data_pengajuan->delete();
+
+        return back();
+    }
+
+    function terima_pengajuanGuru($id){
+        $data_pengajuan = pengajuan::where("id", $id)->first();
+
+        $data_pengajuan->konfirmasi = "d";
+        $data_pengajuan->save();
+
+        return back();
+    }
+    function tolak_pengajuanGuru($id){
+        $data_pengajuan = pengajuan::where("id", $id)->first();
+
+        $data_pengajuan->konfirmasi = "t";
+        $data_pengajuan->save();
 
         return back();
     }

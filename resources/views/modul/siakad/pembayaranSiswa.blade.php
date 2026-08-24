@@ -86,21 +86,41 @@
                         <h4><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Transaksi</h4>
                     </div>
 
-                    @if (count($riwayat_pembayaran ?? []) > 0)
+                    {{-- Data Dummy untuk Pengujian --}}
+                    @php
+                        $riwayat_dummy = [
+                            (object)[
+                                'tanggal' => '12 Feb 2026',
+                                'nama_tagihan' => 'SPP Bulan Februari 2026',
+                                'jenis' => 'SPP Bulanan',
+                                'keterangan' => 'Pembayaran via Transfer Bank',
+                                'nominal' => 500000,
+                                'status' => 'lunas'
+                            ],
+                        ];
+
+                        // Gunakan $riwayat_pembayaran jika dikirim dari Controller, jika tidak ada pakai $riwayat_dummy
+                        $list_pembayaran = (isset($riwayat_pembayaran) && count($riwayat_pembayaran) > 0) ? $riwayat_pembayaran : $riwayat_dummy;
+                    @endphp
+
+                    @if (count($list_pembayaran) > 0)
                         <div class="table-wrap">
                             <table class="payment-table">
                                 <thead>
                                     <tr>
                                         <th>Tanggal</th>
+                                        <th>Nama Tagihan</th>
                                         <th>Jenis Pembayaran</th>
                                         <th class="text-right">Nominal</th>
                                         <th>Status</th>
+                                        <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($riwayat_pembayaran as $item)
+                                    @foreach ($list_pembayaran as $item)
                                         <tr>
                                             <td>{{ $item->tanggal }}</td>
+                                            <td><strong>{{ $item->nama_tagihan }}</strong></td>
                                             <td>
                                                 <div class="cell-jenis">
                                                     <span>{{ $item->jenis }}</span>
@@ -120,6 +140,11 @@
                                                         <i class="fa-solid fa-circle"></i> Belum Lunas
                                                     </span>
                                                 @endif
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="#" class="btn-action-view" title="Lihat Detail / Cetak">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach

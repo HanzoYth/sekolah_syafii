@@ -46,6 +46,7 @@ Route::get('/gr/cb',[cabangGuruController::class,"tampilanCabangGuru"]);
 Route::post('/gr/tbgr',[modulGuruController::class,"tambahGuru"]);
 
 //kelola gaji guru
+Route::get('/gr/slpgjgr',[modulGuruController::class,"tampilan_slipGaji"]);
 Route::get('/gr/klgjgr',[modulGuruController::class,"tampilan_kelolaGajiGuru"]);         
 Route::get('/gr/edgjgr/{id}',[modulGuruController::class,"tampilan_editGajiGuru"]);        
 Route::post('/gr/spgjgr',[modulGuruController::class,"simpan_PerubahanGajiGuru"]);        
@@ -68,9 +69,12 @@ Route::get("/gr/nkt/{id}",[cabangGuruController::class,"nonAktikanCabang"]);
 
 //ini pengajuan
 Route::get("/gr/pgjgr",[modulGuruController::class,"tampilan_pengajuanGuru"]);
+Route::get("/gr/apgjgr",[modulGuruController::class,"tampilan_pengajuanGuruA"]);
 Route::post("/gr/tbpgjgr",[modulGuruController::class,"tambah_pengajuanGuru"]);
 Route::post("/gr/edpgjgr",[modulGuruController::class,"edit_pengajuanGuru"]);
 Route::get("/gr/hppgjgr/{id}",[modulGuruController::class,"hapus_pengajuanGuru"]);
+Route::get("/gr/rjpggr/{id}",[modulGuruController::class,"tolak_pengajuanGuru"]);
+Route::get("/gr/acpggr/{id}",[modulGuruController::class,"terima_pengajuanGuru"]);
 
 //ini pengumuman
 Route::get("/gr/pggr",[modulGuruController::class,"Tampilan_PengumumanGuru"]);
@@ -103,7 +107,7 @@ Route::post('/ad/tbad',[adminController::class,"tambahDataAdmin"]);
 //bagiuan surat
 
 Route::get("/slpgj/{id}",[file_surat::class,"cetak_SuratSlipGaji"])->name("Slipgaji.guru");
-// Route::get("/slip",[file_surat::class,"cetak_SuratSlipGajiTes"]);
+Route::get("/slpgjgr/{id}",[file_surat::class,"tampilan_SuratSlipGaji"])->name("DetailSlipGaji.guru");
 
 //-------------------------------------------------------------------------------------
 

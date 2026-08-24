@@ -56,11 +56,15 @@
                                     @endphp
                                     <tr>
                                         <td>{{$tanggal}}</td>
-                                        @if ($value->konfirmasi)
-                                            <td><span class="badge badge-izin">Sudah Di konfirmasi</span></td>
-                                        @else
-                                            <td><span class="badge badge-sakit">Belum Di Konfirmasi</span></td>
-                                        @endif
+                                        <td>
+                                            @if ($value->konfirmasi == 'd')
+                                                <span class="badge badge-success">Diterima</span>
+                                            @elseif ($value->konfirmasi == 't')
+                                                <span class="badge badge-danger">Ditolak</span>
+                                            @else
+                                                <span class="badge badge-warning">Belum di Konfirmasi</span>
+                                            @endif
+                                        </td>
 
                                         @if ($status_pengajuan == "Sakit")
                                             <td><span class="badge badge-sakit">Sakit</span></td>
@@ -72,9 +76,11 @@
                                                 <button class="btn btn-icon btn-view" title="Lihat Detail" onclick="openModalDetail('{{$tanggal}}','{{$status_pengajuan}}','{{$value->isi}}')">
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
-                                                <button class="btn btn-icon btn-edit" title="Edit Pengajuan" onclick="openModalEdit('{{$value->id}}','{{$value->status_pengajuan}}','{{$value->isi}}')">
-                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                </button>
+                                                @if ($value->konfirmasi == 'b')
+                                                    <button class="btn btn-icon btn-edit" title="Edit Pengajuan" onclick="openModalEdit('{{$value->id}}','{{$value->status_pengajuan}}','{{$value->isi}}')">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                    </button>
+                                                @endif
                                                 <button class="btn btn-icon btn-delete" title="Hapus Pengajuan" onclick="openModalDelete('{{$value->id}}')">
                                                     <i class="fa-solid fa-trash-can"></i>
                                                 </button>
