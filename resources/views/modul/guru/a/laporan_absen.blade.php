@@ -151,6 +151,7 @@
             </div>
         </main>
     </div>
+    <x-warning />
     <script src="{{ asset('js/modul/guru/laporan_absen.js') }}"></script>
 </body>
 </html>

@@ -16,6 +16,8 @@ class riwayat_gaji extends Model
         "kasbon",
         "gaji_tambahan",
         "bonus",
+        "ketidakhadiran",
+        "keterlambatan",
         "guru_id"
     ];
 }

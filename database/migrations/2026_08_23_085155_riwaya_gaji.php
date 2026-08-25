@@ -21,6 +21,8 @@ return new class extends Migration
             $table->decimal("kasbon",15,2);
             $table->decimal("gaji_tambahan",15,2);
             $table->decimal("bonus",15,2);
+            $table->integer("ketidakhadiran");
+            $table->bigInteger("keterlambatan");
             $table->string("tugas_tambahan")->default("tidak ada tugas tambahan yang di berikan");
             $table->timestamps();
             $table->foreignId("guru_id")->constrained("guru")->cascadeOnDelete();

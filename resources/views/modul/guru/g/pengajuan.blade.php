@@ -216,7 +216,7 @@
             </form>
         </div>
     </div>
-
+    <x-warning />
     <!-- SCRIPT POP-UP INTERACTIVE -->
     <script>
         function openModal(modalId) {

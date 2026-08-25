@@ -12,6 +12,18 @@
                 <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>
             </div>
         </div>
+    @elseif(session('success'))
+        <div class="alert alert-danger" id="errorToast">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                <div>
+                    <p>
+                        <i class="fas fa-check-circle" style="color: #39e64d;"></i> 
+                        {{ session('success') }}
+                    </p>
+                </div>
+                <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>
+            </div>
+        </div>
     @endif
     @if ($errors->any())
         <div class="alert alert-danger" id="errorToast">

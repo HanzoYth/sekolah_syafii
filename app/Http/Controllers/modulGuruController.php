@@ -14,9 +14,10 @@ use App\Models\tanggal_merah;
 use App\Models\jenis_sekolah;
 use App\Models\gaji;
 use App\Models\wallas;
-use App\Models\kelas;
+use App\Models\ruang_kelas;
 use App\Models\pengajuan;
 use App\Models\pengumuman;
+use App\Models\priode;
 use App\Models\riwayat_gaji;
 use App\Models\riwayat_tunjangan;
 use App\Models\tunjangan;
@@ -120,7 +121,16 @@ class modulGuruController extends Controller
                 } 
             }
 
-            
+            $data_gaji = gaji::all();
+            $jumlah_gaji = $data_gaji->count();
+            $jumlah_gaji_selesai = gaji::where("publish",1)->count();
+            $jumlah_gaji_pokok = gaji::sum("gaji_pokok");
+            $jumlah_potongan = 0;
+            foreach ($data_gaji as $value){
+                $jumlah_potongan += $value->potongan_tidak_hadir + $value->potongan_keterlambatan + $value->kasbon;
+            }
+
+            $data_pengajuan = pengajuan::where("konfirmasi","b")->count();
             return view("modul/guru/a/dashboard",[
                 "mydata" => $myData,
                 "jumlah_guru_aktif" => $jumlah_data_guru_aktif,
@@ -136,7 +146,12 @@ class modulGuruController extends Controller
                 "jumlah_terlambat" => $jumlah_terlambat,
                 "jumlah_izin" => $jumlah_izin,
                 "jumlah_sakit" => $jumlah_sakit,
-                "jumlah_belum_absen" => $jumlah_belum_absen
+                "jumlah_belum_absen" => $jumlah_belum_absen,
+                "jumlah_gaji" => $jumlah_gaji,
+                "jumlah_gaji_selesai" => $jumlah_gaji_selesai,
+                "jumlah_gaji_pokok" => $jumlah_gaji_pokok,
+                "jumlah_potongan" => $jumlah_potongan,
+                "jumlah_pengajuan" => $data_pengajuan
             ]);
         }
         return redirect ("/reg");
@@ -241,6 +256,7 @@ class modulGuruController extends Controller
             "kasbon" => 0,
             "gaji_tambahan" => 0,
             "bonus" => 0,
+            "ketidakhadiran" => 0,
             "guru_id" => $id_guru
         ]);
     }
@@ -396,11 +412,11 @@ class modulGuruController extends Controller
         $data_guru->save();
         $data_akun->save();
 
-        return redirect("/gr/klgr");
+        return redirect("/gr/klgr")->with("success","berhasil update data guru");
     }
 
 
-    function tambah_riwayatGajiGuru($id_guru,$gaji_pokok,$gaji_honor,$gaji_tugas_tambahan,$potongan_tidak_hadir,$potongan_keterlambatan,$kasbon,$gaji_tambahan,$bonus){
+    function tambah_riwayatGajiGuru($id_guru,$gaji_pokok,$gaji_honor,$gaji_tugas_tambahan,$potongan_tidak_hadir,$potongan_keterlambatan,$kasbon,$gaji_tambahan,$bonus,$ketidakhadiran,$keterlambatan){
         riwayat_gaji::create([
             "gaji_pokok" => $gaji_pokok,
             "gaji_honor" => $gaji_honor,
@@ -410,6 +426,8 @@ class modulGuruController extends Controller
             "kasbon" => $kasbon,
             "gaji_tambahan" => $gaji_tambahan,
             "bonus" => $bonus,
+            "ketidakhadiran" => $ketidakhadiran,
+            "keterlambatan" => $keterlambatan,
             "guru_id" => $id_guru  
         ]);
     }
@@ -435,8 +453,39 @@ class modulGuruController extends Controller
                 $item->where("aktif",1);
             })->get();
 
+            //bikin order baru
+            if (priode::count() == 0){
+                priode::create();
+            }else{
+                if (Carbon::parse(priode::all()->first()->created_at)->translatedFormat("m") != Carbon::now()->translatedFormat("m")){      
+                    priode::create();
+                }
+            }
+
+
+            //setting publish
+            $jumlah_belum_publish_gaji = gaji::where("publish",0)->count();
+            if ($jumlah_belum_publish_gaji == 0){
+                if (Carbon::parse(priode::all()->first()->created_at)->translatedFormat("m") != Carbon::now()->translatedFormat("m")){      
+                    gaji::query()->update([
+                        "gaji_pokok" => 0,
+                        "gaji_honor" => 0,
+                        "gaji_tugas_tambahan" => 0,
+                        "potongan_tidak_hadir" => 0,
+                        "potongan_keterlambatan" => 0,
+                        "kasbon" => 0,
+                        "gaji_tambahan" => 0,
+                        "publish" => 0,
+                        "bonus" => 0,
+                        "ketidakhadiran" => 0
+                    ]);
+                    tunjangan::all()->delete();
+                    priode::all()->first()->delete();
+                }
+            }
+
             return view("modul/guru/a/kelola_gaji_guru",[
-                "data_guru" => $data_guru
+                "data_guru" => $data_guru,
             ]);
         }
         return redirect("/reg");
@@ -445,24 +494,28 @@ class modulGuruController extends Controller
     function tampilan_editGajiGuru($id){
         if (session("hasLogin")){
             Carbon::setLocale("id");
+            $data_priode = priode::all()->first();
             $data_guru = guru::where("id",$id)->first();
             $cek_wallas = wallas::where("guru_id",$id)->exists();
-            $info_jabatan  = "guru ini tidak punya jabatan utama";
-            $bulan = Carbon::now()->translatedFormat("m");
+            $info_jabatan_kepala_sekolah  = "guru ini tidak punya jabatan kepala";
+            $info_jabatan_kepala_wallas  = "guru ini tidak punya jabatan wallas";
+            $bulan = Carbon::parse($data_priode->creted_at)->translatedFormat("m");
             $data_gaji = gaji::where("guru_id",$id)->first();
             $data_tunjangan = tunjangan::where("guru_id",$id)->get();
             if ($cek_wallas){
-                $data_kelas = kelas::where("id",wallas::where("guru_id",$id)->first()->kelas_id)->first();
-                $info_jabatan = "guru wali kelas $data_kelas";
-            }elseif ($data_guru->kepala_sekolah) {
+                $data_kelas = ruang_kelas::where("id",wallas::where("guru_id",$id)->first()->kelas_id)->first();
+                $info_jabatan_kepala_wallas = "guru wali kelas $data_kelas";
+            }
+            
+            if ($data_guru->kepala_sekolah) {
                 $jenis_sekolah = jenis_sekolah::where("id",$data_guru->sekolah_id)->first()->jenis;
-                $info_jabatan = "kepala sekolah $jenis_sekolah";
+                $info_jabatan_kepala_sekolah = "kepala sekolah $jenis_sekolah";
             }
 
             $jumlah_kehadiran = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->count();
             $jumlah_terlambat = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->sum("terlambat_menit");
-            $awal_bulan = Carbon::now()->startOfMonth();
-            $akhir_bulan = Carbon::now()->endOfMonth();
+            $awal_bulan = Carbon::parse($data_priode->creted_at)->startOfMonth();
+            $akhir_bulan = Carbon::parse($data_priode->creted_at)->endOfMonth();
             $jumlah_hari_aktif = 0;
 
             for ($data  = $awal_bulan->copy() ; $data <= $akhir_bulan; $data->addDays()){
@@ -472,9 +525,11 @@ class modulGuruController extends Controller
             }
             return view("modul/guru/a/edit_gaji_guru",[
                 "data_guru" => $data_guru,
-                "info_jabatan" => $info_jabatan,
-                "jumlah_kehadiran" => $jumlah_kehadiran,
+                "info_jabatan_kepala_sekolah" => $info_jabatan_kepala_sekolah,
+                "info_jabatan_wallas" => $info_jabatan_kepala_wallas,
                 "jumlah_terlambat" => $jumlah_terlambat,
+                "jumlah_kehadiran" => $jumlah_kehadiran,
+                "tugas_tambahan" => $data_gaji->tugas_tambahan,
                 "data_gaji" => $data_gaji,
                 "data_tunjangan" => $data_tunjangan,
                 "jumlah_hari_aktif" => $jumlah_hari_aktif
@@ -493,28 +548,32 @@ class modulGuruController extends Controller
     }
 
     function simpan_PerubahanGajiGuru(Request $request){
+        $data_priode = priode::all()->first();
         $data_gaji = gaji::where("guru_id",(int) $request->id_guru)->first();
-        $bulan = Carbon::now()->translatedFormat("m");
+        $bulan = Carbon::parse($data_priode->created_at)->translatedFormat("m");
         $data_absen = master_absen_guru::where("guru_id",$request->id_guru)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->sum("terlambat_menit");
         
-        $awal_bulan = Carbon::now()->startOfMonth();
-        $akhir_bulan = Carbon::now()->endOfMonth();
+        $awal_bulan = Carbon::parse($data_priode->created_at)->startOfMonth();
+        $akhir_bulan = Carbon::parse($data_priode->created_at)->endOfMonth();
         $jumlah_hari_aktif = 0;
+
         Carbon::setLocale("id");
         for ($data  = $awal_bulan->copy() ; $data <= $akhir_bulan; $data->addDays()){
             if (strtolower(Carbon::parse($data)->translatedFormat("l")) != "minggu"){
                 $jumlah_hari_aktif ++;
             }
         }
-        $jumlah_alpa = $jumlah_hari_aktif - master_absen_guru::where("guru_id",$request->id_guru)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->count();
+        
+        $data_gaji->ketidakhadiran =  isset($request->ketidakhadiran) ? $request->ketidakhadiran : 0;
         $data_gaji->gaji_pokok = isset($request->pokok) ? $request->pokok : 0;
         $data_gaji->gaji_honor = isset($request->honor) ? $request->honor : 0;
         $data_gaji->gaji_tugas_tambahan = isset($request->tugas_tambahan) ? $request->tugas_tambahan : 0;
-        $data_gaji->potongan_tidak_hadir = isset($request->tidak_hadir) ? $request->tidak_hadir * $jumlah_alpa : 0;
+        $data_gaji->potongan_tidak_hadir = isset($request->tidak_hadir) ? $request->tidak_hadir * $request->ketidakhadiran : 0;
         $data_gaji->potongan_keterlambatan = isset($request->terlambat) ? $request->terlambat * $data_absen : 0;
         $data_gaji->kasbon = isset($request->kasbon) ? $request->kasbon : 0;
         $data_gaji->gaji_tambahan = isset($request->tambahan) ? $request->tambahan : 0;
         $data_gaji->bonus = isset($request->bonus) ? $request->bonus : 0;
+        
         if (isset($request->tgs_tambahan)){
             $data_gaji->tugas_tambahan = $request->tgs_tambahan;
         }
@@ -528,17 +587,19 @@ class modulGuruController extends Controller
         }
 
         $data_gaji->save();
-        return redirect("/gr/klgjgr");
+        return redirect("/gr/klgjgr")->with("success","berhasil update gaji guru");
     }
 
     function publish_GajiGuru($id){
         $WA_guru = guru::where("id",(int) $id)->first()->getUser;
         $data_gaji = gaji::where("guru_id",(int) $id)->first();
         $data_tunjangan = tunjangan::where("guru_id",$id)->get();
+        $data_priode = priode::all()->first();
+        $jumlah_terlambat = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$data_priode->created_at)->where("status_kehadiran","h")->sum("terlambat_menit");
         $data_gaji->publish = 1;
         $data_gaji->save();
 
-        $this->tambah_riwayatGajiGuru($id,$data_gaji->gaji_pokok,$data_gaji->gaji_honor,$data_gaji->gaji_tugas_tambahan,$data_gaji->potongan_tidak_hadir,$data_gaji->potongan_keterlambatan,$data_gaji->kasbon,$data_gaji->gaji_tambahan,$data_gaji->bonus);
+        $this->tambah_riwayatGajiGuru($id,$data_gaji->gaji_pokok,$data_gaji->gaji_honor,$data_gaji->gaji_tugas_tambahan,$data_gaji->potongan_tidak_hadir,$data_gaji->potongan_keterlambatan,$data_gaji->kasbon,$data_gaji->gaji_tambahan,$data_gaji->bonus,$data_gaji->ketidakhadiran,$jumlah_terlambat);
         
         foreach($data_tunjangan as $value){
             $this->tambah_riwayatTunjanganGuru($value->guru_id,$value->nama_tunjangan,$value->nominal);
@@ -549,7 +610,9 @@ class modulGuruController extends Controller
 
         $kirim_surat = new file_surat();
         $kirim_surat->Kirim_FileSlipGaji($id);
-        return back();
+
+
+        return back()->with("success","berhasil mempublish gaji");
     }
 
 

@@ -232,7 +232,7 @@
             </form>
         </div>
     </main>
-
+    <x-warning />
     <!-- Leaflet JS & Script Map Interaktif -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="{{ asset('js/modul/guru/setting_absen.js') }}"></script>

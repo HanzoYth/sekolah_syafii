@@ -15,6 +15,7 @@
     <!-- TEMPAT SIDEBAR -->
     <x-sidebar_guru />
 
+
     <!-- MAIN CONTENT -->
     <main class="main-wrapper">
         <!-- TOPBAR HEADER -->
@@ -86,7 +87,8 @@
                                 $data_gaji = App\Models\gaji::where("guru_id",$value->id)->first();
                                 $cek_tunjangan = App\Models\tunjangan::where("guru_id",$value->id)->exists();
                                 $total_tunjangan = 0;
-                                $total_gaji =  $data_gaji->gaji_pokok + $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus - $data_gaji->potongan_tidak_hadir - $data_gaji->potongan_keterlambatan - $data_gaji->kasbon;
+                                $total_potongan = $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus - $data_gaji->potongan_tidak_hadir - $data_gaji->potongan_keterlambatan - $data_gaji->kasbon;
+                                $total_gaji =  $total_potongan > 0 ? $data_gaji->gaji_pokok + $total_potongan : $data_gaji->gaji_pokok;
                                 if ($cek_tunjangan) {
                                     $hasil = App\Models\tunjangan::where("guru_id",$value->id)->sum("nominal");
                                     $total_tunjangan += $hasil;
@@ -152,7 +154,7 @@
         </section>
     </main>
 </div>
-
+<x-warning />
 <!-- COMPONENT MODAL POP-UP -->
 <div class="modal-overlay" id="publishModal">
     <div class="modal-box">
@@ -168,7 +170,6 @@
         </div>
     </div>
 </div>
-
 <!-- JAVASCRIPT LOGIC -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {

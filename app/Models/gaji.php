@@ -15,6 +15,7 @@ class gaji extends Model
         "potongan_keterlambatan",
         "kasbon",
         "gaji_tambahan",
+        "ketidakhadiran",
         "bonus",
         "guru_id"
     ];

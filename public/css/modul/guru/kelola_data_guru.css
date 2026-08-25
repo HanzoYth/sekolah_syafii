@@ -8,7 +8,7 @@
     --text-main: #0f172a;
     --text-muted: #64748b;
     --border-color: #e2e8f0;
-    
+
     --success-bg: #dcfce7;
     --success-color: #065f46;      /* Dark Green Accent */
     --danger-bg: #fee2e2;
@@ -21,7 +21,7 @@
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
     --transition: all 0.25s ease-in-out;
-    
+
     /* Variable Sidebar Width untuk sinkronisasi layout */
     --sidebar-width: 260px;
 }
@@ -121,6 +121,26 @@ body {
     background-color: var(--primary-color);
     color: #ffffff;
     box-shadow: 0 4px 10px rgba(6, 78, 59, 0.25);
+}
+
+/* OVERLAY SIDEBAR MOBILE (PERBAIKAN) */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 99;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
 }
 
 /* MAIN WRAPPER */
@@ -245,19 +265,29 @@ body {
     left: 14px;
     color: var(--text-muted);
     font-size: 0.9rem;
+    z-index: 1;
 }
 
-.input-icon-wrapper input {
+.input-icon-wrapper input,
+.input-icon-wrapper select {
     width: 100%;
     padding: 10px 14px 10px 38px;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     outline: none;
     font-size: 0.9rem;
+    background-color: #ffffff;
+    color: var(--text-main);
     transition: var(--transition);
 }
 
-.input-icon-wrapper input:focus {
+.input-icon-wrapper select {
+    cursor: pointer;
+    appearance: none;
+}
+
+.input-icon-wrapper input:focus,
+.input-icon-wrapper select:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(6, 78, 59, 0.15);
 }
@@ -382,6 +412,15 @@ body {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
+}
+
+.avatar-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
 }
 
 .teacher-detail {
@@ -436,12 +475,13 @@ body {
     color: var(--danger-color);
 }
 
-/* ACTION BUTTONS */
+/* ACTION BUTTONS (PERBAIKAN) */
 .action-buttons {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    white-space: nowrap;
 }
 
 .btn-action {
@@ -588,19 +628,15 @@ body {
     background-color: #b91c1c;
 }
 
-.avatar-circle img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    display: block;
+.text-center { 
+    text-align: center; 
 }
-.text-center { text-align: center; }
 
-/* MEDIA QUERIES */
+/* MEDIA QUERIES (PERBAIKAN) */
 @media (max-width: 992px) {
     .sidebar {
         transform: translateX(-100%);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
     }
 
     .sidebar.active {

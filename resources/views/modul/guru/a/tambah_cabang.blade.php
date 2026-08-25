@@ -156,7 +156,7 @@
             </div>
         </div>
     </div>
-
+    <x-warning />
     <!-- JAVASCRIPT INTERAKSI MODAL -->
     <script>
         // Modal Tambah Cabang

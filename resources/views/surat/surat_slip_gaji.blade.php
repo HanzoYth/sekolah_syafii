@@ -196,9 +196,6 @@
                 <div class="instansi-2">DINAS PENDIDIKAN DAN KEAGAMAAN</div>
                 <div class="instansi-3">SEKOLAH QURAN IMAM SYAFII</div>
             </div>
-            <div class="kop-logo">
-                <img src="{{ public_path('img/logo.png') }}" class="logo">
-            </div>
         </div>
 
         <div class="header-address">

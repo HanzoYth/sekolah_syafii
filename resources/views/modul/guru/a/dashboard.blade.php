@@ -44,37 +44,6 @@
 
             <!-- CONTENT BODY -->
             <div class="content-body">
-
-                <!-- FLASH MESSAGES / ERROR TOAST (Tetap menggunakan Blade syntax) -->
-                @if(session('eror'))
-                    <div class="alert alert-danger" id="errorToast">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                            <div>
-                                <p>
-                                    <i class="fas fa-exclamation-circle" style="color: #e63946;"></i> 
-                                    {{ session('eror') }}
-                                </p>
-                            </div>
-                            <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>
-                        </div>
-                    </div>
-                @endif
-
-                @if ($errors->any())
-                    <div class="alert alert-danger" id="errorToast">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                            <div>
-                                @foreach ($errors->all() as $error)
-                                    <p>
-                                        <i class="fas fa-exclamation-circle" style="color: #e63946;"></i> 
-                                        {{ $error }}
-                                    </p>
-                                @endforeach
-                            </div>
-                            <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>
-                        </div>
-                    </div>
-                @endif
                 
                 <!-- 1. STATISTIK UTAMA GURU (ADMIN) -->
                 <div class="stats-grid">
@@ -133,7 +102,7 @@
                         </div>
                         <div class="stat-data">
                             <span class="label">Pending Pengajuan</span>
-                            <h3>5 <small>Berkas</small></h3>
+                            <h3>{{$jumlah_pengajuan}} <small>Berkas</small></h3>
                         </div>
                     </div>
                 </div>
@@ -178,112 +147,29 @@
                     <div class="card widget-pengumuman">
                         <div class="card-header">
                             <h4><i class="fa-solid fa-money-bill-wave"></i> Ringkasan Penggajian</h4>
-                            <a href="#" class="link-more">Kelola Gaji</a>
+                            <a href="/gr/klgjgr" class="link-more">Kelola Gaji</a>
                         </div>
                         <div class="card-body">
                             <div class="payroll-summary-box">
                                 <div class="payroll-row">
                                     <span>Status Proses:</span>
-                                    <strong class="text-success">38 / 45 Selesai</strong>
+                                    <strong class="text-success">{{$jumlah_gaji_selesai}} / {{$jumlah_gaji}} Selesai</strong>
                                 </div>
                                 <div class="payroll-row">
                                     <span>Total Gaji Pokok:</span>
-                                    <strong>Rp 135.000.000</strong>
-                                </div>
-                                <div class="payroll-row">
-                                    <span>Total Tunjangan:</span>
-                                    <strong>Rp 28.500.000</strong>
+                                    <strong>Rp {{number_format($jumlah_gaji_pokok,0,",",".")}}</strong>
                                 </div>
                                 <div class="payroll-row">
                                     <span>Total Potongan:</span>
-                                    <strong class="text-danger">- Rp 3.200.000</strong>
+                                    <strong class="text-danger">- Rp {{number_format($jumlah_potongan,0,",",".")}}</strong>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
-
-                <!-- 3. PENGAJUAN PENDING & AKTIVITAS TERBARU (ADMIN) -->
-                <div class="dashboard-grid">
-                    
-                    <!-- Daftar Pengajuan Menunggu Approval -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h4><i class="fa-solid fa-clock-rotate-left"></i> Pengajuan Menunggu Persetujuan</h4>
-                            <a href="#" class="link-more">Lihat Semua</a>
-                        </div>
-                        <div class="card-body">
-                            <div class="announcement-list">
-                                <div class="announcement-item">
-                                    <div class="badge-date">28 JUL</div>
-                                    <div class="announcement-text">
-                                        <h5>Budi Santoso, M.Pd. (Izin Sakit)</h5>
-                                        <p>Mengajukan izin sakit 2 hari disertai surat dokter.</p>
-                                    </div>
-                                </div>
-                                <div class="announcement-item">
-                                    <div class="badge-date">27 JUL</div>
-                                    <div class="announcement-text">
-                                        <h5>Siti Rahma, S.Pd. (Cuti Tahunan)</h5>
-                                        <p>Mengajukan cuti 3 hari mulai tanggal 1 Agustus 2026.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Log Aktivitas Terbaru -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h4><i class="fa-solid fa-wave-square"></i> Aktivitas Terbaru</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="announcement-list">
-                                <div class="announcement-item">
-                                    <div class="badge-date" style="background: var(--navy-700);"><i class="fa-solid fa-user-pen"></i></div>
-                                    <div class="announcement-text">
-                                        <h5>Perubahan Data Guru</h5>
-                                        <p>Drs. Hendra memperbarui data sertifikasi & rekening bank.</p>
-                                    </div>
-                                </div>
-                                <div class="announcement-item">
-                                    <div class="badge-date" style="background: var(--navy-700);"><i class="fa-solid fa-check-double"></i></div>
-                                    <div class="announcement-text">
-                                        <h5>Pengajuan Disetujui</h5>
-                                        <p>Izin Dinas Luar Siti Aminah telah disetujui Admin.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
             </div>
         </main>
     </div>
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        function closeToast() {
-            const toast = document.getElementById('errorToast');
-            if (toast) {
-                toast.classList.add('fade-out');
-                setTimeout(() => {
-                    toast.remove();
-                }, 400);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const toast = document.getElementById('errorToast');
-            if (toast) {
-                setTimeout(() => {
-                    closeToast();
-                }, 5000);
-            }
-        });
-    </script>
+    <x-warning />
 </body>
 </html>

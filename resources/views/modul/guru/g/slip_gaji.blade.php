@@ -72,6 +72,6 @@
             </div>
         </main>
     </div>
-
+    <x-warning />
 </body>
 </html>

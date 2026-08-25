@@ -172,6 +172,6 @@ class akunController extends Controller
         $data_akun = akun::find((int) $id);
         $data_akun->aktif = 0;
         $data_akun->save();
-        return back();
+        return back()->with("success","berhasil menonaktifkan guru");
     }
 }

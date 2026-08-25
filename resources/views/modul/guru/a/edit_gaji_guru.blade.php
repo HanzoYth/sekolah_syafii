@@ -50,7 +50,7 @@
                     </div>
                 </div>
                 <div class="card-body grid-cols-3">
-                    <input type="hidden" id="jumlahPotonganKehadiran" value="{{$jumlah_hari_aktif - $jumlah_kehadiran}}">
+                    <input type="hidden" id="jumlahPotonganKehadiran" value="{{$data_gaji->ketidakhadiran}}">
                     <div class="form-group">
                         <label>Nama Guru</label>
                         <input type="text" value="{{$data_guru->nama}}" class="form-control readonly" readonly>
@@ -60,17 +60,21 @@
                         <input type="text" value="{{$data_guru->guru_honor ? 'Guru Honor' : 'Guru Tetap'}}" class="form-control readonly" readonly>
                     </div>
                     <div class="form-group">
-                        <label>Tugas / Jabatan Utama</label>
-                        <input type="text" value="{{$info_jabatan}}" class="form-control readonly" readonly>
+                        <label>Jabatan Kepala Sekolah</label>
+                        <input type="text" value="{{$info_jabatan_kepala_sekolah}}" class="form-control readonly" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Jabatan Wallas</label>
+                        <input type="text" value="{{$info_jabatan_wallas}}" class="form-control readonly" readonly>
                     </div>
                     <div class="form-group">
                         <label>Tugas Tambahan</label>
-                        <input type="text" name="tgs_tambahan" value="" class="form-control" placeholder="kosongkan kalau tidak punya tugas tambahan">
+                        <input type="text" name="tgs_tambahan" value="{{$tugas_tambahan}}" class="form-control" placeholder="kosongkan kalau tidak punya tugas tambahan">
                     </div>
                     <div class="form-group">
-                        <label>Jumlah Hadir (Hari)</label>
+                        <label>Jumlah Tidak Hadir (Hari)</label>
                         <div class="input-unit">
-                            <input type="number" id="absenHari" value="{{$jumlah_kehadiran}}" class="form-control readonly" readonly placeholder="0">
+                            <input type="number" id="absenHari" name="ketidakhadiran" value="{{$data_gaji->ketidakhadiran}}" class="form-control" placeholder="0">
                             <span class="unit-text">Hari</span>
                         </div>
                     </div>
@@ -119,7 +123,7 @@
                             <label>Kafalah Tugas Tambahan</label>
                             <div class="input-currency">
                                 <span>Rp</span>
-                                <input type="number" name="tugas_tambahan" id="kafalahTugasTambahan" value="{{(int) $data_gaji->tugas_tambahan == 0 ? '' : (int) $data_gaji->tugas_tambahan}}" class="form-control calc-income" placeholder="0">
+                                <input type="number" name="tugas_tambahan" id="kafalahTugasTambahan" value="{{$data_gaji->gaji_tugas_tambahan == 0 ? '' : (int)$data_gaji->gaji_tugas_tambahan}}" class="form-control calc-income" placeholder="0">
                             </div>
                         </div>
                     </div>
@@ -336,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function () {
             dynamicTunjanganTotal += parseFloat(input.value) || 0;
         });
 
-        const totalPendapatan = pokok + honor + tugasTambahan + dynamicTunjanganTotal;
+        const totalPendapatan = honor + tugasTambahan + dynamicTunjanganTotal;
 
         // B. Total Potongan
         const potAbsen = getVal('potonganAbsen') * parseInt(document.getElementById("jumlahPotonganKehadiran").value);
@@ -360,10 +364,14 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('sumPendapatan').textContent = formatRupiah(totalPendapatan);
         document.getElementById('sumTambahan').textContent = '+ ' + formatRupiah(totalTambahan);
         document.getElementById('sumPotongan').textContent = '- ' + formatRupiah(totalPotongan);
-        document.getElementById('displayGrandTotal').textContent = formatRupiah(grandTotal);
+        document.getElementById('displayGrandTotal').textContent = formatRupiah(grandTotal > 0 ? pokok + grandTotal : pokok );
     }
 
     // Event listener pada perubahan input
+    document.getElementById("absenHari").addEventListener("input", function() {
+        calculateAll();
+        console.log('e');
+    });
     document.getElementById('formEditGaji').addEventListener('input', function(e) {
         if (e.target.tagName === 'INPUT') {
             calculateAll();

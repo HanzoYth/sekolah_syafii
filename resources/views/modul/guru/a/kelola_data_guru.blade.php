@@ -149,7 +149,7 @@
         </div>
     </div>
 </div>
-
+<x-warning />
 <!-- JAVASCRIPT LOGIC -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {

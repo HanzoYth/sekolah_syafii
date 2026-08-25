@@ -45,7 +45,7 @@ class cabangGuruController extends Controller
                 "cabang_id" => cabang_guru::where("nama_cabang",$request->nama_cabang)->first()->id,
             ]);
         }
-        return redirect("/gr/cb");
+        return redirect("/gr/cb")->with("success","berhasil tambah cabang guru");
     }
 
     function nonAktikanCabang($id){

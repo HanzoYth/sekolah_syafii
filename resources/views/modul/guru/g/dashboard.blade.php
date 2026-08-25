@@ -209,6 +209,7 @@
             </div>
         </main>
     </div>
+    <x-warning />
 
     <!-- JAVASCRIPT LOGIC -->
     <script>

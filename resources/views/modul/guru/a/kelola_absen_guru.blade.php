@@ -167,7 +167,7 @@
         </section>
     </main>
 </div>
-
+<x-warning />
 <!-- JAVASCRIPT UTILS -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {

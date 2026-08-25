@@ -30,7 +30,7 @@ class MasterAbsenController extends Controller
 
         $bulan = Carbon::now()->translatedFormat("m");
         $data_guru = guru::where("id",$id)->first();
-        $nama_lokasi = master_lokasi_absen_guru::where("id",master_absen_guru::where("guru_id",$id)->first()->lokasi_id)->first()->nama_lokasi;
+        $nama_lokasi = master_lokasi_absen_guru::where("cabang_id",$data_guru->cabang_id)->first()->nama_lokasi;
         $data_cabang = cabang_guru::where("id",$data_guru->cabang_id)->first();
         $jumlah_hadir = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->count();
         $jumlah_izin = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","i")->count();
@@ -170,7 +170,7 @@ class MasterAbsenController extends Controller
                 }
             }
         }
-        return back();
+        return back()->with("success","berhasil mengabsenkan guru");
     }
 
 

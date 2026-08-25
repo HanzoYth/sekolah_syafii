@@ -213,7 +213,7 @@
         </form>
     </div>
 </div>
-
+<x-warning />
 <!-- JAVASCRIPT MODAL & FILTER LOGIC -->
 <script>
     function tombolHapus(id){

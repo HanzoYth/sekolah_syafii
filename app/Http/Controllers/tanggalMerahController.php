@@ -36,7 +36,7 @@ class tanggalMerahController extends Controller
             "cabang_id" => (int) $request->cabang_id
         ]);
 
-        return back();
+        return back()->with("success","berhasil tambah tanggal merah");
     
     }
 
@@ -49,12 +49,12 @@ class tanggalMerahController extends Controller
 
         $data_tanggal_merah->save();
 
-        return back();
+        return back()->with("success","berhasil edit tanggal merah");
     }
 
     function hapusTanggalMerah($id){
         tanggal_merah::destroy((int) $id);
 
-        return back();
+        return back()->with("success","berhasil hapus tanggal merah");
     }
 }
