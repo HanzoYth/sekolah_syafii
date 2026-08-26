@@ -18,6 +18,8 @@ use App\Http\Controllers\kelasHalaqahController;
 use App\Http\Controllers\file_surat;
 use App\Http\Controllers\pembayaranController;
 use App\Http\Controllers\siswaController;
+use App\Http\Controllers\detailSiswaController;
+use App\Http\Controllers\editSiswaController;
 use Illuminate\Support\Facades\Storage;
 
 // ini route untuk halaman modul dan welcome
@@ -121,7 +123,9 @@ Route::get('/tf/kls',[kelasHalaqahController::class,"kelas_halaqah"]);
 
 //ini dasboard siakad
 Route::get('/sk/das',[modulSiakadController::class,"dashboard_siakad"]);
-Route::get('/sk/ds',[dataSiswaController::class,"data_siswa"]);
+Route::get('/sk/ds',[dataSiswaController::class,"data_siswa"]); 
+Route::get('/sk/dls',[dataSiswaController::class,"detail_siswa"]); 
+Route::get('/sk/dts',[dataSiswaController::class,"edit_siswa"]); 
 Route::get('/sk/pb',[pembayaranController::class,"pembayaran_siswa"]);
 Route::get('/sk/dp',[PembayaranController::class,"detail_pembayaran_siswa"]);
 

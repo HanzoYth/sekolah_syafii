@@ -105,82 +105,10 @@
                                 </td>
                                 <td class="col-center">
                                     <div class="actions">
-                                        <a href="#" class="btn-icon btn-icon-view" data-tooltip="Detail Siswa">
+                                        <a href='/sk/dls' class="btn-icon btn-icon-view" data-tooltip="Detail Siswa">
                                             <i class="fa-solid fa-eye"></i>
                                         </a>
-                                        <a href="#" class="btn-icon btn-icon-edit" data-tooltip="Edit Data">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </a>
-                                        <button type="button" class="btn-icon btn-icon-delete" data-tooltip="Hapus Siswa"
-                                            onclick="return confirm('Apakah Anda yakin ingin menghapus data siswa ini?');">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- Baris 2 (Perempuan) -->
-                            <tr>
-                                <td class="col-center row-number">2</td>
-                                <td>
-                                    <div class="avatar">
-                                        <i class="fa-solid fa-user"></i>
-                                    </div>
-                                </td>
-                                <td class="student-id">
-                                    <strong>0057654321</strong> / 202302
-                                </td>
-                                <td class="student-name">Aisha Humaira</td>
-                                <td>
-                                    <span class="badge badge-perempuan">
-                                        <i class="fa-solid fa-venus"></i> Perempuan
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge-kelas">XI-B IPA</span>
-                                </td>
-                                <td class="col-center">
-                                    <div class="actions">
-                                        <a href="#" class="btn-icon btn-icon-view" data-tooltip="Detail Siswa">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </a>
-                                        <a href="#" class="btn-icon btn-icon-edit" data-tooltip="Edit Data">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </a>
-                                        <button type="button" class="btn-icon btn-icon-delete" data-tooltip="Hapus Siswa"
-                                            onclick="return confirm('Apakah Anda yakin ingin menghapus data siswa ini?');">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- Baris 3 (Laki-laki) -->
-                            <tr>
-                                <td class="col-center row-number">3</td>
-                                <td>
-                                    <div class="avatar">
-                                        <i class="fa-solid fa-user"></i>
-                                    </div>
-                                </td>
-                                <td class="student-id">
-                                    <strong>0059988776</strong> / 202303
-                                </td>
-                                <td class="student-name">Muhammad Zaid</td>
-                                <td>
-                                    <span class="badge badge-laki">
-                                        <i class="fa-solid fa-mars"></i> Laki-laki
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge-kelas">XII-A IPS</span>
-                                </td>
-                                <td class="col-center">
-                                    <div class="actions">
-                                        <a href="#" class="btn-icon btn-icon-view" data-tooltip="Detail Siswa">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </a>
-                                        <a href="#" class="btn-icon btn-icon-edit" data-tooltip="Edit Data">
+                                        <a href='/sk/dts' class="btn-icon btn-icon-edit" data-tooltip="Edit Data">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
                                         <button type="button" class="btn-icon btn-icon-delete" data-tooltip="Hapus Siswa"
