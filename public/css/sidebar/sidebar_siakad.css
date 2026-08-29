@@ -1,6 +1,5 @@
 /* ==========================================================================
    SIDEBAR — SIAKAD
-   (Tema mengikuti referensi sidebar_guru.css)
    Nuansa islami modern-klasik: hijau zamrud + emas, motif geometris
    delapan-penjuru yang samar sebagai tekstur latar, garis emas sebagai
    pembatas ala mushaf/manuskrip.
@@ -51,8 +50,7 @@
   transition: width 0.25s ease;
 }
 
-/* Motif geometris islami: kisi belah-ketupat tipis, sangat samar,
-   terinspirasi jalinan bintang delapan-penjuru pada ornamen masjid */
+/* Motif geometris islami */
 .sidebar::before {
   content: "";
   position: absolute;
@@ -222,20 +220,29 @@
   color: var(--gold-400);
 }
 
-.menu-item.active a {
+.menu-item.active > a {
   background: linear-gradient(90deg, rgba(216, 185, 74, 0.18) 0%, rgba(216, 185, 74, 0.04) 100%);
   border-left-color: var(--gold-400);
   color: var(--gold-100);
   font-weight: 600;
 }
 
-.menu-item.active a i {
+.menu-item.active > a i {
   color: var(--gold-400);
 }
 
 /* ==========================================================================
    SUBMENU / DROPDOWN
    ========================================================================== */
+
+.menu-item details summary {
+  list-style: none;
+  outline: none;
+}
+
+.menu-item details summary::-webkit-details-marker {
+  display: none;
+}
 
 .menu-item .menu-link {
   display: flex;
@@ -248,12 +255,7 @@
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  list-style: none;
   transition: background 0.2s ease, color 0.2s ease;
-}
-
-.menu-item .menu-link::-webkit-details-marker {
-  display: none;
 }
 
 .menu-link-content {
@@ -306,11 +308,13 @@
   align-items: center;
   gap: 10px;
   padding: 9px 16px;
+  margin: 0;
   border-radius: 7px;
   text-decoration: none;
   color: var(--ink-muted-on-dark);
   font-size: 13px;
   font-weight: 400;
+  border-left: none;
   transition: background 0.2s ease, color 0.2s ease;
 }
 
@@ -388,6 +392,7 @@
 
 .sidebar.collapsed .brand-logo span,
 .sidebar.collapsed .menu-item a span,
+.sidebar.collapsed .menu-link-content span,
 .sidebar.collapsed .menu-label,
 .sidebar.collapsed .logout-btn span,
 .sidebar.collapsed .submenu-icon {
@@ -398,7 +403,8 @@
   display: none;
 }
 
-.sidebar.collapsed .menu-item a {
+.sidebar.collapsed .menu-item a,
+.sidebar.collapsed .menu-link {
   justify-content: center;
   padding: 12px 0;
   margin: 0 10px;
@@ -423,6 +429,7 @@
 
   .sidebar .brand-logo span,
   .sidebar .menu-item a span,
+  .sidebar .menu-link-content span,
   .sidebar .menu-label,
   .sidebar .logout-btn span,
   .sidebar .submenu-icon {
@@ -433,7 +440,8 @@
     display: none;
   }
 
-  .sidebar .menu-item a {
+  .sidebar .menu-item a,
+  .sidebar .menu-link {
     justify-content: center;
     padding: 12px 0;
     margin: 0 10px;
@@ -459,6 +467,7 @@
 
   .sidebar .brand-logo span,
   .sidebar .menu-item a span,
+  .sidebar .menu-link-content span,
   .sidebar .menu-label,
   .sidebar .logout-btn span,
   .sidebar .submenu-icon {
@@ -469,7 +478,8 @@
     display: flex;
   }
 
-  .sidebar .menu-item a {
+  .sidebar .menu-item a,
+  .sidebar .menu-link {
     justify-content: flex-start;
   }
 

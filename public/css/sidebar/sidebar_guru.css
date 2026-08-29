@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SIDEBAR — EduHRIS
+   SIDEBAR & TOPBAR — EduHRIS
    Nuansa islami modern-klasik: hijau zamrud + emas, motif geometris
    delapan-penjuru yang samar sebagai tekstur latar, garis emas sebagai
    pembatas ala mushaf/manuskrip.
@@ -45,9 +45,9 @@
     radial-gradient(circle at 18% 12%, rgba(216, 185, 74, 0.10) 0%, transparent 38%),
     linear-gradient(180deg, var(--emerald-900) 0%, var(--emerald-950) 100%);
   border-right: 1px solid rgba(216, 185, 74, 0.18);
-  z-index: 30;
+  z-index: 1000;
   overflow: hidden;
-  transition: width 0.25s ease;
+  transition: width 0.25s ease, transform 0.25s ease;
 }
 
 /* Motif geometris islami: kisi belah-ketupat tipis, sangat samar,
@@ -378,7 +378,7 @@
 }
 
 /* ==========================================================================
-   COLLAPSED STATE
+   COLLAPSED STATE (DESKTOP)
    ========================================================================== */
 
 .sidebar.collapsed {
@@ -412,7 +412,59 @@
 }
 
 /* ==========================================================================
-   RESPONSIVE
+   HAMBURGER BUTTON & MOBILE OVERLAY
+   ========================================================================== */
+
+.mobile-hamburger-btn {
+  display: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--gold-400);
+  background: var(--emerald-900);
+  color: var(--gold-100);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.2s ease;
+}
+
+.mobile-hamburger-btn:hover {
+  background: var(--emerald-800);
+  transform: scale(1.05);
+}
+
+/* Sembunyikan tombol hamburger jika sidebar terbuka */
+.mobile-hamburger-btn.is-hidden,
+body.sidebar-is-open .mobile-hamburger-btn {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Latar Belakang Gelap (Overlay) saat Sidebar Terbuka di HP */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 36, 28, 0.6);
+  backdrop-filter: blur(3px);
+  z-index: 999; /* Tepat di bawah sidebar (1000) */
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.sidebar-overlay.active {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ==========================================================================
+   RESPONSIVE (TABLET & MOBILE)
    ========================================================================== */
 
 @media (max-width: 1024px) {
@@ -444,35 +496,49 @@
 }
 
 @media (max-width: 768px) {
+  /* Menyatu di sebelah judul Dashboard (TopBar) */
+  .topbar .page-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mobile-hamburger-btn {
+    display: flex !important;
+    position: static !important;
+  }
+
+  /* Drawer Sidebar Mobile */
   .sidebar {
-    width: 100%;
-    height: auto;
+    width: var(--sidebar-w) !important;
+    height: 100vh;
     max-height: 100vh;
     transform: translateX(-100%);
-    transition: transform 0.25s ease;
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.4);
   }
 
   .sidebar.open {
     transform: translateX(0);
   }
 
+  /* Tampilkan kembali teks dan menu penuh di mobile saat sidebar terbuka */
   .sidebar .brand-logo span,
   .sidebar .menu-item a span,
   .sidebar .menu-label,
   .sidebar .logout-btn span,
   .sidebar .submenu-icon {
-    display: inline;
+    display: inline !important;
   }
 
   .sidebar .submenu-wrapper[open] .submenu-list {
-    display: flex;
+    display: flex !important;
   }
 
   .sidebar .menu-item a {
-    justify-content: flex-start;
+    justify-content: flex-start !important;
   }
 
   .sidebar .logout-btn {
-    justify-content: flex-start;
+    justify-content: flex-start !important;
   }
 }

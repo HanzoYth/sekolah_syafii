@@ -21,7 +21,7 @@
             </a>
             <div class="header-title">
                 <h2>Edit Profil Guru</h2>
-                <p>Perbarui informasi biodata, jabatan, serta akun akses guru.</p>
+                <p>Perbarui jabatan guru.</p>
             </div>
         </div>
 
@@ -52,37 +52,42 @@
                         <!-- Nama Lengkap -->
                         <div class="form-group">
                             <label for="nama">Nama Lengkap & Gelar</label>
-                            <input type="text" id="nama" name="nama" class="form-control" value="{{$data_guru->nama}}" required>
+                            <input type="text" id="nama" name="nama" class="form-control" value="{{$data_guru->nama}}" readonly>
                         </div>
 
                         <!-- NIG (Nomor Induk Guru) -->
                         <div class="form-group">
                             <label for="nig">NIG (Nomor Induk Guru)</label>
-                            <input type="text" id="nig" name="nig" class="form-control" value="{{$data_guru->nig}}" required>
+                            <input type="text" id="nig" name="nig" class="form-control" value="{{$data_guru->nig}}" readonly>
+                        </div>
+                        <!-- Nomor Wa -->
+                        <div class="form-group">
+                            <label for="nig">WA (Nomor WA Aktif)</label>
+                            <input type="text" id="wa" name="wa" class="form-control" value="{{$nomor_wa}}" readonly>
                         </div>
 
                         <!-- Tempat Lahir -->
                         <div class="form-group">
                             <label for="tempat_lahir">Tempat Lahir</label>
-                            <input type="text" id="tempat_lahir" name="tempat_lahir" class="form-control" value="{{$data_guru->tempat_lahir}}" required>
+                            <input type="text" id="tempat_lahir" name="tempat_lahir" class="form-control" value="{{$data_guru->tempat_lahir}}" readonly>
                         </div>
 
                         <!-- Tanggal Lahir -->
                         <div class="form-group">
                             <label for="tanggal_lahir">Tanggal Lahir</label>
-                            <input type="date" id="tanggal_lahir" name="tanggal_lahir" class="form-control" value="{{$data_guru->tanggal_lahir}}" required>
+                            <input type="date" id="tanggal_lahir" name="tanggal_lahir" class="form-control" value="{{$data_guru->tanggal_lahir}}" readonly>
                         </div>
 
                         <!-- Agama -->
                         <div class="form-group">
                             <label for="agama">Agama</label>
-                            <input type="text" id="agama" name="agama" class="form-control" value="{{$data_guru->agama}}" required>
+                            <input type="text" id="agama" name="agama" class="form-control" value="{{$data_guru->agama}}" readonly>
                         </div>
 
                         <!-- Pendidikan Terakhir -->
                         <div class="form-group">
                             <label for="pendidikan_terakhir">Pendidikan Terakhir</label>
-                            <select id="pendidikan_terakhir" name="pendidikan_terakhir" class="form-control" required>
+                            <select id="pendidikan_terakhir" name="pendidikan_terakhir" class="form-control" disabled>
                                 <option value="" disabled selected>-- Pilih Pendidikan --</option>
                                 <option value="smp" {{$data_guru->pendidikan_terakhir == 'smp' ? 'selected' : ""}}>SMP / Sederajat</option>
                                 <option value="sma" {{$data_guru->pendidikan_terakhir == 'sma' ? 'selected' : ""}}>SMA / MA / Sederajat</option>
@@ -95,7 +100,7 @@
                         <!-- Alamat Lengkap -->
                         <div class="form-group span-2">
                             <label for="alamat">Alamat Lengkap</label>
-                            <textarea id="alamat" name="alamat" class="form-control" rows="3" required>{{$data_guru->alamat}}</textarea>
+                            <textarea id="alamat" name="alamat" class="form-control" rows="3" readonly>{{$data_guru->alamat}}</textarea>
                         </div>
                     </div>
                 </div>
@@ -132,21 +137,6 @@
                             <span>Kepala Sekolah</span>
                         </label>
                     </div>
-
-                    <!-- PENAMBAHAN INPUT TUTUP BUKU -->
-                    <div class="form-grid" style="margin-top: 20px;">
-                        <div class="form-group">
-                            <label for="tutup_buku">Tanggal Tutup Buku Guru</label>
-                            <select id="tutup_buku" name="tutup_buku" class="form-control" required>
-                                <option value="" disabled>-- Pilih Tanggal (1-31) --</option>
-                                @for ($i = 1; $i <= 31; $i++)
-                                    <option value="{{ $i }}" {{ $data_guru->tutup_buku == $i ? 'selected' : '' }}>
-                                        Tanggal {{ $i }}
-                                    </option>
-                                @endfor
-                            </select>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- SECTION 4: CABANG & SEKOLAH -->
@@ -176,33 +166,6 @@
                                     <option value="{{$djs->id}}" {{$djs->id == $data_guru->sekolah_id ? 'selected' : ''}}>{{$djs->jenis}}</option>
                                 @endforeach
                             </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SECTION 5: DATA AKUN (AKSES LOGIN) -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fa-solid fa-key"></i> Data Akun Login
-                    </div>
-
-                    <div class="form-grid">
-                        <!-- Username -->
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" id="username" name="username" class="form-control" value="{{$data_akun->username}}" required>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="form-group">
-                            <label for="email">Alamat Email</label>
-                            <input type="email" id="email" name="email" class="form-control" value="{{$data_akun->email}}" required>
-                        </div>
-
-                        <!-- Password -->
-                        <div class="form-group span-2">
-                            <label for="password">Password Baru <small style="color: var(--text-muted); font-weight: normal;">(Kosongkan jika tidak ingin mengubah password)</small></label>
-                            <input type="password" id="password" name="password" class="form-control" placeholder="Masukkan password baru">
                         </div>
                     </div>
                 </div>

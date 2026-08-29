@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\jenis_sekolah;
 use App\Models\ruang_kelas;
 use App\Models\siswa;
+use App\Models\slip_pembayaran_ipp;
 use App\Models\tahun_ajaran;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -63,6 +64,9 @@ class siswaController extends Controller
         session()->put("id",$data_siswa->id);
         session()->put("nama",$data_siswa->nama);
 
+        slip_pembayaran_ipp::create([
+            "siswa_id" => session("id"),
+        ]);
         return redirect("/mod");
     }
 }

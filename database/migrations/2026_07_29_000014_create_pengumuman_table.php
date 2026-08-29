@@ -14,7 +14,7 @@ return new class extends Migration
             $table->text("isi");
             $table->date("tanggal");
             $table->foreignId("guru_id")->constrained("guru")->cascadeOnDelete();
-            $table->foreignId("cabang_id")->constrained("cabang_guru")->cascadeOnDelete();
+            $table->foreignId("sekolah_id")->constrained("cabang_guru")->cascadeOnDelete();
             $table->timestamps();
         });
     }

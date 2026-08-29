@@ -1,53 +1,54 @@
 /* ============================================================
-   CSS DASHBOARD PEMBAYARAN (FIX SIDEBAR OVERLAP & CLEAN UI)
-   Link di <head> dashboard utama, setelah dasboard.css:
-   <link rel="stylesheet" href="{{ asset('css/modul/siakad/pembayaran.css') }}">
+   CSS DASHBOARD PEMBAYARAN (ISLAMIC ELEGANT & MODERN DESIGN)
+   File: public/css/modul/siakad/pembayaran.css
 ============================================================ */
 
-/* Reset Box-Sizing khusus area modul agar kalkulasi width/padding tepat */
 .main-content,
 .main-content * {
     box-sizing: border-box;
 }
 
 :root {
-    /* Lebar Sidebar (Sesuaikan angka ini jika sidebar kamu 250px / 280px / dll) */
-    --sidebar-width: 260px; 
+    --sidebar-width: 260px;
 
-    --pay-primary: #2563eb;
-    --pay-primary-hover: #1d4ed8;
+    /* Palette Color Islamic Modern (Emerald & Gold Accent) */
+    --pay-primary: #0d9488;          /* Islamic Deep Emerald / Teal */
+    --pay-primary-dark: #0f766e;     /* Dark Emerald */
+    --pay-primary-light: #f0fdf4;    /* Light Emerald Tint */
+    --pay-accent-gold: #d97706;      /* Warm Gold Accent */
+    --pay-accent-gold-light: #fef3c7;
+
+    --pay-bg-canvas: #f8fafc;
     --pay-bg-surface: #ffffff;
+
     --pay-text-title: #0f172a;
     --pay-text-body: #334155;
     --pay-text-muted: #64748b;
+
     --pay-border: #e2e8f0;
-    --pay-radius-lg: 16px;
+    --pay-border-hover: #cbd5e1;
+
+    --pay-radius-xl: 20px;
+    --pay-radius-lg: 14px;
     --pay-radius-md: 10px;
-    --pay-radius-sm: 6px;
-    --pay-shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
-    --pay-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+    --pay-radius-sm: 8px;
+
+    --pay-shadow-subtle: 0 4px 20px -2px rgba(13, 148, 136, 0.05);
+    --pay-shadow-hover: 0 12px 28px -6px rgba(13, 148, 136, 0.12);
 }
 
-/* ------------------------------------------------------------
-   FIX UTAMA: PENCEGAHAN SIDEBAR MENUTUPI KONTEN
------------------------------------------------------------- */
 .main-content {
-    /* Memberi dorongan ke kanan sebesar lebar sidebar agar tidak tertutup */
     margin-left: var(--sidebar-width);
-    
-    /* Menghitung lebar bersih sisa layar */
     width: calc(100% - var(--sidebar-width));
     min-width: 0;
     flex: 1;
-    
-    /* Spasi internal konten */
-    padding: 28px 32px; 
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 32px 36px;
+    font-family: 'Poppins', 'Amiri', -apple-system, BlinkMacSystemFont, sans-serif;
     color: var(--pay-text-body);
+    background-color: var(--pay-bg-canvas);
     -webkit-font-smoothing: antialiased;
 }
 
-/* Responsif untuk layar tablet & mobile (jika sidebar berubah mode) */
 @media (max-width: 992px) {
     .main-content {
         margin-left: 0;
@@ -57,106 +58,186 @@
 }
 
 /* ------------------------------------------------------------
-   1. STATISTIK PEMBAYARAN
+   1. TOPBAR REFINEMENT (WITH GOLD ACCENT)
+------------------------------------------------------------ */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.topbar-left .topbar-eyebrow {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--pay-text-muted);
+    letter-spacing: 0.3px;
+}
+
+.topbar-left h2 {
+    margin: 4px 0 0 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--pay-primary-dark);
+    letter-spacing: -0.5px;
+}
+
+.academic-pill {
+    background: linear-gradient(135deg, #ffffff 0%, var(--pay-primary-light) 100%);
+    border: 1px solid rgba(13, 148, 136, 0.2);
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: var(--pay-primary-dark);
+    box-shadow: var(--pay-shadow-subtle);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.academic-pill i {
+    color: var(--pay-accent-gold);
+}
+
+.topbar-icons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.topbar-icons .icon-bell-wrap,
+.topbar-icons > i {
+    width: 40px;
+    height: 40px;
+    background: var(--pay-bg-surface);
+    border: 1px solid var(--pay-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--pay-text-body);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.topbar-icons .icon-bell-wrap:hover,
+.topbar-icons > i:hover {
+    background: var(--pay-primary-light);
+    color: var(--pay-primary);
+    border-color: var(--pay-primary);
+}
+
+/* ------------------------------------------------------------
+   2. STATISTIK PEMBAYARAN (ISLAMIC CARDS)
 ------------------------------------------------------------ */
 .pembayaran-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 20px;
-    margin-top: 20px;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
 }
 
 .pembayaran-stats .stat-card {
     background: var(--pay-bg-surface);
-    padding: 22px 20px;
-    border-radius: var(--pay-radius-lg);
+    padding: 24px 20px;
+    border-radius: var(--pay-radius-xl);
     border: 1px solid var(--pay-border);
-    box-shadow: var(--pay-shadow-sm);
+    border-top: 3px solid var(--pay-primary);
+    box-shadow: var(--pay-shadow-subtle);
     display: flex;
     align-items: center;
-    gap: 16px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 18px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .pembayaran-stats .stat-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--pay-shadow-md);
-    border-color: #cbd5e1;
+    transform: translateY(-4px);
+    box-shadow: var(--pay-shadow-hover);
+    border-color: var(--pay-primary);
 }
 
 .pembayaran-stats .stat-icon {
-    width: 52px;
-    height: 52px;
-    border-radius: 12px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.35rem;
+    font-size: 1.4rem;
     flex-shrink: 0;
 }
 
-/* Color Accent System */
-.pembayaran-stats .stat-card:nth-child(1) .stat-icon { background: #eff6ff; color: #2563eb; }
-.pembayaran-stats .stat-card:nth-child(2) .stat-icon { background: #f0fdf4; color: #16a34a; }
-.pembayaran-stats .stat-card:nth-child(3) .stat-icon { background: #fffbeb; color: #d97706; }
-.pembayaran-stats .stat-card:nth-child(4) .stat-icon { background: #fef2f2; color: #dc2626; }
+.pembayaran-stats .stat-card:nth-child(1) { border-top-color: #0d9488; }
+.pembayaran-stats .stat-card:nth-child(1) .stat-icon { background: #ccfbf1; color: #0f766e; }
+
+.pembayaran-stats .stat-card:nth-child(2) { border-top-color: #16a34a; }
+.pembayaran-stats .stat-card:nth-child(2) .stat-icon { background: #dcfce7; color: #15803d; }
+
+.pembayaran-stats .stat-card:nth-child(3) { border-top-color: #d97706; }
+.pembayaran-stats .stat-card:nth-child(3) .stat-icon { background: #fef3c7; color: #b45309; }
+
+.pembayaran-stats .stat-card:nth-child(4) { border-top-color: #dc2626; }
+.pembayaran-stats .stat-card:nth-child(4) .stat-icon { background: #fee2e2; color: #b91c1c; }
 
 .pembayaran-stats .stat-card h3 {
     margin: 0;
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 700;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.4px;
     color: var(--pay-text-title);
-    line-height: 1.2;
 }
 
 .pembayaran-stats .stat-card p {
     margin: 4px 0 0 0;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: var(--pay-text-muted);
     font-weight: 500;
 }
 
 /* ------------------------------------------------------------
-   2. FILTER PEMBAYARAN
+   3. FILTER PEMBAYARAN
 ------------------------------------------------------------ */
 .pembayaran-filter {
     background: var(--pay-bg-surface);
-    padding: 20px 24px;
-    border-radius: var(--pay-radius-lg);
+    padding: 22px 26px;
+    border-radius: var(--pay-radius-xl);
     border: 1px solid var(--pay-border);
-    box-shadow: var(--pay-shadow-sm);
-    margin-bottom: 24px;
+    box-shadow: var(--pay-shadow-subtle);
+    margin-bottom: 28px;
 }
 
 .pembayaran-filter h4 {
     margin: 0 0 16px 0;
     font-size: 0.95rem;
     font-weight: 600;
-    color: var(--pay-text-title);
+    color: var(--pay-primary-dark);
     letter-spacing: -0.2px;
 }
 
 .pembayaran-filter .filter-group {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
 }
 
 .pembayaran-filter label {
     display: block;
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: 0.725rem;
+    font-weight: 700;
     color: var(--pay-text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.6px;
-    margin-bottom: 6px;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
 }
 
 .pembayaran-filter select {
     width: 100%;
-    padding: 9px 12px;
+    padding: 10px 14px;
     border-radius: var(--pay-radius-md);
     border: 1px solid var(--pay-border);
     background-color: #f8fafc;
@@ -172,29 +253,33 @@
 .pembayaran-filter select:focus {
     border-color: var(--pay-primary);
     background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.12);
 }
 
 /* ------------------------------------------------------------
-   3. TABEL DAFTAR PEMBAYARAN
+   4. TABEL DAFTAR PEMBAYARAN & BUTTONS
 ------------------------------------------------------------ */
 .main-content .table-card {
     background: var(--pay-bg-surface);
-    padding: 24px;
-    border-radius: var(--pay-radius-lg);
+    padding: 26px;
+    border-radius: var(--pay-radius-xl);
     border: 1px solid var(--pay-border);
-    box-shadow: var(--pay-shadow-sm);
+    box-shadow: var(--pay-shadow-subtle);
 }
 
-.main-content .table-card h4 {
-    margin: 0 0 20px 0;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--pay-text-title);
-    letter-spacing: -0.2px;
+.main-content .table-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 20px;
+}
+
+.main-content .table-card h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--pay-primary-dark);
+    letter-spacing: -0.3px;
 }
 
 .main-content .card-link {
@@ -202,32 +287,37 @@
     color: var(--pay-primary);
     text-decoration: none;
     font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: gap 0.2s ease;
 }
 
 .main-content .card-link:hover {
-    color: var(--pay-primary-hover);
-    text-decoration: underline;
+    color: var(--pay-primary-dark);
+    gap: 9px;
 }
 
 .main-content .table-responsive {
     overflow-x: auto;
-    border-radius: var(--pay-radius-md);
+    border-radius: var(--pay-radius-lg);
     border: 1px solid var(--pay-border);
 }
 
 .main-content table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     text-align: left;
     font-size: 0.875rem;
 }
 
 .main-content th {
-    background-color: #f8fafc;
-    color: var(--pay-text-muted);
+    background-color: #f0fdf4;
+    color: var(--pay-primary-dark);
     font-weight: 600;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--pay-border);
+    padding: 14px 18px;
+    border-bottom: 2px solid #ccfbf1;
     white-space: nowrap;
     text-transform: uppercase;
     font-size: 0.725rem;
@@ -235,64 +325,111 @@
 }
 
 .main-content td {
-    padding: 14px 16px;
-    color: var(--pay-text-title);
+    padding: 16px 18px;
+    color: var(--pay-text-body);
     border-bottom: 1px solid var(--pay-border);
     white-space: nowrap;
     font-weight: 500;
+    vertical-align: middle;
 }
 
 .main-content tbody tr:last-child td {
     border-bottom: none;
 }
 
-.main-content tbody tr:hover {
-    background-color: #f8fafc;
+.main-content tbody tr {
+    transition: background-color 0.2s ease;
 }
 
-/* ------------------------------------------------------------
-   4. BADGES & BUTTONS
------------------------------------------------------------- */
+.main-content tbody tr:hover {
+    background-color: #f0fdf4;
+}
+
+.student-name {
+    font-weight: 600;
+    color: var(--pay-text-title);
+}
+
+.amount {
+    font-weight: 600;
+    color: var(--pay-primary-dark);
+}
+
+.class-pill {
+    background: var(--pay-primary-light);
+    color: var(--pay-primary-dark);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.775rem;
+    font-weight: 600;
+    border: 1px solid #ccfbf1;
+}
+
+/* Status Badges */
 .main-content .badge {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 10px;
-    border-radius: 20px;
+    padding: 5px 12px;
+    border-radius: 30px;
     font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.2px;
 }
 
 .main-content .badge.success { background-color: #dcfce7; color: #15803d; }
 .main-content .badge.warning { background-color: #fef3c7; color: #b45309; }
 .main-content .badge.danger  { background-color: #fee2e2; color: #b91c1c; }
 
-.main-content .btn-sm {
-    padding: 6px 14px;
+/* Custom Action Buttons */
+.action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-action {
+    width: 34px;
+    height: 34px;
     border-radius: var(--pay-radius-sm);
     border: 1px solid var(--pay-border);
     background-color: #ffffff;
-    color: var(--pay-text-title);
-    font-size: 0.8rem;
-    font-family: inherit;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.875rem;
 }
 
-.main-content .btn-sm:hover {
-    background-color: var(--pay-primary);
-    color: #ffffff;
-    border-color: var(--pay-primary);
+.btn-action.view {
+    color: var(--pay-primary);
 }
 
+.btn-action.view:hover {
+    background-color: var(--pay-primary-light);
+    border-color: #ccfbf1;
+    transform: translateY(-2px);
+}
+
+.btn-action.edit {
+    color: var(--pay-accent-gold);
+}
+
+.btn-action.edit:hover {
+    background-color: var(--pay-accent-gold-light);
+    border-color: #fde68a;
+    transform: translateY(-2px);
+}
+
+/* Button Outline Bottom */
 .main-content .btn-outline {
-    padding: 10px 20px;
+    padding: 11px 24px;
     border-radius: var(--pay-radius-md);
-    border: 1px solid var(--pay-border);
+    border: 1px solid var(--pay-primary);
     background-color: #ffffff;
-    color: var(--pay-text-title);
+    color: var(--pay-primary-dark);
     font-size: 0.85rem;
     font-family: inherit;
     font-weight: 600;
@@ -304,9 +441,598 @@
 }
 
 .main-content .btn-outline:hover {
-    background-color: #f8fafc;
-    border-color: #cbd5e1;
+    background-color: var(--pay-primary);
+    color: #ffffff;
+    box-shadow: var(--pay-shadow-subtle);
 }
 
 .text-center { text-align: center; }
-.mt-15 { margin-top: 15px; }
+.mt-20 { margin-top: 20px; }
+
+/* ------------------------------------------------------------
+   5. MODAL POPUP — ISLAMIC ELEGANT & MODERN (WIDE & ADAPTIVE INPUTS)
+------------------------------------------------------------ */
+
+:root {
+    --modal-font: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    --modal-control-h: 46px;
+    --modal-label-size: 0.75rem;
+    --modal-input-size: 0.875rem;
+}
+
+/* Overlay & Centering Container */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(8, 22, 20, 0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    padding: 24px;
+    z-index: 99999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.28s ease, visibility 0.28s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Kartu Modal (Lebar Diperluas Ke 680px) */
+.modal-card {
+    background: var(--pay-bg-surface);
+    width: 100%;
+    max-width: 680px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--pay-radius-xl);
+    border: 1px solid var(--pay-border);
+    box-shadow: 
+        0 24px 60px -12px rgba(15, 23, 42, 0.3),
+        0 4px 14px -4px rgba(13, 148, 136, 0.18);
+    position: relative;
+    font-family: var(--modal-font);
+    
+    transform: scale(0.92) translateY(0);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+    overflow: hidden;
+    margin: auto;
+}
+
+/* Garis aksen hijau-emas */
+.modal-card::before {
+    content: '';
+    display: block;
+    height: 5px;
+    width: 100%;
+    flex-shrink: 0;
+    background: linear-gradient(90deg, 
+        var(--pay-primary) 0%, 
+        var(--pay-primary) 60%, 
+        var(--pay-accent-gold) 100%);
+}
+
+.modal-overlay.active .modal-card {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* Header Modal */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 32px 18px 32px;
+    border-bottom: 1px solid var(--pay-border);
+    background: var(--pay-bg-surface);
+    flex-shrink: 0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--pay-text-title);
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.modal-header h3 small {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--pay-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+.modal-header h3 i {
+    color: var(--pay-primary-dark);
+    background: linear-gradient(135deg, var(--pay-primary-light) 0%, var(--pay-accent-gold-light) 100%);
+    border: 1px solid rgba(13, 148, 136, 0.18);
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--pay-radius-md);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.btn-close-modal {
+    width: 36px;
+    height: 36px;
+    background: var(--pay-bg-canvas);
+    border: 1px solid var(--pay-border);
+    border-radius: 50%;
+    font-size: 0.95rem;
+    color: var(--pay-text-muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.btn-close-modal:hover {
+    background: #fee2e2;
+    color: #dc2626;
+    border-color: #fca5a5;
+    transform: rotate(90deg);
+}
+
+/* Body Form (Mengikuti Lebar Container Secara Optimal) */
+.modal-body {
+    padding: 28px 32px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modal-body::-webkit-scrollbar { width: 6px; }
+.modal-body::-webkit-scrollbar-track { background: transparent; }
+.modal-body::-webkit-scrollbar-thumb {
+    background: var(--pay-border-hover);
+    border-radius: 10px;
+}
+
+.modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+/* Baris Grid Multikolom di Dalam Form (Jika Ada Input Berdampingan) */
+.modal-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    width: 100%;
+}
+
+@media (max-width: 640px) {
+    .modal-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Title Seksi Form */
+.modal-section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0 2px 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--pay-primary-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    width: 100%;
+}
+
+.modal-section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--pay-border) 0%, transparent 100%);
+}
+
+/* Formatting Label */
+.modal-field label {
+    font-size: var(--modal-label-size);
+    font-weight: 700;
+    color: var(--pay-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.2;
+}
+
+.modal-field label i {
+    color: var(--pay-primary);
+    font-size: 0.85rem;
+}
+
+.modal-field label .optional-tag {
+    text-transform: none;
+    font-weight: 500;
+    font-size: 0.65rem;
+    color: #94a3b8;
+    margin-left: auto;
+}
+
+/* Elemen Input Otomatis Menyesuaikan Ukuran Full Container (100%) */
+.modal-field input,
+.modal-field select,
+.modal-field textarea,
+.input-icon-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.modal-field input,
+.modal-field select,
+.modal-field textarea {
+    padding: 0 16px;
+    border-radius: var(--pay-radius-md);
+    border: 1.5px solid var(--pay-border);
+    background-color: var(--pay-bg-canvas);
+    color: var(--pay-text-title);
+    font-size: var(--modal-input-size);
+    font-family: var(--modal-font);
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.modal-field input,
+.modal-field select {
+    height: var(--modal-control-h) !important;
+}
+
+.modal-field textarea {
+    padding: 12px 16px;
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.5;
+}
+
+.modal-field input:hover,
+.modal-field select:hover,
+.modal-field textarea:hover {
+    border-color: var(--pay-border-hover);
+}
+
+.modal-field input:focus,
+.modal-field select:focus,
+.modal-field textarea:focus {
+    border-color: var(--pay-primary);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3.5px rgba(13, 148, 136, 0.12);
+}
+
+/* Input Icon Container Fix */
+.input-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon-wrapper > i {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--pay-text-muted);
+    font-size: 0.95rem;
+    pointer-events: none;
+    z-index: 2;
+    transition: color 0.2s ease;
+}
+
+.input-icon-wrapper input,
+.input-icon-wrapper select {
+    padding-left: 44px !important;
+}
+
+/* Panah Custom Select */
+.modal-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2364748b'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.293l3.71-4.06a.75.75 0 111.08 1.04l-4.25 4.65a.75.75 0 01-1.08 0l-4.25-4.65a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 18px;
+    padding-right: 40px !important;
+    cursor: pointer;
+}
+
+.input-icon-wrapper input:focus ~ i,
+.input-icon-wrapper select:focus ~ i {
+    color: var(--pay-primary);
+}
+
+.modal-field input:disabled,
+.modal-field select:disabled {
+    background-color: #f1f5f9;
+    color: var(--pay-text-muted);
+    cursor: not-allowed;
+}
+
+.modal-field input::placeholder,
+.modal-field textarea::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.modal-field input[type="number"],
+.modal-field input.input-nominal {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.modal-field .field-hint {
+    font-size: 0.725rem;
+    color: var(--pay-text-muted);
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+/* Ringkasan Total Box */
+.modal-summary-box {
+    background: var(--pay-primary-light);
+    border: 1px dashed rgba(13, 148, 136, 0.35);
+    border-radius: var(--pay-radius-lg);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+    width: 100%;
+}
+
+.modal-summary-box span {
+    font-size: 0.775rem;
+    font-weight: 600;
+    color: var(--pay-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modal-summary-box strong {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--pay-primary-dark);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Footer Modal */
+.modal-footer {
+    padding: 18px 32px 22px 32px;
+    border-top: 1px solid var(--pay-border);
+    background: var(--pay-bg-surface);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.btn-modal-cancel,
+.btn-modal-save {
+    height: var(--modal-control-h);
+    font-family: var(--modal-font);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: var(--pay-radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-modal-cancel {
+    padding: 0 24px;
+    border: 1.5px solid var(--pay-border);
+    background: var(--pay-bg-surface);
+    color: var(--pay-text-body);
+}
+
+.btn-modal-cancel:hover {
+    background: var(--pay-bg-canvas);
+    color: var(--pay-text-title);
+    border-color: var(--pay-border-hover);
+}
+
+.btn-modal-save {
+    padding: 0 28px;
+    border: none;
+    background: linear-gradient(135deg, var(--pay-primary) 0%, var(--pay-primary-dark) 100%);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 6px 16px -4px rgba(13, 148, 136, 0.35);
+}
+
+.btn-modal-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -4px rgba(13, 148, 136, 0.45);
+}
+
+.btn-modal-save:active {
+    transform: translateY(0);
+}
+
+/* Responsi Mobile */
+@media (max-width: 576px) {
+    .modal-overlay {
+        padding: 12px;
+    }
+
+    .modal-header, 
+    .modal-body,
+    .modal-footer { 
+        padding-left: 20px; 
+        padding-right: 20px; 
+    }
+
+    .modal-body { 
+        gap: 16px;
+    }
+
+    .modal-footer {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+
+    .btn-modal-cancel,
+    .btn-modal-save {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ------------------------------------------------------------
+   6. PAGINASI TABEL PEMBAYARAN (ISLAMIC ELEGANT & MODERN)
+------------------------------------------------------------ */
+
+.pagination-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--pay-border);
+}
+
+.pagination-info {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--pay-text-muted);
+}
+
+.pagination-info strong {
+    color: var(--pay-text-title);
+    font-weight: 700;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.pagination .page-item {
+    display: flex;
+}
+
+.pagination .page-link {
+    min-width: 38px;
+    height: 38px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--pay-radius-sm);
+    border: 1.5px solid var(--pay-border);
+    background: var(--pay-bg-surface);
+    color: var(--pay-text-body);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.825rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pagination .page-link:hover {
+    border-color: var(--pay-primary);
+    color: var(--pay-primary-dark);
+    background: var(--pay-primary-light);
+    transform: translateY(-1px);
+}
+
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, var(--pay-primary) 0%, var(--pay-primary-dark) 100%);
+    border-color: var(--pay-primary);
+    color: #ffffff;
+    box-shadow: 0 6px 14px -4px rgba(13, 148, 136, 0.45);
+    cursor: default;
+    transform: none;
+}
+
+.pagination .page-item.nav .page-link {
+    gap: 6px;
+    padding: 0 14px;
+    font-weight: 600;
+    color: var(--pay-primary-dark);
+}
+
+.pagination .page-item.nav .page-link i {
+    font-size: 0.75rem;
+}
+
+.pagination .page-item.disabled .page-link {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: var(--pay-bg-canvas);
+}
+
+.pagination .page-item.dots .page-link {
+    border: none;
+    background: transparent;
+    color: var(--pay-text-muted);
+    cursor: default;
+    font-weight: 700;
+}
+
+.pagination .page-item.dots .page-link:hover {
+    transform: none;
+    background: transparent;
+}
+
+@media (max-width: 576px) {
+    .pagination-wrap {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .pagination {
+        justify-content: center;
+    }
+
+    .pagination .page-item.nav .page-link span {
+        display: none;
+    }
+}

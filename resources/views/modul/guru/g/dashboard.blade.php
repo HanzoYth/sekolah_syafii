@@ -44,38 +44,6 @@
 
             <!-- CONTENT BODY -->
             <div class="content-body">
-
-                <!-- FLASH MESSAGES / ERROR TOAST (TETAP SESUAI ASLI) -->
-                @if(session('eror'))
-                    <div class="alert alert-danger" id="errorToast">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                            <div>
-                                <p>
-                                    <i class="fas fa-exclamation-circle" style="color: #e63946;"></i> 
-                                    {{ session('eror') }}
-                                </p>
-                            </div>
-                            <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>
-                        </div>
-                    </div>
-                @endif
-
-                @if ($errors->any())
-                    <div class="alert alert-danger" id="errorToast">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                            <div>
-                                @foreach ($errors->all() as $error)
-                                    <p>
-                                        <i class="fas fa-exclamation-circle" style="color: #e63946;"></i> 
-                                        {{ $error }}
-                                    </p>
-                                @endforeach
-                            </div>
-                            <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>
-                        </div>
-                    </div>
-                @endif
-
                 <!-- Hidden Input Koordinat Lokasi Sekolah (Data Dummy) -->
                 <input type="hidden" class="latitude" value="{{$latitude}}">
                 <input type="hidden" class="longitude" value="{{$longitude}}">
@@ -140,17 +108,37 @@
                                     <i class="fa-solid fa-circle-check"></i>
                                     <div>
                                         <h5>Sudah Absen Masuk</h5>
-                                        <p>Tercatat pukul 07:15 WITA</p>
+                                        <p>Tercatat pukul {{Carbon\Carbon::parse($jam_masuk)->translatedFormat('H:i')}} WITA</p>
                                     </div>
                                 </div>
                             @else
-                                <div class="status-box status-warning">
-                                    <i class="fa-solid fa-circle-xmark"></i>
-                                    <div>
-                                        <h5>Belum Melakukan Absen</h5>
-                                        <p>harap melakukan absen segera</p>
+                                @if ($cek_status_absen)
+                                    @if ($status_absen->status_kehadiran == 's')
+                                        <div class="status-box status-warning">
+                                            <i class="fa-solid fa-circle-xmark"></i>
+                                            <div>
+                                                <h5>Anda Di Statuskan Sakit</h5>
+                                                <p>semoga lekas sembuh</p>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <div class="status-box status-warning">
+                                            <i class="fa-solid fa-circle-xmark"></i>
+                                            <div>
+                                                <h5>Anda Di Statuskan Izin</h5>
+                                                <p>semoga urusannya di lancarkan</p>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @else
+                                    <div class="status-box status-warning">
+                                        <i class="fa-solid fa-circle-xmark"></i>
+                                        <div>
+                                            <h5>Belum Melakukan Absen</h5>
+                                            <p>harap melakukan absen segera</p>
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             @endif
 
                             <div class="time-tracker">

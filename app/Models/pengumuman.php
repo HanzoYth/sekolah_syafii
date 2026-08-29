@@ -12,6 +12,6 @@ class pengumuman extends Model
         "isi",
         "tanggal",
         "guru_id",
-        "cabang_id"
+        "sekolah_id"
     ];
 }

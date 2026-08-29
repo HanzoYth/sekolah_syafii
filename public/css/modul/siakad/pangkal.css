@@ -1,0 +1,314 @@
+/* Custom Styling untuk Modul Pembayaran Uang Pangkal - Islamic Theme */
+
+:root {
+    /* Islamic Color Palette */
+    --islamic-emerald: #065f46;
+    --islamic-emerald-light: #047857;
+    --islamic-emerald-bg: #ecfdf5;
+    --islamic-gold: #d97706;
+    --islamic-gold-light: #fef3c7;
+    --islamic-cream: #fbfbf8;
+    
+    /* Neutral & Status Colors */
+    --text-primary: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --bg-surface: #ffffff;
+    
+    --status-success: #059669;
+    --status-warning: #d97706;
+    --status-danger: #dc2626;
+}
+
+/* Stat Icon Colors - Soft & Elegant */
+.icon-primary {
+    background-color: var(--islamic-emerald-bg);
+    color: var(--islamic-emerald);
+}
+
+.icon-success {
+    background-color: #d1fae5;
+    color: var(--status-success);
+}
+
+.icon-info {
+    background-color: #e0f2fe;
+    color: #0284c7;
+}
+
+.icon-warning {
+    background-color: var(--islamic-gold-light);
+    color: var(--islamic-gold);
+}
+
+/* Header Action Button */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(to right, #ffffff, var(--islamic-cream));
+}
+
+.btn-primary-add {
+    background: linear-gradient(135deg, var(--islamic-emerald) 0%, var(--islamic-emerald-light) 100%);
+    color: #ffffff;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 4px rgba(6, 95, 70, 0.15);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary-add:hover {
+    background: linear-gradient(135deg, #044e3a 0%, var(--islamic-emerald) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(6, 95, 70, 0.25);
+}
+
+/* Registry Number & Helper Styling */
+.reg-number {
+    font-weight: 600;
+    color: var(--islamic-emerald);
+    font-size: 0.825rem;
+    background-color: var(--islamic-emerald-bg);
+    border: 1px solid #a7f3d0;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+}
+
+.text-success {
+    color: var(--status-success) !important;
+}
+
+.text-danger {
+    color: var(--status-danger) !important;
+}
+
+.font-bold {
+    font-weight: 600;
+}
+
+/* Progress Bar Component */
+.progress-bar-container {
+    width: 100%;
+    height: 7px;
+    background-color: #f1f5f9;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 5px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.4s ease-in-out;
+}
+
+.progress-bar.bg-success {
+    background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.progress-bar.bg-warning {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.progress-bar.bg-danger {
+    background: linear-gradient(90deg, #f87171, #dc2626);
+}
+
+.progress-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+/* Modal Form Custom Enhancements */
+.modal-lg {
+    max-width: 680px !important;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.modal-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.input-readonly {
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+/* Student Summary Box - Pattern Accent */
+.student-info-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--islamic-cream);
+    padding: 16px 20px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid var(--islamic-emerald);
+    margin-bottom: 22px;
+}
+
+.student-info-summary small {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+}
+
+.student-info-summary h4 {
+    margin: 4px 0 0 0;
+    color: var(--text-primary);
+    font-size: 0.975rem;
+    font-weight: 600;
+}
+
+/* History Table Styling */
+.history-title {
+    font-size: 0.925rem;
+    color: var(--islamic-emerald);
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.history-table-wrap {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.table-history {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.table-history th {
+    background-color: var(--islamic-emerald-bg);
+    color: var(--islamic-emerald);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 1px solid #d1fae5;
+}
+
+.table-history td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+}
+
+.table-history tr:last-child td {
+    border-bottom: none;
+}
+
+.table-history tr:hover td {
+    background-color: #fafafa;
+}
+/* Card Footer & Pagination Container */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background-color: var(--bg-surface);
+    border-top: 1px solid var(--border-color);
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.card-footer-info {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Pagination Styling */
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pagination button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 36px;
+    min-width: 36px;
+    padding: 0 12px;
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.pagination button i {
+    font-size: 0.75rem;
+}
+
+/* Hover State */
+.pagination button:hover:not(:disabled):not(.active) {
+    background-color: var(--islamic-emerald-bg);
+    color: var(--islamic-emerald);
+    border-color: #a7f3d0;
+}
+
+/* Active State */
+.pagination button.active {
+    background-color: var(--islamic-emerald);
+    color: #ffffff;
+    border-color: var(--islamic-emerald);
+    box-shadow: 0 2px 4px rgba(6, 95, 70, 0.2);
+}
+
+/* Disabled State */
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f8fafc;
+    color: #94a3b8;
+    border-color: var(--border-color);
+}
+
+/* Responsive adjustment */
+@media (max-width: 640px) {
+    .card-footer {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+    
+    .pagination {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

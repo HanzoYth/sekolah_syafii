@@ -31,11 +31,7 @@
                     <h1>Sistem Informasi Data Siswa</h1>
                     <p>Mewujudkan Generasi Rabbani, Berakhlak Mulia &amp; Berprestasi</p>
                 </div>
-                <div>
-                    <a href="#" class="btn btn-gold">
-                        <i class="fa-solid fa-user-plus"></i> Tambah Siswa Baru
-                    </a>
-                </div>
+              
             </div>
         </header>
 

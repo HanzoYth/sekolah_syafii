@@ -13,13 +13,11 @@ use App\Http\Controllers\dataSiswaController;
 use App\Http\Controllers\modulSiakadController;
 use App\Http\Controllers\tanggalMerahController;
 use App\Http\Controllers\modulTahfidzController;
-use App\Http\Controllers\dataWalasControll;
 use App\Http\Controllers\kelasHalaqahController;
 use App\Http\Controllers\file_surat;
 use App\Http\Controllers\pembayaranController;
 use App\Http\Controllers\siswaController;
-use App\Http\Controllers\detailSiswaController;
-use App\Http\Controllers\editSiswaController;
+use App\Http\Controllers\siakadController;
 use Illuminate\Support\Facades\Storage;
 
 // ini route untuk halaman modul dan welcome
@@ -82,6 +80,7 @@ Route::get("/gr/acpggr/{id}",[modulGuruController::class,"terima_pengajuanGuru"]
 Route::get("/gr/pggr",[modulGuruController::class,"Tampilan_PengumumanGuru"]);
 Route::post("/gr/tbpggr",[modulGuruController::class,"tambah_pengumumanGuru"]);
 Route::post("/gr/edpggr",[modulGuruController::class,"Edit_pengumumanGuru"]);
+Route::get("/gr/hppggr/{id}",[modulGuruController::class,"hapus_pengumumanGuru"]);
 
 //ini otp
 Route::get("/gr/totp",[otpController::class,"tampilanOtp"]);
@@ -98,6 +97,8 @@ Route::get('/gr/edklabs/{id}',[MasterAbsenController::class,"edit_AbsenGuru"]);
 Route::get('/gr/klgr',[modulGuruController::class,"tampilan_kelolaGuru"]);
 Route::get('/gr/edgr/{id}',[modulGuruController::class,"tampilan_editGuru"]);
 Route::post('/gr/updgr',[modulGuruController::class,"update_dataGuru"]);
+Route::post('/gr/upprgr',[modulGuruController::class,"update_profileGuru"]);
+Route::get('/gr/edprgr',[modulGuruController::class,"tampilan_editProfileGuru"]);
 
 //ini admin
 Route::get('/ad/frad',[adminController::class,"tampilan_formulirAdmin"]);
@@ -126,8 +127,9 @@ Route::get('/sk/das',[modulSiakadController::class,"dashboard_siakad"]);
 Route::get('/sk/ds',[dataSiswaController::class,"data_siswa"]); 
 Route::get('/sk/dls',[dataSiswaController::class,"detail_siswa"]); 
 Route::get('/sk/dts',[dataSiswaController::class,"edit_siswa"]); 
-Route::get('/sk/pb',[pembayaranController::class,"pembayaran_siswa"]);
+Route::get('/sk/pb',[siakadController::class,"tampilanPembayaran_siswa"]);
 Route::get('/sk/dp',[PembayaranController::class,"detail_pembayaran_siswa"]);
+Route::get('/sk/pp',[PembayaranController::class,"pembayaran_pangkal"]);
 
 
 //siswa

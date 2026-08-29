@@ -1,10 +1,10 @@
 <div>
     <!-- SIDEBAR COMPONENT -->
     <aside class="sidebar" id="sidebar">
-        {{-- CHANGED: CSS khusus siakad, tema mengikuti referensi sidebar_guru.css --}}
+        {{-- CSS khusus siakad --}}
         <link rel="stylesheet" href="{{ asset('css/sidebar/sidebar_siakad.css') }}">
 
-        {{-- CHANGED: header ikut struktur sidebar_guru.css (sidebar-header, brand-logo, toggle-btn) --}}
+        {{-- Header sidebar --}}
         <div class="sidebar-header">
             <div class="brand-logo">
                 <i class="fa-solid fa-mosque"></i>
@@ -40,12 +40,33 @@
                 <div class="menu-section" id="section-admin">
                     <span class="menu-label">ADMINISTRATOR</span>
                     <ul class="menu-list">
+                        {{-- Dropdown Submenu Pembayaran --}}
                         <li class="menu-item">
-                            <a href="/sk/pb">
-                                <i class="fa-solid fa-file-invoice-dollar"></i>
-                                <span>Pembayaran</span>
-                            </a>
+                            <details class="submenu-wrapper">
+                                <summary class="menu-link">
+                                    <div class="menu-link-content">
+                                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                                        <span>Pembayaran</span>
+                                    </div>
+                                    <i class="fa-solid fa-chevron-down submenu-icon"></i>
+                                </summary>
+                                <ul class="submenu-list">
+                                    <li class="submenu-item">
+                                        <a href="/sk/pb">
+                                            <i class="fa-solid fa-wallet"></i>
+                                            <span>Pembayaran IPP</span>
+                                        </a>
+                                    </li>
+                                    <li class="submenu-item">
+                                        <a href="/sk/pp">
+                                            <i class="fa-solid fa-piggy-bank"></i>
+                                            <span>Pembayaran Pangkal</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </details>
                         </li>
+
                         <li class="menu-item">
                             <a href="/sk/ds">
                                 <i class="fa-solid fa-id-card"></i>

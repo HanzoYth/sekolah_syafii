@@ -35,7 +35,7 @@
                 @endif
             </header>
 
-            <!-- CARD TABEL PENGUMUMAN (DATA MANUAL / HARDCODED) -->
+            <!-- CARD TABEL PENGUMUMAN -->
             <div class="card">
                 <div class="table-responsive">
                     <table class="table-pengumuman">
@@ -68,7 +68,8 @@
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
                                                 <!-- Tombol Hapus -->
-                                                <button class="btn btn-icon btn-delete" title="Hapus Pengumuman" onclick="confirmDelete('1')">
+                                                <button class="btn btn-icon btn-delete" title="Hapus Pengumuman" 
+                                                    onclick="openDeleteModal('{{$value->id}}', '{{$value->judul}}')">
                                                     <i class="fa-solid fa-trash-can"></i>
                                                 </button>
                                             @endif
@@ -154,7 +155,7 @@
 </div>
 
 <!-- ==========================================================================
-     3. MODAL POP-UP DETAIL PENGUMUMAN (BARU)
+     3. MODAL POP-UP DETAIL PENGUMUMAN
      ========================================================================== -->
 <div class="modal-overlay" id="modalDetail">
     <div class="modal-container">
@@ -181,7 +182,38 @@
         </div>
     </div>
 </div>
-    <x-warning />
+
+<!-- ==========================================================================
+     4. MODAL POP-UP KONFIRMASI HAPUS (BARU)
+     ========================================================================== -->
+<div class="modal-overlay" id="modalHapus">
+    <div class="modal-container" style="max-width: 440px;">
+        <div class="modal-header">
+            <h3 style="color: #ef4444;"><i class="fa-solid fa-triangle-exclamation" style="margin-right: 8px;"></i> Konfirmasi Hapus</h3>
+            <button class="btn-close" onclick="closeModal('modalHapus')">&times;</button>
+        </div>
+        <form method="GET" id="formDelete">
+            @csrf
+            <input type="hidden" name="id_pengumuman" value="0" id="id_pengumuman_hapus">
+            <div class="modal-body" style="text-align: center; padding: 24px 16px;">
+                <div style="width: 60px; height: 60px; background-color: #fef2f2; color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; font-size: 1.6rem;">
+                    <i class="fa-solid fa-trash-can"></i>
+                </div>
+                <h4 style="font-size: 1.05rem; color: var(--text-main); margin-bottom: 8px;">Apakah Anda yakin?</h4>
+                <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+                    Pengumuman <strong id="delete_judul_text" style="color: var(--text-main);"></strong> akan dihapus secara permanen dan tidak dapat dikembalikan.
+                </p>
+            </div>
+            <div class="modal-footer" style="justify-content: center; gap: 12px;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('modalHapus')">Batal</button>
+                <button type="submit" class="btn btn-primary" style="background-color: #ef4444;"><i class="fa-solid fa-trash-can"></i> Ya, Hapus</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<x-warning />
+
 <!-- SCRIPT JS INTERAKSI MODAL -->
 <script>
     function openModal(modalId) {
@@ -209,21 +241,16 @@
         openModal('modalDetail');
     }
 
+    // Fungsi membuka Modal Hapus (Baru)
+    function openDeleteModal(id, judul) {
+        document.getElementById("formDelete").action = `/gr/hppggr/${id}`
+        document.getElementById('delete_judul_text').innerText = '"' + judul + '"';
+        openModal('modalHapus');
+    }
+
     window.onclick = function(event) {
         if (event.target.classList.contains('modal-overlay')) {
             event.target.classList.remove('active');
-        }
-    }
-
-    function handleSubmit(event, modalId) {
-        event.preventDefault();
-        alert('Data berhasil diproses!');
-        closeModal(modalId);
-    }
-
-    function confirmDelete(id) {
-        if (confirm('Apakah Anda yakin ingin menghapus pengumuman ini?')) {
-            alert('Pengumuman dengan ID ' + id + ' berhasil dihapus!');
         }
     }
 </script>

@@ -44,7 +44,7 @@
 
                 <!-- Info Timer & Resend -->
                 <div class="otp-timer-info">
-                    <p>Tidak menerima kode? <a href="#" class="btn-resend">Kirim Ulang</a></p>
+                    <p>Tidak menerima kode? <a href="/gr/otp" class="btn-resend">Kirim Ulang</a></p>
                     <div class="timer-badge">
                         <i class="fa-regular fa-clock"></i> <span id="timer">01:59</span>
                     </div>
@@ -59,7 +59,7 @@
 
             <!-- Footer / Back Link -->
             <div class="otp-footer">
-                <a href="#"><i class="fa-solid fa-arrow-left"></i> Kembali ke Halaman Login</a>
+                <a href="/gr/abs"><i class="fa-solid fa-arrow-left"></i> Kembali ke Halaman Absen</a>
             </div>
 
         </div>

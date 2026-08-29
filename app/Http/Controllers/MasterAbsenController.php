@@ -109,34 +109,30 @@ class MasterAbsenController extends Controller
     function addAbsenGuru(){
         Carbon::setLocale("id");
         $cek_data_guru = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",session("id"))->exists();
-        $data_guru = guru::find((int) session("id"));
-        $hari = Carbon::now()->translatedFormat("l");
-        $waktu_absen = Carbon::now();
-        $waktu_jadwal = Carbon::parse(master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->first()->waktu_masuk);
-        $terlambat = $waktu_jadwal->diffInMinutes($waktu_absen);
-        if (!$waktu_absen->greaterThan($waktu_jadwal)){
-            $terlambat = 0;
-        }
-        if ($cek_data_guru){
-            $data = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",session("id"))->first();
-            $data->waktu_masuk = Carbon::now()->translatedFormat("H:i:s");
-            $data->terlambat_menit = $terlambat;
-            $data->save();
+        if (!$cek_data_guru){
+            $data_guru = guru::find((int) session("id"));
+            $hari = Carbon::now()->translatedFormat("l");
+            $waktu_absen = Carbon::now();
+            $waktu_jadwal = Carbon::parse(master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->first()->waktu_masuk);
+            $terlambat = $waktu_jadwal->diffInMinutes($waktu_absen);
+            if (!$waktu_absen->greaterThan($waktu_jadwal)){
+                $terlambat = 0;
+            }
+            master_absen_guru::create([
+                "waktu_masuk" => now()->format("H:i:s"),
+                "waktu_keluar" => Carbon::parse("00:00:00"),
+                "tgl_masuk" => now()->format("Y:m:d"),
+                "status_kehadiran" => "a",
+                "terlambat_menit" => $terlambat,
+                "cabang_id" => cabang_guru::find(guru::find((int) session("id"))->cabang_id)->id,
+                "guru_id" => session("id"),
+                "lokasi_id" => 1,
+                "waktu_id" => master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->first()->id
+            ]);
+
             return redirect("/gr/otp");
         }
-
-        master_absen_guru::create([
-            "waktu_masuk" => now()->format("H:i:s"),
-            "waktu_keluar" => Carbon::parse("00:00:00"),
-            "tgl_masuk" => now()->format("Y:m:d"),
-            "status_kehadiran" => "a",
-            "terlambat_menit" => $terlambat,
-            "cabang_id" => cabang_guru::find(guru::find((int) session("id"))->cabang_id)->id,
-            "guru_id" => session("id"),
-            "lokasi_id" => 1,
-            "waktu_id" => master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->first()->id
-        ]);
-
+        
         return redirect("/gr/otp");
     }
 

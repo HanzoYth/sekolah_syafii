@@ -43,11 +43,13 @@ class modulGuruController extends Controller
             $cek_sudah_absen = false;
             $cek_sudah_keluar = false;
             $cek_sudah_absen_oleh_admin = false;
+            $cek_status_absen = master_absen_guru::where("guru_id",session("id"))->where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->exists();
+            $status_absen = master_absen_guru::where("guru_id",session("id"))->where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->first();
             $cek_data_absen = master_absen_guru::where("guru_id",session("id"))->whereNotIn("status_kehadiran",["a","i","s"])->where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->exists();
             $jam_masuk = Carbon::parse("00:00:00")->translatedFormat("H:i:s");
             $jam_keluar = Carbon::parse("00:00:00")->translatedFormat("H:i:s"); 
 
-            $data_pengumuman = pengumuman::where("cabang_id",$data_guru->cabang_id)->get();
+            $data_pengumuman = pengumuman::where("sekolah_id",$data_guru->sekolah_id)->get();
 
             
             if (master_absen_guru::where("waktu_masuk","!=",Carbon::parse("00:00:00"))->where("waktu_keluar",Carbon::parse("00:00:00"))->whereNotIn("status_kehadiran",["a","s","i"])->where("guru_id",session("id"))->exists()){
@@ -69,6 +71,8 @@ class modulGuruController extends Controller
             if(master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("waktu_keluar",Carbon::parse("00:00:00"))->where("waktu_masuk",Carbon::parse("00:00:00"))->where("status_kehadiran","!=","a")->where("guru_id",session("id"))->exists()){
                 $cek_sudah_absen_oleh_admin = true;
             }
+
+            
             return view("modul/guru/g/dashboard",[
                 "data_guru" => $data_guru,
                 "jumlah_kehadiran_bulanan" => $jumlah_kehadiran_bulanan,
@@ -78,7 +82,9 @@ class modulGuruController extends Controller
                 "tanggal_hari_ini" => $tanggal_hari_ini,
                 "cek_sudah_absen" => $cek_sudah_absen,
                 "jam_masuk" => $jam_masuk,
+                "status_absen" => $status_absen,
                 "jam_keluar" => $jam_keluar,
+                "cek_status_absen" => $cek_status_absen,
                 "cek_sudah_absen_oleh_admin" => $cek_sudah_absen_oleh_admin,
                 "cek_sudah_keluar" => $cek_sudah_keluar,
                 "data_pengumuman" => $data_pengumuman
@@ -180,6 +186,7 @@ class modulGuruController extends Controller
         $waktu_keluar_absen = Carbon::parse($waktu->waktu_keluar);
         $sudah_absen = master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("guru_id",session("id"))->where("status_kehadiran","!=","a")->exists(); 
 
+
         $cek_belum_pencet_tombol_keluar= master_absen_guru::where("waktu_masuk","!=",Carbon::parse("00:00:00"))->where("waktu_keluar",Carbon::parse("00:00:00"))->where("status_kehadiran","h")->where("guru_id",session("id"))->exists();
         $cek_absen_oleh_admin= master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("waktu_keluar",Carbon::parse("00:00:00"))->where("waktu_masuk",Carbon::parse("00:00:00"))->where("status_kehadiran","!=","a")->where("guru_id",session("id"))->exists();
     
@@ -246,6 +253,7 @@ class modulGuruController extends Controller
         return redirect("/mod");
     }
 
+
     function tambah_Gaji($id_guru){
         gaji::create([
             "gaji_pokok" => 0,
@@ -297,6 +305,25 @@ class modulGuruController extends Controller
         return view("modul/guru/a/edit_guru",[
             "data_guru" => $data_guru,
             "data_cabang" => $data_cabang,
+            "nomor_wa" => $data_akun->noWa,
+            "data_sekolah" => $data_sekolah,
+            "data_jenis_sekolah" => $data_jenis_sekolah,
+            "data_akun" => $data_akun
+        ]);
+    }
+    
+    function tampilan_editProfileGuru(){
+        $data_guru = guru::find(session('id'));
+        $data_cabang = cabang_guru::where("aktif",1)->get();
+        $data_jenis_sekolah = jenis_sekolah::all();
+        $data_akun = akun::find((int) $data_guru->user_id);
+        $data_cabang = cabang_guru::all();
+        $data_sekolah = jenis_sekolah::all();
+        $data_akun = akun::find((int) $data_guru->user_id);
+        return view("modul/guru/g/profile",[
+            "data_guru" => $data_guru,
+            "data_cabang" => $data_cabang,
+            "nomor_wa" => $data_akun->noWa,
             "data_sekolah" => $data_sekolah,
             "data_jenis_sekolah" => $data_jenis_sekolah,
             "data_akun" => $data_akun
@@ -304,6 +331,22 @@ class modulGuruController extends Controller
     }
 
     function update_dataGuru(Request $request){
+        $data_guru = guru::find((int) $request->id_guru);
+
+        $data_guru->guru_honor = (int) $request->guru_honor;
+        $data_guru->pengampu_tahfiz = (int) $request->pengampu_tahfiz;
+        $data_guru->guru_tetap = (int) $request->guru_tetap;
+        $data_guru->tutup_buku = (int) $request->tutup_buku;
+        $data_guru->koordinator_tahfiz = (int) $request->koordinator_tahfiz;
+        $data_guru->kepala_sekolah = (int) $request->kepala_sekolah;
+        $data_guru->cabang_id = (int) $request->cabang_id;
+        $data_guru->sekolah_id = (int) $request->sekolah_id;
+
+        $data_guru->save();
+        return redirect("/gr/klgr")->with("success","berhasil update data guru");
+    }
+
+    function update_profileGuru(Request $request){
         $data_guru = guru::find((int) $request->id_guru);
         $data_akun = akun::find((int) $data_guru->user_id);
 
@@ -370,6 +413,7 @@ class modulGuruController extends Controller
             $data_akun->email = $request->email;
         }
 
+
         if ($request->username != $data_akun->username){
             $validator = Validator::make($request->all(),[
                 'username' => [
@@ -391,7 +435,17 @@ class modulGuruController extends Controller
             $data_akun->username = $request->username;
         }
 
-        
+        if (isset($request->url_foto)){
+            $request->validate([
+            "foto" => 'required|file|mimes:jpg,jpeg,png|max:2048'
+            ]);
+
+            $path_foto = $request->file("foto")->store('uploads');
+
+            $data_guru->url_foto = $path_foto;
+        }
+
+        $data_akun->noWa = $request->wa;
         
         $data_guru->nama = $request->nama;
         $data_guru->nig = $request->nig;
@@ -400,19 +454,10 @@ class modulGuruController extends Controller
         $data_guru->agama = $request->agama;
         $data_guru->pendidikan_terakhir = $request->pendidikan_terakhir;
         $data_guru->alamat = $request->alamat;
-        $data_guru->guru_honor = (int) $request->guru_honor;
-        $data_guru->pengampu_tahfiz = (int) $request->pengampu_tahfiz;
-        $data_guru->guru_tetap = (int) $request->guru_tetap;
-        $data_guru->tutup_buku = (int) $request->tutup_buku;
-        $data_guru->koordinator_tahfiz = (int) $request->koordinator_tahfiz;
-        $data_guru->kepala_sekolah = (int) $request->kepala_sekolah;
-        $data_guru->cabang_id = (int) $request->cabang_id;
-        $data_guru->sekolah_id = (int) $request->sekolah_id;
-
         $data_guru->save();
         $data_akun->save();
 
-        return redirect("/gr/klgr")->with("success","berhasil update data guru");
+        return back()->with("success","berhasil update data guru");
     }
 
 
@@ -563,7 +608,7 @@ class modulGuruController extends Controller
                 $jumlah_hari_aktif ++;
             }
         }
-        
+
         $data_gaji->ketidakhadiran =  isset($request->ketidakhadiran) ? $request->ketidakhadiran : 0;
         $data_gaji->gaji_pokok = isset($request->pokok) ? $request->pokok : 0;
         $data_gaji->gaji_honor = isset($request->honor) ? $request->honor : 0;
@@ -589,6 +634,7 @@ class modulGuruController extends Controller
         $data_gaji->save();
         return redirect("/gr/klgjgr")->with("success","berhasil update gaji guru");
     }
+
 
     function publish_GajiGuru($id){
         $WA_guru = guru::where("id",(int) $id)->first()->getUser;
@@ -618,7 +664,7 @@ class modulGuruController extends Controller
 
     function Tampilan_PengumumanGuru(){
         $data_guru = guru::where("id",session('id'))->first();
-        $data_pengumuman = pengumuman::where("cabang_id",$data_guru->cabang_id)->get();
+        $data_pengumuman = pengumuman::where("sekolah_id",$data_guru->sekolah_id)->get();
         return view("modul/guru/g/pengumuman",[
             "data_pengumuman" => $data_pengumuman,
             "data_guru" => $data_guru
@@ -626,9 +672,9 @@ class modulGuruController extends Controller
     }
 
     function tambah_pengumumanGuru(Request $request){
-        $id_cabang = guru::where("id",session("id"))->first()->cabang_id;
+        $id_sekolah = guru::where("id",session("id"))->first()->sekolah_id;
 
-        $data_guru = guru::where("cabang_id",$id_cabang)->where("id","!=",session("id"))->get();
+        $data_guru = guru::where("sekolah_id",$id_sekolah)->where("id","!=",session("id"))->get();
 
         $Wa_Fonte = new FonteService();
         foreach ($data_guru as $value){
@@ -640,10 +686,10 @@ class modulGuruController extends Controller
             "isi" => $request->isi,
             "tanggal" => Carbon::parse($request->tanggal)->translatedFormat("Y-m-d"),
             "guru_id" => session("id"),
-            "cabang_id" => $id_cabang
+            "sekolah_id" => $id_sekolah
         ]);
 
-        return back();
+        return back()->with("success","pengumuman berhasil di tambahkan");
     }
 
     function Edit_pengumumanGuru(Request $request){
@@ -655,16 +701,24 @@ class modulGuruController extends Controller
         
         $data_pengumuman->save();
         
-        $id_cabang = guru::where("id",session("id"))->first()->cabang_id;
+        $id_sekolah = guru::where("id",session("id"))->first()->sekolah_id;
 
-        $data_guru = guru::where("cabang_id",$id_cabang)->where("id","!=",session("id"))->get();
+        $data_guru = guru::where("cabang_id",$id_sekolah)->where("id","!=",session("id"))->get();
 
         $Wa_Fonte = new FonteService();
         foreach ($data_guru as $value){
             $Wa_Fonte->sendMassage($value->getUser()->first()->noWa,$request->isi);
         }
 
-        return back();
+        return back()->with("success","pengumuman berhasil di edit");
+    }
+
+    function hapus_pengumumanGuru($id){
+        $data_pengumuman = pengumuman::where("id",$id);
+
+        $data_pengumuman->delete();
+
+        return back()->with("success","pengumuman berhasil di hapus");
     }
 
     function tampilan_pengajuanGuru(){
@@ -688,7 +742,7 @@ class modulGuruController extends Controller
             "guru_id" => session("id")
         ]);
 
-        return back();
+        return back()->with("success","pengajuan berhasil di tambah");
     }
 
     function edit_pengajuanGuru(Request $request){
@@ -699,7 +753,7 @@ class modulGuruController extends Controller
 
         $data_pengajuan->save();
 
-        return back();
+        return back()->with("success","berhasil edit pengajuan");
     }
 
     function hapus_pengajuanGuru($id){
@@ -707,7 +761,7 @@ class modulGuruController extends Controller
 
         $data_pengajuan->delete();
 
-        return back();
+        return back()->with("success","berhasil hapus pengajuan");
     }
 
     function terima_pengajuanGuru($id){
@@ -716,14 +770,16 @@ class modulGuruController extends Controller
         $data_pengajuan->konfirmasi = "d";
         $data_pengajuan->save();
 
-        return back();
+        return back()->with("success","pengajuan di terima");
     }
+
+
     function tolak_pengajuanGuru($id){
         $data_pengajuan = pengajuan::where("id", $id)->first();
 
         $data_pengajuan->konfirmasi = "t";
         $data_pengajuan->save();
 
-        return back();
+        return back()->with("success","pengajuan di tolak");
     }
 }
