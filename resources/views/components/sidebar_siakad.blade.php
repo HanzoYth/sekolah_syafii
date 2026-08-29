@@ -73,6 +73,12 @@
                                 <span>Data Siswa</span>
                             </a>
                         </li>
+                           <li class="menu-item">
+                            <a href="/sk/ds">
+                                <i class="fa-solid fa-bullhorn"></i>
+                                <span>pengumuman</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
 

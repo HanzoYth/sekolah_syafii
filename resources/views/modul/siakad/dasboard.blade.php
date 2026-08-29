@@ -41,11 +41,6 @@
                         </h1>
                         <p class="text-emerald-200 text-xs">Mewujudkan Generasi Rabbani, Berakhlak Mulia & Berprestasi</p>
                     </div>
-                    <div>
-                        <a href="#" class="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-semibold px-4 py-2 rounded-lg shadow-md text-xs transition-all duration-200 hover:shadow-lg">
-                            <i class="fa-solid fa-user-plus"></i> Tambah Siswa Baru
-                        </a>
-                    </div>
                 </div>
             </header>
 
