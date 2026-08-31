@@ -222,7 +222,7 @@
                                     <td>
                                         <div class="action-buttons">
                                             <a href="/sk/dp" class="btn-action view" title="Detail"><i class="fa-solid fa-eye"></i></a>
-                                            <button class="btn-action edit" title="Edit" onclick="openEditModal('{{$value->id}}','{{$data_siswa->nama}}', '{{$value->tanggal_awal}}', '{{$}}', 'lunas')"><i class="fa-solid fa-pen-to-square"></i></button>
+                                            <button class="btn-action edit" title="Edit" onclick="openEditModal('{{$value->id}}','{{$data_siswa->nama}}', '{{$value->tanggal_awal}}', '{{$value->nominal}}')"><i class="fa-solid fa-pen-to-square"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -300,7 +300,7 @@
 
     {{-- SCRIPT DYNAMIC POPUP --}}
     <script>
-        function openEditModal(id,nama,kelas,sekolah,tanggal_awal,tanggal_akhir,nominal,jumlah_dibayar) {
+        function openEditModal(id,nama,kelas,sekolah,tanggal_awal,tanggal_akhir,nominal) {
             document.getElementById("id").value = id;
             document.getElementById('modal-nama-siswa').value = nama;
             document.getElementById('modal-nama-kelas').value = kelas;
@@ -308,9 +308,6 @@
             document.getElementById('tanggal_awal').value = tanggal_awal;
             document.getElementById('tanggal_akhir').value = tanggal_akhir;
             document.getElementById('edit-nominal').value = nominal;
-            document.getElementById('edit-nominal-bayar').value = jumlah_dibayar;
-            document.getElementById('edit-status').value = status;
-
             document.getElementById('modalEditPembayaran').classList.add('active');
         }
 

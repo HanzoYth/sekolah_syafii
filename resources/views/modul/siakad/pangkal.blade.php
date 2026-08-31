@@ -80,17 +80,9 @@
 
             {{-- FILTER PEMBAYARAN UANG PANGKAL --}}
             <div class="filter-box pembayaran-filter">
-                <h4>Filter Uang Pangkal</h4>
+                <h4> Uang Pangkal</h4>
                 <div class="filter-group">
-                    <div class="input-wrap">
-                        <label for="filter-gelombang">Gelombang Pendaftaran</label>
-                        <select id="filter-gelombang" name="gelombang">
-                            <option value="">Semua Gelombang</option>
-                            <option value="1" selected>Gelombang 1 (Early Bird)</option>
-                            <option value="2">Gelombang 2</option>
-                            <option value="3">Gelombang 3</option>
-                        </select>
-                    </div>
+                  
                     <div class="input-wrap">
                         <label for="filter-status-pangkal">Status Pembayaran</label>
                         <select id="filter-status-pangkal" name="status_pangkal">
@@ -100,13 +92,23 @@
                             <option value="belum">Belum Bayar</option>
                         </select>
                     </div>
+                  
                     <div class="input-wrap">
-                        <label for="filter-tingkat">Tingkat / Jenjang</label>
-                        <select id="filter-tingkat" name="tingkat">
-                            <option value="">Semua Jenjang</option>
-                            <option value="TK">TK</option>
-                            <option value="SD">SD</option>
-                            <option value="SMP">SMP</option>
+                        <label for="filter-status-pangkal">kelas</label>
+                        <select id="filter-status-pangkal" name="kelas">
+                            <option value="">Semua kelas</option>
+                            <option value="lunas">kelas 1a</option>
+                            <option value="angsuran">kelas 7a</option>
+                            <option value="belum">kelas 8b</option>
+                        </select>
+                    </div>
+                    <div class="input-wrap">
+                        <label for="filter-tingkat">Bulan</label>
+                        <select  name="Bulan">
+                            <option value="">agustus</option>
+                            <option value="TK">september</option>
+                            <option value="SD">oktober</option>
+                            <option value="SMP">november</option>
                         </select>
                     </div>
                 </div>
@@ -116,7 +118,7 @@
             <div class="table-card">
                 <div class="table-header">
                     <h4>Daftar Tagihan Uang Pangkal Siswa Baru</h4>
-                    <button class="btn-primary-add" onclick="openTambahModal()"><i class="fa-solid fa-plus"></i> Set Tagihan Siswa</button>
+                 
                 </div>
                 <div class="table-responsive">
                     <table>

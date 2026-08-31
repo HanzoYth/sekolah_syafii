@@ -17,9 +17,6 @@ return new class extends Migration
             $table->id();
             $table->decimal("nominal",15,2)->default(0);
             $table->date("tanggal_awal")->nullable();
-            $table->date("tanggal_akhir")->nullable();
-            $table->decimal("jumlah_di_bayar",15,2)->default(0);
-            $table->decimal("jumlah_tunggakan",15,2)->default(0);
             $table->boolean("status")->default(0);
             $table->foreignId("siswa_id")->constrained("siswa")->cascadeOnDelete();
             $table->timestamps();

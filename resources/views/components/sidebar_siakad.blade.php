@@ -52,6 +52,12 @@
                                 </summary>
                                 <ul class="submenu-list">
                                     <li class="submenu-item">
+                                        <a href="/sk/bt">
+                                            <i class="fa-solid fa-wallet"></i>
+                                            <span>Buat Tagihan</span>
+                                        </a>
+                                    </li>
+                                    <li class="submenu-item">
                                         <a href="/sk/pb">
                                             <i class="fa-solid fa-wallet"></i>
                                             <span>Pembayaran IPP</span>
@@ -63,6 +69,12 @@
                                             <span>Pembayaran Pangkal</span>
                                         </a>
                                     </li>
+                                    <li class="submenu-item">
+                                        <a href="/sk/pd">
+                                            <i class="fa-solid fa-piggy-bank"></i>
+                                            <span>Pembayaran pendidikan</span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </details>
                         </li>
@@ -71,12 +83,6 @@
                             <a href="/sk/ds">
                                 <i class="fa-solid fa-id-card"></i>
                                 <span>Data Siswa</span>
-                            </a>
-                        </li>
-                           <li class="menu-item">
-                            <a href="/sk/ds">
-                                <i class="fa-solid fa-bullhorn"></i>
-                                <span>pengumuman</span>
                             </a>
                         </li>
                     </ul>

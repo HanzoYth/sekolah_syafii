@@ -63,10 +63,6 @@ class siswaController extends Controller
         $data_siswa = siswa::where("nis",$request->nis)->first();
         session()->put("id",$data_siswa->id);
         session()->put("nama",$data_siswa->nama);
-
-        slip_pembayaran_ipp::create([
-            "siswa_id" => session("id"),
-        ]);
         return redirect("/mod");
     }
 }

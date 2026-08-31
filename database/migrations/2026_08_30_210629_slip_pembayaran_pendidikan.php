@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create("slip_pembayaran_pendidikan",function(Blueprint $table) {
             $table->id();
             $table->decimal("nominal",15,2);
-            $table->decimal("jumlah_di_bayar",15,2);
-            $table->decimal("jumlah_tunggakan",15,2);
+            $table->decimal("jumlah_di_bayar",15,2)->default(0);
             $table->foreignId("siswa_id")->constrained("siswa")->cascadeOnDelete();
             $table->timestamps();
         });

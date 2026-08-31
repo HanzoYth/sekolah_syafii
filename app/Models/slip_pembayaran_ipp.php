@@ -10,9 +10,7 @@ class slip_pembayaran_ipp extends Model
     protected $fillable = [
         "nominal",
         "tanggal_awal",
-        "tanggal_akhir",
         "jumlah_di_bayar",
-        "jumlah_tunggakan",
         "siswa_id"
     ];
 }
