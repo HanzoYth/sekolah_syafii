@@ -1,0 +1,311 @@
+/* ==========================================================================
+   FLOATING CHAT — Tombol logo melayang + panel chat dummy
+   Mengikuti variabel warna tema SIAKAD (das_ad_gr.css): --navy-900, --paper,
+   --cream, --gold-500, --line, --ink-600, dst.
+   ========================================================================== */
+
+/* --- Tombol Logo Melayang (FAB) --- */
+.chat-fab {
+  position: fixed;
+  right: 26px;
+  bottom: 26px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: none;
+  background: var(--navy-900);
+  color: #fff;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(11, 30, 24, 0.28);
+  z-index: 1100;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chat-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(11, 30, 24, 0.32);
+}
+
+.chat-fab-icon-close {
+  display: none;
+}
+
+.chat-fab.active .chat-fab-icon-open {
+  display: none;
+}
+
+.chat-fab.active .chat-fab-icon-close {
+  display: block;
+}
+
+/* --- Panel Chat --- */
+.chat-panel {
+  position: fixed;
+  right: 26px;
+  bottom: 96px;
+  width: 360px;
+  max-width: calc(100vw - 40px);
+  height: 500px;
+  max-height: calc(100vh - 140px);
+  background: var(--paper);
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 60px rgba(11, 30, 24, 0.28);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1099;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px) scale(0.97);
+  transform-origin: bottom right;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+}
+
+.chat-panel.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* --- Header Panel --- */
+.chat-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--navy-900);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.chat-panel-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-panel-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--gold-500);
+  color: var(--navy-900);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.chat-panel-title h4 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+.chat-panel-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.chat-panel-status i {
+  font-size: 7px;
+  color: #4ade80;
+}
+
+.chat-panel-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.chat-panel-close:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* --- Body / Riwayat Pesan --- */
+.chat-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--cream);
+}
+
+.chat-bubble {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 85%;
+}
+
+.chat-bubble-bot {
+  align-self: flex-start;
+}
+
+.chat-bubble-user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.chat-bubble-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--navy-900);
+  color: var(--gold-500);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chat-bubble-content {
+  padding: 10px 13px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  border-radius: 14px;
+  word-break: break-word;
+}
+
+.chat-bubble-bot .chat-bubble-content {
+  background: var(--paper);
+  color: var(--navy-900);
+  border: 1px solid var(--line);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bubble-user .chat-bubble-content {
+  background: var(--navy-900);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+/* --- Indikator "sedang mengetik" --- */
+.chat-panel-typing {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px 12px;
+  background: var(--cream);
+  flex-shrink: 0;
+}
+
+.chat-panel-typing.active {
+  display: flex;
+}
+
+.chat-typing-dots {
+  display: flex;
+  gap: 4px;
+  padding: 10px 13px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-typing-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-600);
+  opacity: 0.5;
+  animation: chatTypingBounce 1.2s infinite ease-in-out;
+}
+
+.chat-typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+.chat-typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes chatTypingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* --- Form Input --- */
+.chat-panel-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+  flex-shrink: 0;
+}
+
+.chat-panel-input input {
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 13.5px;
+  color: var(--navy-900);
+  background: var(--cream);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.chat-panel-input input:focus {
+  border-color: var(--gold-500);
+}
+
+.chat-send-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: var(--navy-900);
+  color: var(--gold-500);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.chat-send-btn:hover {
+  transform: scale(1.06);
+}
+
+/* --- Responsive --- */
+@media (max-width: 480px) {
+  .chat-fab {
+    right: 18px;
+    bottom: 18px;
+    width: 52px;
+    height: 52px;
+  }
+
+  .chat-panel {
+    right: 14px;
+    left: 14px;
+    bottom: 84px;
+    width: auto;
+    max-width: none;
+    height: calc(100vh - 130px);
+  }
+}

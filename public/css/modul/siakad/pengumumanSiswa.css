@@ -1,0 +1,308 @@
+/* ==========================================================================
+   SIAKAD SISWA — Pengumuman
+   (Tema & struktur mengikuti dashboardSiswa.css / referensi dashboard_guru.css)
+   Catatan: variabel warna mengikuti stylesheet dasar layout (das_ad_gr.css).
+   Diadaptasi dari pembayaranSiswa.css — bagian Ringkasan Tagihan (stats-grid)
+   dihilangkan, sisanya diubah menjadi daftar Pengumuman.
+   ========================================================================== */
+
+/* --- Kartu Pembungkus Tabel --- */
+.card-table {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 18px rgba(11, 59, 46, 0.06);
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.card-table .card-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.card-table .card-header h4 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--navy-900);
+  margin: 0;
+}
+
+.card-table .card-header h4 i {
+  color: var(--gold-500);
+}
+
+/* --- Tabel Daftar Pengumuman --- */
+.table-wrap {
+  overflow-x: auto;
+}
+
+.payment-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.payment-table thead th {
+  text-align: left;
+  padding: 12px 20px;
+  background: var(--cream);
+  color: var(--ink-600);
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+}
+
+.payment-table tbody td {
+  padding: 14px 20px;
+  border-top: 1px solid var(--line);
+  color: var(--navy-900);
+  vertical-align: middle;
+}
+
+.payment-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.payment-table tbody tr:hover {
+  background: var(--cream);
+}
+
+.payment-table td.text-right,
+.payment-table th.text-right {
+  text-align: right;
+}
+
+/* --- Sel Judul Pengumuman (judul + ringkasan singkat) --- */
+.cell-jenis {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  white-space: normal;
+  max-width: 360px;
+}
+
+.cell-jenis strong {
+  color: var(--navy-900);
+  font-weight: 600;
+}
+
+.cell-jenis .sub {
+  font-size: 12px;
+  color: var(--ink-600);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* --- Tombol Aksi (Lihat Detail) ---
+   Bulat dengan efek hover berubah jadi warna solid + icon putih,
+   pola yang sama seperti tombol aksi (btn-print/btn-action) di modul lain. */
+.btn-action-view {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--info-bg, #e0f2fe);
+  color: var(--info, #0369a1);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all 0.25s ease-in-out;
+}
+
+.btn-action-view:hover {
+  background: var(--info, #0369a1);
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+/* --- Empty State --- */
+.table-empty {
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--ink-600);
+}
+
+.table-empty i {
+  font-size: 30px;
+  color: var(--gold-500);
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .payment-table thead th,
+  .payment-table tbody td {
+    padding: 12px 14px;
+  }
+
+  .cell-jenis {
+    max-width: 220px;
+  }
+}
+
+/* ==========================================================================
+   MODAL DETAIL PENGUMUMAN
+   ========================================================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 30, 24, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-box {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px rgba(11, 30, 24, 0.25);
+  transform: translateY(14px) scale(0.98);
+  opacity: 0;
+  transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+.modal-overlay.active .modal-box {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 20px 0;
+}
+
+.modal-header-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cream);
+  color: var(--gold-500);
+  font-size: 16px;
+}
+
+.modal-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--ink-600);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.modal-close:hover {
+  background: var(--cream);
+  color: var(--navy-900);
+}
+
+.modal-body {
+  padding: 14px 24px 20px;
+  overflow-y: auto;
+}
+
+.modal-title {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--navy-900);
+  margin: 0 0 12px;
+  line-height: 1.35;
+}
+
+.modal-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.modal-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--ink-600);
+}
+
+.modal-meta-item i {
+  color: var(--gold-500);
+  font-size: 12px;
+}
+
+.modal-isi {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--navy-900);
+  margin: 0;
+  white-space: pre-line;
+}
+
+.modal-footer {
+  padding: 16px 24px 20px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--line);
+}
+
+.modal-btn-tutup {
+  padding: 9px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--cream);
+  color: var(--navy-900);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.modal-btn-tutup:hover {
+  background: var(--line);
+}
+
+@media (max-width: 480px) {
+  .modal-box {
+    max-width: 100%;
+  }
+
+  .modal-title {
+    font-size: 17px;
+  }
+}

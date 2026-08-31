@@ -10,9 +10,9 @@
                 <i class="fa-solid fa-mosque"></i>
                 <span>SIAKAD</span>
             </div>
-            <button class="toggle-btn" id="sidebar-toggle">
+            <a class="toggle-btn" id="sidebar-toggle" href="/mod" style="text-decoration: none;">
                 <i class="fa-solid fa-angles-left"></i>
-            </button>
+            </a>
         </div>
 
         <div class="sidebar-menu-wrapper">
@@ -123,6 +123,12 @@
                             <a href="/sk/pfs">
                                 <i class="fa-solid fa-id-card"></i>
                                 <span>Profil</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/sk/ps">
+                                <i class="fa-solid fa-bullhorn"></i>
+                                <span>Pengumuman</span>
                             </a>
                         </li>
                     </ul>

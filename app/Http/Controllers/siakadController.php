@@ -60,4 +60,7 @@ class siakadController extends Controller
     function edit_slipPembayaranIppSiswa(Request $request){
         
     }
+    function pengumumanSiswa (){
+        return view('/modul/siakad/pengumumanSiswa');
+    }
 }

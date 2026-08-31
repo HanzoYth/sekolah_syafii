@@ -176,7 +176,7 @@
             </div>
         </main>
     </div>
-
+<x-chatbot />
     <script>
         function closeToast() {
             const toast = document.getElementById('errorToast');
