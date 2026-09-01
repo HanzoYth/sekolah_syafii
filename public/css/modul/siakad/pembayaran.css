@@ -1020,6 +1020,71 @@
     transform: none;
     background: transparent;
 }
+/* Styling Input Month (.input-date-custom) & Select */
+.pembayaran-filter input[type="month"].input-date-custom,
+.pembayaran-filter select {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    color: #334155;
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* Custom Dropdown Arrow untuk Select */
+.pembayaran-filter select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%20%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 36px;
+}
+
+/* Custom Icon Kalender untuk Input Month */
+.pembayaran-filter input[type="month"].input-date-custom::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(40%) sepia(20%) saturate(1000%) hue-rotate(180deg) brightness(90%) contrast(90%);
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.pembayaran-filter input[type="month"].input-date-custom::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* Efek Hover & Focus */
+.pembayaran-filter input[type="month"].input-date-custom:hover,
+.pembayaran-filter select:hover {
+    background-color: #ffffff;
+    border-color: #94a3b8;
+}
+
+.pembayaran-filter input[type="month"].input-date-custom:focus,
+.pembayaran-filter select:focus {
+    background-color: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Penyesuaian Tampilan Mobile */
+@media (max-width: 640px) {
+    .filter-box.pembayaran-filter {
+        padding: 16px;
+    }
+
+    .pembayaran-filter .filter-group {
+        grid-template-columns: 1fr;
+    }
+}
 
 @media (max-width: 576px) {
     .pagination-wrap {
@@ -1035,4 +1100,5 @@
     .pagination .page-item.nav .page-link span {
         display: none;
     }
+  
 }

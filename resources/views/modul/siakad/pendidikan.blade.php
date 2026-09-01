@@ -102,13 +102,8 @@
                     </div>
 
                     <div class="input-wrap">
-                        <label for="filter-bulan-spp">Periode Bulan</label>
-                        <select id="filter-bulan-spp" name="bulan">
-                            <option value="agustus">Agustus 2026</option>
-                            <option value="september">September 2026</option>
-                            <option value="oktober">Oktober 2026</option>
-                            <option value="november">November 2026</option>
-                        </select>
+                        <label for="filter-bulan-spp">Bulan & Tahun</label>
+                        <input type="month" id="filter-bulan-spp" name="bulan_spp" class="input-date-custom">
                     </div>
                 </div>
             </div>

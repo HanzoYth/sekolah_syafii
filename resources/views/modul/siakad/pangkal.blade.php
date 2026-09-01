@@ -103,13 +103,8 @@
                         </select>
                     </div>
                     <div class="input-wrap">
-                        <label for="filter-tingkat">Bulan</label>
-                        <select  name="Bulan">
-                            <option value="">agustus</option>
-                            <option value="TK">september</option>
-                            <option value="SD">oktober</option>
-                            <option value="SMP">november</option>
-                        </select>
+                        <label for="filter-bulan-spp">Bulan & Tahun</label>
+                        <input type="month" id="filter-bulan-spp" name="bulan_spp" class="input-date-custom">
                     </div>
                 </div>
             </div>

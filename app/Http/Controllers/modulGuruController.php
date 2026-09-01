@@ -434,8 +434,7 @@ class modulGuruController extends Controller
 
             $data_akun->username = $request->username;
         }
-
-        if (isset($request->url_foto)){
+        if (isset($request->foto)){
             $request->validate([
             "foto" => 'required|file|mimes:jpg,jpeg,png|max:2048'
             ]);

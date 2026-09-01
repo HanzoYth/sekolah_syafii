@@ -158,14 +158,6 @@
                 <h4>Filter Pembayaran</h4>
                 <div class="filter-group">
                     <div class="input-wrap">
-                        <label for="filter-bulan-spp">Bulan</label>
-                        <select id="filter-bulan-spp" name="bulan_spp">
-                            <option value="8" selected>Agustus 2026</option>
-                            <option value="7">Juli 2026</option>
-                            <option value="6">Juni 2026</option>
-                        </select>
-                    </div>
-                    <div class="input-wrap">
                         <label for="filter-status-bayar">Status</label>
                         <select id="filter-status-bayar" name="status_bayar">
                             <option value="">Semua Status</option>
@@ -183,6 +175,10 @@
                             <option value="7a">Kelas 7A</option>
                             <option value="tkb1">TK B1</option>
                         </select>
+                    </div>
+                    <div class="input-wrap">
+                        <label for="filter-bulan-spp">Bulan & Tahun</label>
+                        <input type="month" id="filter-bulan-spp" name="bulan_spp" class="input-date-custom">
                     </div>
                 </div>
             </div>
@@ -304,7 +300,6 @@
             document.getElementById("id").value = id;
             document.getElementById('modal-nama-siswa').value = nama;
             document.getElementById('modal-nama-kelas').value = kelas;
-            document.getElementById('modal-nama-masjid').value = masjid;
             document.getElementById('tanggal_awal').value = tanggal_awal;
             document.getElementById('tanggal_akhir').value = tanggal_akhir;
             document.getElementById('edit-nominal').value = nominal;
