@@ -207,6 +207,8 @@
                                 @php
                                     $data_siswa = App\Models\siswa::where("id",$value->siswa_id)->first();
                                     $data_kelas = App\Models\ruang_kelas::where("id",$data_siswa->kelas_id)->first();
+                                    $data_sekolah = App\Models\jenis_sekolah::where("id",$data_siswa->sekolah_id)->first();
+
                                 @endphp
                                 <tr>
                                     <td><span class="student-name">{{$data_siswa->nama}}</span></td>
@@ -218,7 +220,7 @@
                                     <td>
                                         <div class="action-buttons">
                                             <a href="/sk/dp" class="btn-action view" title="Detail"><i class="fa-solid fa-eye"></i></a>
-                                            <button class="btn-action edit" title="Edit" onclick="openEditModal('{{$value->id}}','{{$data_siswa->nama}}', '{{$value->tanggal_awal}}', '{{$value->nominal}}')"><i class="fa-solid fa-pen-to-square"></i></button>
+                                            <button class="btn-action edit" title="Edit" onclick="openEditModal('{{$value->id}}','{{$data_siswa->nama}}', '{{$data_kelas->nama_ruang}}', '{{$data_sekolah->jenis}}','{{$value->tanggal_awal}}','{{$value->nominal}}')"><i class="fa-solid fa-pen-to-square"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -247,9 +249,9 @@
                 <h3>Edit Pembayaran IPP / SPP</h3>
                 <button type="button" class="btn-close-modal" onclick="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <form action="#" method="POST" class="modal-body">
+            <form action='/sk/esp' method="POST" class="modal-body">
                 @csrf
-                <input type="hidden" value="" id="id">
+                <input type="hidden" value="" id="id" name = "id">
                 <div class="modal-field">
                     <label>Nama Siswa</label>
                     <input type="text" id="modal-nama-siswa" readonly disabled style="background-color: #f1f5f9; cursor: not-allowed;">
@@ -263,27 +265,23 @@
                     <input type="text" id="modal-nama-sekolah" readonly disabled style="background-color: #f1f5f9; cursor: not-allowed;">
                 </div>
                 <div class="modal-field">
-                    <label for="edit-bulan">Dari Bulan Ke ?</label>
+                    <label for="edit-bulan"> Bulan </label>
                     <input type="date" name="tanggal_awal" id="tanggal_awal">
                 </div>
-                <div class="modal-field">
-                    <label for="edit-bulan">Sampai Bulan ke ?</label>
-                    <input type="date" name="tanggal_akhir" id="tanggal_akhir">
-                </div>
+              
                 <div class="modal-field">
                     <label for="edit-nominal">Nominal Pembayaran (Rp)</label>
                     <input type="number" id="edit-nominal" name="nominal" placeholder="Contoh: 350000" required>
                 </div>
                 <div class="modal-field">
                     <label for="edit-nominal-bayar">Jumlah Yang Di Bayar (Rp)</label>
-                    <input type="number" id="edit-nominal" name="nominal" placeholder="Contoh: 350000" required>
+                    <input type="number" id="edit-nominal" name="bayar" placeholder="Contoh: 350000">
                 </div>
                 <div class="modal-field">
                     <label for="edit-status">Status Pembayaran IPP</label>
                     <select id="edit-status" name="status">
-                        <option value="lunas">Lunas</option>
-                        <option value="belum">Belum Bayar</option>
-                        <option value="tunggak">Tunggakan</option>
+                        <option value="1">Lunas</option>
+                        <option value="0">Belum Bayar</option>
                     </select>
                 </div>
                 <div class="modal-footer">
@@ -296,12 +294,12 @@
 
     {{-- SCRIPT DYNAMIC POPUP --}}
     <script>
-        function openEditModal(id,nama,kelas,sekolah,tanggal_awal,tanggal_akhir,nominal) {
+        function openEditModal(id,nama,kelas,sekolah,tanggal_awal,nominal) {
             document.getElementById("id").value = id;
             document.getElementById('modal-nama-siswa').value = nama;
+            document.getElementById('modal-nama-sekolah').value = sekolah;
             document.getElementById('modal-nama-kelas').value = kelas;
             document.getElementById('tanggal_awal').value = tanggal_awal;
-            document.getElementById('tanggal_akhir').value = tanggal_akhir;
             document.getElementById('edit-nominal').value = nominal;
             document.getElementById('modalEditPembayaran').classList.add('active');
         }

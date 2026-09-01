@@ -134,6 +134,7 @@ Route::get('/sk/bt',[siakadController::class,"tampilanBuatTagihan_Siswa"]);
 Route::post('/sk/tbtg',[siakadController::class,"tambahTagihan_Siswa"]);
 Route::get('/sk/pd',[siakadController::class,"tampilan_pendidikan"]);
 Route::get('/sk/ps',[siakadController::class,"pengumumanSiswa"]);
+Route::post('/sk/esp',[siakadController::class,"edit_slipPembayaranIpp"]);
 
 
 //siswa

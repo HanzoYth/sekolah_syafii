@@ -6,7 +6,7 @@ use App\Models\siswa;
 use App\Models\slip_pembayaran_ipp;
 use App\Models\slip_pembayaran_pangkal;
 use App\Models\slip_pembayaran_pendidikan;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 
 class siakadController extends Controller
@@ -62,5 +62,14 @@ class siakadController extends Controller
     }
     function pengumumanSiswa (){
         return view('/modul/siakad/pengumumanSiswa');
+    }
+    function edit_slipPembayaranIpp(Request $request)
+    {
+        $data_slip = slip_pembayaran_ipp::where('id',$request->id)->first();
+        $data_slip->tanggal_awal = Carbon::parse($request->tanggal_awal)->translatedFormat("Y-m-d");
+        $data_slip->nominal = $request->nominal;
+        $data_slip->status = $request->status == '0' ? false : true;
+        $data_slip->save();
+        return back()->with('success','berhasil edit pembayaran');
     }
 }
