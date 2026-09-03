@@ -246,69 +246,164 @@
     font-weight: 500;
 }
 
-/* Pagination Styling */
+
+/* ------------------------------------------------------------
+   6. PAGINASI TABEL PEMBAYARAN (ISLAMIC ELEGANT & MODERN FIX)
+------------------------------------------------------------ */
+
+/* Card Footer Wrapper */
+.card-footer,
+.card-footer.pagination-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 0;
+    padding: 18px 26px;
+    border-top: 1px solid var(--pay-border);
+    background: var(--pay-bg-surface);
+    border-bottom-left-radius: var(--pay-radius-xl);
+    border-bottom-right-radius: var(--pay-radius-xl);
+}
+
+.card-footer-info,
+.pagination-info {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--pay-text-muted);
+}
+
+.card-footer-info strong,
+.pagination-info strong {
+    color: var(--pay-text-title);
+    font-weight: 700;
+}
+
+.pagination-container nav {
+    display: flex;
+    align-items: center;
+}
+
 .pagination {
     display: flex;
     align-items: center;
-    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 4px;
+    gap: 4px;
+    flex-wrap: wrap;
+    background: var(--pay-bg-canvas);
+    border: 1px solid var(--pay-border);
+    border-radius: 999px;
 }
 
+.pagination .page-item {
+    display: inline-flex;
+    margin: 0;
+}
+
+.pagination .page-link,
+.pagination .page-item a,
+.pagination .page-item span,
 .pagination button {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 13px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    height: 36px;
-    min-width: 36px;
-    padding: 0 12px;
-    font-size: 0.825rem;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    color: var(--pay-text-muted);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
     font-weight: 600;
-    color: var(--text-primary);
-    background-color: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
+    text-decoration: none;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    line-height: 1;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+    outline: none;
 }
 
-.pagination button i {
+.pagination .page-item:first-child .page-link,
+.pagination .page-item:last-child .page-link {
+    font-size: 0;
+    width: 36px;
+    min-width: 36px;
+    padding: 0;
+    color: var(--pay-primary-dark);
+}
+
+.pagination .page-item:first-child .page-link::before,
+.pagination .page-item:last-child .page-link::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
     font-size: 0.75rem;
 }
 
-/* Hover State */
-.pagination button:hover:not(:disabled):not(.active) {
-    background-color: var(--islamic-emerald-bg);
-    color: var(--islamic-emerald);
-    border-color: #a7f3d0;
+.pagination .page-item:first-child .page-link::before { content: "\f104"; }
+.pagination .page-item:last-child .page-link::before  { content: "\f105"; }
+
+.pagination .page-item a:hover,
+.pagination .page-link:hover,
+.pagination button:not([disabled]):hover {
+    color: var(--pay-primary-dark);
+    background: #ffffff;
+    box-shadow: 0 2px 8px -2px rgba(13, 148, 136, 0.25);
+    transform: translateY(-1px);
 }
 
-/* Active State */
+.pagination .page-item.active .page-link,
+.pagination .page-item.active span,
 .pagination button.active {
-    background-color: var(--islamic-emerald);
-    color: #ffffff;
-    border-color: var(--islamic-emerald);
-    box-shadow: 0 2px 4px rgba(6, 95, 70, 0.2);
+    background: linear-gradient(135deg, var(--pay-primary) 0%, var(--pay-primary-dark) 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px -3px rgba(13, 148, 136, 0.5);
+    cursor: default;
+    transform: none;
 }
 
-/* Disabled State */
-.pagination button:disabled {
-    opacity: 0.5;
+.pagination .page-item.disabled .page-link,
+.pagination .page-item.disabled span,
+.pagination button[disabled] {
+    opacity: 0.35;
     cursor: not-allowed;
-    background-color: #f8fafc;
-    color: #94a3b8;
-    border-color: var(--border-color);
+    pointer-events: none;
+    background: transparent;
+    color: var(--pay-text-muted);
 }
 
-/* Responsive adjustment */
-@media (max-width: 640px) {
-    .card-footer {
+.pagination .page-item.dots .page-link,
+.pagination .page-item.disabled.dots span {
+    border: none;
+    background: transparent;
+    color: var(--pay-text-muted);
+    cursor: default;
+    font-weight: 700;
+    width: auto;
+    padding: 0 6px;
+}
+
+@media (max-width: 576px) {
+    .card-footer,
+    .card-footer.pagination-wrap {
         flex-direction: column;
+        align-items: center;
+        text-align: center;
         gap: 12px;
-        align-items: flex-start;
     }
-    
+
     .pagination {
-        width: 100%;
-        justify-content: space-between;
+        justify-content: center;
     }
+}
+.pagination-container nav > div:last-child > p,
+.pagination-container nav > div:last-child > div:first-child:has(p) {
+    display: none !important;
+}
+.pagination-container nav > div:first-child {
+    display: none !important;
 }

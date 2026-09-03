@@ -10,8 +10,4 @@ class pembayaranController extends Controller
         return view ('/modul/siakad/detailPembayaran');
     }
     
-    function pembayaran_pangkal(){
-        return view ('/modul/siakad/pangkal');
-    }
-    
 }

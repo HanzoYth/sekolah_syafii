@@ -10,6 +10,7 @@ class slip_pembayaran_pendidikan extends Model
     protected $fillable = [
         "nominal",
         "jumlah_dibayar",
-        "siswa_id"
+        "siswa_id",
+        "status"
     ];
 }

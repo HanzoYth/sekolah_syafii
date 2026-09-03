@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create("slip_pembayaran_pangkal",function(Blueprint $table){
+        Schema::create("slip_pembayaran_pendidikan",function(Blueprint $table) {
             $table->id();
             $table->decimal("nominal",15,2);
             $table->decimal("jumlah_di_bayar",15,2)->default(0);
+            $table->boolean("status")->default(0);
             $table->foreignId("siswa_id")->constrained("siswa")->cascadeOnDelete();
             $table->timestamps();
         });
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists("slip_pembayaran_pangkal");
+        Schema::dropIfExists("slip_pembayaran_pendidikan");
     }
 };

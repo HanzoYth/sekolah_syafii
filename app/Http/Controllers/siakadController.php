@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ruang_kelas;
 use App\Models\siswa;
 use App\Models\slip_pembayaran_ipp;
 use App\Models\slip_pembayaran_pangkal;
@@ -22,6 +23,10 @@ class siakadController extends Controller
        return view("/modul/siakad/pendidikan");
        
     }
+    function tambah_kelas(){
+       return view("/modul/siakad/tambahKelas");
+       
+    }
 
     function tambahTagihan_Siswa(Request $request){
         if ($request->jenis_pembayaran == "ipp"){
@@ -31,7 +36,6 @@ class siakadController extends Controller
                 slip_pembayaran_ipp::create([
                     "nominal" => $request->nominal,
                     "tanggal_awal" => $data_awal_bulan,
-                    "tanggal_akhir" => $request->tanggal_akhir,
                     "siswa_id" => $request->siswa_id
                 ]);
 
@@ -52,24 +56,44 @@ class siakadController extends Controller
     }
 
     function tampilanPembayaranIpp_siswa(){
-        $data_slip_ipp = slip_pembayaran_ipp::all();
+        $data_slip_ipp = slip_pembayaran_ipp::paginate(4);
+        $data_kelas = ruang_kelas::all();
         return view ('/modul/siakad/pembayaran',[
-            "data_slip_ipp" => $data_slip_ipp
+            "data_slip_ipp" => $data_slip_ipp,
+            "data_ruang_kelas" => $data_kelas,
         ]);
     }
-    function edit_slipPembayaranIppSiswa(Request $request){
-        
+
+    function tampilanPembayaranPangkal(){
+        $data_slip_pangkal = slip_pembayaran_pangkal::paginate(4);
+        $data_kelas = ruang_kelas::all();
+        return view ('/modul/siakad/pangkal',compact('data_slip_pangkal','data_kelas'));  
     }
+
+
     function pengumumanSiswa (){
         return view('/modul/siakad/pengumumanSiswa');
     }
+
+
     function edit_slipPembayaranIpp(Request $request)
     {
         $data_slip = slip_pembayaran_ipp::where('id',$request->id)->first();
         $data_slip->tanggal_awal = Carbon::parse($request->tanggal_awal)->translatedFormat("Y-m-d");
         $data_slip->nominal = $request->nominal;
-        $data_slip->status = $request->status == '0' ? false : true;
+        $data_slip->status = $request->status == 'Menunggak' ? false : true;
+        $data_slip->jumlah_dibayar += (int) $request->bayar;
         $data_slip->save();
         return back()->with('success','berhasil edit pembayaran');
+    }
+
+
+    function edit_slipPembayaranPangkal(Request $request){
+        $data_slip = slip_pembayaran_pangkal::where("id",(int) $request->id_siswa)->first();
+        $data_slip->nominal = $request->nominal;
+        $data_slip->jumlah_di_bayar += (int) $request->bayar;
+        $data_slip->status = $request->status == 'Menunggak' ? false : true;
+        $data_slip->save();
+        return back()->with("success","berhasil edit pembayaran");
     }
 }

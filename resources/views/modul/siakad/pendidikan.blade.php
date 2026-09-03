@@ -30,7 +30,7 @@
             <header class="topbar">
                 <div class="topbar-left">
                     <span class="topbar-eyebrow">Sistem Informasi Akademik &middot; Selasa, 04 Agustus 2026</span>
-                    <h2>Pembayaran SPP & Pendidikan</h2>
+                    <h2>Pembayaran2 Pendidikan</h2>
                 </div>
 
                 <div class="academic-pill">

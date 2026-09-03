@@ -88,23 +88,18 @@
                         <select id="filter-status-pangkal" name="status_pangkal">
                             <option value="">Semua Status</option>
                             <option value="lunas">Lunas</option>
-                            <option value="angsuran">Mengangsur</option>
-                            <option value="belum">Belum Bayar</option>
+                            <option value="Menunggak">Menunggak</option>
                         </select>
                     </div>
                   
                     <div class="input-wrap">
-                        <label for="filter-status-pangkal">kelas</label>
-                        <select id="filter-status-pangkal" name="kelas">
+                        <label for="filter-kelas-pangkal">kelas</label>
+                        <select id="filter-kelas-pangkal" name="kelas">
                             <option value="">Semua kelas</option>
-                            <option value="lunas">kelas 1a</option>
-                            <option value="angsuran">kelas 7a</option>
-                            <option value="belum">kelas 8b</option>
+                            @foreach ($data_kelas as $value)
+                                <option value="{{$value->nama_ruang}}">{{$value->nama_ruang}}</option>
+                            @endforeach
                         </select>
-                    </div>
-                    <div class="input-wrap">
-                        <label for="filter-bulan-spp">Bulan & Tahun</label>
-                        <input type="month" id="filter-bulan-spp" name="bulan_spp" class="input-date-custom">
                     </div>
                 </div>
             </div>
@@ -119,115 +114,46 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>No. Registrasi</th>
                                 <th>Nama Siswa</th>
-                                <th>Jenjang / Kelas</th>
-                                <th>Total Tagihan</th>
+                                <th>Kelas</th>
+                                <th>Nominal</th>
                                 <th>Terbayar</th>
                                 <th>Sisa Tagihan</th>
-                                <th>Progress</th>
                                 <th>Status</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><span class="reg-number">REG-2026-001</span></td>
-                                <td><span class="student-name">Ahmad Raihan</span></td>
-                                <td><span class="class-pill">SD - 1A</span></td>
-                                <td class="amount">Rp 5.000.000</td>
-                                <td class="amount text-success">Rp 5.000.000</td>
-                                <td class="amount">Rp 0</td>
-                                <td style="width: 130px;">
-                                    <div class="progress-bar-container">
-                                        <div class="progress-bar bg-success" style="width: 100%;"></div>
-                                    </div>
-                                    <span class="progress-text">100%</span>
-                                </td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Lunas</span></td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn-action view" title="Detail Riwayat" onclick="openDetailModal('Ahmad Raihan', 'REG-2026-001', '5000000', '5000000', '0')"><i class="fa-solid fa-eye"></i></button>
-                                        <button class="btn-action edit" title="Bayar Angsuran" onclick="openBayarModal('Ahmad Raihan', 'REG-2026-001', '5000000', '5000000', '0')"><i class="fa-solid fa-cash-register"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="reg-number">REG-2026-014</span></td>
-                                <td><span class="student-name">Dewi Lestari</span></td>
-                                <td><span class="class-pill">SMP - 7A</span></td>
-                                <td class="amount">Rp 6.000.000</td>
-                                <td class="amount text-success">Rp 3.000.000</td>
-                                <td class="amount text-danger">Rp 3.000.000</td>
-                                <td style="width: 130px;">
-                                    <div class="progress-bar-container">
-                                        <div class="progress-bar bg-warning" style="width: 50%;"></div>
-                                    </div>
-                                    <span class="progress-text">50%</span>
-                                </td>
-                                <td><span class="badge warning"><i class="fa-solid fa-clock-rotate-left"></i> Angsuran (1/2)</span></td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn-action view" title="Detail Riwayat" onclick="openDetailModal('Dewi Lestari', 'REG-2026-014', '6000000', '3000000', '3000000')"><i class="fa-solid fa-eye"></i></button>
-                                        <button class="btn-action edit" title="Bayar Angsuran" onclick="openBayarModal('Dewi Lestari', 'REG-2026-014', '6000000', '3000000', '3000000')"><i class="fa-solid fa-cash-register"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="reg-number">REG-2026-028</span></td>
-                                <td><span class="student-name">Fajar Maulana</span></td>
-                                <td><span class="class-pill">TK - B1</span></td>
-                                <td class="amount">Rp 4.000.000</td>
-                                <td class="amount text-success">Rp 1.000.000</td>
-                                <td class="amount text-danger">Rp 3.000.000</td>
-                                <td style="width: 130px;">
-                                    <div class="progress-bar-container">
-                                        <div class="progress-bar bg-warning" style="width: 25%;"></div>
-                                    </div>
-                                    <span class="progress-text">25%</span>
-                                </td>
-                                <td><span class="badge warning"><i class="fa-solid fa-clock-rotate-left"></i> Angsuran (1/4)</span></td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn-action view" title="Detail Riwayat" onclick="openDetailModal('Fajar Maulana', 'REG-2026-028', '4000000', '1000000', '3000000')"><i class="fa-solid fa-eye"></i></button>
-                                        <button class="btn-action edit" title="Bayar Angsuran" onclick="openBayarModal('Fajar Maulana', 'REG-2026-028', '4000000', '1000000', '3000000')"><i class="fa-solid fa-cash-register"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="reg-number">REG-2026-045</span></td>
-                                <td><span class="student-name">Gita Gutawa</span></td>
-                                <td><span class="class-pill">SD - 1B</span></td>
-                                <td class="amount">Rp 5.000.000</td>
-                                <td class="amount text-success">Rp 0</td>
-                                <td class="amount text-danger">Rp 5.000.000</td>
-                                <td style="width: 130px;">
-                                    <div class="progress-bar-container">
-                                        <div class="progress-bar bg-danger" style="width: 0%;"></div>
-                                    </div>
-                                    <span class="progress-text">0%</span>
-                                </td>
-                                <td><span class="badge danger"><i class="fa-solid fa-circle-xmark"></i> Belum Bayar</span></td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn-action view" title="Detail Riwayat" onclick="openDetailModal('Gita Gutawa', 'REG-2026-045', '5000000', '0', '5000000')"><i class="fa-solid fa-eye"></i></button>
-                                        <button class="btn-action edit" title="Bayar Angsuran" onclick="openBayarModal('Gita Gutawa', 'REG-2026-045', '5000000', '0', '5000000')"><i class="fa-solid fa-cash-register"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
+                            @foreach ($data_slip_pangkal as $value)
+                                @php
+                                    $data_siswa = App\Models\siswa::where("id", $value->siswa_id)->first();
+                                    $data_kelas = App\Models\ruang_kelas::where("id",$data_siswa->kelas_id)->first();
+                                    $sisa_bayar = $value->nominal - $value->jumlah_di_bayar;
+                                @endphp
+                                <tr>
+                                    <td><span class="student-name">{{$data_siswa->nama}}</span></td>
+                                    <td><span class="class-pill">{{$data_kelas->nama_ruang}}</span></td>
+                                    <td class="amount">Rp{{number_format($value->nominal,0,",",".")}}</td>
+                                    <td class="amount text-success">Rp{{number_format($value->jumlah_di_bayar,0,",",".")}}</td>
+                                    <td class="amount">Rp{{number_format($sisa_bayar,0,",",".")}}</td>
+                                    <td class="status"><span class="badge {{$value->status ? 'success' : 'danger'}}"><i class="fa-solid fa-triangle-exclamation"></i> {{$value->status ? 'lunas':'menunggak'}}</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn-action view" title="Detail Riwayat" onclick="openDetailModal('Ahmad Raihan', 'REG-2026-001', '5000000', '5000000', '0')"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn-action edit" title="Bayar Angsuran" onclick="openBayarModal('{{$value->id}}','{{$data_siswa->nama}}', '{{$data_siswa->nis}}', '{{$value->nominal}}','{{$sisa_bayar}}','{{$value->status}}')"><i class="fa-solid fa-cash-register"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
 
                 {{-- FOOTER CARD / PAGINATION --}}
-                <div class="card-footer">
-                    <span class="card-footer-info">Menampilkan 4 dari 85 data tagihan uang pangkal</span>
-                    <div class="pagination">
-                        <button disabled><i class="fa-solid fa-chevron-left"></i> Sebelumnya</button>
-                        <button class="active">1</button>
-                        <button>2</button>
-                        <button>3</button>
-                        <button>Selanjutnya <i class="fa-solid fa-chevron-right"></i></button>
+                <div class="card-footer pagination-wrap">
+                    {{-- Laravel Pagination Link --}}
+                    <div class="pagination-container">
+                        {{ $data_slip_pangkal->links() }}
                     </div>
                 </div>
             </div>
@@ -236,21 +162,23 @@
 
     {{-- MODAL INPUT TRANSAKSI / ANGSURAN --}}
     <div id="modalBayarPangkal" class="modal-overlay">
+        <input type="hidden" value="" id="value_pembayaran">
         <div class="modal-card">
             <div class="modal-header">
                 <h3>Input Pembayaran Uang Pangkal</h3>
                 <button type="button" class="btn-close-modal" onclick="closeBayarModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <form action="#" method="POST" class="modal-body">
+            <form action="/sk/espk" method="POST" class="modal-body">
                 @csrf
+                <input type="hidden" name="id_siswa" id="id_siswa" value="">
                 <div class="modal-field">
-                    <label>No. Registrasi / Nama Siswa</label>
+                    <label>Nis / Nama Siswa</label>
                     <input type="text" id="modal-bayar-siswa" readonly disabled class="input-readonly">
                 </div>
                 <div class="modal-row-2">
                     <div class="modal-field">
-                        <label>Total Tagihan</label>
-                        <input type="text" id="modal-bayar-total" readonly disabled class="input-readonly">
+                        <label>Nominal Tagihan</label>
+                        <input type="number" id="modal-bayar-total" name="nominal">
                     </div>
                     <div class="modal-field">
                         <label>Sisa Tanggungan</label>
@@ -259,19 +187,11 @@
                 </div>
                 <div class="modal-field">
                     <label for="bayar-nominal">Nominal Pembayaran Saat Ini (Rp)</label>
-                    <input type="number" id="bayar-nominal" name="nominal_bayar" placeholder="Masukkan jumlah yang dibayarkan" required>
+                    <input type="number" id="bayar-nominal" name="bayar" placeholder="Masukkan jumlah yang dibayarkan" required>
                 </div>
                 <div class="modal-field">
-                    <label for="bayar-metode">Metode Pembayaran</label>
-                    <select id="bayar-metode" name="metode_pembayaran" required>
-                        <option value="transfer">Transfer Bank (BSI / Mandiri)</option>
-                        <option value="tunai">Tunai / Kasir Sekolah</option>
-                        <option value="qris">QRIS</option>
-                    </select>
-                </div>
-                <div class="modal-field">
-                    <label for="bayar-catatan">Keterangan / Catatan (Opsional)</label>
-                    <input type="text" id="bayar-catatan" name="catatan" placeholder="Contoh: Cicilan ke-2 via transfer BSI">
+                    <label for="edit-status">Status Pembayaran IPP</label>
+                    <input type="text" id="edit-status" name="status" readonly>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-modal-cancel" onclick="closeBayarModal()">Batal</button>
@@ -295,7 +215,7 @@
                         <h4 id="detail-nama">Ahmad Raihan</h4>
                     </div>
                     <div>
-                        <small>No. Reg</small>
+                        <small>Nis</small>
                         <h4 id="detail-reg">REG-2026-001</h4>
                     </div>
                     <div>
@@ -310,8 +230,7 @@
                         <thead>
                             <tr>
                                 <th>Tgl Transaksi</th>
-                                <th>Keterangan</th>
-                                <th>Metode</th>
+                                <th>Nominal</th>
                                 <th>Jumlah</th>
                             </tr>
                         </thead>
@@ -330,9 +249,69 @@
 
     {{-- SCRIPT JAVASCRIPT --}}
     <script>
-        function openBayarModal(nama, reg, total, terbayar, sisa) {
+        var input_status = document.getElementById("filter-status-pangkal");
+        var input_kelas = document.getElementById("filter-kelas-pangkal");
+
+
+        input_status.addEventListener("change",filterData);
+        input_kelas.addEventListener("change",filterData);
+
+        function filterData(){
+            var value_status = input_status.value;
+            var value_kelas = input_kelas.value;
+            var row_tr = document.querySelectorAll(".table-responsive tbody tr");
+
+            reset();
+            row_tr.forEach((data) => {
+                var row_kelas = data.querySelector(".class-pill");
+                var row_status = data.querySelector(".status");
+
+                if (value_status != ""){
+                    if (!row_status.classList.contains("hide") && row_status.textContent.toLowerCase().trim() != value_status.toLowerCase().trim()){
+                        data.classList.add("hide");
+                    }
+                }
+
+                if (value_kelas != ""){
+                    if (!row_kelas.classList.contains("hide") && row_kelas.textContent.toLowerCase().trim() != value_kelas.toLowerCase().trim()){
+                        data.classList.add("hide");
+                    }
+                }
+            });
+        }
+
+        function reset(){
+            var row_tr = document.querySelectorAll("tbody tr");
+            row_tr.forEach((data) => {
+                data.classList.remove("hide");
+            }); 
+        }
+
+
+        var memory_data = 0;
+        document.getElementById("bayar-nominal").addEventListener('input',(e) => {
+            if (parseInt(e.target.value ? e.target.value : 0) <= parseInt(document.getElementById("value_pembayaran").value)){
+                memory_data = parseInt(e.target.value);
+            }else{
+                e.target.value = memory_data;
+            }
+
+            if (parseInt(e.target.value ? e.target.value : 0) == parseInt(document.getElementById("value_pembayaran").value)){
+                document.getElementById("edit-status").value = "Lunas";
+            }else{
+                document.getElementById("edit-status").value = "Menunggak";        
+            }
+        });
+
+
+        function openBayarModal(id,nama, reg, total, sisa,status) {
+            document.getElementById("value_pembayaran").value = sisa;
+            document.getElementById("id_siswa").value = id;
+
+            document.getElementById("edit-status").value = parseInt(status) ? "lunas" : "Menunggak";
+
             document.getElementById('modal-bayar-siswa').value = `${reg} - ${nama}`;
-            document.getElementById('modal-bayar-total').value = 'Rp ' + parseInt(total).toLocaleString('id-ID');
+            document.getElementById('modal-bayar-total').value = parseInt(total);
             document.getElementById('modal-bayar-sisa').value = 'Rp ' + parseInt(sisa).toLocaleString('id-ID');
             document.getElementById('bayar-nominal').max = sisa;
             
@@ -344,38 +323,6 @@
         }
 
         function openDetailModal(nama, reg, total, terbayar, sisa) {
-            document.getElementById('detail-nama').innerText = nama;
-            document.getElementById('detail-reg').innerText = reg;
-
-            const historyBody = document.getElementById('detail-history-body');
-            if(parseInt(sisa) === 0) {
-                document.getElementById('detail-status-badge').className = 'badge success';
-                document.getElementById('detail-status-badge').innerText = 'Lunas';
-                historyBody.innerHTML = `
-                    <tr>
-                        <td>01/08/2026</td>
-                        <td>Pembayaran Pelunasan Uang Pangkal</td>
-                        <td>Transfer BSI</td>
-                        <td class="text-success font-bold">Rp ${parseInt(total).toLocaleString('id-ID')}</td>
-                    </tr>`;
-            } else if (parseInt(terbayar) > 0) {
-                document.getElementById('detail-status-badge').className = 'badge warning';
-                document.getElementById('detail-status-badge').innerText = 'Mengangsur';
-                historyBody.innerHTML = `
-                    <tr>
-                        <td>15/07/2026</td>
-                        <td>Pembayaran Angsuran ke-1</td>
-                        <td>Tunai</td>
-                        <td class="text-success font-bold">Rp ${parseInt(terbayar).toLocaleString('id-ID')}</td>
-                    </tr>`;
-            } else {
-                document.getElementById('detail-status-badge').className = 'badge danger';
-                document.getElementById('detail-status-badge').innerText = 'Belum Bayar';
-                historyBody.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="text-center" style="color: #94a3b8;">Belum ada riwayat transaksi.</td>
-                    </tr>`;
-            }
 
             document.getElementById('modalDetailPangkal').classList.add('active');
         }
