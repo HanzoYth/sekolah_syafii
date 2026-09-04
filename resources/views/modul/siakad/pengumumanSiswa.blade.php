@@ -24,7 +24,7 @@
             <header class="topbar">
                 <div class="page-title">
                     <h2>Pengumuman</h2>
-                    <p>Informasi & pemberitahuan terbaru untuk <strong>Rafly</strong> &middot; Kelas 1A</p>
+                    <p>Informasi & pemberitahuan terbaru untuk <strong>{{$data_siswa->nama}}</strong> &middot;{{$data_kelas->nama_ruang}}</p>
                 </div>
             </header>
 

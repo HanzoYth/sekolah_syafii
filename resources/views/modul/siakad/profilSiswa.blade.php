@@ -49,7 +49,7 @@
                 <!-- HEADER PROFIL: foto + nama + tombol ganti foto -->
                 <div class="profile-header">
                     <div class="avatar-wrap">
-                        <img class="avatar-xl" src="#" alt="Foto Profil">
+                        <img class="avatar-xl" src="{{route('file.show',$data_siswa->url_foto)}}" alt="Foto Profil">
                         <label for="input_foto" class="avatar-edit-btn" title="Ganti Foto">
                             <i class="fa-solid fa-camera"></i>
                         </label>
@@ -59,8 +59,8 @@
                         </form>
                     </div>
                     <div class="profile-header-info">
-                        <h2>Rafly</h2>
-                        <p>23665 &middot; Kelas 2A</p>
+                        <h2>{{$data_siswa->nama}}</h2>
+                        <p>{{$data_siswa->nis}} &middot; {{$data_kelas->nama_ruang}}</p>
                         <span class="status-pill">
                             <i class="fa-solid fa-circle" style="font-size:8px;"></i> Siswa Aktif
                         </span>
@@ -73,7 +73,7 @@
                     <div class="info-grid">
                         <div class="info-item">
                             <span class="info-label">NISN</span>
-                            <span class="info-value">23442</span>
+                            <span class="info-value">{{$data_siswa->nis}}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Jenis Kelamin</span>
@@ -112,42 +112,15 @@
                         </div>
                         <div class="info-item">
                             <span class="info-label">Kelas</span>
-                            <span class="info-value">2A</span>
+                            <span class="info-value">{{$data_kelas->nama_ruang}}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Status Siswa</span>
                             <span class="info-value">Aktif</span>
                         </div>
                     </div>
-                </div>
-
-                <!-- DATA ORANG TUA / WALI -->
-                <h3 class="info-section-title"><i class="fa-solid fa-people-roof"></i> Data Orang Tua / Wali</h3>
-                <div class="info-card">
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="info-label">Nama Ayah</span>
-                            <span class="info-value">Zianax</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Nama Ibu</span>
-                            <span class="info-value">Zuanax</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Pekerjaan Orang Tua</span>
-                            <span class="info-value">Pegawai Negeri Sipil</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Nomor HP Orang Tua</span>
-                            <span class="info-value">089999887787</span>
-                        </div>
-                        <div class="info-item full">
-                            <span class="info-label">Alamat Orang Tua</span>
-                            <span class="info-value">Jl.Sigma</span>
-                        </div>
-                    </div>
-                </div>
-
+                </div> 
+                
                 <!-- GANTI PASSWORD -->
                 <h3 class="info-section-title"><i class="fa-solid fa-lock"></i> Keamanan Akun</h3>
                 <div class="info-card">

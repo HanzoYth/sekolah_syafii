@@ -29,7 +29,7 @@
             <header class="topbar">
                 <div class="page-title">
                     <h2>Dashboard Siswa</h2>
-                    <p>Selamat {{$sapaan}}, <strong>Rafly</strong></p>
+                    <p>Selamat {{$sapaan}}, <strong>{{$data_siswa->nama}}</strong></p>
                 </div>
             </header>
 
@@ -54,11 +54,11 @@
                 {{-- CHANGED: PROFIL — card tersendiri, disusun ke bawah, info ringkas saja
                      (bukan selengkap halaman Profil: cukup foto, nama, NIS, kelas) --}}
                 <div class="profile-card">
-                    <img class="avatar-lg" src="#" alt="Foto Profil">
-                    <h3>Rafly</h3>
+                    <img class="avatar-lg" src="{{route('file.show',$data_siswa->url_foto)}}" alt="Foto Profil">
+                    <h3>{{$data_siswa->nama}}</h3>
                     <ul class="profile-meta">
-                        <li><i class="fa-solid fa-id-badge"></i> NIS: 2026001</li>
-                        <li><i class="fa-solid fa-chalkboard"></i> Kelas 1A</li>
+                        <li><i class="fa-solid fa-id-badge"></i> NIS: {{$data_siswa->nis}}</li>
+                        <li><i class="fa-solid fa-chalkboard"></i> {{$data_kelas->nama_ruang}}</li>
                     </ul>
                 </div>
 

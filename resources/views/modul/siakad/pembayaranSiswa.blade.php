@@ -24,7 +24,7 @@
             <header class="topbar">
                 <div class="page-title">
                     <h2>Slip Pembayaran</h2>
-                    <p>Riwayat & status pembayaran <strong>Rafly</strong> &middot; Kelas 1A</p>
+                    <p>Riwayat & status pembayaran <strong>{{$data_siswa->nama}}</strong> &middot;{{$data_kelas->nama_ruang}}</p>
                 </div>
             </header>
 

@@ -71,11 +71,6 @@ class siakadController extends Controller
     }
 
 
-    function pengumumanSiswa (){
-        return view('/modul/siakad/pengumumanSiswa');
-    }
-
-
     function edit_slipPembayaranIpp(Request $request)
     {
         $data_slip = slip_pembayaran_ipp::where('id',$request->id)->first();

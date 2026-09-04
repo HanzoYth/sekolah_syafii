@@ -14,17 +14,28 @@ use Illuminate\Http\Request;
 class siswaController extends Controller
 {
     function dashboardSiswa (){
-        return view('/modul/siakad/dashboardSiswa');
+        $data_siswa = siswa:: where("id",session("id"))->first();
+        $data_kelas = ruang_kelas:: where("id",$data_siswa->kelas_id)->first();
+        return view('/modul/siakad/dashboardSiswa',compact("data_siswa","data_kelas"));
     }
 
     function pembayaranSiswa (){
-        return view('/modul/siakad/pembayaranSiswa');
+        $data_siswa = siswa:: where("id",session("id"))->first();
+        $data_kelas = ruang_kelas:: where("id",$data_siswa->kelas_id)->first();
+        return view('/modul/siakad/pembayaranSiswa',compact("data_siswa","data_kelas"));
     }
     function profilSiswa (){
-        return view('/modul/siakad/profilSiswa');
+        $data_siswa = siswa:: where("id",session("id"))->first();
+        $data_kelas = ruang_kelas:: where("id",$data_siswa->kelas_id)->first();
+        return view('/modul/siakad/profilSiswa',compact("data_siswa","data_kelas"));
     }
      function DetailSlipPembayaran (){
         return view('/modul/siakad/detailSlipPembayaran');
+    }
+    function pengumumanSiswa (){
+        $data_siswa = siswa:: where("id",session("id"))->first();
+        $data_kelas = ruang_kelas:: where("id",$data_siswa->kelas_id)->first();
+        return view('/modul/siakad/pengumumanSiswa',compact("data_siswa","data_kelas"));
     }
 
     function tampilan_formulirSiswa(){
