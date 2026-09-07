@@ -37,9 +37,29 @@
 
 .payment-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 13.5px;
 }
+
+/* Lebar kolom tetap & sama di ketiga card (IPP/Pangkal/Pendidikan) agar sejajar */
+.payment-table th:nth-child(1),
+.payment-table td:nth-child(1) { width: 13%; }
+
+.payment-table th:nth-child(2),
+.payment-table td:nth-child(2) { width: 23%; }
+
+.payment-table th:nth-child(3),
+.payment-table td:nth-child(3) { width: 28%; }
+
+.payment-table th:nth-child(4),
+.payment-table td:nth-child(4) { width: 15%; }
+
+.payment-table th:nth-child(5),
+.payment-table td:nth-child(5) { width: 13%; }
+
+.payment-table th:nth-child(6),
+.payment-table td:nth-child(6) { width: 8%; }
 
 .payment-table thead th {
   text-align: left;
@@ -58,7 +78,8 @@
   border-top: 1px solid var(--line);
   color: var(--navy-900);
   vertical-align: middle;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .payment-table tbody tr {
@@ -118,29 +139,6 @@
   color: var(--warning);
 }
 
-/* --- Tombol Aksi (Lihat Detail / Cetak) ---
-   Bulat dengan efek hover berubah jadi warna solid + icon putih,
-   pola yang sama seperti tombol aksi (btn-print/btn-action) di modul lain. */
-.btn-action-view {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--info-bg, #e0f2fe);
-  color: var(--info, #0369a1);
-  text-decoration: none;
-  font-size: 0.85rem;
-  transition: all 0.25s ease-in-out;
-}
-
-.btn-action-view:hover {
-  background: var(--info, #0369a1);
-  color: #ffffff;
-  transform: scale(1.05);
-}
-
 /* --- Empty State --- */
 .table-empty {
   padding: 48px 20px;
@@ -161,4 +159,68 @@
   .payment-table tbody td {
     padding: 12px 14px;
   }
+}
+
+/* ==========================================================================
+   === TAMBAHAN: 3 Kolom Riwayat (IPP / Pangkal / Pendidikan) + Filter ===
+   ========================================================================== */
+
+/* Kartu riwayat tersusun ke bawah (bukan berdampingan) */
+.payment-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 26px;
+}
+
+.payment-columns .card-table {
+  margin-top: 0;
+}
+
+/* Tombol Aksi Download (pengganti tombol Lihat Detail) */
+.btn-action-download {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--navy-800);
+  color: var(--paper);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all 0.25s ease-in-out;
+}
+
+.btn-action-download:hover {
+  background: var(--navy-900);
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+/* Toolbar filter (khusus di atas tabel Riwayat IPP) */
+.table-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px 20px;
+  background: var(--cream);
+  border-bottom: 1px solid var(--line);
+}
+
+.table-filters select {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--navy-900);
+  background: var(--paper);
+  cursor: pointer;
+}
+
+.table-filters select:focus {
+  outline: none;
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 3px rgba(216, 185, 74, 0.18);
 }

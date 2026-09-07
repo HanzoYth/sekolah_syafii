@@ -189,3 +189,54 @@
     max-width: 100%;
   }
 }
+
+/* ==========================================================================
+   === TAMBAHAN: Tombol & Mode Edit ===
+   ========================================================================== */
+
+/* Tombol toggle edit di pojok kanan atas topbar */
+.edit-toggle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--paper);
+  background: var(--navy-800);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.edit-toggle-btn:hover {
+  background: var(--navy-900);
+  transform: scale(1.06);
+}
+
+/* Saat mode edit aktif, ganti warna tombol jadi aksen emas (state "simpan/selesai") */
+.edit-toggle-btn.is-active {
+  background: var(--gold-500);
+  color: var(--navy-900);
+}
+
+/* Field yang sedang bisa diedit (contenteditable) */
+.content-body.edit-mode .info-value[contenteditable="true"] {
+  outline: none;
+  border-bottom: 1px dashed var(--gold-500);
+  background: var(--cream);
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: text;
+}
+
+/* Card password disembunyikan sampai mode edit diaktifkan */
+.password-card {
+  display: none;
+}
+
+.content-body.edit-mode .password-card {
+  display: block;
+}

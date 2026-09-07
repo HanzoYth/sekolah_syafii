@@ -26,6 +26,11 @@
                     <h2>Profil Saya</h2>
                     <p>Data lengkap akun dan informasi siswa</p>
                 </div>
+                <!-- === TAMBAHAN: Tombol toggle mode edit === -->
+                <button type="button" class="edit-toggle-btn" id="btnToggleEdit" title="Edit Profil">
+                    <i class="fa-solid fa-pen" id="iconToggleEdit"></i>
+                </button>
+                <!-- === /TAMBAHAN === -->
             </header>
 
             <!-- CONTENT BODY -->
@@ -122,8 +127,9 @@
                 </div> 
                 
                 <!-- GANTI PASSWORD -->
+                <!-- === TAMBAHAN: class "password-card" agar bisa disembunyikan/ditampilkan lewat mode edit === -->
                 <h3 class="info-section-title"><i class="fa-solid fa-lock"></i> Keamanan Akun</h3>
-                <div class="info-card">
+                <div class="info-card password-card">
                     <form class="password-form" action="/sk/pr/password" method="POST">
                         @csrf
                         <div class="form-group">
@@ -137,11 +143,6 @@
                         <div class="form-group">
                             <label for="password_konfirmasi">Konfirmasi Password Baru</label>
                             <input type="password" name="password_konfirmasi" id="password_konfirmasi" required>
-                        </div>
-                        <div class="action-buttons">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fa-solid fa-key"></i> Simpan Password
-                            </button>
                         </div>
                     </form>
                 </div>
@@ -169,6 +170,27 @@
                 }, 5000);
             }
         });
+
+        // === TAMBAHAN: Toggle mode edit ===
+        // Menyalakan/mematikan contenteditable pada semua .info-value
+        // dan menampilkan/menyembunyikan card password. Tidak ada data yang diubah/dikirim.
+        const btnToggleEdit = document.getElementById('btnToggleEdit');
+        const iconToggleEdit = document.getElementById('iconToggleEdit');
+        const contentBody = document.querySelector('.content-body');
+        const editableValues = document.querySelectorAll('.info-value');
+
+        btnToggleEdit.addEventListener('click', () => {
+            const isEditing = contentBody.classList.toggle('edit-mode');
+            btnToggleEdit.classList.toggle('is-active', isEditing);
+
+            editableValues.forEach(el => {
+                el.setAttribute('contenteditable', isEditing ? 'true' : 'false');
+            });
+
+            iconToggleEdit.className = isEditing ? 'fa-solid fa-check' : 'fa-solid fa-pen';
+            btnToggleEdit.title = isEditing ? 'Selesai Edit' : 'Edit Profil';
+        });
+        // === /TAMBAHAN ===
     </script>
 </body>
 </html>
