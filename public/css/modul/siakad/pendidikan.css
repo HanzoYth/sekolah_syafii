@@ -283,6 +283,10 @@
     border-color: var(--border-color);
 }
 
+.hide{
+    display: none;
+}
+
 /* Responsive adjustment */
 @media (max-width: 640px) {
     .card-footer {

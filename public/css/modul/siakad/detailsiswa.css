@@ -308,7 +308,20 @@ body {
     display: flex;
     justify-content: flex-end;
 }
+/* Mengatur gambar di dalam avatar-large agar fit dan membulat */
+.avatar-large {
+    overflow: hidden; /* Memastikan foto tidak keluar dari bingkai lingkaran */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
+.avatar-img-large {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Memastikan gambar tidak gepeng/terdistorsi */
+    border-radius: 50%;
+}
 /* Responsif Mobile & Tablet */
 @media (max-width: 1024px) {
     .detail-grid {

@@ -17,9 +17,7 @@
         <header class="topbar">
             <div class="topbar-inner">
                 <div class="topbar-title">
-                    <span class="font-arabic">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
                     <h1>Detail Data Santri / Siswa</h1>
-                    <p>Informasi Lengkap Profil &amp; Akademik Siswa</p>
                 </div>
                 <a href="{{ url()->previous() }}" class="btn btn-outline">
                     <i class="fa-solid fa-arrow-left"></i> Kembali
@@ -33,13 +31,16 @@
                 <div class="card profile-card">
                     <div class="avatar-wrapper">
                         <div class="avatar-large">
-                            <i class="fa-solid fa-user"></i>
+                            <img src="{{ route('file.show',$data_siswa->url_foto) }}" alt="Foto Santri" class="avatar-img-large">
                         </div>
                     </div>
-                    <h2 class="profile-name">Ahmad Al-Fatih</h2>
-                    <span class="badge badge-laki"><i class="fa-solid fa-mars"></i> Laki-laki</span>
+                    <h2 class="profile-name">{{$data_siswa->nama}}</h2>
+                    <span class="badge {{$data_siswa->gender == 'p' ? 'badge-perempuan' : 'badge-laki'}}">
+                        <i class="fa-solid {{$data_siswa->gender == 'p' ? 'fa-venus' : 'fa-mars'}}"></i> 
+                        {{$data_siswa->gender == 'p' ? 'Perempuan' : 'Laki-laki'}}
+                    </span>
                     <div class="profile-meta">
-                        <span class="badge-kelas">X-A Tahfidz</span>
+                        <span class="badge-kelas">{{$data_kelas->nama_ruang}}</span>
                     </div>
                 </div>
 
@@ -49,44 +50,26 @@
                     
                     <div class="info-grid">
                         <div class="info-item">
-                            <label>NISN</label>
-                            <p>0051234567</p>
-                        </div>
-                        <div class="info-item">
                             <label>NIS</label>
-                            <p>202301</p>
+                            <p>{{$data_siswa->nis}}</p>
                         </div>
+
+                        @php
+                            Carbon\Carbon::setLocale("id");
+                        @endphp
                         <div class="info-item">
                             <label>Tempat, Tanggal Lahir</label>
-                            <p>Jakarta, 12 Ramadhan 1426 H / 15 Oktober 2005</p>
+                            <p>{{$data_siswa->tempat_lahir}},{{Carbon\Carbon::parse($data_siswa->tanggal_lahir)->translatedFormat("Y F d")}}</p>
                         </div>
                         <div class="info-item">
                             <label>Program Studi / Kelas</label>
-                            <p>X-A Tahfidz Al-Qur'an</p>
+                            <p>{{$data_kelas->nama_ruang}}</p>
                         </div>
                         <div class="info-item full-width">
                             <label>Alamat Lengkap</label>
-                            <p>Jl. Pesantren No. 45, Komplek Islamic Center, Jakarta Selatan</p>
+                            <p>{{$data_siswa->alamat}}</p>
                         </div>
-                    </div>
-
-                    <h3 class="card-title mt-20"><i class="fa-solid fa-user-group"></i> Informasi Orang Tua / Wali</h3>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <label>Nama Ayah</label>
-                            <p>Muhammad Ibrahim</p>
-                        </div>
-                        <div class="info-item">
-                            <label>Nama Ibu</label>
-                            <p>Siti Aminah</p>
-                        </div>
-                        <div class="info-item">
-                            <label>No. WhatsApp Orang Tua</label>
-                            <p>+62 812-3456-7890</p>
-                        </div>
-                    </div>
-
-                   
+                    </div> 
                 </div>
             </div>
         </main>

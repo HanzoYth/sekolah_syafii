@@ -82,7 +82,7 @@
                         <li class="menu-item">
                             <a href="/sk/ds">
                                 <i class="fa-solid fa-id-card"></i>
-                                <span>Data Siswa</span>
+                                <span>Daftar Siswa</span>
                             </a>
                         </li>
                      <li class="menu-item">

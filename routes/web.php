@@ -124,18 +124,21 @@ Route::get('/tf/kls',[kelasHalaqahController::class,"kelas_halaqah"]);
 
 //ini dasboard siakad
 Route::get('/sk/das',[modulSiakadController::class,"dashboard_siakad"]);
-Route::get('/sk/ds',[dataSiswaController::class,"data_siswa"]); 
-Route::get('/sk/dls',[dataSiswaController::class,"detail_siswa"]); 
+Route::get('/sk/ds',[siakadController::class,"tampian_daftarSiswa"]); 
+Route::get('/sk/dls/{id}',[siakadController::class,"tampilan_detailSiswa"]); 
 Route::get('/sk/dts',[dataSiswaController::class,"edit_siswa"]); 
 Route::get('/sk/pb',[siakadController::class,"tampilanPembayaranIpp_siswa"]);
 Route::get('/sk/dp',[PembayaranController::class,"detail_pembayaran_siswa"]);
 Route::get('/sk/pp',[siakadController::class,"tampilanPembayaranPangkal"]);
 Route::get('/sk/bt',[siakadController::class,"tampilanBuatTagihan_Siswa"]);
 Route::post('/sk/tbtg',[siakadController::class,"tambahTagihan_Siswa"]);
-Route::get('/sk/pd',[siakadController::class,"tampilan_pendidikan"]);
+Route::get('/sk/pd',[siakadController::class,"tampilanPembayaranPendidikan"]);
 Route::post('/sk/esp',[siakadController::class,"edit_slipPembayaranIpp"]);
 Route::post('/sk/espk',[siakadController::class,"edit_slipPembayaranPangkal"]);
+Route::post('/sk/espp',[siakadController::class,"edit_slipPembayaranPendidikan"]);
 Route::get('/sk/tk',[siakadController::class,"tambah_kelas"]);
+Route::post('/sk/pbsp/',[siakadController::class,"publish_slipPembayaran"]);
+Route::post('/sk/hpsp/',[siakadController::class,"hapus_slipPembayaran"]);
 
 
 //siswa

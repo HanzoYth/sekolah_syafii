@@ -387,6 +387,11 @@
     padding: 0 6px;
 }
 
+.hide{
+    display: none;
+}
+
+
 @media (max-width: 576px) {
     .card-footer,
     .card-footer.pagination-wrap {
