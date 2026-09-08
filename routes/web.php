@@ -130,6 +130,7 @@ Route::get('/sk/dts',[dataSiswaController::class,"edit_siswa"]);
 Route::get('/sk/pb',[siakadController::class,"tampilanPembayaranIpp_siswa"]);
 Route::get('/sk/dp',[PembayaranController::class,"detail_pembayaran_siswa"]);
 Route::get('/sk/pp',[siakadController::class,"tampilanPembayaranPangkal"]);
+Route::get('/sk/ppl',[siakadController::class,"tampilanPembayaranPemeliharaan"]);
 Route::get('/sk/bt',[siakadController::class,"tampilanBuatTagihan_Siswa"]);
 Route::post('/sk/tbtg',[siakadController::class,"tambahTagihan_Siswa"]);
 Route::get('/sk/pd',[siakadController::class,"tampilanPembayaranPendidikan"]);

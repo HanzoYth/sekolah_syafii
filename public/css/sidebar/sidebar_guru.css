@@ -25,6 +25,8 @@
 
   --sidebar-w: 260px;
   --sidebar-w-collapsed: 84px;
+  --hamburger-size: 42px;
+  --hamburger-offset: 14px;
 }
 
 /* ==========================================================================
@@ -251,7 +253,27 @@
   transition: background 0.2s ease, color 0.2s ease;
 }
 
+/* Matikan disclosure marker bawaan <summary> di SEMUA browser.
+   ::-webkit-details-marker saja tidak cukup: Firefox/Safari pakai
+   ::marker bawaan yang menambah indentasi tersendiri, itulah sebabnya
+   item "Master Data" / "Laporan HR" jadi tidak rata dengan menu lain
+   di mobile. */
+.menu-item .submenu-wrapper {
+  list-style: none;
+}
+
+.menu-item .menu-link {
+  list-style: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 .menu-item .menu-link::-webkit-details-marker {
+  display: none;
+}
+
+.menu-item .menu-link::marker {
+  content: "";
   display: none;
 }
 
@@ -387,6 +409,7 @@
 
 .sidebar.collapsed .brand-logo span,
 .sidebar.collapsed .menu-item a span,
+.sidebar.collapsed .menu-link-content span,
 .sidebar.collapsed .menu-label,
 .sidebar.collapsed .logout-btn span,
 .sidebar.collapsed .submenu-icon {
@@ -397,7 +420,8 @@
   display: none;
 }
 
-.sidebar.collapsed .menu-item a {
+.sidebar.collapsed .menu-item a,
+.sidebar.collapsed .menu-link {
   justify-content: center;
   padding: 12px 0;
   margin: 0 10px;
@@ -413,27 +437,57 @@
 
 /* ==========================================================================
    HAMBURGER BUTTON & MOBILE OVERLAY
+   --------------------------------------------------------------------------
+   PERBAIKAN UTAMA:
+   - Tombol ini SELALU `position: fixed` (bukan static), jadi dia dikeluarkan
+     total dari alur dokumen. Artinya dia TIDAK PERNAH mendorong / mengubah
+     layout topbar atau konten utama, di breakpoint manapun.
+   - Karena fixed terhadap viewport, tombol otomatis tetap muncul di posisi
+     yang sama walau konten di-scroll ke bawah (tidak perlu JS tambahan).
+   - Latar belakangnya dibuat semi-transparan + backdrop-blur dan diberi
+     shadow tipis, jadi dia terlihat sebagai elemen "melayang" di atas
+     konten, bukan blok warna solid yang menutupi tulisan judul.
    ========================================================================== */
 
 .mobile-hamburger-btn {
   display: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 8px;
-  border: 1px solid var(--gold-400);
-  background: var(--emerald-900);
-  color: var(--gold-100);
+  position: fixed;
+  top: var(--hamburger-offset);
+  left: var(--hamburger-offset);
+  width: var(--hamburger-size);
+  height: var(--hamburger-size);
+  border-radius: 10px;
+  border: none;
+  background: transparent; /* tidak ada blok warna solid → tidak menutupi apa pun di baliknya */
+  color: var(--gold-400);
   cursor: pointer;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  flex-shrink: 0;
-  transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.2s ease;
+  font-size: 20px;
+  /* drop-shadow (bukan box-shadow) mengikuti bentuk ikon, bukan bentuk
+     kotak, jadi tetap kontras & kebaca di atas latar terang maupun gelap
+     tanpa perlu latar belakang solid */
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))
+    drop-shadow(0 0 6px rgba(7, 36, 28, 0.55));
+  z-index: 998; /* di bawah sidebar (1000) & overlay (999), di atas konten */
+  transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.2s ease,
+    background 0.2s ease, color 0.2s ease;
 }
 
-.mobile-hamburger-btn:hover {
-  background: var(--emerald-800);
+/* Latar tipis hanya muncul saat hover/fokus, sekadar penanda interaktif,
+   tetap tidak dipakai sebagai blok warna permanen */
+.mobile-hamburger-btn:hover,
+.mobile-hamburger-btn:focus-visible {
+  background: rgba(11, 59, 46, 0.5);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  color: var(--gold-100);
   transform: scale(1.05);
+}
+
+.mobile-hamburger-btn:focus-visible {
+  outline: 2px solid var(--gold-400);
+  outline-offset: 2px;
 }
 
 /* Sembunyikan tombol hamburger jika sidebar terbuka */
@@ -474,6 +528,7 @@ body.sidebar-is-open .mobile-hamburger-btn {
 
   .sidebar .brand-logo span,
   .sidebar .menu-item a span,
+  .sidebar .menu-link-content span,
   .sidebar .menu-label,
   .sidebar .logout-btn span,
   .sidebar .submenu-icon {
@@ -484,7 +539,8 @@ body.sidebar-is-open .mobile-hamburger-btn {
     display: none;
   }
 
-  .sidebar .menu-item a {
+  .sidebar .menu-item a,
+  .sidebar .menu-link {
     justify-content: center;
     padding: 12px 0;
     margin: 0 10px;
@@ -496,19 +552,12 @@ body.sidebar-is-open .mobile-hamburger-btn {
 }
 
 @media (max-width: 768px) {
-  /* Menyatu di sebelah judul Dashboard (TopBar) */
-  .topbar .page-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
+  /* Tombol hamburger tampil, tetap fixed (lihat definisi di atas) */
   .mobile-hamburger-btn {
-    display: flex !important;
-    position: static !important;
+    display: flex;
   }
 
-  /* Drawer Sidebar Mobile */
+  /* Sidebar disembunyikan total di luar layar sampai dibuka */
   .sidebar {
     width: var(--sidebar-w) !important;
     height: 100vh;
@@ -524,6 +573,7 @@ body.sidebar-is-open .mobile-hamburger-btn {
   /* Tampilkan kembali teks dan menu penuh di mobile saat sidebar terbuka */
   .sidebar .brand-logo span,
   .sidebar .menu-item a span,
+  .sidebar .menu-link-content span,
   .sidebar .menu-label,
   .sidebar .logout-btn span,
   .sidebar .submenu-icon {
@@ -534,11 +584,22 @@ body.sidebar-is-open .mobile-hamburger-btn {
     display: flex !important;
   }
 
-  .sidebar .menu-item a {
+  .sidebar .menu-item a,
+  .sidebar .menu-link {
     justify-content: flex-start !important;
+    padding: 12px 24px !important;
+    margin: 0 12px !important;
   }
 
   .sidebar .logout-btn {
     justify-content: flex-start !important;
   }
+
+  /*
+    CATATAN PENTING (lihat pesan di bawah kode):
+    Beri jarak/padding pada judul halaman di topbar Anda sendiri
+    (bukan di file ini) sebesar kurang lebih 56px di sisi kiri pada
+    breakpoint ini, supaya area tombol hamburger yang melayang tidak
+    duduk tepat di atas tulisan judul.
+  */
 }

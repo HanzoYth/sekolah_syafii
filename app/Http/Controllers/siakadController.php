@@ -25,6 +25,10 @@ class siakadController extends Controller
        return view("/modul/siakad/tambahKelas");
        
     }
+    function tampilanPembayaranPemeliharaan(){
+       return view("/modul/siakad/pemeliharaan");
+       
+    }
 
     function tambahTagihan_Siswa(Request $request){
         if ($request->jenis_pembayaran == "ipp"){
@@ -54,7 +58,7 @@ class siakadController extends Controller
     }
 
     function tampilanPembayaranIpp_siswa(){
-        $data_slip_ipp = slip_pembayaran_ipp::paginate(5)->onEachSide(1);
+        $data_slip_ipp = slip_pembayaran_ipp::paginate(6)->onEachSide(1);
         $data_kelas = ruang_kelas::all();
         $jumlah_total_bayar_lunas = slip_pembayaran_ipp::where("status",true)->sum("jumlah_dibayar");
         return view ('/modul/siakad/pembayaran',[
@@ -65,7 +69,7 @@ class siakadController extends Controller
     }
 
     function tampilanPembayaranPangkal(){
-        $data_slip_pangkal = slip_pembayaran_pangkal::paginate(5)->onEachSide(1);
+        $data_slip_pangkal = slip_pembayaran_pangkal::paginate(6)->onEachSide(1);
         $data_kelas = ruang_kelas::all();
         $target_pangkal_belum_lunas = slip_pembayaran_pangkal::sum("nominal");
         $total_lunas_pangkal = slip_pembayaran_pangkal::sum("jumlah_di_bayar");
@@ -76,7 +80,7 @@ class siakadController extends Controller
     }
 
     function tampilanPembayaranPendidikan(){
-        $data_slip_pendidikan = slip_pembayaran_pendidikan::paginate(5)->onEachSide(1);
+        $data_slip_pendidikan = slip_pembayaran_pendidikan::paginate(6)->onEachSide(1);
         $data_kelas = ruang_kelas::all();
         $target_pendidikan_belum_lunas = slip_pembayaran_pendidikan::sum("nominal");
         $total_lunas_pendidikan = slip_pembayaran_pendidikan::sum("jumlah_di_bayar");

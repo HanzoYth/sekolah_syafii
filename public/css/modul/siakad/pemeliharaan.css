@@ -1,0 +1,778 @@
+/* ============================================================
+   Custom Styling untuk Dashboard Uang Pemeliharaan - SIAKAD
+   Theme: Islamic Emerald & Gold Premium
+   ============================================================ */
+
+:root {
+    /* Islamic Color Palette */
+    --islamic-emerald: #065f46;
+    --islamic-emerald-light: #047857;
+    --islamic-emerald-bg: #ecfdf5;
+    --islamic-emerald-border: #a7f3d0;
+    --islamic-gold: #d97706;
+    --islamic-gold-light: #fef3c7;
+    --islamic-gold-border: #fde68a;
+    --islamic-cream: #fbfbf8;
+    
+    /* Surface & UI Variables */
+    --maint-border: #e2e8f0;
+    --maint-bg-surface: #ffffff;
+    --maint-bg-canvas: #f8fafc;
+    --maint-text-title: #0f172a;
+    --maint-text-primary: #1e293b;
+    --maint-text-muted: #64748b;
+    
+    /* Layout Variables */
+    --sidebar-width: 260px; /* Sesuaikan dengan lebar sidebar Anda */
+
+    /* Radius Rules */
+    --maint-radius-sm: 6px;
+    --maint-radius-md: 8px;
+    --maint-radius-lg: 12px;
+    --maint-radius-xl: 16px;
+
+    /* Status Colors */
+    --status-success: #059669;
+    --status-success-bg: #d1fae5;
+    --status-warning: #d97706;
+    --status-warning-bg: #fef3c7;
+    --status-danger: #dc2626;
+    --status-danger-bg: #fee2e2;
+    --status-info: #0284c7;
+    --status-info-bg: #e0f2fe;
+
+    /* Transition & Shadows */
+    --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* ------------------------------------------------------------
+   1. RESET & GENERAL LAYOUT (PERBAIKAN UTAMA SIDEBAR)
+------------------------------------------------------------ */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--maint-bg-canvas);
+    color: var(--maint-text-primary);
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+.dashboard-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* 
+   Main Content Layout:
+   1. Mencegah flex child menyusut/meluap (flex: 1 1 0%, min-width: 0).
+   2. Jika sidebar memakai 'position: fixed', hilangkan comment pada margin-left dibawah.
+*/
+.main-content {
+    flex: 1 1 0%;
+    min-width: 0; 
+    width: 100%;
+    padding: 24px 32px;
+    background-color: var(--maint-bg-canvas);
+    overflow-x: hidden;
+    
+    /* UNCOMMENT BARIS DI BAWAH JIKA SIDEBAR ANDA MENGGUNAKAN POSITION: FIXED */
+    /* margin-left: var(--sidebar-width); */
+    /* width: calc(100% - var(--sidebar-width)); */
+}
+
+/* ------------------------------------------------------------
+   2. TOPBAR / HEADER SECTION
+------------------------------------------------------------ */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to right, #ffffff, var(--islamic-cream));
+    padding: 20px 28px;
+    border-radius: var(--maint-radius-xl);
+    border: 1px solid var(--maint-border);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.topbar-left .topbar-eyebrow {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--islamic-emerald);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.topbar-left h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--maint-text-title);
+}
+
+.academic-pill {
+    background-color: var(--islamic-emerald-bg);
+    color: var(--islamic-emerald);
+    border: 1px solid var(--islamic-emerald-border);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 0.825rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.topbar-icons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.topbar-icons i {
+    font-size: 1.1rem;
+    color: var(--maint-text-muted);
+    cursor: pointer;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid var(--maint-border);
+    border-radius: 50%;
+    transition: var(--transition-fast);
+}
+
+.topbar-icons i:hover {
+    color: var(--islamic-emerald);
+    border-color: var(--islamic-emerald-border);
+    background-color: var(--islamic-emerald-bg);
+}
+
+/* ------------------------------------------------------------
+   3. STATS GRID CARDS
+------------------------------------------------------------ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.stat-card {
+    background-color: var(--maint-bg-surface);
+    border: 1px solid var(--maint-border);
+    border-radius: var(--maint-radius-lg);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-fast);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--maint-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+.icon-primary {
+    background-color: var(--islamic-emerald-bg);
+    color: var(--islamic-emerald);
+}
+
+.icon-success {
+    background-color: var(--status-success-bg);
+    color: var(--status-success);
+}
+
+.icon-info {
+    background-color: var(--status-info-bg);
+    color: var(--status-info);
+}
+
+.icon-warning {
+    background-color: var(--islamic-gold-light);
+    color: var(--islamic-gold);
+}
+
+.stat-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--maint-text-title);
+    line-height: 1.2;
+}
+
+.stat-card p {
+    font-size: 0.8rem;
+    color: var(--maint-text-muted);
+    margin-top: 2px;
+}
+
+/* ------------------------------------------------------------
+   4. FILTER BOX
+------------------------------------------------------------ */
+.filter-box {
+    background-color: var(--maint-bg-surface);
+    border: 1px solid var(--maint-border);
+    border-radius: var(--maint-radius-lg);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+}
+
+.filter-box h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--maint-text-title);
+    margin-bottom: 14px;
+}
+
+.filter-group {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.input-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.input-wrap label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--maint-text-muted);
+}
+
+.input-wrap select,
+.modal-field input,
+.modal-field select {
+    padding: 10px 14px;
+    border: 1px solid var(--maint-border);
+    border-radius: var(--maint-radius-md);
+    font-family: inherit;
+    font-size: 0.875rem;
+    color: var(--maint-text-primary);
+    background-color: #ffffff;
+    outline: none;
+    transition: var(--transition-fast);
+}
+
+.input-wrap select:focus,
+.modal-field input:focus,
+.modal-field select:focus {
+    border-color: var(--islamic-emerald);
+    box-shadow: 0 0 0 3px rgba(6, 95, 70, 0.1);
+}
+
+/* ------------------------------------------------------------
+   5. TABLE CONTAINER & STYLING
+------------------------------------------------------------ */
+.table-card {
+    background-color: var(--maint-bg-surface);
+    border: 1px solid var(--maint-border);
+    border-radius: var(--maint-radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    width: 100%;
+}
+
+.table-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--maint-border);
+    background: linear-gradient(to right, #ffffff, var(--islamic-cream));
+}
+
+.table-header h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--maint-text-title);
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.875rem;
+}
+
+table thead tr {
+    background-color: #f8fafc;
+    border-bottom: 1px solid var(--maint-border);
+}
+
+table th {
+    padding: 14px 20px;
+    font-weight: 600;
+    color: var(--maint-text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+table tbody tr {
+    border-bottom: 1px solid var(--maint-border);
+    transition: var(--transition-fast);
+}
+
+table tbody tr:last-child {
+    border-bottom: none;
+}
+
+table tbody tr:hover {
+    background-color: #f1f5f9;
+}
+
+table tbody tr.hide {
+    display: none;
+}
+
+table td {
+    padding: 16px 20px;
+    vertical-align: middle;
+}
+
+.student-name {
+    font-weight: 600;
+    color: var(--maint-text-title);
+}
+
+.class-pill {
+    font-weight: 600;
+    color: var(--islamic-emerald);
+    font-size: 0.775rem;
+    background-color: var(--islamic-emerald-bg);
+    border: 1px solid var(--islamic-emerald-border);
+    padding: 4px 10px;
+    border-radius: var(--maint-radius-sm);
+    display: inline-block;
+}
+
+.amount {
+    font-weight: 600;
+}
+
+/* Badges Status */
+.badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.badge.success {
+    background-color: var(--status-success-bg);
+    color: var(--status-success);
+    border: 1px solid #a7f3d0;
+}
+
+.badge.danger {
+    background-color: var(--status-danger-bg);
+    color: var(--status-danger);
+    border: 1px solid #fca5a5;
+}
+
+/* ------------------------------------------------------------
+   6. ACTION BUTTONS & PAGINATION
+------------------------------------------------------------ */
+.text-center { text-align: center; }
+.text-success { color: var(--status-success) !important; }
+.text-danger { color: var(--status-danger) !important; }
+.font-bold { font-weight: 700 !important; }
+
+.action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-action {
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--maint-border);
+    border-radius: var(--maint-radius-md);
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: var(--transition-fast);
+}
+
+.btn-action.view { color: var(--status-info); }
+.btn-action.view:hover { background-color: var(--status-info-bg); border-color: #7dd3fc; }
+
+.btn-action.edit { color: var(--islamic-gold); }
+.btn-action.edit:hover { background-color: var(--islamic-gold-light); border-color: var(--islamic-gold-border); }
+
+.btn-action.publish { color: var(--islamic-emerald); }
+.btn-action.publish:hover { background-color: var(--islamic-emerald-bg); border-color: var(--islamic-emerald-border); }
+
+.btn-action.delete { color: var(--status-danger); }
+.btn-action.delete:hover { background-color: var(--status-danger-bg); border-color: #fca5a5; }
+
+/* Pagination */
+.pagination-wrap {
+    padding: 16px 24px;
+    border-top: 1px solid var(--maint-border);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.pagination {
+    display: flex;
+    gap: 6px;
+}
+
+.page-item {
+    padding: 6px 12px;
+    border: 1px solid var(--maint-border);
+    border-radius: var(--maint-radius-md);
+    font-size: 0.825rem;
+    font-weight: 500;
+    color: var(--maint-text-primary);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.page-item.active {
+    background-color: var(--islamic-emerald);
+    color: #ffffff;
+    border-color: var(--islamic-emerald);
+}
+
+.page-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-item:not(.active):not(.disabled):hover {
+    background-color: #f1f5f9;
+}
+
+/* ------------------------------------------------------------
+   7. MODAL STYLING & OVERLAYS (PERBAIKAN Z-INDEX & DISPLAY)
+------------------------------------------------------------ */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition-fast);
+    z-index: 1050; /* Pastikan di atas elemen standar, atur lebih rendah jika sidebar harus di atas modal */
+    padding: 20px;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-card {
+    background-color: #ffffff;
+    border-radius: var(--maint-radius-xl);
+    width: 100%;
+    max-width: 520px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    transform: translateY(20px);
+    transition: var(--transition-fast);
+}
+
+.modal-overlay.active .modal-card {
+    transform: translateY(0);
+}
+
+.modal-card.modal-lg {
+    max-width: 720px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--maint-border);
+    background: linear-gradient(to right, #ffffff, var(--islamic-cream));
+}
+
+.modal-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--maint-text-title);
+}
+
+.btn-close-modal {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--maint-text-muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--maint-radius-sm);
+    transition: var(--transition-fast);
+}
+
+.btn-close-modal:hover {
+    color: var(--status-danger);
+    background-color: var(--status-danger-bg);
+}
+
+.modal-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.modal-field label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--maint-text-muted);
+}
+
+.input-readonly {
+    background-color: #f8fafc !important;
+    cursor: not-allowed;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.btn-modal-cancel {
+    padding: 9px 18px;
+    border: 1px solid var(--maint-border);
+    border-radius: var(--maint-radius-md);
+    background-color: #ffffff;
+    color: var(--maint-text-primary);
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-modal-cancel:hover {
+    background-color: #f1f5f9;
+}
+
+.btn-modal-save {
+    padding: 9px 18px;
+    border: none;
+    border-radius: var(--maint-radius-md);
+    background: linear-gradient(135deg, var(--islamic-emerald) 0%, var(--islamic-emerald-light) 100%);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 4px rgba(6, 95, 70, 0.2);
+    transition: var(--transition-fast);
+}
+
+.btn-modal-save:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+}
+
+.btn-publish-confirm {
+    background: linear-gradient(135deg, var(--islamic-emerald) 0%, var(--islamic-emerald-light) 100%);
+}
+
+.btn-delete-confirm {
+    background: linear-gradient(135deg, var(--status-danger) 0%, #b91c1c 100%);
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+}
+
+/* Modal Confirmation Alerts */
+.modal-alert-body {
+    text-align: center;
+    padding: 12px 0;
+}
+
+.modal-alert-body i {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.icon-alert-publish { color: var(--islamic-emerald); }
+.icon-alert-delete { color: var(--status-danger); }
+
+.modal-alert-body p {
+    font-size: 0.95rem;
+    color: var(--maint-text-primary);
+}
+
+.modal-alert-body strong {
+    display: block;
+    margin-top: 6px;
+    font-size: 1.05rem;
+}
+
+.modal-alert-body small {
+    display: block;
+    margin-top: 4px;
+    color: var(--maint-text-muted);
+}
+
+/* Modal Detail & Print Header */
+.printable-header {
+    display: none;
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 2px double var(--maint-border);
+    padding-bottom: 12px;
+}
+
+.student-info-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--islamic-cream);
+    padding: 16px 20px;
+    border-radius: var(--maint-radius-lg);
+    border: 1px solid var(--maint-border);
+    border-left: 4px solid var(--islamic-emerald);
+}
+
+.student-info-summary small {
+    color: var(--maint-text-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.student-info-summary h4 {
+    margin-top: 2px;
+    color: var(--maint-text-title);
+    font-size: 0.95rem;
+}
+
+.confirmation-box {
+    background-color: var(--maint-bg-canvas);
+    border: 1px solid var(--maint-border);
+    border-radius: var(--maint-radius-lg);
+    padding: 16px 20px;
+}
+
+.confirmation-box h5 {
+    font-size: 0.85rem;
+    color: var(--maint-text-title);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.summary-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.summary-grid div {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+.summary-grid span {
+    color: var(--maint-text-muted);
+}
+
+/* ------------------------------------------------------------
+   8. PRINT MEDIA QUERIES
+------------------------------------------------------------ */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #modalDetailPemeliharaan,
+    #modalDetailPemeliharaan * {
+        visibility: visible;
+    }
+    #modalDetailPemeliharaan {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: auto;
+        background: none;
+        backdrop-filter: none;
+    }
+    .modal-card {
+        box-shadow: none;
+        border: none;
+        max-width: 100% !important;
+    }
+    .modal-header .btn-close-modal,
+    .modal-footer {
+        display: none !important;
+    }
+    .printable-header {
+        display: block;
+    }
+}

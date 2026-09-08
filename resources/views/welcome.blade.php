@@ -15,7 +15,7 @@
 <body>
 
     <!-- ======== NAVBAR ======== -->
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="container">
             <a href="#" class="logo">
                 <img src="{{asset('img/logo.png')}}" alt="">
@@ -30,16 +30,17 @@
                 <a class="btn-started" id="openSignup" href="/reg">Mulai</a>
             </div>
             <!-- Mobile Menu Toggle -->
-            <div class="menu-toggle" id="mobile-menu">
+            <button class="menu-toggle" id="mobile-menu" type="button"
+                aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="navbar">
                 <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
-            </div>
+            </button>
         </div>
     </nav>
 
     <!-- ======== HERO SECTION ======== -->
-<section id="home" class="hero">
+<section id="home" class="hero" style="--hero-bg: url('{{ asset('img/foto_1.jpeg') }}');">
     <div class="container">
         <!-- TAMBAHKAN CLASS hero-wrapper DI SINI -->
         <div class="hero-wrapper">
@@ -122,14 +123,46 @@
     <!-- ======== SCRIPTS ======== -->
     <!-- AOS JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<!-- ======== SCRIPTS ======== -->
-    <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         // 1. Inisialisasi AOS Animation
         AOS.init({
             once: true,
         });
+
+        // 2. Toggle dropdown menu mobile (hamburger)
+        (function () {
+            var navbar = document.getElementById('navbar');
+            var toggleBtn = document.getElementById('mobile-menu');
+            if (!navbar || !toggleBtn) return;
+
+            function closeMobileNav() {
+                navbar.classList.remove('mobile-nav-open');
+                toggleBtn.classList.remove('active');
+                toggleBtn.setAttribute('aria-expanded', 'false');
+                document.body.classList.remove('mobile-nav-locked');
+            }
+
+            function toggleMobileNav() {
+                var isOpen = navbar.classList.toggle('mobile-nav-open');
+                toggleBtn.classList.toggle('active', isOpen);
+                toggleBtn.setAttribute('aria-expanded', String(isOpen));
+                document.body.classList.toggle('mobile-nav-locked', isOpen);
+            }
+
+            toggleBtn.addEventListener('click', toggleMobileNav);
+
+            // Tutup menu otomatis saat salah satu link/tombol diklik
+            navbar.querySelectorAll('.nav-links a, .auth-buttons a').forEach(function (link) {
+                link.addEventListener('click', closeMobileNav);
+            });
+
+            // Reset saat resize kembali ke layar besar
+            window.addEventListener('resize', function () {
+                if (window.innerWidth > 768) {
+                    closeMobileNav();
+                }
+            });
+        })();
     </script>
 </body>
 </html>

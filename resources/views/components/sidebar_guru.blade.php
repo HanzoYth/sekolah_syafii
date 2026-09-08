@@ -24,8 +24,6 @@
             $route = $_SERVER['REQUEST_URI'];
             
             // Helper untuk mengecek submenu aktif
-            $isMasterDataActive = in_array($route, ['/gr/cb', '/gr/klgr', '/gr/klab', '/gr/klgjgr', '/gr/tgm']);
-            $isLaporanActive    = in_array($route, ['/gr/lpabs', '/gr/apgjgr']);
         @endphp
         <div class="sidebar-menu-wrapper">
             <!-- ================= MENU GURU ================= -->
@@ -84,8 +82,8 @@
                         </li>
 
                         <!-- SUBMENU MASTER DATA -->
-                        <li class="menu-item has-submenu {{$isMasterDataActive ? 'active' : ''}}">
-                            <details class="submenu-wrapper" {{$isMasterDataActive ? 'open' : ''}}>
+                        <li class="menu-item has-submenu">
+                            <details class="submenu-wrapper">
                                 <summary class="menu-link">
                                     <div class="menu-link-content">
                                         <i class="fa-solid fa-database"></i>
@@ -129,8 +127,8 @@
                         </li>
 
                         <!-- MENU LAPORAN HR DENGAN SUBMENU -->
-                        <li class="menu-item has-submenu {{$isLaporanActive ? 'active' : ''}}">
-                            <details class="submenu-wrapper" {{$isLaporanActive ? 'open' : ''}}>
+                        <li class="menu-item has-submenu">
+                            <details class="submenu-wrapper">
                                 <summary class="menu-link">
                                     <div class="menu-link-content">
                                         <i class="fa-solid fa-file-lines"></i>

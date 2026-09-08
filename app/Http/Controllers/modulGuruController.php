@@ -302,13 +302,27 @@ class modulGuruController extends Controller
         $data_cabang = cabang_guru::all();
         $data_sekolah = jenis_sekolah::all();
         $data_akun = akun::find((int) $data_guru->user_id);
+        $data_kelas = ruang_kelas::all();
+
+        $cek_wallas = wallas::where("guru_id",$id)->exists();
+        $nama_kelas_terpilih = null;
+
+        if ($cek_wallas){
+            $data_wallas = wallas::where("guru_id",$id)->first();
+            $nama_kelas_terpilih = ruang_kelas::where("id",$data_wallas->kelas_id)->first()->nama_ruang;
+        }
+
+
         return view("modul/guru/a/edit_guru",[
             "data_guru" => $data_guru,
             "data_cabang" => $data_cabang,
             "nomor_wa" => $data_akun->noWa,
             "data_sekolah" => $data_sekolah,
             "data_jenis_sekolah" => $data_jenis_sekolah,
-            "data_akun" => $data_akun
+            "data_akun" => $data_akun,
+            "data_kelas" => $data_kelas,
+            "cek_wallas" => $cek_wallas,
+            "nama_kelas" => $nama_kelas_terpilih
         ]);
     }
     
@@ -331,6 +345,7 @@ class modulGuruController extends Controller
     }
 
     function update_dataGuru(Request $request){
+
         $data_guru = guru::find((int) $request->id_guru);
 
         $data_guru->guru_honor = (int) $request->guru_honor;
@@ -341,6 +356,24 @@ class modulGuruController extends Controller
         $data_guru->kepala_sekolah = (int) $request->kepala_sekolah;
         $data_guru->cabang_id = (int) $request->cabang_id;
         $data_guru->sekolah_id = (int) $request->sekolah_id;
+
+
+        if ($request->is_wali_kelas && !wallas::where("guru_id",$request->id_guru)->exists()){
+            wallas::create([
+                "guru_id" => (int) $request->id_guru,
+                "kelas_id" => (int) $request->kelas_id
+            ]);
+        }elseif(!$request->is_wali_kelas && wallas::where("guru_id",$request->id_guru)->exists()){
+            $data_wallas = wallas::where("guru_id",$request->id_guru)->first();
+            $data_wallas->delete();
+        }else{
+            if ($request->is_wali_kelas){
+                $data_wallas = wallas::where("guru_id",$request->id_guru)->first();
+                $data_wallas->kelas_id = $request->kelas_id;
+
+                $data_wallas->save();
+            }
+        }
 
         $data_guru->save();
         return redirect("/gr/klgr")->with("success","berhasil update data guru");
@@ -547,7 +580,7 @@ class modulGuruController extends Controller
             $data_gaji = gaji::where("guru_id",$id)->first();
             $data_tunjangan = tunjangan::where("guru_id",$id)->get();
             if ($cek_wallas){
-                $data_kelas = ruang_kelas::where("id",wallas::where("guru_id",$id)->first()->kelas_id)->first();
+                $data_kelas = ruang_kelas::where("id",wallas::where("guru_id",$id)->first()->kelas_id)->first()->nama_ruang;
                 $info_jabatan_kepala_wallas = "guru wali kelas $data_kelas";
             }
             

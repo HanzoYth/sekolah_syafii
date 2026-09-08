@@ -75,6 +75,12 @@
                                             <span>Pembayaran pendidikan</span>
                                         </a>
                                     </li>
+                                    <li class="submenu-item">
+                                        <a href="/sk/ppl">
+                                            <i class="fa-solid fa-piggy-bank"></i>
+                                            <span>Pembayaran pemeliharaan</span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </details>
                         </li>

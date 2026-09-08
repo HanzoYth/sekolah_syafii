@@ -62,7 +62,7 @@
                         </div>
                         <!-- Nomor Wa -->
                         <div class="form-group">
-                            <label for="nig">WA (Nomor WA Aktif)</label>
+                            <label for="wa">WA (Nomor WA Aktif)</label>
                             <input type="text" id="wa" name="wa" class="form-control" value="{{$nomor_wa}}" readonly>
                         </div>
 
@@ -170,6 +170,34 @@
                     </div>
                 </div>
 
+                <!-- SECTION 5: TUGAS WALI KELAS -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fa-solid fa-user-graduate"></i> Penugasan Wali Kelas
+                    </div>
+
+                    <div class="form-grid">
+                        <!-- Checkbox Status Wali Kelas -->
+                        <div class="form-group">
+                            <label class="checkbox-card">
+                                <input type="checkbox" id="is_wali_kelas" name="is_wali_kelas" value="0" {{$cek_wallas ? 'checked' : ''}}>
+                                <span>Bertugas Sebagai Wali Kelas</span>
+                            </label>
+                        </div>
+
+                        <!-- Select Pilihan Kelas -->
+                        <div class="form-group">
+                            <label for="kelas_id">Pilih Kelas Binaan</label>
+                            <select id="kelas_id" name="kelas_id" class="form-control" {{$data_guru->is_wali_kelas ? '' : 'disabled'}}>
+                                <option value="">-- Pilih Kelas --</option>
+                                @foreach ($data_kelas as $value)
+                                    <option value="{{$value->id}}" {{$value->nama_ruang == $nama_kelas ? 'selected' : ''}}>{{$value->nama_ruang}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- TOMBOL SIMPAN -->
                 <div class="form-actions">
                     <button type="submit" class="btn-submit">
@@ -183,7 +211,7 @@
     </div>
     <x-warning />
 
-    <!-- Script Sederhana Preview Foto -->
+    <!-- Script Sederhana Preview Foto & Handlers -->
     <script>
         function previewImage(event) {
             const reader = new FileReader();
@@ -195,24 +223,44 @@
         }
         console.log(document.getElementById("id_guru").value)
 
-        //reset
+        // Reset dan handler value checkbox (Section 3)
         document.querySelectorAll(".checkbox-card").forEach(item => {
-            if(item.querySelector("input").hasAttribute("checked")){
-                item.querySelector("input").value = 1;
-            }else{
-                item.querySelector("input").value = 0
+            const checkbox = item.querySelector("input");
+            if (checkbox.hasAttribute("checked")) {
+                checkbox.value = 1;
+            } else {
+                checkbox.value = 0;
             }
-        });
 
-        document.querySelectorAll(".checkbox-card").forEach(item => {
-            item.querySelector("input").addEventListener('change',(e) => {
-                if (e.target.checked){
-                    e.target.value = 1;
-                }else{
-                    e.target.value = 0
-                }
+            checkbox.addEventListener('change', (e) => {
+                e.target.value = e.target.checked ? 1 : 0;
             });
         });
+
+        // Handler Khusus Interaksi Wali Kelas
+        const checkWaliKelas = document.getElementById('is_wali_kelas');
+        const selectKelas = document.getElementById('kelas_id');
+
+        if (checkWaliKelas.checked){
+            checkWaliKelas.value = 1;
+            selectKelas.removeAttribute('disabled');
+            selectKelas.setAttribute('required', 'required');
+        }
+
+        if (checkWaliKelas) {
+            checkWaliKelas.addEventListener('change', function() {
+                if (this.checked) {
+                    checkWaliKelas.value = 1;
+                    selectKelas.removeAttribute('disabled');
+                    selectKelas.setAttribute('required', 'required');
+                } else {
+                    checkWaliKelas.value = 0;
+                    selectKelas.setAttribute('disabled', 'disabled');
+                    selectKelas.removeAttribute('required');
+                    selectKelas.value = "";
+                }
+            });
+        }
     </script>
 </body>
 </html>
