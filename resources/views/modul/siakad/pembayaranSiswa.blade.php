@@ -46,40 +46,6 @@
                     </div>
                 @endif
 
-                <!-- RINGKASAN TAGIHAN -->
-                <h3 class="page-section-title">Ringkasan Tagihan</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-info-light">
-                            <i class="fa-solid fa-file-invoice text-info"></i>
-                        </div>
-                        <div class="stat-data">
-                            <span class="label">Total Tagihan</span>
-                            <h3>Rp 1.000.000</h3>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon bg-success-light">
-                            <i class="fa-solid fa-circle-check text-success"></i>
-                        </div>
-                        <div class="stat-data">
-                            <span class="label">Sudah Dibayar</span>
-                            <h3>Rp 1.000.000</h3>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon bg-warning-light">
-                            <i class="fa-solid fa-circle-exclamation text-warning"></i>
-                        </div>
-                        <div class="stat-data">
-                            <span class="label">Sisa Tunggakan</span>
-                            <h3>Rp 0</h3>
-                        </div>
-                    </div>
-                </div>
-
                 {{-- Data Dummy untuk Pengujian (3 contoh per kategori, termasuk yang sudah Lunas) --}}
                 @php
                     $dummy_ipp = [
@@ -163,6 +129,34 @@
                         ],
                     ];
 
+                    // === TAMBAHAN: dummy kategori baru "Pemeliharaan" ===
+                    $dummy_pemeliharaan = [
+                        (object)[
+                            'tanggal' => '15 Mei 2026',
+                            'nama_tagihan' => 'Pemeliharaan Fasilitas Semester Genap 2026',
+                            'jenis' => 'Pemeliharaan Fasilitas',
+                            'keterangan' => 'Pembayaran via Transfer Bank',
+                            'nominal' => 400000,
+                            'status' => 'lunas'
+                        ],
+                        (object)[
+                            'tanggal' => '15 Nov 2026',
+                            'nama_tagihan' => 'Pemeliharaan Fasilitas Semester Ganjil 2026',
+                            'jenis' => 'Pemeliharaan Fasilitas',
+                            'keterangan' => 'Pembayaran via Transfer Bank',
+                            'nominal' => 400000,
+                            'status' => 'lunas'
+                        ],
+                        (object)[
+                            'tanggal' => '15 Mei 2027',
+                            'nama_tagihan' => 'Pemeliharaan Fasilitas Semester Genap 2027',
+                            'jenis' => 'Pemeliharaan Fasilitas',
+                            'keterangan' => 'Menunggu konfirmasi pembayaran',
+                            'nominal' => 450000,
+                            'status' => 'belum'
+                        ],
+                    ];
+
                     // Gunakan $riwayat_pembayaran dari Controller jika ada, kelompokkan per kategori berdasarkan "jenis".
                     // Kalau tidak ada / tidak ada yang cocok di suatu kategori, pakai data dummy kategori itu.
                     $riwayat_pembayaran = $riwayat_pembayaran ?? [];
@@ -175,9 +169,103 @@
 
                     $list_pendidikan = array_values(array_filter($riwayat_pembayaran, fn($item) => str_contains(strtolower($item->jenis), 'pendidikan')));
                     $list_pendidikan = count($list_pendidikan) > 0 ? $list_pendidikan : $dummy_pendidikan;
+
+                    // === TAMBAHAN: kategori "Pemeliharaan" — pakai data dummy langsung dulu (belum ada sumber data asli) ===
+                    $list_pemeliharaan = $dummy_pemeliharaan;
+
+                    // === TAMBAHAN: total nominal per kategori, untuk kartu ringkasan
+                    $total_ipp = array_sum(array_column($list_ipp, 'nominal'));
+                    $total_pangkal = array_sum(array_column($list_pangkal, 'nominal'));
+                    $total_pendidikan = array_sum(array_column($list_pendidikan, 'nominal'));
+                    $total_pemeliharaan = array_sum(array_column($list_pemeliharaan, 'nominal'));
+
+                    // === TAMBAHAN: Total Tagihan, Sudah Dibayar, Sisa Tunggakan — dihitung dari gabungan 4 kategori ===
+                    $semua_transaksi = array_merge($list_ipp, $list_pangkal, $list_pendidikan, $list_pemeliharaan);
+                    $total_tagihan_keseluruhan = array_sum(array_column($semua_transaksi, 'nominal'));
+                    $sudah_dibayar = array_sum(array_map(fn($item) => $item->status === 'lunas' ? $item->nominal : 0, $semua_transaksi));
+                    $sisa_tunggakan = $total_tagihan_keseluruhan - $sudah_dibayar;
                 @endphp
 
-                <!-- === TAMBAHAN: 3 Kartu Riwayat Transaksi (IPP / Pangkal / Pendidikan), tersusun ke bawah === -->
+                <!-- RINGKASAN TAGIHAN -->
+                <h3 class="page-section-title">Ringkasan Tagihan</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-info-light">
+                            <i class="fa-solid fa-file-invoice text-info"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="label">Total Tagihan</span>
+                            <h3>Rp {{ number_format($total_tagihan_keseluruhan, 0, ',', '.') }}</h3>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon bg-success-light">
+                            <i class="fa-solid fa-circle-check text-success"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="label">Sudah Dibayar</span>
+                            <h3>Rp {{ number_format($sudah_dibayar, 0, ',', '.') }}</h3>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon bg-warning-light">
+                            <i class="fa-solid fa-circle-exclamation text-warning"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="label">Sisa Tunggakan</span>
+                            <h3>Rp {{ number_format($sisa_tunggakan, 0, ',', '.') }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- === TAMBAHAN: Rincian Total Tagihan per Kategori === -->
+                <h3 class="page-section-title">Rincian Tagihan per Kategori</h3>
+                <div class="stats-grid stats-grid-4col">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-info-light">
+                            <i class="fa-solid fa-file-invoice-dollar text-info"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="label">Total Tagihan IPP</span>
+                            <h3>Rp {{ number_format($total_ipp, 0, ',', '.') }}</h3>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon bg-success-light">
+                            <i class="fa-solid fa-hand-holding-dollar text-success"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="label">Total Tagihan Pangkal</span>
+                            <h3>Rp {{ number_format($total_pangkal, 0, ',', '.') }}</h3>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon bg-warning-light">
+                            <i class="fa-solid fa-book text-warning"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="label">Total Tagihan Pendidikan</span>
+                            <h3>Rp {{ number_format($total_pendidikan, 0, ',', '.') }}</h3>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon bg-total-light">
+                            <i class="fa-solid fa-screwdriver-wrench text-total"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="label">Total Tagihan Pemeliharaan</span>
+                            <h3>Rp {{ number_format($total_pemeliharaan, 0, ',', '.') }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <!-- === /TAMBAHAN === -->
+
+                <!-- === TAMBAHAN: 4 Kartu Riwayat Transaksi (IPP / Pangkal / Pendidikan / Pemeliharaan), tersusun ke bawah === -->
                 <div class="payment-columns">
 
                     <!-- KARTU 1: RIWAYAT IPP (dengan filter Bulan & Status) -->
@@ -388,6 +476,69 @@
                             </div>
                         @endif
                     </div>
+
+                    <!-- === TAMBAHAN: KARTU 4: RIWAYAT PEMELIHARAAN === -->
+                    <div class="card card-table">
+                        <div class="card-header">
+                            <h4><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pemeliharaan</h4>
+                        </div>
+
+                        @if (count($list_pemeliharaan) > 0)
+                            <div class="table-wrap">
+                                <table class="payment-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tanggal</th>
+                                            <th>Nama Tagihan</th>
+                                            <th>Jenis Pembayaran</th>
+                                            <th class="text-right">Nominal</th>
+                                            <th>Status</th>
+                                            <th class="text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($list_pemeliharaan as $item)
+                                            <tr>
+                                                <td>{{ $item->tanggal }}</td>
+                                                <td><strong>{{ $item->nama_tagihan }}</strong></td>
+                                                <td>
+                                                    <div class="cell-jenis">
+                                                        <span>{{ $item->jenis }}</span>
+                                                        @if(!empty($item->keterangan))
+                                                            <span class="sub">{{ $item->keterangan }}</span>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                <td class="text-right cell-nominal">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
+                                                <td>
+                                                    @if ($item->status === 'lunas')
+                                                        <span class="badge-status badge-lunas">
+                                                            <i class="fa-solid fa-circle"></i> Lunas
+                                                        </span>
+                                                    @else
+                                                        <span class="badge-status badge-belum">
+                                                            <i class="fa-solid fa-circle"></i> Belum Lunas
+                                                        </span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    <a href="/sk/dsp" class="btn-action-download" title="Download File">
+                                                        <i class="fa-solid fa-download"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="table-empty">
+                                <i class="fa-solid fa-receipt"></i>
+                                <p>Belum ada riwayat transaksi Pemeliharaan.</p>
+                            </div>
+                        @endif
+                    </div>
+                    <!-- === /TAMBAHAN KARTU 4 === -->
 
                 </div>
                 <!-- === /TAMBAHAN === -->

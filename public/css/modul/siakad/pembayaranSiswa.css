@@ -15,6 +15,59 @@
   color: var(--navy-900);
 }
 
+/* === TAMBAHAN: warna ikon kartu ringkasan "Total Tagihan Pemeliharaan" === */
+.bg-total-light {
+  background: rgba(11, 59, 46, 0.08);
+}
+
+.text-total {
+  color: var(--navy-800);
+}
+
+/* === TAMBAHAN: samakan ukuran kotak Ringkasan Tagihan & Rincian per Kategori ===
+   Semua kartu memakai lebar yang sama (span 3 dari 12 kolom), baris "Ringkasan
+   Tagihan" yang isinya cuma 3 kartu otomatis menyisakan 1 slot kosong di kanan —
+   itu supaya ukurannya konsisten dengan baris "Rincian per Kategori" (4 kartu). */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+.stats-grid .stat-card {
+  grid-column: span 3;
+  min-width: 0;
+}
+
+/* Sesuaikan ukuran font supaya pas dengan lebar kartu yang lebih ramping */
+.stats-grid .stat-card .label {
+  font-size: 12px;
+  white-space: normal;
+  line-height: 1.3;
+}
+
+.stats-grid .stat-card .stat-data h3 {
+  font-size: 20px;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats-grid .stat-card {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 520px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* --- Kartu Pembungkus Tabel --- */
 .card-table {
   background: var(--paper);
