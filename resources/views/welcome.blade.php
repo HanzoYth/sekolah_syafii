@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- AOS Animation Library -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="stylesheet" href="./css/welcome.css">
+    <link rel="stylesheet" href="{{asset('css/welcome.css')}}">
 </head>
 <body>
 
@@ -129,19 +129,29 @@
             once: true,
         });
 
-        // FIX BARU: sebagian browser/WebView Android salah hitung lebar viewport
-        // saat pertama kali halaman dimuat, dan baru benar setelah ada "reflow"
-        // (itu sebabnya kalau discroll manual baru rapi). Script ini memaksa
-        // reflow itu terjadi otomatis begitu halaman selesai dimuat, tanpa
-        // butuh user menggeser/scroll manual.
-        window.addEventListener('load', function () {
+        // FIX BARU (v2 - lebih agresif): sebagian browser/WebView Android salah
+        // hitung lebar viewport saat pertama kali halaman dimuat, dan baru benar
+        // setelah ada "reflow" (itu sebabnya kalau discroll manual baru rapi).
+        // Dulu fix ini cuma dipasang di window.load (baru jalan setelah SEMUA
+        // gambar termasuk foto hero yg besar selesai didownload -> telat).
+        // Sekarang dipasang lebih awal (langsung + beberapa kali di awal) supaya
+        // bug-nya ketutup sebelum sempat kelihatan oleh user.
+        function forceViewportReflow() {
             window.scrollTo(0, 1);
             requestAnimationFrame(function () {
                 window.scrollTo(0, 0);
-                // Trigger tambahan: paksa browser hitung ulang layout
                 window.dispatchEvent(new Event('resize'));
             });
+        }
+        // Jalankan langsung begitu script ini dieksekusi (paling awal)
+        forceViewportReflow();
+        // Jalankan lagi beberapa kali di detik-detik pertama (jaga-jaga kalau
+        // browser baru selesai menghitung ulang viewport-nya belakangan)
+        [0, 100, 300, 600, 1000, 2000].forEach(function (delay) {
+            setTimeout(forceViewportReflow, delay);
         });
+        // Dan tetap jalankan sekali lagi saat semua resource (gambar dll) selesai
+        window.addEventListener('load', forceViewportReflow);
 
         // 2. Toggle dropdown menu mobile (hamburger)
         (function () {
