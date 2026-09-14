@@ -151,19 +151,37 @@
 
                             <!-- Element untuk Menampilkan Pesan Radius Geolocation -->
                             <div id="location-status" style="margin-top: 15px; font-size: 0.9rem;"></div>
-                            @if($cek_sudah_absen && $cek_sudah_keluar && !$cek_sudah_absen_oleh_admin)
-                                <div class="action-buttons" style="margin-top: 15px;">
-                                    <button class="btn btn-primary" id="btn_keluar" data-status="boleh">
-                                        <i class="fa-solid fa-right-from-bracket"></i> Absen Pulang
-                                    </button>
-                                </div>
-                            @else
-                                <div class="action-buttons" style="margin-top: 15px;">
-                                    <button class="btn btn-primary" id="btn_keluar" data-status="boleh" disabled>
-                                        <i class="fa-solid fa-right-from-bracket"></i> Absen Pulang
-                                    </button>
-                                </div>
-                            @endif
+
+                            @php
+                                /*
+                                  KUNCI PERBAIKAN #1:
+                                  data-status di sini HANYA menyatakan apakah SECARA BISNIS
+                                  (sudah absen masuk, belum absen pulang, belum ditutup admin)
+                                  guru ini BOLEH melakukan absen pulang -- terlepas dari lokasi.
+                                  Keputusan lokasi (dalam/luar radius) sepenuhnya dikendalikan
+                                  oleh JavaScript di bawah, bukan oleh Blade di sini.
+                                */
+                                $bolehAbsenPulangSecaraBisnis = $cek_sudah_absen && $cek_sudah_keluar && !$cek_sudah_absen_oleh_admin;
+                            @endphp
+                            <div class="action-buttons" style="margin-top: 15px;">
+                                {{--
+                                    KUNCI PERBAIKAN #2:
+                                    Tombol SELALU dirender dalam keadaan disabled di HTML awal,
+                                    apapun kondisi bisnisnya. Ini mencegah jendela waktu di mana
+                                    tombol sempat aktif sebelum geolocation selesai mengecek lokasi.
+                                    JS di bawah yang akan meng-aktifkan tombol ini HANYA jika:
+                                    (a) data-status == "boleh", DAN
+                                    (b) posisi guru terkonfirmasi berada dalam radius sekolah.
+                                --}}
+                                <button
+                                    class="btn btn-primary"
+                                    id="btn_keluar"
+                                    data-status="{{ $bolehAbsenPulangSecaraBisnis ? 'boleh' : 'tidak' }}"
+                                    disabled
+                                >
+                                    <i class="fa-solid fa-right-from-bracket"></i> Absen Pulang
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -197,49 +215,133 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        if (navigator.geolocation) {
+        const RADIUS_METER = 500;
+
+        const statusElement = document.getElementById('location-status');
+        const button = document.getElementById('btn_keluar');
+
+        /*
+          KUNCI PERBAIKAN #3:
+          Satu fungsi terpusat untuk menentukan aktif/nonaktifnya tombol.
+          Dipanggil di SETIAP kondisi (dalam radius, luar radius, ATAU
+          gagal mendapat lokasi) supaya tombol selalu konsisten dengan
+          kondisi lokasi TERBARU -- bisa aktif lagi kalau user/guru
+          bergerak kembali masuk radius, dan bisa nonaktif lagi kalau
+          keluar radius. Sebelumnya kode lama HANYA menonaktifkan
+          tombol dan tidak pernah mengaktifkannya kembali.
+        */
+        function updateButtonState(bolehKarenaLokasi) {
+            if (!button) return;
+
+            const bolehSecaraBisnis = button.dataset.status === "boleh";
+
+            if (bolehKarenaLokasi && bolehSecaraBisnis) {
+                button.removeAttribute("disabled");
+            } else {
+                button.setAttribute("disabled", "");
+            }
+        }
+
+        function tampilkanPesanLokasi(html, className) {
+            if (!statusElement) return;
+            statusElement.className = className;
+            statusElement.innerHTML = html;
+        }
+
+        /*
+          KUNCI PERBAIKAN #4 (soal "kenapa di laptop tidak bisa"):
+          Geolocation API browser modern WAJIB secure context (https://
+          atau localhost). Kalau halaman diakses lewat http:// biasa,
+          browser akan menolak permintaan lokasi TANPA pernah memanggil
+          watchPosition sama sekali. Kita cek dan beri tahu user secara
+          jelas, bukan cuma diam di console seperti sebelumnya.
+        */
+        const isSecureContext = window.isSecureContext ||
+            location.protocol === 'https:' ||
+            location.hostname === 'localhost';
+
+        if (!isSecureContext) {
+            tampilkanPesanLokasi(
+                '<i class="fa-solid fa-triangle-exclamation" style="color:#e63946;"></i> ' +
+                'Deteksi lokasi butuh koneksi HTTPS. Buka halaman ini lewat https:// agar absen pulang bisa aktif.',
+                'location-status status-warn'
+            );
+            updateButtonState(false);
+        } else if (navigator.geolocation) {
             navigator.geolocation.watchPosition(
                 function (position) {
                     const userLat = position.coords.latitude;
                     const userLng = position.coords.longitude;
+                    const akurasi = position.coords.accuracy; // dalam meter
 
                     const latInput = document.querySelector(".latitude");
                     const lngInput = document.querySelector(".longitude");
 
                     if (!latInput || !lngInput) return;
 
-                    let data_latitude = parseFloat(latInput.value);
-                    let data_longitude = parseFloat(lngInput.value);
+                    const dataLatitude = parseFloat(latInput.value);
+                    const dataLongitude = parseFloat(lngInput.value);
 
-                    const distance = calculateDistance(data_latitude, data_longitude, userLat, userLng);
-                    
-                    const statusElement = document.getElementById('location-status');
-                    const button = document.getElementById("btn_keluar");
+                    const distance = calculateDistance(dataLatitude, dataLongitude, userLat, userLng);
+                    const dalamRadius = distance <= RADIUS_METER;
 
-                    if (distance <= 500) {
-                        if (statusElement) {
-                            statusElement.className = "location-status status-ok";
-                            statusElement.innerHTML = `<i class="fa-solid fa-circle-check" style="color: #2ec4b6;"></i> Anda berada dalam radius presensi (${Math.round(distance)} meter dari sekolah).`;
-                        }
+                    if (dalamRadius) {
+                        tampilkanPesanLokasi(
+                            '<i class="fa-solid fa-circle-check" style="color: #2ec4b6;"></i> ' +
+                            'Anda berada dalam radius presensi (' + Math.round(distance) + ' meter dari sekolah).',
+                            'location-status status-ok'
+                        );
                     } else {
-                        if (statusElement) {
-                            statusElement.className = "location-status status-warn";
-                            statusElement.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: #e63946;"></i> Anda di luar radius presensi (${Math.round(distance)} meter dari sekolah).`;
+                        // Kalau akurasi GPS-nya sangat kasar (umum terjadi di laptop
+                        // tanpa GPS, hanya mengandalkan WiFi/IP), beri tahu user supaya
+                        // tidak bingung kenapa jaraknya kelihatan jauh padahal di lokasi.
+                        let pesanAkurasi = '';
+                        if (akurasi && akurasi > 200) {
+                            pesanAkurasi = ' Akurasi lokasi perangkat ini rendah (\u00b1' + Math.round(akurasi) +
+                                ' m) \u2014 coba gunakan HP dengan GPS aktif untuk hasil lebih akurat.';
                         }
-                        if (button && button.dataset.status == "boleh") {
-                            button.setAttribute("disabled", "");
-                        }
+
+                        tampilkanPesanLokasi(
+                            '<i class="fa-solid fa-triangle-exclamation" style="color: #e63946;"></i> ' +
+                            'Anda di luar radius presensi (' + Math.round(distance) + ' meter dari sekolah).' + pesanAkurasi,
+                            'location-status status-warn'
+                        );
                     }
+
+                    updateButtonState(dalamRadius);
                 },
                 function (error) {
+                    // KUNCI PERBAIKAN #5: error ditampilkan ke user, bukan cuma console,
+                    // dan tombol dipastikan nonaktif karena lokasi belum terkonfirmasi.
+                    let pesan = 'Gagal mendapatkan lokasi Anda.';
+                    if (error.code === error.PERMISSION_DENIED) {
+                        pesan = 'Izin lokasi ditolak. Aktifkan izin lokasi di browser/perangkat Anda untuk bisa absen pulang.';
+                    } else if (error.code === error.POSITION_UNAVAILABLE) {
+                        pesan = 'Lokasi tidak tersedia. Pastikan GPS/Location Service perangkat Anda aktif.';
+                    } else if (error.code === error.TIMEOUT) {
+                        pesan = 'Waktu pencarian lokasi habis. Coba lagi di area dengan sinyal lebih baik.';
+                    }
+
                     console.warn("Gagal mendapatkan lokasi: " + error.message);
+                    tampilkanPesanLokasi(
+                        '<i class="fa-solid fa-triangle-exclamation" style="color: #e63946;"></i> ' + pesan,
+                        'location-status status-warn'
+                    );
+                    updateButtonState(false);
                 },
                 {
-                    enableHighAccuracy: true
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 0
                 }
             );
         } else {
-            alert("Browser Anda tidak mendukung Geolocation.");
+            tampilkanPesanLokasi(
+                '<i class="fa-solid fa-triangle-exclamation" style="color: #e63946;"></i> ' +
+                'Browser Anda tidak mendukung Geolocation.',
+                'location-status status-warn'
+            );
+            updateButtonState(false);
         }
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -275,9 +377,9 @@
                 }, 5000);
             }
 
-            const btnKeluar = document.getElementById("btn_keluar");
-            if (btnKeluar) {
-                btnKeluar.addEventListener('click', () => {
+            if (button) {
+                button.addEventListener('click', () => {
+                    if (button.hasAttribute('disabled')) return;
                     window.location.href = "/gr/klabs";
                 });
             }
