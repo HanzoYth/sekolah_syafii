@@ -78,7 +78,7 @@ body::before {
     margin-bottom: 35px;
 }
 
-/* ======== GRID 2 KOTAK MODUL ======== */
+/* ======== GRID 2 KOTAK MODUL (DESKTOP) ======== */
 .module-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -107,7 +107,7 @@ body::before {
     box-shadow: 0 15px 30px rgba(26, 83, 26, 0.12);
 }
 
-/* IKON WAPPER */
+/* IKON WRAPPER */
 .icon-wrapper {
     width: 60px;
     height: 60px;
@@ -206,16 +206,80 @@ body::before {
 
 /* ======== RESPONSIVE (HP & TABLET) ======== */
 @media (max-width: 680px) {
-    .module-container {
-        padding: 30px 20px;
+    body {
+        padding: 12px;
     }
 
-    .module-grid {
-        grid-template-columns: 1fr; /* Jadi 1 kolom bertumpuk di HP */
-        gap: 15px;
+    .module-container {
+        padding: 24px 16px;
+        border-radius: 18px;
+    }
+
+    .module-header .basmalah {
+        font-size: 1.4rem;
     }
 
     .module-header h2 {
-        font-size: 1.5rem;
+        font-size: 1.35rem;
+    }
+
+    .module-header .subtitle {
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+    }
+
+    /* GRID HP: dibuat otomatis jadi 2 kolom (atau lebih jika muat) */
+    .module-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    /* Penyesuaian ukuran kartu di HP agar ringkas */
+    .module-card {
+        padding: 16px 14px;
+        border-radius: 14px;
+    }
+
+    .icon-wrapper {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+    }
+
+    .icon-wrapper i {
+        font-size: 1.25rem;
+    }
+
+    .module-card h3 {
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+    }
+
+    .module-card p {
+        font-size: 0.78rem;
+        line-height: 1.35;
+        margin-bottom: 14px;
+    }
+
+    .card-action {
+        font-size: 0.78rem;
+        padding-top: 10px;
+    }
+
+    .module-footer {
+        margin-top: 24px;
+        padding-top: 16px;
+    }
+}
+
+/* Untuk HP yang sangat kecil (layar di bawah 360px) */
+@media (max-width: 360px) {
+    .module-grid {
+        gap: 8px;
+    }
+
+    .module-card {
+        padding: 12px 10px;
     }
 }

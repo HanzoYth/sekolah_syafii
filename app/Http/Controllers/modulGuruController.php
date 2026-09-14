@@ -24,6 +24,7 @@ use App\Models\tunjangan;
 use App\Services\FonteService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;  
 
 class modulGuruController extends Controller
@@ -162,13 +163,17 @@ class modulGuruController extends Controller
     }
 
     //ini fitur2 untuk guru
-    function tampilan_formulirGuru(){
-        $data_cabang = cabang_guru::where("aktif",1)->get();
-        $data_sekolah = jenis_sekolah::all();
-        return view("/modul/guru/formulir_guru",[
-            "cabang" => $data_cabang,
-            "sekolah" => $data_sekolah
-        ]);
+    function tampilan_formulirGuru(){   
+        if (session("has_login")){
+            $data_cabang = cabang_guru::where("aktif",1)->get();
+            $data_sekolah = jenis_sekolah::all();
+            return view("/modul/guru/formulir_guru",[
+                "cabang" => $data_cabang,
+                "sekolah" => $data_sekolah
+            ]);
+        }else{
+            return redirect ("/reg");
+        }
     }
 
     function tampilan_presensiAbsen(){
@@ -305,66 +310,78 @@ class modulGuruController extends Controller
     }
 
     function tampilan_laporanAbsen(){
-        $data_absen_guru = master_absen_guru::all();
-        $cek_hari_ini_tanggal_merah = tanggal_merah::where("tanggal",Carbon::now()->translatedFormat("Y-m-d"))->exists();
-        return view("modul/guru/a/laporan_absen",["data" => $data_absen_guru,"cek" => $cek_hari_ini_tanggal_merah]);
+        if (session("has_login")){  
+            $data_absen_guru = master_absen_guru::all();
+            $cek_hari_ini_tanggal_merah = tanggal_merah::where("tanggal",Carbon::now()->translatedFormat("Y-m-d"))->exists();
+            return view("modul/guru/a/laporan_absen",["data" => $data_absen_guru,"cek" => $cek_hari_ini_tanggal_merah]);
+        }
+        return redirect("/reg");
     }
 
     function tampilan_kelolaGuru(){
-        $data = guru::all();
-        return view("modul/guru/a/kelola_data_guru",[
-            "data_guru" => $data
-        ]);
+        if (session("has_login")){
+            $data = guru::all();
+            return view("modul/guru/a/kelola_data_guru",[
+                "data_guru" => $data
+            ]);
+        }
+        return redirect("/reg");
     }   
 
     function tampilan_editGuru($id){
-        $data_guru = guru::find($id);
-        $data_cabang = cabang_guru::where("aktif",1)->get();
-        $data_jenis_sekolah = jenis_sekolah::all();
-        $data_akun = akun::find((int) $data_guru->user_id);
-        $data_cabang = cabang_guru::all();
-        $data_sekolah = jenis_sekolah::all();
-        $data_akun = akun::find((int) $data_guru->user_id);
-        $data_kelas = ruang_kelas::all();
-
-        $cek_wallas = wallas::where("guru_id",$id)->exists();
-        $nama_kelas_terpilih = null;
-
-        if ($cek_wallas){
-            $data_wallas = wallas::where("guru_id",$id)->first();
-            $nama_kelas_terpilih = ruang_kelas::where("id",$data_wallas->kelas_id)->first()->nama_ruang;
+        if (session("has_login")){
+            $data_guru = guru::find($id);
+            $data_cabang = cabang_guru::where("aktif",1)->get();
+            $data_jenis_sekolah = jenis_sekolah::all();
+            $data_akun = akun::find((int) $data_guru->user_id);
+            $data_cabang = cabang_guru::all();
+            $data_sekolah = jenis_sekolah::all();
+            $data_akun = akun::find((int) $data_guru->user_id);
+            $data_kelas = ruang_kelas::all();
+    
+            $cek_wallas = wallas::where("guru_id",$id)->exists();
+            $nama_kelas_terpilih = null;
+    
+            if ($cek_wallas){
+                $data_wallas = wallas::where("guru_id",$id)->first();
+                $nama_kelas_terpilih = ruang_kelas::where("id",$data_wallas->kelas_id)->first()->nama_ruang;
+            }
+    
+    
+            return view("modul/guru/a/edit_guru",[
+                "data_guru" => $data_guru,
+                "data_cabang" => $data_cabang,
+                "nomor_wa" => $data_akun->noWa,
+                "data_sekolah" => $data_sekolah,
+                "data_jenis_sekolah" => $data_jenis_sekolah,
+                "data_akun" => $data_akun,
+                "data_kelas" => $data_kelas,
+                "cek_wallas" => $cek_wallas,
+                "nama_kelas" => $nama_kelas_terpilih
+            ]);
         }
-
-
-        return view("modul/guru/a/edit_guru",[
-            "data_guru" => $data_guru,
-            "data_cabang" => $data_cabang,
-            "nomor_wa" => $data_akun->noWa,
-            "data_sekolah" => $data_sekolah,
-            "data_jenis_sekolah" => $data_jenis_sekolah,
-            "data_akun" => $data_akun,
-            "data_kelas" => $data_kelas,
-            "cek_wallas" => $cek_wallas,
-            "nama_kelas" => $nama_kelas_terpilih
-        ]);
+        return redirect("/reg");
     }
     
     function tampilan_editProfileGuru(){
-        $data_guru = guru::find(session('id'));
-        $data_cabang = cabang_guru::where("aktif",1)->get();
-        $data_jenis_sekolah = jenis_sekolah::all();
-        $data_akun = akun::find((int) $data_guru->user_id);
-        $data_cabang = cabang_guru::all();
-        $data_sekolah = jenis_sekolah::all();
-        $data_akun = akun::find((int) $data_guru->user_id);
-        return view("modul/guru/g/profile",[
-            "data_guru" => $data_guru,
-            "data_cabang" => $data_cabang,
-            "nomor_wa" => $data_akun->noWa,
-            "data_sekolah" => $data_sekolah,
-            "data_jenis_sekolah" => $data_jenis_sekolah,
-            "data_akun" => $data_akun
-        ]);
+        if (session("has_login")){
+            $data_guru = guru::find(session('id'));
+            $data_cabang = cabang_guru::where("aktif",1)->get();
+            $data_jenis_sekolah = jenis_sekolah::all();
+            $data_akun = akun::find((int) $data_guru->user_id);
+            $data_cabang = cabang_guru::all();
+            $data_sekolah = jenis_sekolah::all();
+            $data_akun = akun::find((int) $data_guru->user_id);
+            return view("modul/guru/g/profile",[
+                "data_guru" => $data_guru,
+                "data_cabang" => $data_cabang,
+                "nomor_wa" => $data_akun->noWa,
+                "data_sekolah" => $data_sekolah,
+                "data_jenis_sekolah" => $data_jenis_sekolah,
+                "data_akun" => $data_akun
+            ]);
+        }
+        return redirect("/reg");
     }
 
     function update_dataGuru(Request $request){
@@ -541,10 +558,13 @@ class modulGuruController extends Controller
     }
 
     function tampilan_slipGaji(){
-        $data_riwayat_gaji = riwayat_gaji::where("guru_id",session("id"))->get();
-        return view("modul/guru/g/slip_gaji",[
-            "data_riwayat_gaji" => $data_riwayat_gaji
-        ]);
+        if (session("has_login")){
+            $data_riwayat_gaji = riwayat_gaji::where("guru_id",session("id"))->get();
+            return view("modul/guru/g/slip_gaji",[
+                "data_riwayat_gaji" => $data_riwayat_gaji
+            ]);
+        }
+        return redirect("/reg");
     }
 
     function tampilan_kelolaGajiGuru(){
@@ -719,12 +739,15 @@ class modulGuruController extends Controller
 
 
     function Tampilan_PengumumanGuru(){
-        $data_guru = guru::where("id",session('id'))->first();
-        $data_pengumuman = pengumuman::where("sekolah_id",$data_guru->sekolah_id)->get();
-        return view("modul/guru/g/pengumuman",[
-            "data_pengumuman" => $data_pengumuman,
-            "data_guru" => $data_guru
-        ]);
+        if (session("has_login")){
+            $data_guru = guru::where("id",session('id'))->first();
+            $data_pengumuman = pengumuman::where("sekolah_id",$data_guru->sekolah_id)->get();
+            return view("modul/guru/g/pengumuman",[
+                "data_pengumuman" => $data_pengumuman,
+                "data_guru" => $data_guru
+            ]);
+        }
+        return redirect("/reg");
     }
 
     function tambah_pengumumanGuru(Request $request){
@@ -778,17 +801,23 @@ class modulGuruController extends Controller
     }
 
     function tampilan_pengajuanGuru(){
-        $data_pengajuan = pengajuan::all();
-        return view("modul/guru/g/pengajuan",[
-            "data_pengajuan" => $data_pengajuan,
-        ]);
+        if (session("has_login")){
+            $data_pengajuan = pengajuan::all();
+            return view("modul/guru/g/pengajuan",[
+                "data_pengajuan" => $data_pengajuan,
+            ]);
+        }
+        return redirect("/reg");
     }
     
     function tampilan_pengajuanGuruA(){
-        $data_pengajuan = pengajuan::all();
-        return view("modul/guru/a/kelola_pengajuan",[
-            "data_pengajuan" => $data_pengajuan
-        ]);
+        if (session("has_login")){
+            $data_pengajuan = pengajuan::all();
+            return view("modul/guru/a/kelola_pengajuan",[
+                "data_pengajuan" => $data_pengajuan
+            ]);
+        }
+        return redirect("/reg");
     }
 
     function tambah_pengajuanGuru(Request $request){
@@ -841,7 +870,10 @@ class modulGuruController extends Controller
 
 
     function tampilan_tambahKelas(){
-        return view("modul/guru/a/tambah_kelas");
+        if (session("has_login")){
+            return view("modul/guru/a/tambah_kelas");
+        }
+        return redirect("/reg");
     }
 
     function tambah_kelas(Request $request){
