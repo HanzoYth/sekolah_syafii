@@ -38,7 +38,14 @@
   top: 0;
   left: 0;
   width: var(--sidebar-w);
+
+  /* Fallback ke 100vh dulu untuk browser lama, lalu ditimpa dvh
+     (dynamic viewport height) yang memperhitungkan address bar
+     browser mobile, supaya tinggi sidebar tidak pernah "kelebihan"
+     dan mendorong footer keluar layar. */
   height: 100vh;
+  height: 100dvh;
+
   display: flex;
   flex-direction: column;
   font-family: 'Poppins', sans-serif;
@@ -75,6 +82,7 @@
    ========================================================================== */
 
 .sidebar-header {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -145,6 +153,17 @@
 
 .sidebar-menu-wrapper {
   flex: 1;
+
+  /* KUNCI PERBAIKAN: tanpa min-height: 0, flex item ini akan
+     "memaksa" tinggi aslinya (mengikuti panjang daftar menu,
+     termasuk saat submenu dibuka) melebihi ruang yang tersedia,
+     sehingga men-scroll seluruh sidebar dan mendorong
+     .sidebar-footer (tombol Keluar) sampai tertutup / hilang
+     dari layar. Dengan min-height: 0, elemen ini dipaksa patuh
+     pada tinggi flex-nya sendiri dan yang di-scroll cukup area
+     menu ini saja — footer selalu tetap terlihat. */
+  min-height: 0;
+
   overflow-y: auto;
   padding: 22px 0 12px;
   scrollbar-width: thin;
@@ -365,8 +384,18 @@
    ========================================================================== */
 
 .sidebar-footer {
+  /* KUNCI PERBAIKAN: flex-shrink: 0 memastikan footer ini tidak
+     pernah diperas/hilang oleh flexbox kalau area menu di atasnya
+     kepanjangan — tingginya selalu utuh dan tetap terlihat. */
+  flex-shrink: 0;
+
   padding: 16px 22px 22px;
+  /* Tambahan aman untuk perangkat dengan gesture-bar/notch
+     (iPhone dsb.) supaya tombol Keluar tidak mepet/ketutup
+     home-indicator di bagian bawah layar. */
+  padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid rgba(216, 185, 74, 0.22);
+  background: var(--emerald-950);
 }
 
 .logout-btn {
@@ -554,11 +583,13 @@ body.sidebar-is-open .mobile-hamburger-btn {
     display: flex;
   }
 
-  /* Sidebar disembunyikan total di luar layar sampai dibuka */
+  /* Sidebar disembunyikan total di luar layar sampai dibuka.
+     height memakai fallback vh lalu ditimpa dvh (lihat .sidebar
+     di atas) supaya konsisten dengan aturan dasar. */
   .sidebar {
     width: var(--sidebar-w) !important;
-    height: 100vh;
     max-height: 100vh;
+    max-height: 100dvh;
     transform: translateX(-100%);
     box-shadow: 5px 0 25px rgba(0, 0, 0, 0.4);
   }
