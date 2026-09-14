@@ -46,15 +46,15 @@ class modulGuruController extends Controller
             $status_absen = master_absen_guru::where("guru_id",session("id"))->where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->first();
             $cek_data_absen = master_absen_guru::where("guru_id",session("id"))->whereNotIn("status_kehadiran",["a","i","s"])->where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->exists();
             $jam_masuk = Carbon::parse("00:00:00")->translatedFormat("H:i:s");
-            $jam_keluar = Carbon::parse("00:00:00")->translatedFormat("H:i:s"); 
+            $jam_keluar = Carbon::parse("00:00:00")->translatedFormat("H:i:s");
 
             $data_pengumuman = pengumuman::where("sekolah_id",$data_guru->sekolah_id)->get();
 
             
-            if (master_absen_guru::where("waktu_masuk","!=",Carbon::parse("00:00:00"))->where("waktu_keluar",Carbon::parse("00:00:00"))->whereNotIn("status_kehadiran",["a","s","i"])->where("guru_id",session("id"))->exists()){
+            if (master_absen_guru::where("waktu_masuk","!=",Carbon::parse("00:00:00")->translatedFormat("H:i:s"))->where("waktu_keluar",Carbon::parse("00:00:00")->translatedFormat("H:i:s"))->whereNotIn("status_kehadiran",["a","s","i"])->where("guru_id",session("id"))->exists()){
                 $cek_sudah_keluar = true;
                 $cek_sudah_absen = true;
-                $data_waktu = master_absen_guru::where("waktu_masuk","!=",Carbon::parse("00:00:00"))->where("waktu_keluar",Carbon::parse("00:00:00"))->whereNotIn("status_kehadiran",["a","s","i"])->where("guru_id",session("id"))->first();
+                $data_waktu = master_absen_guru::where("waktu_masuk","!=",Carbon::parse("00:00:00")->translatedFormat("H:i:s"))->where("waktu_keluar",Carbon::parse("00:00:00")->translatedFormat("H:i:s"))->whereNotIn("status_kehadiran",["a","s","i"])->where("guru_id",session("id"))->first();
                 $jam_masuk = Carbon::parse($data_waktu->waktu_masuk)->translatedFormat("H:i:s");
                 $jam_keluar = Carbon::parse($data_waktu->waktu_keluar)->translatedFormat("H:i:s");
             }else{
@@ -67,7 +67,7 @@ class modulGuruController extends Controller
             }
 
 
-            if(master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("waktu_keluar",Carbon::parse("00:00:00"))->where("waktu_masuk",Carbon::parse("00:00:00"))->where("status_kehadiran","!=","a")->where("guru_id",session("id"))->exists()){
+            if(master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("waktu_keluar",Carbon::parse("00:00:00")->translatedFormat("H:i:s"))->where("waktu_masuk",Carbon::parse("00:00:00")->translatedFormat("H:i:s"))->where("status_kehadiran","!=","a")->where("guru_id",session("id"))->exists()){
                 $cek_sudah_absen_oleh_admin = true;
             }
 
@@ -190,8 +190,8 @@ class modulGuruController extends Controller
         $sudah_absen = master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("guru_id",session("id"))->where("status_kehadiran","!=","a")->exists(); 
 
 
-        $cek_belum_pencet_tombol_keluar= master_absen_guru::where("waktu_masuk","!=",Carbon::parse("00:00:00"))->where("waktu_keluar",Carbon::parse("00:00:00"))->where("status_kehadiran","h")->where("guru_id",session("id"))->exists();
-        $cek_absen_oleh_admin= master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("waktu_keluar",Carbon::parse("00:00:00"))->where("waktu_masuk",Carbon::parse("00:00:00"))->where("status_kehadiran","!=","a")->where("guru_id",session("id"))->exists();
+        $cek_belum_pencet_tombol_keluar= master_absen_guru::where("waktu_masuk","!=",Carbon::parse("00:00:00")->translatedFormat("H:i:s"))->where("waktu_keluar",Carbon::parse("00:00:00")->translatedFormat("H:i:s"))->where("status_kehadiran","h")->where("guru_id",session("id"))->exists();
+        $cek_absen_oleh_admin= master_absen_guru::where("tgl_masuk",now()->format("Y-m-d"))->where("waktu_keluar",Carbon::parse("00:00:00")->translatedFormat("H:i:s"))->where("waktu_masuk",Carbon::parse("00:00:00")->translatedFormat("H:i:s"))->where("status_kehadiran","!=","a")->where("guru_id",session("id"))->exists();
     
         if ($cek_tanggal_merah){
             return back()->with("eror","anda endak bisa melakukan absen tanggal merah");
