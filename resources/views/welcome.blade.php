@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>Sekolah Al-Qur'an Imam Syafi'i</title>
     <!-- Google Fonts: Poppins & Amiri -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">  
@@ -48,7 +48,7 @@
             <!-- Kiri: Teks -->
             <div class="hero-content" data-aos="fade-right" data-aos-duration="1000">
                 <p class="basmalah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
-                <h1>Mencetak Generasi Rabbani Berakhlak <span class="highlight">Al-Qur'an</span></h1>
+                <h1>Mencetak Generasi Rabbani Berakhlak<span class="highlight">Al-Qur'an</span></h1>
                 <p>Pendidikan Al-Qur'an terpadu dengan metode modern untuk mendidik generasi yang mencintai dan mengamalkan Al-Qur'an sesuai pemahaman salafus shalih.</p>
                 <div class="hero-btns">
                     <a href="#program" class="btn-primary">Pelajari Program</a>
@@ -127,6 +127,20 @@
         // 1. Inisialisasi AOS Animation
         AOS.init({
             once: true,
+        });
+
+        // FIX BARU: sebagian browser/WebView Android salah hitung lebar viewport
+        // saat pertama kali halaman dimuat, dan baru benar setelah ada "reflow"
+        // (itu sebabnya kalau discroll manual baru rapi). Script ini memaksa
+        // reflow itu terjadi otomatis begitu halaman selesai dimuat, tanpa
+        // butuh user menggeser/scroll manual.
+        window.addEventListener('load', function () {
+            window.scrollTo(0, 1);
+            requestAnimationFrame(function () {
+                window.scrollTo(0, 0);
+                // Trigger tambahan: paksa browser hitung ulang layout
+                window.dispatchEvent(new Event('resize'));
+            });
         });
 
         // 2. Toggle dropdown menu mobile (hamburger)
