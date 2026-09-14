@@ -31,11 +31,15 @@
   box-sizing: border-box;
 }
 
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* Mencegah scroll samping di tingkat dokumen */
+}
+
 html {
   scroll-behavior: smooth;
   font-size: 16px;
-  overflow-x: hidden;
-  width: 100%;
 }
 
 body {
@@ -43,8 +47,6 @@ body {
   color: var(--dark);
   background-color: var(--light-bg);
   line-height: 1.7;
-  overflow-x: hidden;
-  max-width: 100%;
   position: relative;
 }
 
@@ -273,21 +275,12 @@ img {
   display: flex;
   align-items: center;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Mengunci background agar tidak menyebabakan overflow */
   color: #fff;
   padding: 140px 0 80px;
+  width: 100%;
 }
 
-/* Gambar background yang di-blur.
-   URL gambarnya TIDAK di-hardcode di sini — diisi lewat CSS variable
-   --hero-bg yang di-set langsung dari elemen .hero di Blade
-   (welcome.blade.php) memakai asset(). Kenapa harus begitu: kalau
-   url(...) ditulis di file .css ini, path-nya dihitung relatif
-   terhadap LOKASI FILE CSS INI (mis. /css/welcome.css), bukan
-   terhadap halaman HTML — jadi url('img/foto_1.jpeg') di sini malah
-   dicari di /css/img/foto_1.jpeg dan gagal dimuat diam-diam. Dengan
-   variable dari Blade + asset(), path selalu benar dari root
-   /public, dan ganti gambar cukup ubah satu baris di HTML. */
 .hero::before {
   content: '';
   position: absolute;
@@ -296,11 +289,10 @@ img {
   background-size: cover;
   background-position: center;
   filter: blur(12px) brightness(0.6);
-  transform: scale(1.15);
+  transform: scale(1.08); /* Dikecilkan sedikit agar aman di mobile */
   z-index: 0;
 }
 
-/* Overlay tipis agar teks tetap memiliki kontras tinggi */
 .hero-overlay {
   position: absolute;
   top: 0;
@@ -314,6 +306,7 @@ img {
 .hero .container {
   position: relative;
   z-index: 2;
+  width: 90%;
 }
 
 .hero-wrapper {
@@ -321,6 +314,7 @@ img {
   align-items: center;
   justify-content: space-between;
   gap: 60px;
+  width: 100%;
 }
 
 .hero-content {
@@ -376,6 +370,7 @@ img {
   align-items: center;
   position: relative;
   min-width: 0;
+  width: 100%;
 }
 
 .hero-image::before {
@@ -413,11 +408,12 @@ img {
   padding: 120px 0;
   background-color: var(--light-bg);
   position: relative;
+  overflow: hidden;
 }
 
 .program-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 32px;
 }
 
@@ -473,18 +469,21 @@ img {
 .keunggulan {
   padding: 120px 0;
   background: #ffffff;
+  overflow: hidden;
 }
 
 .keunggulan-wrapper {
   display: flex;
   align-items: center;
   gap: 70px;
+  width: 100%;
 }
 
 .keunggulan-img {
   flex: 1;
   position: relative;
   min-width: 0;
+  width: 100%;
 }
 
 .keunggulan-img img {
@@ -497,6 +496,7 @@ img {
 .keunggulan-content {
   flex: 1;
   min-width: 0;
+  width: 100%;
 }
 
 .keunggulan-content ul {
@@ -618,14 +618,21 @@ img {
 
   .hero {
     padding-top: 120px;
+    height: auto; /* Mencegah cutoff konten di hp */
+    min-height: 100vh;
+  }
+
+  .hero-image img {
+    height: auto;
+    max-height: 380px;
   }
 
   .hero h1 {
-    font-size: 1.9rem;
+    font-size: 2rem;
   }
 
   .basmalah {
-    font-size: 1.7rem;
+    font-size: 1.8rem;
   }
 
   .hero p {
@@ -642,19 +649,28 @@ img {
   }
 
   .section-title {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
+    margin-bottom: 40px;
+  }
+
+  .program {
+    padding: 70px 0;
   }
 
   .program-card {
-    padding: 36px 24px;
+    padding: 32px 20px;
   }
 
   .program-card h3 {
-    font-size: 1.15rem;
+    font-size: 1.2rem;
   }
 
   .program-card p {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+  }
+
+  .keunggulan {
+    padding: 70px 0;
   }
 
   .keunggulan-content ul li {
@@ -663,8 +679,20 @@ img {
   }
 }
 
-/* Layar sangat kecil (HP ramping, mis. <= 400px) */
-@media (max-width: 400px) {
+/* Layar Sangat Kecil (HP Ramping <= 480px) */
+@media (max-width: 480px) {
+  .container {
+    width: 92%; /* Sedikit diperlebar agar menghemat ruang horizontal di hp kecil */
+  }
+
+  .logo {
+    font-size: 1.15rem;
+  }
+
+  .logo img {
+    height: 34px;
+  }
+
   .basmalah {
     font-size: 1.4rem;
   }
@@ -678,6 +706,6 @@ img {
   }
 
   .program-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Memastikan 1 kolom rapi */
   }
 }
