@@ -156,12 +156,12 @@ img {
   box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
 }
 
-/* ======== NAVBAR (VERTIKAL LAYOUT) ======== */
+/* ======== NAVBAR ======== */
 .navbar {
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  padding: 16px 0;
+  padding: 14px 0;
   position: fixed;
   top: 0;
   left: 0;
@@ -173,9 +173,9 @@ img {
 
 .navbar-container {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .logo {
@@ -196,18 +196,13 @@ img {
 
 .nav-menu-wrapper {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 16px;
-  width: 100%;
+  gap: 36px;
 }
 
 .nav-links {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
+  gap: 36px;
 }
 
 .nav-links a {
@@ -215,15 +210,13 @@ img {
   color: var(--dark);
   font-size: 0.95rem;
   position: relative;
-  padding: 4px 12px;
 }
 
 .nav-links a::after {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: -6px;
+  left: 0;
   width: 0%;
   height: 2px;
   background-color: var(--accent);
@@ -232,7 +225,7 @@ img {
 }
 
 .nav-links a:hover::after {
-  width: 80%;
+  width: 100%;
 }
 
 .nav-links a:hover {
@@ -290,7 +283,7 @@ img {
   position: relative;
   overflow: hidden;
   color: #fff;
-  padding: 220px 0 80px;
+  padding: 130px 0 80px;
   width: 100%;
 }
 
@@ -570,11 +563,6 @@ img {
 }
 
 @media (max-width: 768px) {
-  .navbar-container {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
   .menu-toggle {
     display: flex;
   }
@@ -626,7 +614,7 @@ img {
   }
 
   .hero {
-    padding-top: 130px;
+    padding-top: 110px;
     height: auto;
     min-height: 100vh;
     min-height: 100svh;
