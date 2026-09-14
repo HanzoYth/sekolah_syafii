@@ -253,6 +253,28 @@ img {
 
 
 /* =========================================================
+   NAV MENU WRAPPER
+   Bungkus nav-links + auth-buttons.
+   Di desktop harus flex horizontal supaya urutannya:
+   LOGO -> NAV (tengah) -> TOMBOL (kanan)
+   ========================================================= */
+
+.nav-menu-wrapper {
+  display: flex;
+  align-items: center;
+
+  /* ambil sisa ruang di antara logo dan tombol */
+  flex: 1;
+
+  justify-content: space-between;
+
+  margin-left: 40px;
+
+  min-width: 0;
+}
+
+
+/* =========================================================
    NAVIGATION DESKTOP
    ========================================================= */
 
@@ -894,6 +916,24 @@ img {
     align-items: center;
 
     justify-content: center;
+  }
+
+
+  /* =======================================================
+     NAV MENU WRAPPER MOBILE
+     Balik jadi block biasa (bukan flex horizontal)
+     supaya nav-links & auth-buttons di dalamnya bisa
+     tersusun vertikal saat hamburger diklik.
+     ======================================================= */
+
+  .nav-menu-wrapper {
+    display: block;
+
+    flex: none;
+
+    width: 100%;
+
+    margin-left: 0;
   }
 
 
