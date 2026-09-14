@@ -161,7 +161,7 @@
                                   Keputusan lokasi (dalam/luar radius) sepenuhnya dikendalikan
                                   oleh JavaScript di bawah, bukan oleh Blade di sini.
                                 */
-                                $bolehAbsenPulangSecaraBisnis = $cek_sudah_absen && $cek_sudah_keluar && !$cek_sudah_absen_oleh_admin;
+                                $bolehAbsenPulangSecaraBisnis = $cek_sudah_absen && !$cek_sudah_keluar && !$cek_sudah_absen_oleh_admin;
                             @endphp
                             <div class="action-buttons" style="margin-top: 15px;">
                                 {{--
