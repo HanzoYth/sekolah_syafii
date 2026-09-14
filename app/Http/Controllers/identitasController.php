@@ -21,4 +21,10 @@ class identitasController extends Controller
 
         return redirect("/idnt");
     }
+
+    function ambil_DataIdentitas($role){
+        $data_identitas = identitas_rahasia::where("jenis_role",$role)->get();
+
+        return response()->json($data_identitas);
+    }
 }

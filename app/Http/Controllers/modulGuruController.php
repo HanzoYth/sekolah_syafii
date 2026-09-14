@@ -29,8 +29,6 @@ use Illuminate\Support\Facades\Validator;
 class modulGuruController extends Controller
 {
     //ini tampilan dashaboard guru dan admin
-
-
     function tampilan_dashboardGuru(){
         if (session("hasLogin")){
             Carbon::setLocale("id");
@@ -694,6 +692,7 @@ class modulGuruController extends Controller
     }
 
 
+
     function Tampilan_PengumumanGuru(){
         $data_guru = guru::where("id",session('id'))->first();
         $data_pengumuman = pengumuman::where("sekolah_id",$data_guru->sekolah_id)->get();
@@ -813,5 +812,19 @@ class modulGuruController extends Controller
         $data_pengajuan->save();
 
         return back()->with("success","pengajuan di tolak");
+    }
+
+
+    function tampilan_tambahKelas(){
+        return view("modul/guru/a/tambah_kelas");
+    }
+
+    function tambah_kelas(Request $request){
+        $nama_kelas = $request->tingkat_sekolah . " ". (isset($request->no_kelas) ? $request->no_kelas : "" ). $request->tipe_kelas;
+        ruang_kelas::create([
+            "nama_ruang" => $nama_kelas
+        ]);
+
+        return back()->with("success","berhasil tambah kelas");
     }
 }

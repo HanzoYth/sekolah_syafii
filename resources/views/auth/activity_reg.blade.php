@@ -12,6 +12,40 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="{{asset('/css/activity_reg.css')}}">
+
+    <style>
+        /* Tambahan style khusus untuk toggle password */
+        .input-group {
+            position: relative;
+        }
+        .toggle-password {
+            position: absolute !important;
+            right: 16px !important;
+            left: auto !important;
+            top: 50% !important;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+            transition: color 0.2s ease;
+            /* Override aturan pointer-events:none dari icon dekoratif di activity_reg.css */
+            pointer-events: auto !important;
+            z-index: 5;
+        }
+        .toggle-password:hover {
+            color: #333;
+        }
+        /* Pastikan input tidak menutupi icon mata & teks tidak numpuk dengan icon */
+        .input-group input {
+            position: relative;
+            z-index: 1;
+        }
+        .input-group input[type="password"],
+        .input-group input#loginPassword,
+        .input-group input#registerPassword,
+        .input-group input#registerPasswordConfirmation {
+            padding-right: 40px !important;
+        }
+    </style>
 </head>
 <body>
 
@@ -64,7 +98,8 @@
                     </div>
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
-                        <input name="password" type="password" placeholder="Kata Sandi" required>
+                        <input id="loginPassword" name="password" type="password" placeholder="Kata Sandi" required>
+                        <i class="fas fa-eye toggle-password" onclick="togglePassword('loginPassword', this)"></i>
                     </div>
                     <div class="form-options">
                         <!-- <label class="remember-me">
@@ -102,11 +137,13 @@
                     </div>
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
-                        <input name="password" type="password" placeholder="Kata Sandi" required>
+                        <input id="registerPassword" name="password" type="password" placeholder="Kata Sandi" required>
+                        <i class="fas fa-eye toggle-password" onclick="togglePassword('registerPassword', this)"></i>
                     </div>
                     <div class="input-group">
                         <i class="fas fa-shield-alt"></i>
-                        <input name="password_confirmation" type="password" placeholder="Konfirmasi Kata Sandi" required>
+                        <input id="registerPasswordConfirmation" name="password_confirmation" type="password" placeholder="Konfirmasi Kata Sandi" required>
+                        <i class="fas fa-eye toggle-password" onclick="togglePassword('registerPasswordConfirmation', this)"></i>
                     </div>
                     <button type="submit" class="btn-submit">Daftar Akun</button>
                 </form>
@@ -116,6 +153,41 @@
         </div>
         <x-warning />
     </div>
+
     <!-- JavaScript untuk Switch Tab Form -->
+    <script>
+        function switchTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const tabLoginBtn = document.getElementById('tabLoginBtn');
+            const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+
+            if (tab === 'login') {
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+                tabLoginBtn.classList.add('active');
+                tabRegisterBtn.classList.remove('active');
+            } else {
+                registerForm.classList.add('active');
+                loginForm.classList.remove('active');
+                tabRegisterBtn.classList.add('active');
+                tabLoginBtn.classList.remove('active');
+            }
+        }
+
+        // Toggle show/hide password
+        function togglePassword(inputId, iconElement) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                iconElement.classList.remove('fa-eye');
+                iconElement.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                iconElement.classList.remove('fa-eye-slash');
+                iconElement.classList.add('fa-eye');
+            }
+        }
+    </script>
 </body>
 </html>

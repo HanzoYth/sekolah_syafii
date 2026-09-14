@@ -46,7 +46,7 @@
                             <tbody>
                                 @foreach ($data_riwayat_gaji as $value)
                                     @php
-                                        $tanggal = Carbon\Carbon::parse($value->create_at)->translatedFormat("d M Y");
+                                        $tanggal = Carbon\Carbon::parse($value->created_at)->translatedFormat("d M Y");
                                     @endphp
                                     <tr>
                                         <td>{{$tanggal}}</td>

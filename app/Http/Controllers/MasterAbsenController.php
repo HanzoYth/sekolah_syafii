@@ -14,9 +14,11 @@ use Illuminate\Support\Facades\Redirect;
 class MasterAbsenController extends Controller
 {
 
-    function edit_AbsenGuru($id){
-        $Awaldate = Carbon::now()->startOfMonth();
-        $Akhirdate = Carbon::now()->endOfMonth();
+    function edit_AbsenGuru(Request $request,$id){
+
+
+        $Awaldate = Carbon::parse($request->bulan)->startOfMonth();
+        $Akhirdate = Carbon::parse($request->bulan)->endOfMonth();
 
         $tanggal = [];
         Carbon::setLocale("id");
@@ -28,7 +30,7 @@ class MasterAbsenController extends Controller
             ];
         }
 
-        $bulan = Carbon::now()->translatedFormat("m");
+        $bulan = Carbon::parse($request->bulan)->translatedFormat("m");
         $data_guru = guru::where("id",$id)->first();
         $nama_lokasi = master_lokasi_absen_guru::where("cabang_id",$data_guru->cabang_id)->first()->nama_lokasi;
         $data_cabang = cabang_guru::where("id",$data_guru->cabang_id)->first();

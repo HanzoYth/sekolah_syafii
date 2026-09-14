@@ -74,20 +74,18 @@ body {
 
 /* 
    Main Content Layout:
-   1. Mencegah flex child menyusut/meluap (flex: 1 1 0%, min-width: 0).
-   2. Jika sidebar memakai 'position: fixed', hilangkan comment pada margin-left dibawah.
+   Disesuaikan agar berdampingan rapi dengan sidebar fixed/absolute
 */
 .main-content {
     flex: 1 1 0%;
     min-width: 0; 
-    width: 100%;
     padding: 24px 32px;
     background-color: var(--maint-bg-canvas);
     overflow-x: hidden;
     
-    /* UNCOMMENT BARIS DI BAWAH JIKA SIDEBAR ANDA MENGGUNAKAN POSITION: FIXED */
-    /* margin-left: var(--sidebar-width); */
-    /* width: calc(100% - var(--sidebar-width)); */
+    /* Dihidupkan agar konten bergeser memberi ruang untuk sidebar */
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
 }
 
 /* ------------------------------------------------------------

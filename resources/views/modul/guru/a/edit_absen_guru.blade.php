@@ -9,6 +9,60 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Ubah path CSS sesuai lokasi file kamu jika untuk testing lokal, misal: edit_absen_guru.css -->
     <link rel="stylesheet" href="{{asset('css/modul/guru/edit_absen_guru.css')}}">
+    
+    <style>
+        /* CSS tambahan inline untuk Form Filter Periode */
+        .card-header-filter {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .filter-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-input-group {
+            display: flex;
+            align-items: center;
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 6px 12px;
+            gap: 8px;
+        }
+        .filter-input-group i {
+            color: #6b7280;
+        }
+        .filter-input-group input[type="month"] {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-family: inherit;
+            font-size: 0.9rem;
+            color: #374151;
+            cursor: pointer;
+        }
+        .btn-filter {
+            background-color: #3b82f6;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.2s ease;
+        }
+        .btn-filter:hover {
+            background-color: #2563eb;
+        }
+    </style>
 </head>
 <body>
 
@@ -18,7 +72,7 @@
         <!-- TOPBAR HEADER -->
         <header class="topbar">
             <div class="topbar-left">
-                <a href="javascript:history.back()" class="btn-back" title="Kembali">
+                <a href="/gr/klab" class="btn-back" title="Kembali">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
                 <div class="topbar-title">
@@ -80,14 +134,27 @@
         <!-- CARD TABEL DAFTAR ABSENSI BULAN INI -->
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <div class="header-icon icon-income">
-                        <i class="fa-solid fa-calendar-days"></i>
+                <div class="card-header card-header-filter">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="header-icon icon-income">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
+                        <div>
+                            <h3>Daftar Presensi Bulan Ini</h3>
+                            <p class="subtitle">Riwayat presensi dari awal hingga akhir bulan</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3>Daftar Presensi Bulan Ini</h3>
-                        <p class="subtitle">Riwayat presensi dari awal hingga akhir bulan</p>
-                    </div>
+
+                    <!-- FORM FILTER PERIODE BULAN -->
+                    <form action="/gr/edklabs/{{$id_guru}}" method="GET" class="filter-form">
+                        <div class="filter-input-group">
+                            <i class="fa-solid fa-calendar"></i>
+                            <input type="month" name="bulan" id="filter_bulan" value="{{ request('bulan', date('Y-m')) }}">
+                        </div>
+                        <button type="submit" class="btn-filter">
+                            <i class="fa-solid fa-magnifying-glass"></i> Cari
+                        </button>
+                    </form>
                 </div>
 
                 <div class="card-body" style="padding: 0;">
@@ -104,12 +171,12 @@
                             </thead>
                             <tbody>
                                 @foreach ($tanggal as $tgl)
-                                    @if (App\Models\tanggal_merah::where("tanggal",$tgl->tanggal_bulan)->exists())
+                                    @if (App\Models\tanggal_merah::where("cabang_id",$data_guru->cabang_id)->where("tanggal",$tgl->tanggal_bulan)->exists())
                                         <tr class="row-holiday">
                                             <td style="font-weight: 600;">{{$tgl->hari}}</td>
                                             <td>{{Carbon\Carbon::parse($tgl->tanggal_bulan)->translatedFormat('d M Y')}}</td>
                                             <td colspan="3" class="holiday-label" style="text-align: center;">
-                                                <i class="fa-solid fa-mug-hot"></i> Tanggal Merah
+                                                <i class="fa-solid fa-mug-hot"></i> {{App\Models\tanggal_merah::where("cabang_id",$data_guru->cabang_id)->where("tanggal",$tgl->tanggal_bulan)->first()->keterangan}}
                                             </td>
                                         </tr>
                                     @elseif (App\Models\master_absen_guru::where("guru_id",$id_guru)->where("tgl_masuk",$tgl->tanggal_bulan)->exists())

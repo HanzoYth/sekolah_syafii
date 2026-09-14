@@ -11,7 +11,7 @@ return new class extends Migration
     {
         Schema::create("identitas_rahasia",function (Blueprint $table) {
             $table->id();
-            $table->enum("jenis_role",["a","g","s"]);
+            $table->enum("jenis_role",["y","a","g","s"]);
             $table->string("identitas")->unique();
             $table->boolean("aktif")->default(0);
         });

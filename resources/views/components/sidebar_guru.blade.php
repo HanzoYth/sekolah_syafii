@@ -152,6 +152,12 @@
                                 </ul>
                             </details>
                         </li>
+                        <li class="menu-item {{$route == '/gr/tmbhk' ? 'active' : ''}}">
+                            <a href="/gr/tmbhk">
+                                <i class="fa-solid fa-door-open"></i> {{-- atau bisa pakai 'fa-solid fa-square-plus' / 'fa-solid fa-chalkboard-user' --}}
+                                <span>tambah kelas</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             @endif

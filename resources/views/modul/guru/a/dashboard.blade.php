@@ -28,10 +28,6 @@
                     <p>Selamat datang kembali, <strong>Administrator</strong></p>
                 </div>
                 <div class="topbar-actions">
-                    <button class="icon-btn" title="Notifikasi">
-                        <i class="fa-regular fa-bell"></i>
-                        <span class="badge-dot"></span>
-                    </button>
                     <div class="user-profile">
                         <img src="{{ route('file.show',$mydata->url_foto)}}" alt="Foto Profil">
                         <div class="user-info">

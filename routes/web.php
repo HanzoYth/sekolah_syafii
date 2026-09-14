@@ -18,6 +18,7 @@ use App\Http\Controllers\file_surat;
 use App\Http\Controllers\pembayaranController;
 use App\Http\Controllers\siswaController;
 use App\Http\Controllers\siakadController;
+use App\Http\Controllers\yayasanController;
 use Illuminate\Support\Facades\Storage;
 
 // ini route untuk halaman modul dan welcome
@@ -27,6 +28,7 @@ Route::get("/mod",[PageController::class,"tampilan_modul"]);
 //ini route untuk atur identitas_rahasia
 Route::get("/idnt",[identitasController::class,"tampilan_identitas"]);
 Route::post("/add/idnt",[identitasController::class,"add_identitas"]);
+Route::get("/ab/idnt/{role}",[identitasController::class,"ambil_DataIdentitas"]);
 
 // ini route untuk halaman registrasi
 Route::get('/reg',[akunController::class,"tampilan"]);
@@ -100,6 +102,11 @@ Route::post('/gr/updgr',[modulGuruController::class,"update_dataGuru"]);
 Route::post('/gr/upprgr',[modulGuruController::class,"update_profileGuru"]);
 Route::get('/gr/edprgr',[modulGuruController::class,"tampilan_editProfileGuru"]);
 
+
+//tambah kelas
+Route::get('/gr/tmbhk',[modulGuruController::class,"tampilan_tambahKelas"]);
+Route::post('/gr/tmbkls',[modulGuruController::class,"tambah_kelas"]);
+
 //ini admin
 Route::get('/ad/frad',[adminController::class,"tampilan_formulirAdmin"]);
 Route::post('/ad/tbad',[adminController::class,"tambahDataAdmin"]);
@@ -152,6 +159,11 @@ Route::get("/sk/dsp",[siswaController::class,"DetailSlipPembayaran"]);
 Route::get('/sk/ps',[siswaController::class,"pengumumanSiswa"]);
 
 
+//yayasan punya
+Route::get("/yys",[yayasanController::class,"dashboard_Yayasan"]);
+Route::get("/pby",[pembayaranController::class,"Ambil_DataPembayaran"]);
+
+Route::get('/grafik-keuangan', [pembayaranController::class, 'data'])->name('grafik.keuangan');
 
 // Route::get('/tes',[file_surat::class,"testingKirim"]);
 

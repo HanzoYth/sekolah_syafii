@@ -104,6 +104,7 @@
                             </div>
                         </div>
                         
+                        <!-- JENIS KELAMIN -->
                         <div class="form-group">
                             <label for="jenisKelamin">Jenis Kelamin <span class="required">*</span></label>
                             <div class="input-wrapper">
@@ -144,7 +145,44 @@
                             </div>
                         </div>
 
-                        <!-- 7. ALAMAT LENGKAP -->
+                        <!-- SECTION BERKAS DOKUMEN ENKRIPSI/LAMPIRAN -->
+                        <div class="form-group full-width">
+                            <div class="document-section-title">
+                                <i class="fa-solid fa-folder-open"></i> Lampiran Dokumen Berkas (PDF / JPG / PNG)
+                            </div>
+                        </div>
+
+                        <!-- 7. UPLOAD KTP -->
+                        <div class="form-group">
+                            <label for="inputKtp">File KTP <span class="required">*</span></label>
+                            <div class="input-wrapper file-input-wrapper">
+                                <i class="fa-solid fa-address-card"></i>
+                                <input type="file" id="inputKtp" name="file_ktp" accept=".pdf,.jpg,.jpeg,.png" required class="doc-file-input">
+                            </div>
+                            <small class="file-name-preview" id="previewKtp">Belum ada file dipilih</small>
+                        </div>
+
+                        <!-- 8. UPLOAD KK -->
+                        <div class="form-group">
+                            <label for="inputKk">File Kartu Keluarga (KK) <span class="required">*</span></label>
+                            <div class="input-wrapper file-input-wrapper">
+                                <i class="fa-solid fa-users"></i>
+                                <input type="file" id="inputKk" name="file_kk" accept=".pdf,.jpg,.jpeg,.png" required class="doc-file-input">
+                            </div>
+                            <small class="file-name-preview" id="previewKk">Belum ada file dipilih</small>
+                        </div>
+
+                        <!-- 9. UPLOAD IJAZAH TERAKHIR -->
+                        <div class="form-group full-width">
+                            <label for="inputIjazah">File Ijazah Terakhir <span class="required">*</span></label>
+                            <div class="input-wrapper file-input-wrapper">
+                                <i class="fa-solid fa-file-certificate"></i>
+                                <input type="file" id="inputIjazah" name="file_ijazah" accept=".pdf,.jpg,.jpeg,.png" required class="doc-file-input">
+                            </div>
+                            <small class="file-name-preview" id="previewIjazah">Belum ada file dipilih</small>
+                        </div>
+
+                        <!-- 10. ALAMAT LENGKAP -->
                         <div class="form-group full-width">
                             <label for="alamat">Alamat Lengkap <span class="required">*</span></label>
                             <div class="input-wrapper">
@@ -153,7 +191,7 @@
                             </div>
                         </div>
 
-                        <!-- 8. CHECKBOX KELOMPOK 1 (STATUS KEPEGAWAIAN) -->
+                        <!-- 11. CHECKBOX KELOMPOK 1 (STATUS KEPEGAWAIAN) -->
                         <div class="form-group full-width">
                             <div class="checkbox-section">
                                 <div class="checkbox-section-title">
@@ -172,7 +210,7 @@
                             </div>
                         </div>
 
-                        <!-- 9. CHECKBOX KELOMPOK 2 (PERAN TAHFIZ) -->
+                        <!-- 12. CHECKBOX KELOMPOK 2 (PERAN TAHFIZ) -->
                         <div class="form-group full-width">
                             <div class="checkbox-section">
                                 <div class="checkbox-section-title">
@@ -207,7 +245,7 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Helper Mutual Exclusion
+        // Helper Mutual Exclusion untuk Checkbox
         function makeExclusive(selector) {
             const list = document.querySelectorAll(selector);
             list.forEach(checkbox => {
@@ -228,7 +266,7 @@
         makeExclusive('.chk-kepegawaian');
         makeExclusive('.chk-tahfiz');
 
-        // Logic Preview Upload Foto
+        // Logic Preview Upload Foto Profil
         const inputFoto = document.getElementById('inputFoto');
         const avatarPreview = document.getElementById('avatarPreview');
 
@@ -243,9 +281,33 @@
             }
         });
 
+        // Helper Handler Preview Nama Berkas Dokumen
+        function bindFilePreview(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+
+            input.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    preview.textContent = `File dipilih: ${this.files[0].name}`;
+                    preview.classList.add('active');
+                } else {
+                    preview.textContent = 'Belum ada file dipilih';
+                    preview.classList.remove('active');
+                }
+            });
+        }
+
+        bindFilePreview('inputKtp', 'previewKtp');
+        bindFilePreview('inputKk', 'previewKk');
+        bindFilePreview('inputIjazah', 'previewIjazah');
+
         // Reset Handler
         document.getElementById('btnReset').addEventListener('click', () => {
             avatarPreview.innerHTML = `<i class="fa-solid fa-user"></i>`;
+            document.querySelectorAll('.file-name-preview').forEach(el => {
+                el.textContent = 'Belum ada file dipilih';
+                el.classList.remove('active');
+            });
         });
     </script>
 </body>

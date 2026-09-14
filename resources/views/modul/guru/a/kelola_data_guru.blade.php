@@ -69,6 +69,7 @@
                             <th width="60">No</th>
                             <th>Nama Guru</th>
                             <th>NIG</th>
+                            <th>Kode Identitas</th>
                             <th>Jenis Sekolah</th>
                             <th class="text-center">Status</th>
                             <th class="text-center" width="160">Aksi</th>
@@ -79,6 +80,7 @@
                          @foreach ($data_guru as $value)
                          @php
                             $data_akun = App\Models\akun::find((int) $value->user_id);
+                            $data_identitas = App\Models\identitas_rahasia::where("id",$data_akun->identity_id)->first();
                             $jenis_sekolah = App\Models\jenis_sekolah::find((int) $value->sekolah_id);
                          @endphp
                             <tr data-id="{{$value->id}}" data-nama="{{$value->nama}}">
@@ -95,6 +97,7 @@
                                     </div>
                                 </td>
                                 <td><span class="nig-badge">{{$value->nig}}</span></td>
+                                <td><span class="nig-badge">{{$data_identitas->identitas    }}</span></td>
                                 <td><span class="school-tag sma">{{$jenis_sekolah->jenis}}</span></td>
                                 <td class="text-center">
                                     @if ($data_akun->aktif)

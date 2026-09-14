@@ -53,7 +53,7 @@
                                 <ul class="submenu-list">
                                     <li class="submenu-item">
                                         <a href="/sk/bt">
-                                            <i class="fa-solid fa-wallet"></i>
+                                            <i class="fa-solid fa-file-circle-plus"></i>
                                             <span>Buat Tagihan</span>
                                         </a>
                                     </li>
@@ -71,15 +71,15 @@
                                     </li>
                                     <li class="submenu-item">
                                         <a href="/sk/pd">
-                                            <i class="fa-solid fa-piggy-bank"></i>
+                                            <i class="fa-solid fa-graduation-cap"></i>
                                             <span>Pembayaran pendidikan</span>
                                         </a>
                                     </li>
-                                    <li class="submenu-item">
-                                        <a href="/sk/ppl">
-                                            <i class="fa-solid fa-piggy-bank"></i>
-                                            <span>Pembayaran pemeliharaan</span>
-                                        </a>
+                                     <li class="submenu-item">
+                                         <a href="/sk/ppl">
+                                             <i class="fa-solid fa-wrench"></i>
+                                           <span>Pembayaran pemeliharaan</span>
+                                         </a>
                                     </li>
                                 </ul>
                             </details>

@@ -51,6 +51,7 @@
                             <label for="role_type"><i class="fa-solid fa-user-tag"></i> Jenis Role</label>
                             <select id="role_type" name="role_type" class="form-control" required>
                                 <option value="" disabled selected>-- Pilih Role Pengguna --</option>
+                                <option value="y">Yayasan</option>
                                 <option value="a">Admin</option>
                                 <option value="g">Guru</option>
                                 <option value="s">Siswa</option>
@@ -77,6 +78,46 @@
                 </div>
 
             </form>
+
+            <!-- ================= TAMBAHAN: DAFTAR KODE PER ROLE ================= -->
+            <div class="form-section" id="role-list-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-list-check"></i>
+                    <h4>Daftar Kode Identitas per Role</h4>
+                </div>
+
+                <div class="role-tabs">
+                    <button type="button" class="role-tab-btn" data-role="y">
+                        <i class="fa-solid fa-crown"></i> Ketua Yayasan
+                    </button>
+                    <button type="button" class="role-tab-btn" data-role="a">
+                        <i class="fa-solid fa-user-shield"></i> Admin
+                    </button>
+                    <button type="button" class="role-tab-btn" data-role="g">
+                        <i class="fa-solid fa-chalkboard-user"></i> Guru
+                    </button>
+                    <button type="button" class="role-tab-btn" data-role="s">
+                        <i class="fa-solid fa-user-graduate"></i> Siswa
+                    </button>
+                </div>
+
+                <div class="data-list-wrapper hide" id="data-list-wrapper">
+                    <table class="data-list-table">
+                        <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-list-body">
+                            <!-- diisi otomatis via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="empty-state hide" id="empty-state-text">Belum ada data untuk role ini.</p>
+            </div>
+            <!-- ================= AKHIR TAMBAHAN ================= -->
 
         </div>
     </main>

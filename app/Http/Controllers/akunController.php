@@ -170,8 +170,10 @@ class akunController extends Controller
 
     function nonAktifkanAkun($id){
         $data_akun = akun::find((int) $id);
-        $data_akun->aktif = 0;
-        $data_akun->save();
+        $data_identitas = identitas_rahasia::where("id",$data_akun->identity_id)->first();
+        $data_identitas->aktif = 0;
+        $data_identitas->save();
+        $data_akun->delete();
         return back()->with("success","berhasil menonaktifkan guru");
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\sendFileEmail;
 use App\Models\gaji;
 use App\Models\guru;
+use App\Models\jenis_sekolah;
 use App\Models\tunjangan;
 use App\Models\master_absen_guru;
 use App\Models\riwayat_gaji;
