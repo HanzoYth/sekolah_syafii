@@ -164,7 +164,7 @@ class modulGuruController extends Controller
 
     //ini fitur2 untuk guru
     function tampilan_formulirGuru(){   
-        if (session("has_login")){
+        if (session("hasLogin")){
             $data_cabang = cabang_guru::where("aktif",1)->get();
             $data_sekolah = jenis_sekolah::all();
             return view("/modul/guru/formulir_guru",[
@@ -310,7 +310,7 @@ class modulGuruController extends Controller
     }
 
     function tampilan_laporanAbsen(){
-        if (session("has_login")){  
+        if (session("hasLogin")){  
             $data_absen_guru = master_absen_guru::all();
             $cek_hari_ini_tanggal_merah = tanggal_merah::where("tanggal",Carbon::now()->translatedFormat("Y-m-d"))->exists();
             return view("modul/guru/a/laporan_absen",["data" => $data_absen_guru,"cek" => $cek_hari_ini_tanggal_merah]);
@@ -319,7 +319,7 @@ class modulGuruController extends Controller
     }
 
     function tampilan_kelolaGuru(){
-        if (session("has_login")){
+        if (session("hasLogin")){
             $data = guru::all();
             return view("modul/guru/a/kelola_data_guru",[
                 "data_guru" => $data
@@ -329,7 +329,7 @@ class modulGuruController extends Controller
     }   
 
     function tampilan_editGuru($id){
-        if (session("has_login")){
+        if (session("hasLogin")){
             $data_guru = guru::find($id);
             $data_cabang = cabang_guru::where("aktif",1)->get();
             $data_jenis_sekolah = jenis_sekolah::all();
@@ -364,7 +364,7 @@ class modulGuruController extends Controller
     }
     
     function tampilan_editProfileGuru(){
-        if (session("has_login")){
+        if (session("hasLogin")){
             $data_guru = guru::find(session('id'));
             $data_cabang = cabang_guru::where("aktif",1)->get();
             $data_jenis_sekolah = jenis_sekolah::all();
@@ -558,7 +558,7 @@ class modulGuruController extends Controller
     }
 
     function tampilan_slipGaji(){
-        if (session("has_login")){
+        if (session("hasLogin")){
             $data_riwayat_gaji = riwayat_gaji::where("guru_id",session("id"))->get();
             return view("modul/guru/g/slip_gaji",[
                 "data_riwayat_gaji" => $data_riwayat_gaji
@@ -739,7 +739,7 @@ class modulGuruController extends Controller
 
 
     function Tampilan_PengumumanGuru(){
-        if (session("has_login")){
+        if (session("hasLogin")){
             $data_guru = guru::where("id",session('id'))->first();
             $data_pengumuman = pengumuman::where("sekolah_id",$data_guru->sekolah_id)->get();
             return view("modul/guru/g/pengumuman",[
@@ -801,7 +801,7 @@ class modulGuruController extends Controller
     }
 
     function tampilan_pengajuanGuru(){
-        if (session("has_login")){
+        if (session("hasLogin")){
             $data_pengajuan = pengajuan::all();
             return view("modul/guru/g/pengajuan",[
                 "data_pengajuan" => $data_pengajuan,
@@ -811,7 +811,7 @@ class modulGuruController extends Controller
     }
     
     function tampilan_pengajuanGuruA(){
-        if (session("has_login")){
+        if (session("hasLogin")){
             $data_pengajuan = pengajuan::all();
             return view("modul/guru/a/kelola_pengajuan",[
                 "data_pengajuan" => $data_pengajuan
@@ -870,7 +870,7 @@ class modulGuruController extends Controller
 
 
     function tampilan_tambahKelas(){
-        if (session("has_login")){
+        if (session("hasLogin")){
             return view("modul/guru/a/tambah_kelas");
         }
         return redirect("/reg");
