@@ -10,7 +10,7 @@
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <aside class="sidebar" id="sidebar">
-        <link rel="stylesheet" href="{{ asset('css/sidebar/sidebar_guru.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/sidebar/sidebar_guru.css')}}?v=2">
         <div class="sidebar-header">
             <div class="brand-logo">
                 <i class="fa-solid fa-mosque"></i>
