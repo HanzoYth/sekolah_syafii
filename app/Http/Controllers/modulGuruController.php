@@ -219,11 +219,33 @@ class modulGuruController extends Controller
     }
 
     function tambahGuru(Request $request){
-        $request->validate([
-            "foto" => 'required|file|mimes:jpg,jpeg,png|max:2048'
-        ]);
+        $validator = Validator::make($request->all(),
+            [
+                "foto" => 'required|file|mimes:jpg,jpeg,png|max:2048',
+                "file_ktp" => 'required|file|mimes:pdf|max:2048',
+                "file_kk" => 'required|file|mimes:pdf|max:2048',
+                "file_ijazah" => 'required|file|mimes:pdf|max:2048'
+            ],
+            [
+                "foto.mimes" => "file harus berupa jpg, jpeg, atau png",
+                "foto.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+                "file_ktp.mimes" => "file harus berupa pdf",
+                "file_ktp.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+                "file_kk.mimes" => "file harus berupa pdf",
+                "file_kk.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+                "file_ijazah.mimes" => "file harus berupa pdf",
+                "file_ijazah.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+            ]
+        );
+        
+        if ($validator->fails()){
+            return back()->withErrors($validator)->withInput();
+        }
 
         $path_foto = $request->file("foto")->store('uploads');
+        $path_ktp = $request->file("file_ktp")->store('file-kirim');
+        $path_kk = $request->file("file_kk")->store('file-kirim');
+        $path_ijazah = $request->file("file_ijazah")->store('file-kirim');
 
         guru::create([
             "nama" => $request->nama,
@@ -234,6 +256,9 @@ class modulGuruController extends Controller
             "alamat" => $request->alamat,
             "pendidikan_terakhir" => $request->pendidikan_terakhir,
             "url_foto" => $path_foto,
+            "ktp" => $path_ktp,
+            "kk" => $path_kk,
+            "ijazah" => $path_ijazah,
             "guru_honor" => (int) $request->honor,
             "guru_tetap" => (int) $request->tetap,
             "koordinator_tahfiz" => (int) $request->koordinator,

@@ -148,7 +148,7 @@
                         <!-- SECTION BERKAS DOKUMEN ENKRIPSI/LAMPIRAN -->
                         <div class="form-group full-width">
                             <div class="document-section-title">
-                                <i class="fa-solid fa-folder-open"></i> Lampiran Dokumen Berkas (PDF / JPG / PNG)
+                                <i class="fa-solid fa-folder-open"></i> Lampiran Dokumen Berkas (PDF)
                             </div>
                         </div>
 
@@ -157,7 +157,7 @@
                             <label for="inputKtp">File KTP <span class="required">*</span></label>
                             <div class="input-wrapper file-input-wrapper">
                                 <i class="fa-solid fa-address-card"></i>
-                                <input type="file" id="inputKtp" name="file_ktp" accept=".pdf,.jpg,.jpeg,.png" required class="doc-file-input">
+                                <input type="file" id="inputKtp" name="file_ktp" accept=".pdf" required class="doc-file-input">
                             </div>
                             <small class="file-name-preview" id="previewKtp">Belum ada file dipilih</small>
                         </div>
@@ -167,7 +167,7 @@
                             <label for="inputKk">File Kartu Keluarga (KK) <span class="required">*</span></label>
                             <div class="input-wrapper file-input-wrapper">
                                 <i class="fa-solid fa-users"></i>
-                                <input type="file" id="inputKk" name="file_kk" accept=".pdf,.jpg,.jpeg,.png" required class="doc-file-input">
+                                <input type="file" id="inputKk" name="file_kk" accept=".pdf" required class="doc-file-input">
                             </div>
                             <small class="file-name-preview" id="previewKk">Belum ada file dipilih</small>
                         </div>
@@ -177,7 +177,7 @@
                             <label for="inputIjazah">File Ijazah Terakhir <span class="required">*</span></label>
                             <div class="input-wrapper file-input-wrapper">
                                 <i class="fa-solid fa-file-certificate"></i>
-                                <input type="file" id="inputIjazah" name="file_ijazah" accept=".pdf,.jpg,.jpeg,.png" required class="doc-file-input">
+                                <input type="file" id="inputIjazah" name="file_ijazah" accept=".pdf" required class="doc-file-input">
                             </div>
                             <small class="file-name-preview" id="previewIjazah">Belum ada file dipilih</small>
                         </div>
@@ -242,7 +242,7 @@
             </div>
         </section>
     </div>
-
+    <x-warning />
     <!-- JAVASCRIPT LOGIC -->
     <script>
         // Helper Mutual Exclusion untuk Checkbox
