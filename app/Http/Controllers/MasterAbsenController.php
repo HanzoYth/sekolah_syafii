@@ -174,6 +174,10 @@ class MasterAbsenController extends Controller
 
     function keluarAbsenGuru(){
         $data = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->where("waktu_masuk","!=",Carbon::parse("00:00:00"))->where("waktu_keluar",Carbon::parse("00:00:00"))->whereNotIn("status_kehadiran",["a","s","i"])->where("guru_id",session("id"))->first();
+        dd([
+            "tes" => $data
+        ]);
+        
         $data_waktu = master_waktu_absen_guru::where("id",$data->waktu_id)->first();
         $waktu_keluar = Carbon::parse($data_waktu->waktu_keluar);
         $waktu_sekarang = Carbon::now();
