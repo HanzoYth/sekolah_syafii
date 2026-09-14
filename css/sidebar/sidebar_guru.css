@@ -52,8 +52,7 @@
   transition: width 0.25s ease, transform 0.25s ease;
 }
 
-/* Motif geometris islami: kisi belah-ketupat tipis, sangat samar,
-   terinspirasi jalinan bintang delapan-penjuru pada ornamen masjid */
+/* Motif geometris islami */
 .sidebar::before {
   content: "";
   position: absolute;
@@ -253,11 +252,6 @@
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-/* Matikan disclosure marker bawaan <summary> di SEMUA browser.
-   ::-webkit-details-marker saja tidak cukup: Firefox/Safari pakai
-   ::marker bawaan yang menambah indentasi tersendiri, itulah sebabnya
-   item "Master Data" / "Laporan HR" jadi tidak rata dengan menu lain
-   di mobile. */
 .menu-item .submenu-wrapper {
   list-style: none;
 }
@@ -437,45 +431,31 @@
 
 /* ==========================================================================
    HAMBURGER BUTTON & MOBILE OVERLAY
-   --------------------------------------------------------------------------
-   PERBAIKAN UTAMA:
-   - Tombol ini SELALU `position: fixed` (bukan static), jadi dia dikeluarkan
-     total dari alur dokumen. Artinya dia TIDAK PERNAH mendorong / mengubah
-     layout topbar atau konten utama, di breakpoint manapun.
-   - Karena fixed terhadap viewport, tombol otomatis tetap muncul di posisi
-     yang sama walau konten di-scroll ke bawah (tidak perlu JS tambahan).
-   - Latar belakangnya dibuat semi-transparan + backdrop-blur dan diberi
-     shadow tipis, jadi dia terlihat sebagai elemen "melayang" di atas
-     konten, bukan blok warna solid yang menutupi tulisan judul.
    ========================================================================== */
 
 .mobile-hamburger-btn {
   display: none;
   position: fixed;
   top: var(--hamburger-offset);
-  left: var(--hamburger-offset);
+  right: var(--hamburger-offset); /* Mengubah posisi ke kanan */
+  left: auto;                     /* Menghapus anchor ke kiri */
   width: var(--hamburger-size);
   height: var(--hamburger-size);
   border-radius: 10px;
   border: none;
-  background: transparent; /* tidak ada blok warna solid → tidak menutupi apa pun di baliknya */
+  background: transparent;
   color: var(--gold-400);
   cursor: pointer;
   align-items: center;
   justify-content: center;
   font-size: 20px;
-  /* drop-shadow (bukan box-shadow) mengikuti bentuk ikon, bukan bentuk
-     kotak, jadi tetap kontras & kebaca di atas latar terang maupun gelap
-     tanpa perlu latar belakang solid */
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))
     drop-shadow(0 0 6px rgba(7, 36, 28, 0.55));
-  z-index: 998; /* di bawah sidebar (1000) & overlay (999), di atas konten */
+  z-index: 998;
   transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.2s ease,
     background 0.2s ease, color 0.2s ease;
 }
 
-/* Latar tipis hanya muncul saat hover/fokus, sekadar penanda interaktif,
-   tetap tidak dipakai sebagai blok warna permanen */
 .mobile-hamburger-btn:hover,
 .mobile-hamburger-btn:focus-visible {
   background: rgba(11, 59, 46, 0.5);
@@ -490,7 +470,6 @@
   outline-offset: 2px;
 }
 
-/* Sembunyikan tombol hamburger jika sidebar terbuka */
 .mobile-hamburger-btn.is-hidden,
 body.sidebar-is-open .mobile-hamburger-btn {
   opacity: 0 !important;
@@ -498,14 +477,13 @@ body.sidebar-is-open .mobile-hamburger-btn {
   pointer-events: none !important;
 }
 
-/* Latar Belakang Gelap (Overlay) saat Sidebar Terbuka di HP */
 .sidebar-overlay {
   display: none;
   position: fixed;
   inset: 0;
   background: rgba(7, 36, 28, 0.6);
   backdrop-filter: blur(3px);
-  z-index: 999; /* Tepat di bawah sidebar (1000) */
+  z-index: 999;
   opacity: 0;
   transition: opacity 0.25s ease;
   pointer-events: none;
@@ -552,12 +530,10 @@ body.sidebar-is-open .mobile-hamburger-btn {
 }
 
 @media (max-width: 768px) {
-  /* Tombol hamburger tampil, tetap fixed (lihat definisi di atas) */
   .mobile-hamburger-btn {
     display: flex;
   }
 
-  /* Sidebar disembunyikan total di luar layar sampai dibuka */
   .sidebar {
     width: var(--sidebar-w) !important;
     height: 100vh;
@@ -570,7 +546,6 @@ body.sidebar-is-open .mobile-hamburger-btn {
     transform: translateX(0);
   }
 
-  /* Tampilkan kembali teks dan menu penuh di mobile saat sidebar terbuka */
   .sidebar .brand-logo span,
   .sidebar .menu-item a span,
   .sidebar .menu-link-content span,
@@ -594,12 +569,4 @@ body.sidebar-is-open .mobile-hamburger-btn {
   .sidebar .logout-btn {
     justify-content: flex-start !important;
   }
-
-  /*
-    CATATAN PENTING (lihat pesan di bawah kode):
-    Beri jarak/padding pada judul halaman di topbar Anda sendiri
-    (bukan di file ini) sebesar kurang lebih 56px di sisi kiri pada
-    breakpoint ini, supaya area tombol hamburger yang melayang tidak
-    duduk tepat di atas tulisan judul.
-  */
 }
