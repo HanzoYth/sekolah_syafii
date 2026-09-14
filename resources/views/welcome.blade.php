@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- AOS Animation Library -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{asset('css/welcome.css')}}">
+    <link rel="stylesheet" href="./css/welcome.css">
 </head>
 <body>
 
@@ -48,7 +48,7 @@
             <!-- Kiri: Teks -->
             <div class="hero-content" data-aos="fade-right" data-aos-duration="1000">
                 <p class="basmalah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
-                <h1>Mencetak Generasi Rabbani Berakhlak <span class="highlight">Al-Qur'an</span></h1>
+                <h1>Mencetak Generasi Rabbani Berakhlak<span class="highlight">Al-Qur'an</span></h1>
                 <p>Pendidikan Al-Qur'an terpadu dengan metode modern untuk mendidik generasi yang mencintai dan mengamalkan Al-Qur'an sesuai pemahaman salafus shalih.</p>
                 <div class="hero-btns">
                     <a href="#program" class="btn-primary">Pelajari Program</a>
@@ -137,10 +137,24 @@
         // Sekarang dipasang lebih awal (langsung + beberapa kali di awal) supaya
         // bug-nya ketutup sebelum sempat kelihatan oleh user.
         function forceViewportReflow() {
+            // FIX BARU (v3): paksa browser membaca ULANG meta viewport-nya.
+            // Ini menyasar bug "zoom nyangkut dari kunjungan/reload sebelumnya"
+            // di Chrome Android, yang membuat halaman terlihat menyempit sesaat
+            // sampai ada interaksi. Caranya: utak-atik sedikit atribut content
+            // meta viewport, browser akan mereset skala zoom-nya ke normal.
+            var viewportMeta = document.querySelector('meta[name="viewport"]');
+            if (viewportMeta) {
+                var original = viewportMeta.getAttribute('content');
+                viewportMeta.setAttribute('content', original + ', shrink-to-fit=no');
+                setTimeout(function () {
+                    viewportMeta.setAttribute('content', original);
+                }, 50);
+            }
             window.scrollTo(0, 1);
             requestAnimationFrame(function () {
                 window.scrollTo(0, 0);
                 window.dispatchEvent(new Event('resize'));
+                window.dispatchEvent(new Event('orientationchange'));
             });
         }
         // Jalankan langsung begitu script ini dieksekusi (paling awal)
