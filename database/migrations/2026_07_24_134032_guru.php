@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string("alamat");
             $table->string("pendidikan_terakhir");
             $table->string("url_foto");
+            $table->string("ktp");
+            $table->string("kk");
+            $table->string("ijazah");
             $table->boolean("guru_honor")->default(0);
             $table->boolean("guru_tetap")->default(0);
             $table->boolean("koordinator_tahfiz")->default(0);
