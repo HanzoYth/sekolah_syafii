@@ -1,12 +1,12 @@
 /* ======== ROOT VARIABLES & DESIGN SYSTEM ======== */
 :root {
   /* Color Palette - Modern Islamic Luxury */
-  --primary: #0f3822;         /* Deep Emerald */
-  --primary-light: #164e2e;   /* Vibrant Emerald */
-  --accent: #d4af37;          /* Gold Accent */
-  --accent-light: #f3e5ab;    /* Soft Gold Glow */
-  --dark: #121814;            /* Dark Slate */
-  --light-bg: #f8f9fa;        /* Clean Off-White */
+  --primary: #0f3822;
+  --primary-light: #164e2e;
+  --accent: #d4af37;
+  --accent-light: #f3e5ab;
+  --dark: #121814;
+  --light-bg: #f8f9fa;
   --card-bg: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(255, 255, 255, 0.3);
 
@@ -24,14 +24,18 @@
   --radius-sm: 8px;
 }
 
+
 /* ======== GLOBAL RESET & BASE ======== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   overflow-x: clip;
 }
@@ -77,6 +81,7 @@ img {
   display: block;
 }
 
+
 /* ======== TYPOGRAPHY & BUTTONS ======== */
 .section-title {
   font-size: clamp(1.4rem, 4.5vw, 2.5rem);
@@ -93,7 +98,11 @@ img {
   display: block;
   width: 60px;
   height: 4px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  background: linear-gradient(
+    90deg,
+    var(--accent),
+    var(--accent-light)
+  );
   margin: 12px auto 0;
   border-radius: 10px;
 }
@@ -107,8 +116,11 @@ img {
   margin: 12px 0 0;
 }
 
-/* Modern Pill Buttons */
-.btn-primary, .btn-secondary, .btn-started {
+
+/* ======== MODERN PILL BUTTONS ======== */
+.btn-primary,
+.btn-secondary,
+.btn-started {
   padding: 14px 32px;
   border-radius: 50px;
   font-weight: 600;
@@ -123,7 +135,11 @@ img {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-light) 100%
+  );
   color: #fff;
   box-shadow: 0 8px 20px rgba(15, 56, 34, 0.25);
 }
@@ -131,7 +147,11 @@ img {
 .btn-primary:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 28px rgba(15, 56, 34, 0.35);
-  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-light) 0%,
+    var(--primary) 100%
+  );
 }
 
 .btn-secondary {
@@ -148,7 +168,11 @@ img {
 }
 
 .btn-started {
-  background: linear-gradient(135deg, var(--accent) 0%, #b89228 100%);
+  background: linear-gradient(
+    135deg,
+    var(--accent) 0%,
+    #b89228 100%
+  );
   color: #fff;
   box-shadow: var(--shadow-glow);
 }
@@ -158,68 +182,124 @@ img {
   box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
 }
 
-/* ======== NAVBAR DESKTOP (MENYAMPING SAMPAI DUA SISI) ======== */
+
+/* =========================================================
+   NAVBAR DESKTOP
+   URUTAN:
+   LOGO | NAVIGATION | BUTTON
+   ========================================================= */
+
 .navbar {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+
   padding: 14px 0;
+
   position: fixed;
   top: 0;
   left: 0;
+
   width: 100%;
   z-index: 1000;
+
   border-bottom: 1px solid var(--glass-border);
+
   transition: var(--transition);
 }
 
+
+/* Container navbar */
 .navbar .container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+
+  /* PENTING:
+     logo kiri
+     nav tengah
+     button kanan */
+  justify-content: space-between;
+
   width: 90%;
   max-width: 1200px;
+
+  margin: 0 auto;
 }
 
+
+/* ===== LOGO ===== */
 .logo {
   display: flex;
   align-items: center;
+
   gap: 10px;
+
   font-size: clamp(1rem, 3.2vw, 1.3rem);
   font-weight: 700;
+
   color: var(--primary);
+
   white-space: nowrap;
+
   flex-shrink: 0;
 }
 
 .logo img {
   height: 38px;
   width: auto;
+
   object-fit: contain;
 }
+
+
+/* =========================================================
+   NAVIGATION DESKTOP
+   ========================================================= */
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 36px;
+
+  /* Jarak antar menu */
+  gap: 32px;
+
+  /* Supaya nav berada di tengah */
+  flex: 1;
+
+  justify-content: center;
+
+  min-width: 0;
 }
 
 .nav-links a {
   font-weight: 500;
+
   color: var(--dark);
+
   font-size: 0.95rem;
+
   position: relative;
+
+  white-space: nowrap;
 }
 
+
+/* Garis bawah menu */
 .nav-links a::after {
   content: '';
+
   position: absolute;
+
   bottom: -6px;
   left: 0;
+
   width: 0%;
   height: 2px;
+
   background-color: var(--accent);
+
   transition: var(--transition);
+
   border-radius: 2px;
 }
 
@@ -231,41 +311,77 @@ img {
   color: var(--primary);
 }
 
+
+/* =========================================================
+   BUTTON AUTH DESKTOP
+   ========================================================= */
+
 .auth-buttons {
   display: flex;
   align-items: center;
-  gap: 16px;
+
+  gap: 12px;
+
   flex-shrink: 0;
 }
 
+
+/* =========================================================
+   HAMBURGER
+   DESKTOP = TIDAK MUNCUL
+   ========================================================= */
+
 .menu-toggle {
   display: none;
+
   position: relative;
+
   width: 36px;
   height: 36px;
+
   cursor: pointer;
+
   background: none;
   border: none;
+
   padding: 0;
+
   flex-shrink: 0;
 }
 
 .bar {
   display: block;
+
   position: absolute;
+
   left: 50%;
+
   width: 24px;
   height: 3px;
+
   background-color: var(--primary);
+
   border-radius: 3px;
+
   transform: translate(-50%, 0);
+
   transition: var(--transition);
 }
 
-.bar:nth-child(1) { top: 10px; }
-.bar:nth-child(2) { top: 17px; }
-.bar:nth-child(3) { top: 24px; }
+.bar:nth-child(1) {
+  top: 10px;
+}
 
+.bar:nth-child(2) {
+  top: 17px;
+}
+
+.bar:nth-child(3) {
+  top: 24px;
+}
+
+
+/* Hamburger berubah menjadi X */
 .menu-toggle.active .bar:nth-child(1) {
   top: 17px;
   transform: translate(-50%, 0) rotate(45deg);
@@ -281,38 +397,59 @@ img {
   transform: translate(-50%, 0) rotate(-45deg);
 }
 
-/* ======== HERO SECTION ======== */
+
+/* =========================================================
+   HERO SECTION
+   ========================================================= */
+
 .hero {
   min-height: 100vh;
   min-height: 100svh;
+
   display: flex;
   align-items: center;
+
   position: relative;
+
   overflow: hidden;
+
   color: #fff;
+
   padding: 130px 0 80px;
+
   width: 100%;
 }
 
 .hero::before {
   content: '';
+
   position: absolute;
+
   inset: 0;
+
   background-image: var(--hero-bg);
+
   background-size: cover;
   background-position: center;
+
   filter: blur(12px) brightness(0.6);
+
   transform: scale(1.05);
+
   z-index: 0;
 }
 
 .hero-overlay {
   position: absolute;
+
   top: 0;
   left: 0;
+
   width: 100%;
   height: 100%;
+
   background: rgba(15, 56, 34, 0.45);
+
   z-index: 1;
 }
 
@@ -323,9 +460,13 @@ img {
 
 .hero-wrapper {
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
+
   gap: 50px;
+
   width: 100%;
 }
 
@@ -336,222 +477,350 @@ img {
 
 .basmalah {
   font-family: var(--font-arabic);
+
   font-size: clamp(1.3rem, 5vw, 2.5rem);
+
   color: var(--accent);
+
   margin-bottom: 12px;
+
   text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+
   word-wrap: break-word;
 }
 
 .hero h1 {
   font-size: clamp(1.6rem, 6vw, 3.2rem);
+
   font-weight: 700;
+
   line-height: 1.25;
+
   margin-bottom: 24px;
+
   letter-spacing: -0.5px;
+
   word-wrap: break-word;
 }
 
 .hero h1 .highlight {
-  background: linear-gradient(120deg, var(--accent) 0%, #fff 100%);
+  background: linear-gradient(
+    120deg,
+    var(--accent) 0%,
+    #fff 100%
+  );
+
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .hero p {
   font-size: clamp(0.9rem, 2.8vw, 1.05rem);
+
   font-weight: 300;
+
   color: rgba(255, 255, 255, 0.9);
+
   margin-bottom: 40px;
+
   line-height: 1.8;
 }
 
 .hero-btns {
   display: flex;
+
   gap: 16px;
+
   flex-wrap: wrap;
 }
 
 .hero-image {
   flex: 0.9;
+
   display: flex;
+
   justify-content: center;
   align-items: center;
+
   position: relative;
+
   min-width: 0;
+
   width: 100%;
 }
 
 .hero-image::before {
   content: '';
+
   position: absolute;
+
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, var(--accent), transparent);
+
+  background: linear-gradient(
+    135deg,
+    var(--accent),
+    transparent
+  );
+
   border-radius: var(--radius-lg);
+
   filter: blur(30px);
+
   opacity: 0.25;
+
   z-index: 0;
 }
 
 .hero-image img {
   position: relative;
+
   z-index: 1;
+
   width: 100%;
+
   max-width: 380px;
+
   height: 460px;
+
   object-fit: cover;
+
   border-radius: var(--radius-lg);
+
   border: 1px solid var(--glass-border);
+
   box-shadow: var(--shadow-lg);
+
   transition: var(--transition);
 }
 
 .hero-image img:hover {
   transform: translateY(-8px) scale(1.01);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.3);
 }
 
-/* ======== PROGRAM SECTION ======== */
+
+/* =========================================================
+   PROGRAM SECTION
+   ========================================================= */
+
 .program {
   padding: 100px 0;
+
   background-color: var(--light-bg);
+
   position: relative;
+
   overflow: hidden;
 }
 
 .program-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(280px, 1fr));
+
   gap: 32px;
 }
 
 .program-card {
   background: var(--card-bg);
+
   backdrop-filter: blur(10px);
+
   padding: 40px 30px;
+
   border-radius: var(--radius-lg);
+
   text-align: center;
+
   border: 1px solid rgba(255, 255, 255, 0.6);
+
   box-shadow: var(--shadow-sm);
+
   transition: var(--transition);
 }
 
 .program-card:hover {
   transform: translateY(-8px);
+
   background: #ffffff;
+
   box-shadow: var(--shadow-md);
+
   border-color: var(--accent);
 }
 
 .icon-card {
   font-size: 2.5rem;
+
   color: var(--primary);
+
   margin-bottom: 20px;
+
   display: inline-block;
+
   padding: 18px;
+
   background: rgba(15, 56, 34, 0.05);
+
   border-radius: 50%;
+
   transition: var(--transition);
 }
 
 .program-card:hover .icon-card {
   background: var(--accent);
+
   color: #fff;
+
   transform: rotateY(180deg);
 }
 
 .program-card h3 {
   font-size: clamp(1.1rem, 3.5vw, 1.3rem);
+
   font-weight: 600;
+
   color: var(--primary);
+
   margin-bottom: 12px;
 }
 
 .program-card p {
   color: #6c757d;
+
   font-size: clamp(0.88rem, 2.5vw, 0.95rem);
+
   line-height: 1.6;
 }
 
-/* ======== KEUNGGULAN SECTION ======== */
+
+/* =========================================================
+   KEUNGGULAN SECTION
+   ========================================================= */
+
 .keunggulan {
   padding: 100px 0;
+
   background: #ffffff;
+
   overflow: hidden;
 }
 
 .keunggulan-wrapper {
   display: flex;
+
   align-items: center;
+
   gap: 60px;
+
   width: 100%;
 }
 
 .keunggulan-img {
   flex: 1;
+
   position: relative;
+
   min-width: 0;
+
   width: 100%;
 }
 
 .keunggulan-img img {
   border-radius: var(--radius-lg);
+
   box-shadow: var(--shadow-md);
+
   object-fit: cover;
+
   width: 100%;
 }
 
 .keunggulan-content {
   flex: 1;
+
   min-width: 0;
+
   width: 100%;
 }
 
 .keunggulan-content ul {
   display: flex;
+
   flex-direction: column;
+
   gap: 16px;
 }
 
 .keunggulan-content ul li {
   display: flex;
+
   align-items: center;
+
   gap: 14px;
+
   font-size: clamp(0.9rem, 2.8vw, 1rem);
+
   font-weight: 500;
+
   color: var(--dark);
+
   padding: 12px 18px;
+
   background: var(--light-bg);
+
   border-radius: var(--radius-md);
+
   transition: var(--transition);
 }
 
 .keunggulan-content ul li:hover {
   transform: translateX(6px);
+
   background: rgba(212, 175, 55, 0.1);
 }
 
 .keunggulan-content ul li i {
   color: var(--accent);
+
   font-size: 1.3rem;
 }
 
-/* ======== FOOTER ======== */
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
 .footer {
   background-color: var(--dark);
+
   color: rgba(255, 255, 255, 0.6);
+
   padding: 36px 0;
+
   text-align: center;
+
   font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* ======== RESPONSIVE DESIGN (BREAKPOINTS) ======== */
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
 @media (max-width: 992px) {
+
   .hero-wrapper {
     flex-direction: column;
+
     text-align: center;
+
     gap: 40px;
   }
 
@@ -565,6 +834,7 @@ img {
 
   .keunggulan-wrapper {
     flex-direction: column-reverse;
+
     gap: 40px;
   }
 
@@ -573,84 +843,213 @@ img {
   }
 }
 
-/* ======== MOBILE NAVBAR (URUTAN VERTIKAL PENUH SAAT DIKLIK) ======== */
+
+/* =========================================================
+   MOBILE NAVBAR
+   <= 768px
+   ========================================================= */
+
 @media (max-width: 768px) {
-  .navbar .container {
-    flex-wrap: wrap;
-    padding: 0 20px;
+
+  /* =======================================================
+     NAVBAR UTAMA
+     ======================================================= */
+
+  .navbar {
+    padding: 12px 0;
   }
 
-  /* Tampilkan tombol Hamburger di sebelah kanan logo */
+  .navbar .container {
+    width: 90%;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0;
+  }
+
+
+  /* =======================================================
+     LOGO + HAMBURGER
+     ======================================================= */
+
+  .logo {
+    flex: 1;
+
+    min-width: 0;
+  }
+
+  .logo img {
+    height: 34px;
+  }
+
   .menu-toggle {
     display: flex;
+
+    align-items: center;
+
+    justify-content: center;
   }
 
-  /* Sembunyikan Nav Menu & Button saat normal */
+
+  /* =======================================================
+     MENU & BUTTON
+     DEFAULT = SEMBUNYI
+     ======================================================= */
+
   .nav-links,
   .auth-buttons {
     display: none;
+
     width: 100%;
+
+    flex: none;
   }
 
-  /* Tampilan ketika navbar dibuka (mobile-nav-open) */
+
+  /* =======================================================
+     SAAT HAMBURGER DIKLIK
+     
+     URUTAN:
+     
+     LOGO
+        ↓
+     NAVIGASI
+        ↓
+     BUTTON
+     ======================================================= */
+
   .navbar.mobile-nav-open .nav-links {
+
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
+
+    justify-content: flex-start;
+
     width: 100%;
-    gap: 12px;
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px solid var(--glass-border);
+
+    gap: 0;
+
+    margin-top: 18px;
+
+    padding-top: 10px;
+
+    border-top:
+      1px solid var(--glass-border);
   }
 
+
+  /* Menu satu per satu */
   .nav-links a {
+
     display: block;
+
     width: 100%;
+
     text-align: center;
-    padding: 10px 0;
+
+    padding: 11px 0;
+
     font-size: 1rem;
+
+    white-space: normal;
   }
 
+
+  /* Hilangkan garis bawah desktop */
   .nav-links a::after {
     display: none;
   }
 
-  .navbar.mobile-nav-open .auth-buttons {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    gap: 12px;
-    margin-top: 16px;
-    padding-bottom: 10px;
+
+  /* Hover mobile */
+  .nav-links a:hover {
+    color: var(--primary);
+
+    background: rgba(15, 56, 34, 0.04);
+
+    border-radius: 10px;
   }
 
+
+  /* =======================================================
+     BUTTON MOBILE
+     ======================================================= */
+
+  .navbar.mobile-nav-open .auth-buttons {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    gap: 12px;
+
+    margin-top: 16px;
+
+    padding-top: 16px;
+
+    padding-bottom: 12px;
+
+    border-top:
+      1px solid var(--glass-border);
+  }
+
+
+  /* Button full width */
   .auth-buttons .btn-started,
   .auth-buttons .btn-primary,
   .auth-buttons .btn-secondary {
+
     width: 100%;
+
+    max-width: 320px;
+
     text-align: center;
   }
 
+
+  /* =======================================================
+     HERO MOBILE
+     ======================================================= */
+
   .hero {
     padding-top: 110px;
+
     height: auto;
+
     min-height: 100vh;
+
     min-height: 100svh;
   }
 
   .hero-image img {
     height: auto;
+
     max-height: 340px;
   }
 
   .hero-btns {
     flex-direction: column;
+
     width: 100%;
   }
 
-  .btn-primary, .btn-secondary {
+  .btn-primary,
+  .btn-secondary {
     width: 100%;
   }
 
@@ -671,8 +1070,13 @@ img {
   }
 }
 
-/* Layar Sangat Kecil (HP <= 480px) */
+
+/* =========================================================
+   HP SANGAT KECIL
+   ========================================================= */
+
 @media (max-width: 480px) {
+
   .container {
     width: 90%;
   }
@@ -681,7 +1085,20 @@ img {
     height: 32px;
   }
 
+  .logo {
+    font-size: 1rem;
+  }
+
   .program-grid {
     grid-template-columns: 1fr;
+  }
+
+  .menu-toggle {
+    width: 34px;
+    height: 34px;
+  }
+
+  .bar {
+    width: 22px;
   }
 }
