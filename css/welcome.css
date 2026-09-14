@@ -9,7 +9,7 @@
   --light-bg: #f8f9fa;        /* Clean Off-White */
   --card-bg: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(255, 255, 255, 0.3);
-  
+
   /* Typography & Shadows */
   --font-main: 'Poppins', sans-serif;
   --font-arabic: 'Amiri', serif;
@@ -17,7 +17,7 @@
   --shadow-md: 0 12px 30px rgba(15, 56, 34, 0.08);
   --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
   --shadow-glow: 0 0 25px rgba(212, 175, 55, 0.3);
-  
+
   --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   --radius-lg: 24px;
   --radius-md: 16px;
@@ -171,12 +171,14 @@ img {
   z-index: 1000;
   border-bottom: 1px solid var(--glass-border);
   transition: var(--transition);
+  overflow: hidden; /* FIX: kunci supaya isi navbar tidak bisa bocor keluar layar */
 }
 
 .navbar .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .logo {
@@ -187,12 +189,22 @@ img {
   font-weight: 700;
   color: var(--primary);
   white-space: nowrap;
+  min-width: 0;    /* FIX: izinkan logo menyusut, jangan maksa lebar penuh */
+  overflow: hidden; /* FIX */
+  flex-shrink: 1;
 }
 
 .logo img {
   height: 38px;
   width: auto;
   object-fit: contain;
+  flex-shrink: 0;
+}
+
+.logo span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .nav-links {
@@ -236,8 +248,8 @@ img {
   background: none;
   border: none;
   padding: 0;
-  flex-shrink: 0;
-  margin-left: auto; /* Memastikan hamburger terdorong rapat ke kanan */
+  flex-shrink: 0;   /* FIX: tombol hamburger tidak pernah menyusut/terdorong */
+  margin-left: auto;
 }
 
 .bar {
@@ -685,6 +697,10 @@ img {
 
   .logo img {
     height: 32px;
+  }
+
+  .logo span {
+    max-width: 150px; /* FIX: batasi lebar teks logo di layar sempit, kalau kepanjangan dipotong "..." */
   }
 
   .basmalah {
