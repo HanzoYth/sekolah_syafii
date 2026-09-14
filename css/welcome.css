@@ -33,13 +33,15 @@
 
 html, body {
   width: 100%;
-  max-width: 100vw;
-  overflow-x: hidden !important; /* Mencegah scroll ke samping total */
+  overflow-x: hidden;   /* fallback untuk browser lama */
+  overflow-x: clip;     /* FIX BARU: browser modern -> benar-benar tidak bisa discroll ke samping (lebih kuat dari hidden untuk kasus fixed navbar) */
 }
 
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%; /* FIX BARU: matikan "font boosting" otomatis Android Chrome yg baru kalkulasi ulang saat discroll -> ini penyebab utama hamburger baru muncul setelah discroll */
 }
 
 body {
@@ -79,7 +81,7 @@ img {
 
 /* ======== TYPOGRAPHY & BUTTONS ======== */
 .section-title {
-  font-size: 2.5rem;
+  font-size: clamp(1.4rem, 4.5vw, 2.5rem); /* FIX BARU: font fluid, mulus di semua lebar layar */
   font-weight: 700;
   color: var(--primary);
   text-align: center;
@@ -112,7 +114,7 @@ img {
   padding: 14px 32px;
   border-radius: 50px;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem, 2.2vw, 0.95rem); /* FIX BARU */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -185,7 +187,7 @@ img {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 1.3rem;
+  font-size: clamp(1rem, 3.2vw, 1.3rem); /* FIX BARU: fluid */
   font-weight: 700;
   color: var(--primary);
   white-space: nowrap;
@@ -205,6 +207,7 @@ img {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 55vw; /* FIX BARU: batas aman biar teks logo gak pernah mepet ke tombol hamburger di layar manapun */
 }
 
 .nav-links {
@@ -286,6 +289,7 @@ img {
 /* ======== HERO SECTION ======== */
 .hero {
   min-height: 100vh;
+  min-height: 100svh; /* FIX BARU: stable viewport height -> tidak berubah saat address bar collapse/muncul waktu scroll, ini pemicu reflow lebar */
   display: flex;
   align-items: center;
   position: relative;
@@ -337,7 +341,7 @@ img {
 
 .basmalah {
   font-family: var(--font-arabic);
-  font-size: 2.5rem;
+  font-size: clamp(1.3rem, 5vw, 2.5rem); /* FIX BARU: fluid */
   color: var(--accent);
   margin-bottom: 12px;
   text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
@@ -345,7 +349,7 @@ img {
 }
 
 .hero h1 {
-  font-size: 3.2rem;
+  font-size: clamp(1.6rem, 6vw, 3.2rem); /* FIX BARU: fluid, gak loncat2 di breakpoint */
   font-weight: 700;
   line-height: 1.25;
   margin-bottom: 24px;
@@ -360,7 +364,7 @@ img {
 }
 
 .hero p {
-  font-size: 1.05rem;
+  font-size: clamp(0.9rem, 2.8vw, 1.05rem); /* FIX BARU: fluid */
   font-weight: 300;
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 40px;
@@ -464,7 +468,7 @@ img {
 }
 
 .program-card h3 {
-  font-size: 1.3rem;
+  font-size: clamp(1.1rem, 3.5vw, 1.3rem); /* FIX BARU: fluid */
   font-weight: 600;
   color: var(--primary);
   margin-bottom: 12px;
@@ -472,7 +476,7 @@ img {
 
 .program-card p {
   color: #6c757d;
-  font-size: 0.95rem;
+  font-size: clamp(0.88rem, 2.5vw, 0.95rem); /* FIX BARU: fluid */
   line-height: 1.6;
 }
 
@@ -520,7 +524,7 @@ img {
   display: flex;
   align-items: center;
   gap: 14px;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 2.8vw, 1rem); /* FIX BARU: fluid */
   font-weight: 500;
   color: var(--dark);
   padding: 12px 18px;
@@ -545,7 +549,7 @@ img {
   color: rgba(255, 255, 255, 0.6);
   padding: 36px 0;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 2.2vw, 0.9rem); /* FIX BARU: fluid */
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -563,10 +567,6 @@ img {
 
   .hero-btns {
     justify-content: center;
-  }
-
-  .hero h1 {
-    font-size: 2.6rem;
   }
 
   .keunggulan-wrapper {
@@ -633,23 +633,12 @@ img {
     padding-top: 110px;
     height: auto;
     min-height: 100vh;
+    min-height: 100svh;
   }
 
   .hero-image img {
     height: auto;
     max-height: 340px;
-  }
-
-  .hero h1 {
-    font-size: 1.85rem;
-  }
-
-  .basmalah {
-    font-size: 1.6rem;
-  }
-
-  .hero p {
-    font-size: 0.95rem;
   }
 
   .hero-btns {
@@ -662,7 +651,6 @@ img {
   }
 
   .section-title {
-    font-size: 1.7rem;
     margin-bottom: 36px;
   }
 
@@ -691,28 +679,8 @@ img {
     padding: 0 16px;
   }
 
-  .logo {
-    font-size: 1.1rem;
-  }
-
   .logo img {
     height: 32px;
-  }
-
-  .logo span {
-    max-width: 150px; /* FIX: batasi lebar teks logo di layar sempit, kalau kepanjangan dipotong "..." */
-  }
-
-  .basmalah {
-    font-size: 1.35rem;
-  }
-
-  .hero h1 {
-    font-size: 1.5rem;
-  }
-
-  .section-title {
-    font-size: 1.35rem;
   }
 
   .program-grid {
