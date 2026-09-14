@@ -34,6 +34,8 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 body {
@@ -42,6 +44,8 @@ body {
   background-color: var(--light-bg);
   line-height: 1.7;
   overflow-x: hidden;
+  max-width: 100%;
+  position: relative;
 }
 
 /* Mengunci scroll halaman saat dropdown menu mobile terbuka */
@@ -160,6 +164,7 @@ img {
   padding: 16px 0;
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
   z-index: 1000;
   border-bottom: 1px solid var(--glass-border);
@@ -228,6 +233,7 @@ img {
   background: none;
   border: none;
   padding: 0;
+  flex-shrink: 0;
 }
 
 .bar {
@@ -319,6 +325,7 @@ img {
 
 .hero-content {
   flex: 1.1;
+  min-width: 0;
 }
 
 .basmalah {
@@ -327,6 +334,8 @@ img {
   color: var(--accent);
   margin-bottom: 12px;
   text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .hero h1 {
@@ -335,6 +344,8 @@ img {
   line-height: 1.2;
   margin-bottom: 24px;
   letter-spacing: -1px;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .hero h1 .highlight {
@@ -354,6 +365,7 @@ img {
 .hero-btns {
   display: flex;
   gap: 16px;
+  flex-wrap: wrap;
 }
 
 /* Image Card Styling */
@@ -363,6 +375,7 @@ img {
   justify-content: center;
   align-items: center;
   position: relative;
+  min-width: 0;
 }
 
 .hero-image::before {
@@ -471,6 +484,7 @@ img {
 .keunggulan-img {
   flex: 1;
   position: relative;
+  min-width: 0;
 }
 
 .keunggulan-img img {
@@ -482,6 +496,7 @@ img {
 
 .keunggulan-content {
   flex: 1;
+  min-width: 0;
 }
 
 .keunggulan-content ul {
@@ -606,11 +621,15 @@ img {
   }
 
   .hero h1 {
-    font-size: 2.2rem;
+    font-size: 1.9rem;
   }
 
   .basmalah {
-    font-size: 2.2rem;
+    font-size: 1.7rem;
+  }
+
+  .hero p {
+    font-size: 0.95rem;
   }
 
   .hero-btns {
@@ -623,6 +642,42 @@ img {
   }
 
   .section-title {
-    font-size: 2rem;
+    font-size: 1.6rem;
+  }
+
+  .program-card {
+    padding: 36px 24px;
+  }
+
+  .program-card h3 {
+    font-size: 1.15rem;
+  }
+
+  .program-card p {
+    font-size: 0.85rem;
+  }
+
+  .keunggulan-content ul li {
+    font-size: 0.95rem;
+    padding: 10px 16px;
+  }
+}
+
+/* Layar sangat kecil (HP ramping, mis. <= 400px) */
+@media (max-width: 400px) {
+  .basmalah {
+    font-size: 1.4rem;
+  }
+
+  .hero h1 {
+    font-size: 1.6rem;
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+  }
+
+  .program-grid {
+    grid-template-columns: 1fr;
   }
 }
