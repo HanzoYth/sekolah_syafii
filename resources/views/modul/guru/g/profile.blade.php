@@ -51,7 +51,7 @@
                                     <label for="foto" class="custom-file-label">
                                         <i class="fa-solid fa-cloud-arrow-up"></i> Pilih Foto Baru
                                     </label>
-                                    <input type="file" id="foto" name="foto" class="file-input-hidden" accept="image/*" onchange="previewImage(event)" >
+                                    <input type="file" id="foto" name="foto" class="file-input-hidden" accept="image/*" onchange="previewImage(event)">
                                     <span class="file-name-indicator" id="fileName">Belum ada file baru dipilih</span>
                                 </div>
                             </div>
@@ -136,6 +136,61 @@
                                     <div class="input-icon-wrapper">
                                         <i class="fa-solid fa-house input-icon textarea-icon"></i>
                                         <textarea id="alamat" name="alamat" class="form-control" rows="3" required placeholder="Alamat domisili lengkap">{{$data_guru->alamat}}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION TERBARU: DOKUMEN PENDUKUNG (KTP, KK, IJAZAH) -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <span class="icon-box"><i class="fa-solid fa-file-contract"></i></span>
+                                <div>
+                                    <h3>Dokumen Pendukung</h3>
+                                    <small>Upload berkas identitas dan kualifikasi (PDF, JPG, JPEG, PNG - Maks. 2MB)</small>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <!-- INPUT KTP -->
+                                <div class="form-group">
+                                    <label for="ktp">Kartu Tanda Penduduk (KTP)</label>
+                                    <div class="photo-upload-wrapper" style="padding: 16px;">
+                                        <div class="photo-input-group">
+                                            <label for="ktp" class="custom-file-label">
+                                                <i class="fa-solid fa-id-card"></i> Pilih File KTP
+                                            </label>
+                                            <input type="file" id="ktp" class="file-input-hidden" accept="image/*,.pdf" onchange="previewDocument(event, 'fileNameKtp')">
+                                            <span class="file-name-indicator" id="fileNameKtp">Belum ada file dipilih</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- INPUT KK -->
+                                <div class="form-group">
+                                    <label for="kk">Kartu Keluarga (KK)</label>
+                                    <div class="photo-upload-wrapper" style="padding: 16px;">
+                                        <div class="photo-input-group">
+                                            <label for="kk" class="custom-file-label">
+                                                <i class="fa-solid fa-users"></i> Pilih File KK
+                                            </label>
+                                            <input type="file" id="kk" class="file-input-hidden" accept="image/*,.pdf" onchange="previewDocument(event, 'fileNameKk')">
+                                            <span class="file-name-indicator" id="fileNameKk">Belum ada file dipilih</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- INPUT IJAZAH -->
+                                <div class="form-group span-2">
+                                    <label for="ijazah">Ijazah Terakhir</label>
+                                    <div class="photo-upload-wrapper" style="padding: 16px;">
+                                        <div class="photo-input-group">
+                                            <label for="ijazah" class="custom-file-label">
+                                                <i class="fa-solid fa-file-certificate"></i> Pilih File Ijazah
+                                            </label>
+                                            <input type="file" id="ijazah" class="file-input-hidden" accept="image/*,.pdf" onchange="previewDocument(event, 'fileNameIjazah')">
+                                            <span class="file-name-indicator" id="fileNameIjazah">Belum ada file dipilih</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -300,6 +355,15 @@
                     document.getElementById('previewFoto').src = e.target.result;
                 }
                 reader.readAsDataURL(input.files[0]);
+                fileNameText.textContent = input.files[0].name;
+            }
+        }
+
+        /* Fungsi baru untuk menampilkan nama file dokumen (KTP, KK, Ijazah) */
+        function previewDocument(event, elementId) {
+            const input = event.target;
+            const fileNameText = document.getElementById(elementId);
+            if (input.files && input.files[0]) {
                 fileNameText.textContent = input.files[0].name;
             }
         }
