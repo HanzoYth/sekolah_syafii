@@ -8,8 +8,8 @@
     <!-- Google Fonts & Font Awesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{asset('/css/modul/guru/das_ad_gr.css')}}">
-    <link rel="stylesheet" href="{{asset('/css/modul/guru/dashboard_guru.css')}}    ">
+    <link rel="stylesheet" href="{{ asset('/css/modul/guru/das_ad_gr.css') }}?v={{ filemtime(base_path('/css/modul/guru/das_ad_gr.css')) }}">
+    <link rel="stylesheet" href="{{ asset('/css/modul/guru/dashboard_guru.css') }}?v={{ filemtime(base_path('/css/modul/guru/dashboard_guru.css')) }}">
 </head>
 <body>
 
