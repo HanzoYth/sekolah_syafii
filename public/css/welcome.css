@@ -1,14 +1,16 @@
 /* ======== ROOT VARIABLES & DESIGN SYSTEM ======== */
 :root {
-  --primary: #0f3822;         
-  --primary-light: #164e2e;   
-  --accent: #d4af37;          
-  --accent-light: #f3e5ab;    
-  --dark: #121814;            
-  --light-bg: #f8f9fa;        
+  /* Color Palette - Modern Islamic Luxury */
+  --primary: #0f3822;         /* Deep Emerald */
+  --primary-light: #164e2e;   /* Vibrant Emerald */
+  --accent: #d4af37;          /* Gold Accent */
+  --accent-light: #f3e5ab;    /* Soft Gold Glow */
+  --dark: #121814;            /* Dark Slate */
+  --light-bg: #f8f9fa;        /* Clean Off-White */
   --card-bg: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(255, 255, 255, 0.3);
 
+  /* Typography & Shadows */
   --font-main: 'Poppins', sans-serif;
   --font-arabic: 'Amiri', serif;
   --shadow-sm: 0 4px 12px rgba(15, 56, 34, 0.05);
@@ -31,15 +33,15 @@
 
 html, body {
   width: 100%;
-  overflow-x: hidden;
-  overflow-x: clip;
+  overflow-x: hidden;   /* fallback untuk browser lama */
+  overflow-x: clip;     /* FIX BARU: browser modern -> benar-benar tidak bisa discroll ke samping (lebih kuat dari hidden untuk kasus fixed navbar) */
 }
 
 html {
   scroll-behavior: smooth;
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+  text-size-adjust: 100%; /* FIX BARU: matikan "font boosting" otomatis Android Chrome yg baru kalkulasi ulang saat discroll -> ini penyebab utama hamburger baru muncul setelah discroll */
 }
 
 body {
@@ -50,6 +52,7 @@ body {
   position: relative;
 }
 
+/* Mengunci scroll halaman saat dropdown menu mobile terbuka */
 body.mobile-nav-locked {
   overflow: hidden;
 }
@@ -78,7 +81,7 @@ img {
 
 /* ======== TYPOGRAPHY & BUTTONS ======== */
 .section-title {
-  font-size: clamp(1.4rem, 4.5vw, 2.5rem);
+  font-size: clamp(1.4rem, 4.5vw, 2.5rem); /* FIX BARU: font fluid, mulus di semua lebar layar */
   font-weight: 700;
   color: var(--primary);
   text-align: center;
@@ -106,11 +109,12 @@ img {
   margin: 12px 0 0;
 }
 
+/* Modern Pill Buttons */
 .btn-primary, .btn-secondary, .btn-started {
   padding: 14px 32px;
   border-radius: 50px;
   font-weight: 600;
-  font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+  font-size: clamp(0.85rem, 2.2vw, 0.95rem); /* FIX BARU */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -156,9 +160,9 @@ img {
   box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
 }
 
-/* ======== NAVBAR ======== */
+/* ======== NAVBAR (GLASSMORPHISM) ======== */
 .navbar {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   padding: 14px 0;
@@ -169,35 +173,41 @@ img {
   z-index: 1000;
   border-bottom: 1px solid var(--glass-border);
   transition: var(--transition);
+  overflow: hidden; /* FIX: kunci supaya isi navbar tidak bisa bocor keluar layar */
 }
 
-.navbar-container {
+.navbar .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  width: 100%;
 }
 
 .logo {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: clamp(1rem, 3.2vw, 1.3rem);
+  font-size: clamp(1rem, 3.2vw, 1.3rem); /* FIX BARU: fluid */
   font-weight: 700;
   color: var(--primary);
   white-space: nowrap;
+  min-width: 0;    /* FIX: izinkan logo menyusut, jangan maksa lebar penuh */
+  overflow: hidden; /* FIX */
+  flex-shrink: 1;
 }
 
 .logo img {
   height: 38px;
   width: auto;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
-.nav-menu-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 36px;
+.logo span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 55vw; /* FIX BARU: batas aman biar teks logo gak pernah mepet ke tombol hamburger di layar manapun */
 }
 
 .nav-links {
@@ -241,6 +251,8 @@ img {
   background: none;
   border: none;
   padding: 0;
+  flex-shrink: 0;   /* FIX: tombol hamburger tidak pernah menyusut/terdorong */
+  margin-left: auto;
 }
 
 .bar {
@@ -277,7 +289,7 @@ img {
 /* ======== HERO SECTION ======== */
 .hero {
   min-height: 100vh;
-  min-height: 100svh;
+  min-height: 100svh; /* FIX BARU: stable viewport height -> tidak berubah saat address bar collapse/muncul waktu scroll, ini pemicu reflow lebar */
   display: flex;
   align-items: center;
   position: relative;
@@ -329,7 +341,7 @@ img {
 
 .basmalah {
   font-family: var(--font-arabic);
-  font-size: clamp(1.3rem, 5vw, 2.5rem);
+  font-size: clamp(1.3rem, 5vw, 2.5rem); /* FIX BARU: fluid */
   color: var(--accent);
   margin-bottom: 12px;
   text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
@@ -337,7 +349,7 @@ img {
 }
 
 .hero h1 {
-  font-size: clamp(1.6rem, 6vw, 3.2rem);
+  font-size: clamp(1.6rem, 6vw, 3.2rem); /* FIX BARU: fluid, gak loncat2 di breakpoint */
   font-weight: 700;
   line-height: 1.25;
   margin-bottom: 24px;
@@ -352,7 +364,7 @@ img {
 }
 
 .hero p {
-  font-size: clamp(0.9rem, 2.8vw, 1.05rem);
+  font-size: clamp(0.9rem, 2.8vw, 1.05rem); /* FIX BARU: fluid */
   font-weight: 300;
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 40px;
@@ -365,6 +377,7 @@ img {
   flex-wrap: wrap;
 }
 
+/* Image Card Styling */
 .hero-image {
   flex: 0.9;
   display: flex;
@@ -455,7 +468,7 @@ img {
 }
 
 .program-card h3 {
-  font-size: clamp(1.1rem, 3.5vw, 1.3rem);
+  font-size: clamp(1.1rem, 3.5vw, 1.3rem); /* FIX BARU: fluid */
   font-weight: 600;
   color: var(--primary);
   margin-bottom: 12px;
@@ -463,7 +476,7 @@ img {
 
 .program-card p {
   color: #6c757d;
-  font-size: clamp(0.88rem, 2.5vw, 0.95rem);
+  font-size: clamp(0.88rem, 2.5vw, 0.95rem); /* FIX BARU: fluid */
   line-height: 1.6;
 }
 
@@ -511,7 +524,7 @@ img {
   display: flex;
   align-items: center;
   gap: 14px;
-  font-size: clamp(0.9rem, 2.8vw, 1rem);
+  font-size: clamp(0.9rem, 2.8vw, 1rem); /* FIX BARU: fluid */
   font-weight: 500;
   color: var(--dark);
   padding: 12px 18px;
@@ -536,11 +549,11 @@ img {
   color: rgba(255, 255, 255, 0.6);
   padding: 36px 0;
   text-align: center;
-  font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+  font-size: clamp(0.8rem, 2.2vw, 0.9rem); /* FIX BARU: fluid */
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* ======== RESPONSIVE MOBILE FIXES ======== */
+/* ======== RESPONSIVE DESIGN (FIXED MOBILE) ======== */
 @media (max-width: 992px) {
   .hero-wrapper {
     flex-direction: column;
@@ -560,44 +573,46 @@ img {
     flex-direction: column-reverse;
     gap: 40px;
   }
+
+  .keunggulan-img {
+    width: 100%;
+  }
 }
 
 @media (max-width: 768px) {
+  /* Fix Container Navbar di Mobile agar Pas dengan Tepi Layar */
+  .navbar .container {
+    width: 100%;
+    padding: 0 16px;
+  }
+
   .menu-toggle {
     display: flex;
   }
 
-  .nav-menu-wrapper {
+  .nav-links,
+  .auth-buttons {
     display: none;
-    flex-direction: column;
+    flex-basis: 100%;
     width: 100%;
-    gap: 16px;
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid var(--glass-border);
   }
 
-  .navbar.mobile-nav-open .nav-menu-wrapper {
+  .navbar.mobile-nav-open .nav-links,
+  .navbar.mobile-nav-open .auth-buttons {
     display: flex;
-    animation: fadeInSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   .nav-links {
     flex-direction: column;
-    width: 100%;
     gap: 0;
-    text-align: center;
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--glass-border);
   }
 
   .nav-links a {
     display: block;
-    padding: 12px 0;
-    font-size: 1rem;
-    border-radius: var(--radius-sm);
-  }
-
-  .nav-links a:hover {
-    background: rgba(15, 56, 34, 0.05);
+    padding: 10px 4px;
   }
 
   .nav-links a::after {
@@ -605,12 +620,13 @@ img {
   }
 
   .auth-buttons {
-    width: 100%;
+    justify-content: center;
+    padding-top: 10px;
+    padding-bottom: 4px;
   }
 
   .auth-buttons .btn-started {
     width: 100%;
-    padding: 12px;
   }
 
   .hero {
@@ -638,25 +654,29 @@ img {
     margin-bottom: 36px;
   }
 
-  .program, .keunggulan {
+  .program {
+    padding: 60px 0;
+  }
+
+  .program-card {
+    padding: 28px 18px;
+  }
+
+  .keunggulan {
     padding: 60px 0;
   }
 }
 
-@keyframes fadeInSlideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+/* Layar Sangat Kecil (HP <= 480px) */
 @media (max-width: 480px) {
   .container {
-    width: 92%;
+    width: 90%;
+  }
+
+  /* Kunci utama agar Navbar tidak pernah bergeser keluar layar */
+  .navbar .container {
+    width: 100%;
+    padding: 0 16px;
   }
 
   .logo img {
