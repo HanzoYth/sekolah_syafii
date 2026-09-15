@@ -61,6 +61,8 @@ class file_surat extends Controller
         $jumlah_potongan = $jumlah_gaji_bisa_kepotong - ($data_gaji->potongan_tidak_hadir + $data_gaji->potongan_keterlambatan + $data_gaji->kasbon);
         $jumlah_gaji_bersih = $jumlah_potongan > 0 ? $data_gaji->gaji_pokok + $jumlah_potongan : $data_gaji->gaji_pokok;
 
+        dd(public_path());
+
         $pdf = Pdf::loadView("surat/surat_slip_gaji",[
             "data_guru" => $guru,
             "data_gaji" => $data_gaji,
