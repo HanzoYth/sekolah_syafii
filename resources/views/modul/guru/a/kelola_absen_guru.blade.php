@@ -54,7 +54,7 @@
             </div>
 
             <!-- FORM UNTUK MENYIMPAN PERUBAHAN ABSENSI -->
-            <form action="/gr/keabs/" method="POST">
+            <form action="/gr/keabs" method="POST">
                 @csrf
                 
                 <!-- TABEL ABSENSI -->
