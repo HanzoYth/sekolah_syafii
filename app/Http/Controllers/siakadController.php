@@ -24,6 +24,9 @@ class siakadController extends Controller
     function tambah_kelas(){
        return view("/modul/siakad/tambahKelas");
     }
+    function absenSiswa(){
+       return view("/modul/siakad/absensisiswa");
+    }
     function tampilanPembayaranPemeliharaan(){
        return view("/modul/siakad/pemeliharaan");
        

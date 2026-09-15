@@ -1,0 +1,565 @@
+/* =========================================================
+   ABSENSI TAHFIZ — STYLES
+   Palet: Emerald & Gold (selaras dengan siswa_tahfiz.css)
+   ========================================================= */
+
+:root {
+    --emerald-900: #064e3b;
+    --emerald-700: #047857;
+    --emerald-500: #10b981;
+    --emerald-50:  #ecfdf5;
+    --gold-600:    #b8860b;
+    --gold-500:    #d4af37;
+    --gold-50:     #fdf8ec;
+    --red-600:     #dc2626;
+    --red-50:      #fef2f2;
+    --orange-600:  #ea580c;
+    --orange-50:   #fff7ed;
+    --blue-600:    #2563eb;
+    --blue-50:     #eff6ff;
+    --gray-900:    #1f2937;
+    --gray-600:    #6b7280;
+    --gray-300:    #d1d5db;
+    --gray-100:    #f3f4f6;
+    --white:       #ffffff;
+    --radius-md:   10px;
+    --radius-lg:   16px;
+    --shadow-sm:   0 1px 3px rgba(0,0,0,0.06);
+    --shadow-md:   0 4px 14px rgba(0,0,0,0.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-900);
+    margin: 0;
+}
+
+.main-content {
+    padding: 28px 32px;
+}
+
+/* ---------- 1. PAGE HEADER ---------- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.page-header-left .breadcrumb {
+    font-size: 13px;
+    color: var(--gray-600);
+    margin: 0 0 6px;
+}
+
+.page-header-left .breadcrumb span {
+    color: var(--emerald-700);
+    font-weight: 600;
+}
+
+.page-header-left h1 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gray-900);
+}
+
+.page-header-right {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-outline {
+    background: var(--white);
+    border: 1px solid var(--gray-300);
+    color: var(--gray-900);
+    padding: 10px 16px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background .15s ease;
+}
+
+.btn-outline:hover { background: var(--gray-100); }
+
+.btn-primary-gold {
+    background: linear-gradient(135deg, var(--gold-500), var(--gold-600));
+    border: none;
+    color: var(--white);
+    padding: 10px 18px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-sm);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.btn-primary-gold:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* ---------- 2. QUICK STATS ---------- */
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.stat-pill {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid var(--emerald-500);
+}
+
+.stat-pill i {
+    font-size: 20px;
+    color: var(--emerald-700);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--emerald-50);
+    border-radius: 50%;
+}
+
+.stat-pill h4 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.stat-pill p {
+    margin: 2px 0 0;
+    font-size: 12.5px;
+    color: var(--gray-600);
+}
+
+.stat-pill.hadir { border-left-color: var(--emerald-500); }
+.stat-pill.hadir i { color: var(--emerald-700); background: var(--emerald-50); }
+
+.stat-pill.sakit { border-left-color: var(--orange-600); }
+.stat-pill.sakit i { color: var(--orange-600); background: var(--orange-50); }
+
+.stat-pill.izin { border-left-color: var(--blue-600); }
+.stat-pill.izin i { color: var(--blue-600); background: var(--blue-50); }
+
+.stat-pill.alpa,
+.stat-pill.alert { border-left-color: var(--red-600); }
+.stat-pill.alpa i,
+.stat-pill.alert i { color: var(--red-600); background: var(--red-50); }
+
+/* ---------- 3. TOOLBAR / FILTER ---------- */
+.toolbar-box {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.search-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gray-100);
+    border-radius: var(--radius-md);
+    padding: 9px 14px;
+    min-width: 240px;
+    flex: 1;
+}
+
+.search-field i { color: var(--gray-600); font-size: 13px; }
+
+.search-field input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    font-family: inherit;
+    width: 100%;
+}
+
+.toolbar-filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.date-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gray-100);
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+}
+
+.date-field i { color: var(--emerald-700); font-size: 13px; }
+
+.date-field input[type="date"] {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.toolbar-filters select {
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-md);
+    padding: 9px 12px;
+    font-size: 13.5px;
+    font-family: inherit;
+    background: var(--white);
+    color: var(--gray-900);
+    cursor: pointer;
+}
+
+/* ---------- 4. TABLE ---------- */
+.table-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.table-responsive { overflow-x: auto; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+thead th {
+    text-align: left;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: var(--gray-600);
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--gray-100);
+    white-space: nowrap;
+}
+
+th.col-status { min-width: 320px; }
+
+tbody td {
+    padding: 14px 18px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: middle;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--gray-100); }
+
+.student-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar-sm {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--emerald-50);
+    color: var(--emerald-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.cell-strong { font-weight: 600; color: var(--gray-900); }
+
+/* ---------- Status radio group (khas absensi) ---------- */
+.attendance-status-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.status-radio {
+    position: relative;
+    cursor: pointer;
+}
+
+.status-radio input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.status-radio span {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 500;
+    border: 1px solid var(--gray-300);
+    color: var(--gray-600);
+    background: var(--white);
+    transition: all .15s ease;
+}
+
+.status-radio.hadir input:checked + span {
+    background: var(--emerald-500);
+    border-color: var(--emerald-500);
+    color: var(--white);
+}
+
+.status-radio.sakit input:checked + span {
+    background: var(--orange-600);
+    border-color: var(--orange-600);
+    color: var(--white);
+}
+
+.status-radio.izin input:checked + span {
+    background: var(--blue-600);
+    border-color: var(--blue-600);
+    color: var(--white);
+}
+
+.status-radio.alpa input:checked + span {
+    background: var(--red-600);
+    border-color: var(--red-600);
+    color: var(--white);
+}
+
+.input-keterangan {
+    width: 100%;
+    min-width: 160px;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+}
+
+.input-keterangan:focus { border-color: var(--emerald-500); }
+
+/* ---------- Badge (dipakai di modal riwayat) ---------- */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge.success { background: var(--emerald-50); color: var(--emerald-700); }
+.badge.warning { background: var(--orange-50); color: var(--orange-600); }
+.badge.nonaktif { background: var(--gray-100); color: var(--gray-600); }
+
+/* ---------- Action icons ---------- */
+.action-icons {
+    display: flex;
+    gap: 8px;
+}
+
+.action-icons button {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-300);
+    background: var(--white);
+    color: var(--gray-600);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s ease;
+}
+
+.action-icons button:hover { background: var(--gray-100); }
+.action-icons button.danger:hover { background: var(--red-50); color: var(--red-600); }
+
+/* ---------- Empty state ---------- */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray-600);
+}
+
+.empty-state i {
+    font-size: 42px;
+    color: var(--gray-300);
+    margin-bottom: 14px;
+}
+
+.empty-state h4 {
+    margin: 0 0 6px;
+    color: var(--gray-900);
+}
+
+/* ---------- 5. MODAL ---------- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.modal-overlay.show { display: flex; }
+
+.modal-box {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    width: 480px;
+    max-width: 92vw;
+    max-height: 88vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.modal-box-lg { width: 640px; }
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.modal-header h3 { margin: 0; font-size: 17px; }
+
+.modal-close {
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    color: var(--gray-600);
+    cursor: pointer;
+}
+
+.modal-body { padding: 20px 22px; }
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 22px;
+    border-top: 1px solid var(--gray-100);
+}
+
+.btn-back {
+    background: var(--white);
+    border: 1px solid var(--gray-300);
+    padding: 9px 16px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 13.5px;
+}
+
+/* ---------- Student profile (dalam modal) ---------- */
+.student-profile {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.student-profile .avatar {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--emerald-50);
+    color: var(--emerald-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.student-info h4 { margin: 0 0 2px; font-size: 16px; }
+.student-info p { margin: 0; font-size: 12.5px; color: var(--gray-600); }
+
+/* ---------- Recap stats (dalam modal riwayat) ---------- */
+.recap-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.recap-pill {
+    text-align: center;
+    padding: 12px 8px;
+    border-radius: var(--radius-md);
+    background: var(--gray-100);
+}
+
+.recap-pill h5 { margin: 0; font-size: 18px; font-weight: 700; }
+.recap-pill p { margin: 2px 0 0; font-size: 11.5px; color: var(--gray-600); }
+
+.recap-pill.hadir { background: var(--emerald-50); }
+.recap-pill.hadir h5 { color: var(--emerald-700); }
+
+.recap-pill.sakit { background: var(--orange-50); }
+.recap-pill.sakit h5 { color: var(--orange-600); }
+
+.recap-pill.izin { background: var(--blue-50); }
+.recap-pill.izin h5 { color: var(--blue-600); }
+
+.recap-pill.alpa { background: var(--red-50); }
+.recap-pill.alpa h5 { color: var(--red-600); }
+
+/* ---------- History table (compact, dalam modal) ---------- */
+.history-section h5 { margin: 0 0 10px; font-size: 14px; }
+
+.table-compact { min-width: 0; }
+
+.table-compact th,
+.table-compact td {
+    padding: 9px 10px;
+    font-size: 13px;
+}
+
+.text-green { color: var(--emerald-700); }
+.text-red { color: var(--red-600); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+    .quick-stats { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 700px) {
+    .quick-stats { grid-template-columns: repeat(2, 1fr); }
+    .toolbar-box { flex-direction: column; align-items: stretch; }
+    .modal-box-lg { width: 92vw; }
+}

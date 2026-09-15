@@ -117,6 +117,12 @@
                                 <span>Profil</span>
                             </a>
                         </li>
+                        <li class="menu-item">
+                            <a href='/sk/ass'>
+                                <i class="fa-solid fa-id-card"></i>
+                                <span>absenSiswa</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
 

@@ -161,6 +161,10 @@ Route::get("/sk/dsp",[siswaController::class,"DetailSlipPembayaran"]);
 Route::get('/sk/ps',[siswaController::class,"pengumumanSiswa"]);
 
 
+//guru
+Route::get('/sk/ass',[siswaController::class,"absenSiswa"]);
+
+
 //yayasan punya
 Route::get("/yys",[yayasanController::class,"dashboard_Yayasan"]);
 Route::get("/pby",[pembayaranController::class,"Ambil_DataPembayaran"]);
