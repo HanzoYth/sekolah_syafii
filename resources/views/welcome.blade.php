@@ -44,8 +44,6 @@
         </div>
     </nav>
 
-    {{ dd(asset('img/foto_1.jpeg')) }}
-
     <!-- ======== HERO SECTION ======== -->
     <section id="home" class="hero" style="--hero-bg: url('{{ asset('img/foto_1.jpeg') }}');">
         <div class="container">
@@ -63,7 +61,7 @@
 
                 <!-- Kanan: Foto -->
                 <div class="hero-image" data-aos="fade-left" data-aos-duration="1000">
-                    <img src="{{asset('img/ft_1.jpeg')}}" alt="Hero Image">
+                    <img src="{{asset('img/foto_2.jpeg')}}" alt="Hero Image">
                 </div>
             </div>
         </div>
