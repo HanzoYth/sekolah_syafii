@@ -45,7 +45,7 @@
     </nav>
 
     <!-- ======== HERO SECTION ======== -->
-    <section id="home" class="hero" style="--hero-bg: url('{{ asset('img/ft_1.jpeg') }}');">
+    <section id="home" class="hero" style="--hero-bg: url('public/img/bg_skl.jpeg');">
         <div class="container">
             <div class="hero-wrapper">
                 <!-- Kiri: Teks -->
@@ -61,7 +61,7 @@
 
                 <!-- Kanan: Foto -->
                 <div class="hero-image" data-aos="fade-left" data-aos-duration="1000">
-                    <img src="{{asset('public/img/ft_2.jpeg')}}" alt="Hero Image">
+                    <img src="{{asset('public/img/ft_1.jpeg')}}" alt="Hero Image">
                 </div>
             </div>
         </div>
