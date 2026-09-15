@@ -6,7 +6,7 @@
     <title>Absensi - Tahfiz Digital</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/modul/tahfiz/absensi_tahfiz.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/modul/siakad/absensiSiswa.css') }}">
 </head>
 <body>
 
