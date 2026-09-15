@@ -43,12 +43,9 @@
             </div>
         </div>
     </nav>
-    @php
-        dd(public_path('img/ft_1.jpeg'));
-    @endphp
 
     <!-- ======== HERO SECTION ======== -->
-    <section id="home" class="hero" style="--hero-bg: url('{{ asset('img/ft_1.jpeg') }}');">
+    <section id="home" class="hero" style="--hero-bg: url('{{ asset('img/foto_1.jpeg') }}');">
         <div class="container">
             <div class="hero-wrapper">
                 <!-- Kiri: Teks -->
@@ -100,7 +97,7 @@
         <div class="container">
             <div class="keunggulan-wrapper">
                 <div class="keunggulan-img" data-aos="fade-right">
-                    <img src="{{asset('img/ft_2.jpeg')}}" alt="Mengaji">
+                    <img src="{{asset('img/foto_1.jpeg')}}" alt="Mengaji">
                 </div>
                 <div class="keunggulan-content" data-aos="fade-left">
                     <h2 class="section-title left">Mengapa Memilih Kami?</h2>
