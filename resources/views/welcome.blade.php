@@ -61,7 +61,7 @@
 
                 <!-- Kanan: Foto -->
                 <div class="hero-image" data-aos="fade-left" data-aos-duration="1000">
-                    <img src="{{asset('public/img/foto_2.jpeg')}}" alt="Hero Image">
+                    <img src="{{asset('public/img/ft_2.jpeg')}}" alt="Hero Image">
                 </div>
             </div>
         </div>
