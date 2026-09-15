@@ -44,6 +44,8 @@
         </div>
     </nav>
 
+    {{ dd(asset('img/foto_1.jpeg')) }}
+
     <!-- ======== HERO SECTION ======== -->
     <section id="home" class="hero" style="--hero-bg: url('{{ asset('img/foto_1.jpeg') }}');">
         <div class="container">
