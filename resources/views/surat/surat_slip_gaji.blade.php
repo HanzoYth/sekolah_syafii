@@ -210,7 +210,7 @@
                 @php
                     // Embed logo sebagai base64 agar tetap muncul saat di-export ke PDF (dompdf/mpdf
                     // tidak bisa mengambil gambar lewat URL asset() secara default).
-                    $logoPath = public_path('img/logo_sklh.png');
+                    $logoPath = base_path('img/logo_sklh.png');
                     $logoData = null;
                     if (file_exists($logoPath)) {
                         $logoType = pathinfo($logoPath, PATHINFO_EXTENSION);
