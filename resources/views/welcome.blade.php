@@ -43,6 +43,9 @@
             </div>
         </div>
     </nav>
+    @php
+        dd(public_path('img/ft_1.jpeg'));
+    @endphp
 
     <!-- ======== HERO SECTION ======== -->
     <section id="home" class="hero" style="--hero-bg: url('{{ asset('img/ft_1.jpeg') }}');">
