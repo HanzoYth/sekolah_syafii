@@ -27,6 +27,9 @@
                 <p>Masukkan 6 digit kode keamanan yang telah dikirimkan ke nomor WhatsApp / Email Anda.</p>
             </div>
 
+
+            <input type="hidden" value="{{$kode_otp}}" id="otp">
+
             <!-- Form OTP -->
             <form action="/gr/ckotp" method="POST" class="otp-form">
                 @csrf

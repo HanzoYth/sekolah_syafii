@@ -3,6 +3,7 @@ let timer = document.getElementById("timer");
 let inp_otp = document.querySelectorAll(".otp-field");
 let button_verify_otp = document.querySelector(".btn-verify");
 let inp_value_otp = document.getElementById("value_otp");
+let otp = document.getElementById("otp").value.split("");
 
 
 let [menit, detik] = timer.textContent.split(":").map(Number);
@@ -28,6 +29,10 @@ const setWaktu = setInterval(() => {
 
 
 var kode_otp = "";
+
+for (let i = 0; i < otp.length;i++){
+    inp_otp[i].value = otp[i];
+}
 
 inp_otp.forEach((data,idx) => {
     data.addEventListener("keydown",(e) => {
