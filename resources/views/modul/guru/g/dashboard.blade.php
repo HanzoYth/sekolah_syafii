@@ -52,7 +52,7 @@
                         </div>
                         <div class="stat-data">
                             <span class="label">Kehadiran Bulan Ini</span>
-                            <h3>{{$jumlah_kehadiran_bulanan}}<small>/ 25 Hari</small></h3>
+                            <h3>{{$jumlah_kehadiran_bulanan}}<small>/ {{$jumlah_hari_aktif}} Hari</small></h3>
                         </div>
                     </div>
 

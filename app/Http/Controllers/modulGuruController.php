@@ -71,6 +71,16 @@ class modulGuruController extends Controller
                 $cek_sudah_absen_oleh_admin = true;
             }
 
+            $awal_bulan = Carbon::now()->startOfMonth();
+            $akhir_bulan = Carbon::now()->endOfMonth();
+            $jumlah_hari_aktif = 0;
+
+            for ($data  = $awal_bulan->copy() ; $data <= $akhir_bulan; $data->addDays()){
+                if (strtolower(Carbon::parse($data)->translatedFormat("l")) != "minggu"){
+                    $jumlah_hari_aktif ++;
+                }
+            }
+
             
             return view("modul/guru/g/dashboard",[
                 "data_guru" => $data_guru,
@@ -86,7 +96,8 @@ class modulGuruController extends Controller
                 "cek_status_absen" => $cek_status_absen,
                 "cek_sudah_absen_oleh_admin" => $cek_sudah_absen_oleh_admin,
                 "cek_sudah_keluar" => $cek_sudah_keluar,
-                "data_pengumuman" => $data_pengumuman
+                "data_pengumuman" => $data_pengumuman,
+                "jumlah_hari_aktif" => $jumlah_hari_aktif
             ]);
         }
         return redirect("/reg");
