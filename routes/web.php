@@ -85,7 +85,6 @@ Route::post("/gr/edpggr",[modulGuruController::class,"Edit_pengumumanGuru"]);
 Route::get("/gr/hppggr/{id}",[modulGuruController::class,"hapus_pengumumanGuru"]);
 
 //ini otp
-Route::get("/gr/totp",[otpController::class,"tampilanOtp"]);
 Route::get("/gr/otp",[otpController::class,"createOtp"]);
 Route::post("/gr/ckotp",[otpController::class,"cekOtp"]);
 

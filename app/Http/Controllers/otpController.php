@@ -12,13 +12,6 @@ use App\Services\FonteService;
 
 class otpController extends Controller
 {
-    function tampilanOtp(){
-        if (session("hasLogin")){
-            return view("auth/otp");
-        }
-        return redirect("/reg");
-    }
-
     function createOtp(){
         if (otp_guru::where("guru_id",session("id"))->exists()){
             otp_guru::where("guru_id",session("id"))->delete();
@@ -36,7 +29,7 @@ class otpController extends Controller
         $foonte = new FonteService();
         $foonte->sendMassage($data_guru->getUser()->first()->noWa,"ini kode Otp anda ($kode) jangan di perlihatkan oleh orang lain");
         
-        return redirect("/gr/totp",[
+        return view("auth/otp",[
             $kode_otp = $kode
         ]);
     }
