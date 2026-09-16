@@ -27,12 +27,15 @@ const setWaktu = setInterval(() => {
     }
 },1000)
 
-console.log("hello world");
 var kode_otp = "";
 
+
+//ini otomatis
 for (let i = 0; i < otp.length;i++){
     inp_otp[i].value = parseInt(otp[i]);
+    inp_otp[otp.length - 1].focus();
 }
+
 
 inp_otp.forEach((data,idx) => {
     data.addEventListener("keydown",(e) => {
