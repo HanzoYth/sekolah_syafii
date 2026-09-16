@@ -27,7 +27,7 @@ const setWaktu = setInterval(() => {
     }
 },1000)
 
-
+console.log("hello world");
 var kode_otp = "";
 
 for (let i = 0; i < otp.length;i++){
