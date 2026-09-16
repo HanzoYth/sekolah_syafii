@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
             overlay.classList.add("hide");
             wrapper.classList.add("show");
             isiOtpOtomatis(String(data.kode_otp));
-            mulaiTimer(data.expired_in);
         }, delay);
     })
     .catch((err) => {
@@ -45,19 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
         inpValueOtp.value = kode;
     }
 
-    function mulaiTimer(sisaDetik) {
-        let waktu = sisaDetik;
-        const setWaktu = setInterval(() => {
-            const m = Math.floor(waktu / 60);
-            const d = (waktu % 60).toString().padStart(2, "0");
-            timerEl.textContent = `${m}:${d}`;
-            waktu--;
-            if (waktu < 0) {
-                clearInterval(setWaktu);
-                timerEl.textContent = "0:00";
-            }
-        }, 1000);
-    }
 
     // navigasi antar kotak input saat user mengetik manual
     inpOtp.forEach((el, idx) => {
