@@ -31,7 +31,7 @@ console.log("hello world");
 var kode_otp = "";
 
 for (let i = 0; i < otp.length;i++){
-    inp_otp[i].value = otp[i];
+    inp_otp[i].value = parseInt(otp[i]);
 }
 
 inp_otp.forEach((data,idx) => {
