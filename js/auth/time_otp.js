@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
             inpOtp[idx].removeAttribute("disabled");
             inpOtp[idx].value = digit;
         });
+        inpOtp[inpOtp.length - 1].focus();
         inpValueOtp.value = kode;
     }
 
