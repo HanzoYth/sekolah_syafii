@@ -30,13 +30,16 @@ const setWaktu = setInterval(() => {
 var kode_otp = "";
 
 
-//ini otomatis
-for (let i = 0; i < otp.length;i++){
+// ini terisi otomatis
+let kode_otp_auto = "";
+for (let i = 0; i < otp.length; i++){
     inp_otp[i].value = parseInt(otp[i]);
-    inp_otp[otp.length - 1].focus();
+    kode_otp_auto += inp_otp[i].value;
 }
+inp_value_otp.value = kode_otp_auto;
 
 
+//ini terisi manual
 inp_otp.forEach((data,idx) => {
     data.addEventListener("keydown",(e) => {
         if (e.key == "Backspace"){
@@ -49,7 +52,7 @@ inp_otp.forEach((data,idx) => {
             data.value != "" ? data.value = "" : inp_otp[(idx - 1) <= 0 ? 0 : idx-1].value = "";
         }
     })
-    data.addEventListener("input",() => {
+    data.addEventListener("input",function(){
         if (this.value != ""){
             if ((idx + 1) < 6){
                 data.setAttribute("disabled","");
@@ -58,6 +61,7 @@ inp_otp.forEach((data,idx) => {
             }
         }
         if (inp_otp[5].value != ""){
+            kode_otp = "";
             inp_otp.forEach((data1) => {
                 kode_otp += data1.value;
             })
