@@ -30,7 +30,7 @@ class otpController extends Controller
         $foonte->sendMassage($data_guru->getUser()->first()->noWa,"ini kode Otp anda ($kode) jangan di perlihatkan oleh orang lain");
         
         return view("auth/otp",[
-            $kode_otp => $kode
+            "kode_otp" => $kode
         ]);
     }
 
