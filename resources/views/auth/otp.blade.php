@@ -43,7 +43,7 @@
                 </div>
 
                 <div class="otp-timer-info">
-                    <p>Tidak menerima kode? <a href="/gr/otp" class="btn-resend">Kirim Ulang</a></p>
+                    <p>Tidak menerima kode? <a href="/gr/totp" class="btn-resend">Kirim Ulang</a></p>
                     <div class="timer-badge"><i class="fa-regular fa-clock"></i> <span id="timer">--:--</span></div>
                 </div>
 
