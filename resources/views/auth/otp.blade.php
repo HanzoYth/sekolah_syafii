@@ -67,6 +67,7 @@
 
         </div>
     </div>
+    <x-warning />
     <script src="{{ asset('js/auth/time_otp.js') }}?v={{ filemtime(base_path('js/auth/time_otp.js')) }}"></script>
 </body>
 </html>
