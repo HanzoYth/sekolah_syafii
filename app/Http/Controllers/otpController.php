@@ -18,8 +18,12 @@ class otpController extends Controller
         }
 
         $data_guru = guru::where("id",session('id'))->first();
-        
+
         $kode = random_int(100000,999999);
+        if (otp_guru::where("kode_otp",$kode)->exists()){
+            return redirect("/gr/otp");
+        }   
+
         otp_guru::create([
             "kode_otp" => $kode,
             "otp_expired_at" => now()->addMinute(5),
