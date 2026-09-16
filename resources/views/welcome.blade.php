@@ -18,7 +18,7 @@
     <nav class="navbar" id="navbar">
         <div class="container navbar-container">
             <a href="#" class="logo">
-                <img src="{{asset('img/logo.png')}}" alt="Logo">
+                <img src="{{asset('public/img/logo.png')}}" alt="Logo">
                 <span>Imam Syafi'i</span>
             </a>
             
