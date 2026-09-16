@@ -9,13 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const MIN_LOADING = 600; // ms, biar spinner minimal sempat kelihatan
     const startTime = performance.now();
 
-    fetch("/gr/otp", {
-        method: "POST",
-        headers: {
-            "X-CSRF-TOKEN": csrfToken,
-            "Accept": "application/json",
-        },
-    })
+    fetch("/gr/otp")
     .then((res) => {
         if (!res.ok) throw new Error("Gagal membuat OTP");
         return res.json();
