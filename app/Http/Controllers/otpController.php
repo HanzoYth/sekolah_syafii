@@ -39,7 +39,7 @@ class otpController extends Controller
         $otp_d = otp_guru::where("guru_id",session('id'))->first();
         $absensi_guru = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",session("id"))->first();
         if ($request->otp != $otp_d->kode_otp){
-            return back();
+            return back()->with("eror","kode otp salah");
         }
 
         $absensi_guru->status_kehadiran = "h";
