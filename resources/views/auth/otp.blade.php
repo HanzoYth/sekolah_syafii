@@ -33,12 +33,12 @@
                 
                 <!-- Group Input 6 Digit -->
                 <div class="otp-inputs">
-                    <input type="text" maxlength="1" class="otp-field" autofocus placeholder="•" required>
-                    <input type="text" maxlength="1" class="otp-field" placeholder="•" disabled required>
-                    <input type="text" maxlength="1" class="otp-field" placeholder="•" disabled required>
-                    <input type="text" maxlength="1" class="otp-field" placeholder="•" disabled required>
-                    <input type="text" maxlength="1" class="otp-field" placeholder="•" disabled required>
-                    <input type="text" maxlength="1" class="otp-field" placeholder="•" disabled required>
+                    <input type="number" min="0" max="9" class="otp-field" autofocus placeholder="•" required>
+                    <input type="number" min="0" max="9" class="otp-field" placeholder="•" disabled required>
+                    <input type="number" min="0" max="9" class="otp-field" placeholder="•" disabled required>
+                    <input type="number" min="0" max="9" class="otp-field" placeholder="•" disabled required>
+                    <input type="number" min="0" max="9" class="otp-field" placeholder="•" disabled required>
+                    <input type="number" min="0" max="9" class="otp-field" placeholder="•" disabled required>
                     <input type="hidden" id="value_otp" name="otp">
                 </div>
 
