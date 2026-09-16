@@ -12,35 +12,38 @@ use App\Services\FonteService;
 
 class otpController extends Controller
 {
-    function createOtp(){
-        $waktu_mulai = microtime(true);
+    function tampilan_otp(){
+        return view("auth/otp");
+    }
 
-        if (otp_guru::where("guru_id",session("id"))->exists()){
-            otp_guru::where("guru_id",session("id"))->delete();
+    function createOtp(){
+        if (otp_guru::where("guru_id", session("id"))->exists()) {
+            otp_guru::where("guru_id", session("id"))->delete();
         }
 
-        $data_guru = guru::where("id",session('id'))->first();
+        $data_guru = guru::where("id", session('id'))->first();
 
-        $kode = random_int(100000,999999);
-        if (otp_guru::where("kode_otp",$kode)->exists()){
-            return redirect("/gr/otp");
-        }   
+        do {
+            $kode = random_int(100000, 999999);
+        } while (otp_guru::where("kode_otp", $kode)->exists());
+
+        $expiredAt = now()->addMinutes(2); // samain sama durasi timer 01:59 di view
 
         otp_guru::create([
-            "kode_otp" => $kode,
-            "otp_expired_at" => now()->addMinute(5),
-            "guru_id" => session("id")
+            "kode_otp"       => $kode,
+            "otp_expired_at" => $expiredAt,
+            "guru_id"        => session("id"),
         ]);
 
         $foonte = new FonteService();
-        $foonte->sendMassage($data_guru->getUser()->first()->noWa,"ini kode Otp anda ($kode) jangan di perlihatkan oleh orang lain");
+        $foonte->sendMassage(
+            $data_guru->getUser()->first()->noWa,
+            "ini kode Otp anda ($kode) jangan di perlihatkan oleh orang lain"
+        );
 
-        $waktu_selesai = microtime(true);
-        $durasi_ms = (int) (($waktu_selesai - $waktu_mulai) * 1000);
-
-        return view("auth/otp",[
-            "kode_otp" => $kode,
-            "durasi_loading" => $durasi_ms
+        return response()->json([
+            "kode_otp"   => $kode,
+            "expired_in" => now()->diffInSeconds($expiredAt), // sisa detik
         ]);
     }
 

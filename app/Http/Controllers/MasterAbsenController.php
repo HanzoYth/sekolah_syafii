@@ -132,10 +132,10 @@ class MasterAbsenController extends Controller
                 "waktu_id" => master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->first()->id
             ]);
 
-            return redirect("/gr/otp");
+            return redirect("/gr/totp");
         }
         
-        return redirect("/gr/otp");
+        return redirect("/gr/totp");
     }
 
     function addAbsenGuruDenganKelola(Request $request){

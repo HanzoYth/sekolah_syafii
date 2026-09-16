@@ -1,91 +1,87 @@
-// ===== LOADING OVERLAY =====
-window.addEventListener("load", () => {
-    const overlay = document.getElementById("loadingOverlay");
-    const wrapper = document.getElementById("otpWrapper");
+document.addEventListener("DOMContentLoaded", () => {
+    const overlay     = document.getElementById("loadingOverlay");
+    const wrapper     = document.getElementById("otpWrapper");
+    const inpOtp      = document.querySelectorAll(".otp-field");
+    const inpValueOtp = document.getElementById("value_otp");
+    const timerEl     = document.getElementById("timer");
+    const csrfToken   = document.querySelector('meta[name="csrf-token"]').content;
 
-    // ambil durasi asli proses pembuatan + pengiriman OTP dari controller (dalam ms)
-    let durasiAsli = parseInt(overlay.dataset.durasi) || 0;
+    const MIN_LOADING = 600; // ms, biar spinner minimal sempat kelihatan
+    const startTime = performance.now();
 
-    // batasi minimal & maksimal biar UX tetap enak
-    // minimal 600ms supaya animasi spinner sempat kelihatan
-    // maksimal 3000ms supaya user tidak menunggu kelamaan kalau proses lambat
-    let durasiTampil = Math.min(Math.max(durasiAsli, 600), 3000);
-
-    setTimeout(() => {
-        overlay.classList.add("hide");
-        wrapper.classList.add("show");
-    }, durasiTampil);
-});
-
-
-let timer = document.getElementById("timer");
-
-let inp_otp = document.querySelectorAll(".otp-field");
-let button_verify_otp = document.querySelector(".btn-verify");
-let inp_value_otp = document.getElementById("value_otp");
-let otp = document.getElementById("otp").value.split("");
-
-
-let [menit, detik] = timer.textContent.split(":").map(Number);
-
-let waktu = menit * 60 + detik;
-
-
-const setWaktu = setInterval(() => {
-    let m = Math.floor(waktu / 60);
-    let d = waktu % 60;
-
-    d = d.toString().padStart(2,"0");
-
-    timer.textContent = `${m}:${d}`;
-
-    waktu--;
-
-    if (waktu < 0){
-        clearInterval(setWaktu);
-        timer.textContent = "0:00";
-    }
-},1000)
-
-var kode_otp = "";
-
-
-// ini terisi otomatis
-let kode_otp_auto = "";
-for (let i = 0; i < otp.length; i++){
-    inp_otp[i].value = parseInt(otp[i]);
-    kode_otp_auto += inp_otp[i].value;
-}
-inp_value_otp.value = kode_otp_auto;
-
-
-//ini terisi manual
-inp_otp.forEach((data,idx) => {
-    data.addEventListener("keydown",(e) => {
-        if (e.key == "Backspace"){
-            if ((idx - 1) > -1){
-                data.setAttribute("disabled","");
-                inp_otp[idx - 1].removeAttribute("disabled");
-                inp_otp[idx - 1].focus();
-                kode_otp = "";
-            }
-            data.value != "" ? data.value = "" : inp_otp[(idx - 1) <= 0 ? 0 : idx-1].value = "";
-        }
+    fetch("/gr/otp", {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": csrfToken,
+            "Accept": "application/json",
+        },
     })
-    data.addEventListener("input",function(){
-        if (this.value != ""){
-            if ((idx + 1) < 6){
-                data.setAttribute("disabled","");
-                inp_otp[idx + 1].removeAttribute("disabled");
-                inp_otp[idx + 1].focus();
-            }
-        }
-        if (inp_otp[5].value != ""){
-            kode_otp = "";
-            inp_otp.forEach((data1) => {
-                kode_otp += data1.value;
-            })
-            inp_value_otp.value = kode_otp;  
-        }
+    .then((res) => {
+        if (!res.ok) throw new Error("Gagal membuat OTP");
+        return res.json();
+    })
+    .then((data) => {
+        const elapsed = performance.now() - startTime;
+        const delay = Math.max(MIN_LOADING - elapsed, 0);
+
+        setTimeout(() => {
+            overlay.classList.add("hide");
+            wrapper.classList.add("show");
+            isiOtpOtomatis(String(data.kode_otp));
+            mulaiTimer(data.expired_in);
+        }, delay);
+    })
+    .catch((err) => {
+        overlay.querySelector(".loading-text").textContent =
+            "Gagal memuat kode OTP, silakan muat ulang halaman.";
+        console.error(err);
     });
-})
+
+    function isiOtpOtomatis(kode) {
+        kode.split("").forEach((digit, idx) => {
+            inpOtp[idx].removeAttribute("disabled");
+            inpOtp[idx].value = digit;
+        });
+        inpValueOtp.value = kode;
+    }
+
+    function mulaiTimer(sisaDetik) {
+        let waktu = sisaDetik;
+        const setWaktu = setInterval(() => {
+            const m = Math.floor(waktu / 60);
+            const d = (waktu % 60).toString().padStart(2, "0");
+            timerEl.textContent = `${m}:${d}`;
+            waktu--;
+            if (waktu < 0) {
+                clearInterval(setWaktu);
+                timerEl.textContent = "0:00";
+            }
+        }, 1000);
+    }
+
+    // navigasi antar kotak input saat user mengetik manual
+    inpOtp.forEach((el, idx) => {
+        el.addEventListener("keydown", (e) => {
+            if (e.key === "Backspace") {
+                if (idx - 1 > -1) {
+                    el.setAttribute("disabled", "");
+                    inpOtp[idx - 1].removeAttribute("disabled");
+                    inpOtp[idx - 1].focus();
+                }
+                el.value !== "" ? (el.value = "") : (inpOtp[idx - 1 <= 0 ? 0 : idx - 1].value = "");
+            }
+        });
+        el.addEventListener("input", function () {
+            if (this.value !== "" && idx + 1 < 6) {
+                el.setAttribute("disabled", "");
+                inpOtp[idx + 1].removeAttribute("disabled");
+                inpOtp[idx + 1].focus();
+            }
+            if (inpOtp[5].value !== "") {
+                let kode = "";
+                inpOtp.forEach((d) => (kode += d.value));
+                inpValueOtp.value = kode;
+            }
+        });
+    });
+});
