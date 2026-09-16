@@ -36,9 +36,9 @@ class otpController extends Controller
         $foonte = new FonteService();
         $foonte->sendMassage($data_guru->getUser()->first()->noWa,"ini kode Otp anda ($kode) jangan di perlihatkan oleh orang lain");
         
-
         return redirect("/gr/totp");
     }
+    
 
     function cekOtp(Request $request){
         $otp_d = otp_guru::where("guru_id",session('id'))->first();

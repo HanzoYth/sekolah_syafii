@@ -75,16 +75,20 @@
                             <th class="text-center" width="160">Aksi</th>
                         </tr>
                     </thead>
+                    @php
+                        $no = 0;
+                    @endphp
                     <tbody id="guruTableBody">
                         <!-- BARIS 1 -->
                          @foreach ($data_guru as $value)
                          @php
+                            $no++;
                             $data_akun = App\Models\akun::find((int) $value->user_id);
                             $data_identitas = App\Models\identitas_rahasia::where("id",$data_akun->identity_id)->first();
                             $jenis_sekolah = App\Models\jenis_sekolah::find((int) $value->sekolah_id);
                          @endphp
                             <tr data-id="{{$value->id}}" data-nama="{{$value->nama}}">
-                                <td>1</td>
+                                <td>{{$no}}</td>
                                 <td>
                                     <div class="teacher-profile">
                                         <div class="avatar-circle">
