@@ -67,6 +67,6 @@
 
         </div>
     </div>
-    <script src="{{ asset('js/auth/time_otp.js') }}"></script>
+    <script src="{{ asset('js/auth/time_otp.js') }}?v={{ filemtime(base_path('js/auth/time_otp.js')) }}"></script>
 </body>
 </html>
