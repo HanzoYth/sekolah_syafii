@@ -1,3 +1,23 @@
+// ===== LOADING OVERLAY =====
+window.addEventListener("load", () => {
+    const overlay = document.getElementById("loadingOverlay");
+    const wrapper = document.getElementById("otpWrapper");
+
+    // ambil durasi asli proses pembuatan + pengiriman OTP dari controller (dalam ms)
+    let durasiAsli = parseInt(overlay.dataset.durasi) || 0;
+
+    // batasi minimal & maksimal biar UX tetap enak
+    // minimal 600ms supaya animasi spinner sempat kelihatan
+    // maksimal 3000ms supaya user tidak menunggu kelamaan kalau proses lambat
+    let durasiTampil = Math.min(Math.max(durasiAsli, 600), 3000);
+
+    setTimeout(() => {
+        overlay.classList.add("hide");
+        wrapper.classList.add("show");
+    }, durasiTampil);
+});
+
+
 let timer = document.getElementById("timer");
 
 let inp_otp = document.querySelectorAll(".otp-field");

@@ -14,7 +14,15 @@
 </head>
 <body>
 
-    <div class="otp-wrapper">
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" data-durasi="{{ $durasi_loading }}">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Menyiapkan kode verifikasi...</p>
+        </div>
+    </div>
+
+    <div class="otp-wrapper" id="otpWrapper">
         <div class="otp-card">
             
             <!-- Banner Islami Top -->
@@ -26,7 +34,6 @@
                 <h2>Verifikasi Kode OTP</h2>
                 <p>Masukkan 6 digit kode keamanan yang telah dikirimkan ke nomor WhatsApp / Email Anda.</p>
             </div>
-
 
             <input type="hidden" value="{{$kode_otp}}" id="otp">
 

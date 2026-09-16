@@ -13,6 +13,8 @@ use App\Services\FonteService;
 class otpController extends Controller
 {
     function createOtp(){
+        $waktu_mulai = microtime(true);
+
         if (otp_guru::where("guru_id",session("id"))->exists()){
             otp_guru::where("guru_id",session("id"))->delete();
         }
@@ -32,9 +34,13 @@ class otpController extends Controller
 
         $foonte = new FonteService();
         $foonte->sendMassage($data_guru->getUser()->first()->noWa,"ini kode Otp anda ($kode) jangan di perlihatkan oleh orang lain");
-        
+
+        $waktu_selesai = microtime(true);
+        $durasi_ms = (int) (($waktu_selesai - $waktu_mulai) * 1000);
+
         return view("auth/otp",[
-            "kode_otp" => $kode
+            "kode_otp" => $kode,
+            "durasi_loading" => $durasi_ms
         ]);
     }
 
