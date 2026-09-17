@@ -54,8 +54,7 @@
                 <form action="/reg/reset-password" method="POST">
                     @csrf
                     <!-- Hidden Token (biasanya dikirim dari link email Laravel) -->
-                    <input type="hidden" name="token" value="{{ $token ?? '' }}">
-                    <input type="hidden" name="email" value="{{ request('email') }}">
+                    <input type="hidden" name="email" value="{{ $email }}">
 
                     <div class="input-group">
                         <i class="fas fa-lock"></i>

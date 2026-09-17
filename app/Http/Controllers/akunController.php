@@ -184,7 +184,62 @@ class akunController extends Controller
     }
 
     function lupaSandiPassword($email){
-        return view("auth/lupa_sandi_password");
+        return view("auth/lupa_sandi_password",compact("email"));
+    }
+
+    function ResetSandiPassword(Request $request){
+        $data_akun = akun::where("email",$request->email)->first();
+        
+        $validator = Validator::make($request->all(), [
+            'password' => [
+                'required',
+                'min:8',
+                'confirmed',
+            ],
+        ], [
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak sama.',
+        ]);
+
+        $validator->after(function ($validator) use ($request) {
+
+            $password = $request->password;
+
+            if ($password !== null) {
+
+                if (!preg_match('/[A-Z]/', $password) ||
+                    !preg_match('/[a-z]/', $password)) {
+
+                    $validator->errors()->add(
+                        'password',
+                        'Password harus memiliki huruf kapital dan huruf kecil.'
+                    );
+                }
+
+                if (!preg_match('/[0-9]/', $password)) {
+
+                    $validator->errors()->add(
+                        'password',
+                        'Password harus memiliki sebuah angka.'
+                    );
+                }
+            }
+        });
+    
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $data_akun->password = Hash::make($request->password_confirmation);
+
+        $data_akun->save();
+
+        return redirect("/reg/sign");
+
+
     }
 
     function KirimLink(Request $request){
@@ -198,6 +253,6 @@ class akunController extends Controller
 
         Mail::to($user->email)->send(new sendLink($resetUrl, $user->username));
 
-        return back()->with("success","Permohonan berhasi, Cek Email Anda");
+        return back()->with("success","Permohonan berhasil, Cek Email Anda");
     }
 }
