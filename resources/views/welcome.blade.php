@@ -17,7 +17,7 @@
     <nav class="navbar" id="navbar">
         <div class="container navbar-container">
             <a href="#" class="logo">
-                <img src="{{asset('public/img/logo.png')}}" alt="Logo">
+                <img src="{{asset('img/logo.png')}}?v={{ time() }}" alt="Logo">
                 <span>Imam Syafi'i</span>
             </a>
             
@@ -44,7 +44,7 @@
     </nav>
 
     <!-- ======== HERO SECTION ======== -->
-    <section id="home" class="hero" style="--hero-bg: url('{{asset('public/img/foto_1.jpeg')}}');">
+    <section id="home" class="hero" style="--hero-bg: url('{{asset('img/bg_skl.jpeg')}}?v={{ time() }}');">
         <div class="container">
             <div class="hero-wrapper">
                 <!-- Kiri: Teks -->
@@ -60,7 +60,7 @@
 
                 <!-- Kanan: Foto -->
                 <div class="hero-image" data-aos="fade-left" data-aos-duration="1000">
-                    <img src="{{asset('public/img/ft_1.jpeg')}}" alt="Hero Image">
+                    <img src="{{asset('img/ft_1.jpeg')}}?v={{ time() }}" alt="Hero Image">
                 </div>
             </div>
         </div>
@@ -96,7 +96,7 @@
         <div class="container">
             <div class="keunggulan-wrapper">
                 <div class="keunggulan-img" data-aos="fade-right">
-                    <img src="{{asset('public/img/ft_2.jpeg')}}" alt="Mengaji">
+                    <img src="{{asset('img/ft_2.jpeg')}}?v={{ time() }}" alt="Mengaji">
                 </div>
                 <div class="keunggulan-content" data-aos="fade-left">
                     <h2 class="section-title left">Mengapa Memilih Kami?</h2>
