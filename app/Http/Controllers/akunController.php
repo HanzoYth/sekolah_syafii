@@ -183,7 +183,7 @@ class akunController extends Controller
         return view("auth/lupa_sandi");
     }
 
-    function lupaSandiPassword(){
+    function lupaSandiPassword($email){
         return view("auth/lupa_sandi_password");
     }
 
@@ -194,7 +194,7 @@ class akunController extends Controller
 
         $user = akun::where("email",$request->email)->first();
 
-        $resetUrl = route('/reg/lpsp');
+        $resetUrl = url('/reg/lpsp/' . $user->email);
 
         Mail::to($user->email)->send(new sendLink($resetUrl, $user->username));
 

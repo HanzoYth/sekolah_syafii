@@ -37,7 +37,7 @@ Route::post('/reg/login',[akunController::class,"login"]);
 Route::get("/reg/logout",[akunController::class,"logout"]);
 Route::get("/reg/nakt/{id}",[akunController::class,"nonAktifkanAkun"]);
 Route::get("/reg/lps",[akunController::class,"lupaSandi"]);
-Route::get("/reg/lpsp",[akunController::class,"lupaSandiPassword"]);
+Route::get("/reg/lpsp/{email}",[akunController::class,"lupaSandiPassword"]);
 Route::post("/reg/krm",[akunController::class,"KirimLink"]);
 
 // ini route untuk halaman modul guru
