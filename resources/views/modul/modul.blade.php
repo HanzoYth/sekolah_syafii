@@ -14,7 +14,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="stylesheet" href="{{ asset('css/module.css') }}?v={{ filemtime(base_path('css/module.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/module.css') }}?v={{ time() }}">
 </head>
 <body>
 
