@@ -176,4 +176,8 @@ class akunController extends Controller
         $data_akun->delete();
         return back()->with("success","berhasil menonaktifkan guru");
     }
+
+    function lupaSandi(){
+        return view("auth/lupa_sandi");
+    }
 }

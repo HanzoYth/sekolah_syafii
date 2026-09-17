@@ -105,7 +105,7 @@
                         <!-- <label class="remember-me">
                             <input type="checkbox"> Ingat saya
                         </label> -->
-                        <a href="#" class="forgot-pass">Lupa Sandi?</a>
+                        <a href="/reg/lps" class="forgot-pass">Lupa Sandi?</a>
                     </div>
                     <button type="submit" class="btn-submit">Masuk Sekarang</button>
                 </form>
