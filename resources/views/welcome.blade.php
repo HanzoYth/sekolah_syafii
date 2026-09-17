@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
 </head>
 <body>
+    {{ asset('css/welcome.css') }}
 
     <!-- ======== NAVBAR ======== -->
     <nav class="navbar" id="navbar">
