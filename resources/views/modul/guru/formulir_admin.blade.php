@@ -9,7 +9,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- CSS Form Admin -->
-    <link rel="stylesheet" href="{{ asset('css/modul/guru/formulir_admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/css/modul/guru/formulir_admin.css') }}">
 </head>
 <body>
 

@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- CSS khusus tanpa sidebar -->
-    <link rel="stylesheet" href="{{ asset('css/identitas.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/css/identitas.css') }}">
 </head>
 <body>
 
@@ -123,6 +123,6 @@
     </main>
 
     <!-- JS untuk memanggil logika generate kamu -->
-    <script src="{{asset('js/identitas.js')}}"></script>
+    <script src="{{asset('public/js/identitas.js')}}"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
     <title>Dashboard SIAKAD</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/dashboard_yayasan.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/css/dashboard_yayasan.css') }}">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 </head>
@@ -148,6 +148,6 @@
         </div>
     </main>
 
-    <script src="{{ asset('js/dashboard_yayasan.js') }}"></script>
+    <script src="{{ asset('public/js/dashboard_yayasan.js') }}"></script>
 </body>
 </html>

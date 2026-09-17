@@ -128,6 +128,6 @@
 
     <!-- Pustaka Leaflet JS & Script Khusus -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="{{ asset('js/modul/guru/absensi.js') }}"></script>
+    <script src="{{ asset('public/js/modul/guru/absensi.js') }}"></script>
 </body>
 </html>

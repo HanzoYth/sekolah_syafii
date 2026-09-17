@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- CSS Pengaturan Absensi -->
-    <link rel="stylesheet" href="{{ asset('css/modul/guru/setting_absen.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/css/modul/guru/setting_absen.css') }}">
 </head>
 <body>
     <x-sidebar_guru />
@@ -235,6 +235,6 @@
     <x-warning />
     <!-- Leaflet JS & Script Map Interaktif -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="{{ asset('js/modul/guru/setting_absen.js') }}"></script>
+    <script src="{{ asset('public/js/modul/guru/setting_absen.js') }}"></script>
 </body>
 </html>
