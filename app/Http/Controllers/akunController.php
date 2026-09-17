@@ -237,7 +237,7 @@ class akunController extends Controller
 
         $data_akun->save();
 
-        return redirect("/reg");
+        return redirect("/reg")->with("success","Password anda sudah terganti");
 
 
     }
