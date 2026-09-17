@@ -183,6 +183,10 @@ class akunController extends Controller
         return view("auth/lupa_sandi");
     }
 
+    function lupaSandiPassword(){
+        return view("auth/lupa_sandi_password");
+    }
+
     function KirimLink(Request $request){
         if (!akun::where("email", $request->email)->exists()){
             return back()->with("eror","Email anda tidak terdaftar");
@@ -190,7 +194,7 @@ class akunController extends Controller
 
         $user = akun::where("email",$request->email)->first();
 
-        $resetUrl = route('password.reset', ['email' => $user->email]);
+        $resetUrl = route('/reg/lpsp');
 
         Mail::to($user->email)->send(new sendLink($resetUrl, $user->username));
 

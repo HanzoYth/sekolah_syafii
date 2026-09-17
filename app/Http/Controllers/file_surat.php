@@ -11,7 +11,7 @@ use App\Models\master_absen_guru;
 use App\Models\riwayat_gaji;
 use App\Models\riwayat_tunjangan;
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Barryvdh\DomPDF\Facade\Pdf;                                                               
 use Carbon\Carbon;
 use App\Services\FonteService;
 use Illuminate\Support\Facades\Log;
