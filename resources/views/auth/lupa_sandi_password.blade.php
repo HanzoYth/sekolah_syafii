@@ -51,7 +51,7 @@
                     <p>Masukkan kata sandi baru Anda di bawah ini</p>
                 </div>
 
-                <form action="/reg/reset-password" method="POST">
+                <form action="/reg/rst" method="POST">
                     @csrf
                     <!-- Hidden Token (biasanya dikirim dari link email Laravel) -->
                     <input type="hidden" name="email" value="{{ $email }}">
