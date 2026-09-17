@@ -10,13 +10,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- AOS Animation Library -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('public/css/welcome.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
 </head>
 <body>
-
-    {{dd([
-        "tes" => asset('public/css/welcome.css')
-    ])}}
     <!-- ======== NAVBAR ======== -->
     <nav class="navbar" id="navbar">
         <div class="container navbar-container">
