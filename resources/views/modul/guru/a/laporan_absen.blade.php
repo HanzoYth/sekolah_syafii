@@ -8,7 +8,7 @@
     <!-- Google Fonts & Font Awesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{asset('public/css/modul/guru/laporan_absensi.css')}}">
+    <link rel="stylesheet" href="{{asset('css/modul/guru/laporan_absensi.css')}}?v={{ time() }}">
 </head>
 <body>
 
@@ -152,6 +152,6 @@
         </main>
     </div>
     <x-warning />
-    <script src="{{ asset('public/js/modul/guru/laporan_absen.js') }}"></script>
+    <script src="{{ asset('js/modul/guru/laporan_absen.js') }}?v={{ time() }}"></script>
 </body>
 </html>

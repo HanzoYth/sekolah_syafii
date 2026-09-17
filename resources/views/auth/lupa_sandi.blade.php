@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- CSS Terpisah -->
-      <link rel="stylesheet" href="{{ asset('css/lupa_sandi.css') }}?v={{ filemtime(base_path('css/lupa_sandi.css')) }}">
+      <link rel="stylesheet" href="{{ asset('css/lupa_sandi.css') }}?v={{ time() }}">
 </head>
 <body>
 

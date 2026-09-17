@@ -9,7 +9,7 @@
     halaman seperti pemanggilan <x-sidebar_siakad />).
 --}}
 
-<link rel="stylesheet" href="{{ asset('/css/component/chatbot.css') }}">
+<link rel="stylesheet" href="{{ asset('/css/component/chatbot.css') }}?v={{ time() }}">
 
 <!-- TOMBOL LOGO MELAYANG -->
 <button type="button" class="chat-fab" id="chatFabToggle" title="Butuh bantuan?">

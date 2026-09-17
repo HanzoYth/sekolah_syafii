@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
 
     <!-- CSS OTP -->
-    <link rel="stylesheet" href="{{ asset('css/otp.css') }}?v={{ filemtime(base_path('css/otp.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/otp.css') }}?v={{ time() }}">
 </head>
 <body>
 
@@ -58,6 +58,6 @@
     </div>
 
     <x-warning />
-    <script src="{{ asset('js/auth/time_otp.js') }}?v={{ filemtime(base_path('js/auth/time_otp.js')) }}"></script>
+    <script src="{{ asset('js/auth/time_otp.js') }}?v={{ time() }}"></script>
 </body>
 </html>

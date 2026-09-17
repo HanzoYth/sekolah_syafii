@@ -9,7 +9,7 @@
     <!-- Font Awesome untuk Ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- CSS Khusus Dashboard Cabang -->
-    <link rel="stylesheet" href="{{asset('public/css/modul/guru/cabang_guru.css')}}">
+    <link rel="stylesheet" href="{{asset('css/modul/guru/cabang_guru.css')}}?v={{ time() }}">
 </head>
 <body>
 

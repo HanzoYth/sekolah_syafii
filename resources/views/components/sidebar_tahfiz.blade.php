@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ asset('css/sidebar/sidebar_tahfiz.css') }}">
+<link rel="stylesheet" href="{{ asset('css/sidebar/sidebar_tahfiz.css') }}?v={{ time() }}">
 
 <aside class="sidebar">
     <div class="sidebar-header">

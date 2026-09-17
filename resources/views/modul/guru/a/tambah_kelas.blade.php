@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Load CSS Terpisah -->
-    <link rel="stylesheet" href="{{ asset('public/css/modul/siakad/tambahKelas.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/modul/siakad/tambahKelas.css') }}?v={{ time() }}">
 </head>
 <body>
 

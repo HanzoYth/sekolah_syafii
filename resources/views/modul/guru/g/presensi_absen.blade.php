@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Asset CSS khusus Absensi -->
-    <link rel="stylesheet" href="{{ asset('css/modul/guru/absensi.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/modul/guru/absensi.css') }}?v={{ time() }}">
 </head>
 <body>
     <x-sidebar_guru />
@@ -128,6 +128,6 @@
 
     <!-- Pustaka Leaflet JS & Script Khusus -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="{{ asset('public/js/modul/guru/absensi.js') }}"></script>
+    <script src="{{ asset('js/modul/guru/absensi.js') }}?v={{ time() }}"></script>
 </body>
 </html>

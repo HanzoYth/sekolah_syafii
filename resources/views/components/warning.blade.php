@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{asset('css/component/warning.css')}}">
+<link rel="stylesheet" href="{{asset('css/component/warning.css')}}?v={{ time() }}">
 <div>
     @if(session('eror'))
         <div class="alert alert-danger" id="errorToast">

@@ -2,7 +2,7 @@
     <!-- SIDEBAR COMPONENT -->
     <aside class="sidebar" id="sidebar">
         {{-- CSS khusus siakad --}}
-        <link rel="stylesheet" href="{{ asset('css/sidebar/sidebar_siakad.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/sidebar/sidebar_siakad.css') }}?v={{ time() }}">
 
         {{-- Header sidebar --}}
         <div class="sidebar-header">
