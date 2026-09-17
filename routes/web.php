@@ -37,6 +37,7 @@ Route::post('/reg/login',[akunController::class,"login"]);
 Route::get("/reg/logout",[akunController::class,"logout"]);
 Route::get("/reg/nakt/{id}",[akunController::class,"nonAktifkanAkun"]);
 Route::get("/reg/lps",[akunController::class,"lupaSandi"]);
+Route::post("/reg/krm",[akunController::class,"KirimLink"]);
 
 // ini route untuk halaman modul guru
 Route::get('/gr/das',[modulGuruController::class,"tampilan_dashboardGuru"]);

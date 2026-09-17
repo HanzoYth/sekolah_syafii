@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\sendLink;
 use Illuminate\Http\Request;
 use App\Models\akun;
 use App\Models\identitas_rahasia;
@@ -12,6 +13,7 @@ use App\Models\siswa;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 
 class akunController extends Controller
 {
@@ -179,5 +181,19 @@ class akunController extends Controller
 
     function lupaSandi(){
         return view("auth/lupa_sandi");
+    }
+
+    function KirimLink(Request $request){
+        if (!akun::where("email", $request->email)->exists()){
+            return back()->with("eror","Email anda tidak terdaftar");
+        }
+
+        $user = akun::where("email",$request->email)->first();
+
+        $resetUrl = route('password.reset', ['email' => $user->email]);
+
+        Mail::to($user->email)->send(new sendLink($resetUrl, $user->username));
+
+        return back()->with("success","Permohonan berhasi, Cek Email Anda");
     }
 }

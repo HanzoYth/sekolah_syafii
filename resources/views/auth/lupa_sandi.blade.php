@@ -51,7 +51,7 @@
                     <p>Masukkan email terdaftar untuk mengatur ulang kata sandi Anda</p>
                 </div>
 
-                <form action="/forgot-password" method="POST">
+                <form action="/reg/krm" method="POST">
                     @csrf
                     <div class="input-group">
                         <i class="fas fa-envelope"></i>
