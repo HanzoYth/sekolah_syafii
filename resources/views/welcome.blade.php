@@ -14,7 +14,9 @@
 </head>
 <body>
 
-
+    {{dd([
+        "tes" => asset('public/css/welcome.css')
+    ])}}
     <!-- ======== NAVBAR ======== -->
     <nav class="navbar" id="navbar">
         <div class="container navbar-container">
