@@ -250,9 +250,22 @@ class akunController extends Controller
         $user = akun::where("email",$request->email)->first();
 
         $resetUrl = url('/reg/lpsp/' . $user->email);
+        try {
+            Mail::to($user->email)->send(
+                new sendLink($resetUrl, $user->username)
+            );
 
-        Mail::to($user->email)->send(new sendLink($resetUrl, $user->username));
+            return back()->with(
+                "success",
+                "Email berhasil dikirim ke " . $user->email
+            );
 
-        return back()->with("success","Permohonan berhasil, Cek Email Anda");
+        } catch (\Exception $e) {
+
+            return back()->with(
+                "eror",
+                "Gagal mengirim email: " . $e->getMessage()
+            );
+        }
     }
 }
