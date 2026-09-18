@@ -62,7 +62,7 @@
                 </form>
             </div>
 
-            <a href="/login" class="back-home">
+            <a href="/reg" class="back-home">
                 <i class="fas fa-arrow-left"></i> Kembali ke Halaman Masuk
             </a>
         </div>

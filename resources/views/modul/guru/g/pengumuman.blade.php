@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- External CSS -->
-    <link rel="stylesheet" href="{{ asset('public/css/modul/guru/pengumuman.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/modul/guru/pengumuman.css') }}?v={{ time() }}">
 </head>
 <body>
 

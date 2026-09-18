@@ -72,7 +72,7 @@
                 </form>
             </div>
 
-            <a href="/login" class="back-home">
+            <a href="/reg" class="back-home">
                 <i class="fas fa-arrow-left"></i> Batal & Kembali ke Masuk
             </a>
         </div>
