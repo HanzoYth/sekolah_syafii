@@ -28,6 +28,7 @@ class guru extends Model
         "koordinator_tahfiz",
         "pengampu_tahfiz",
         "kepala_sekolah",
+        "wakil_sekolah",
         "gender",
         "cabang_id",
         "sekolah_id",

@@ -280,6 +280,7 @@ class modulGuruController extends Controller
             "koordinator_tahfiz" => (int) $request->koordinator,
             "pengampu_tahfiz" => (int) $request->pengampu,
             "kepala_sekolah" => 0,
+            "wakil_sekolah" => 0,
             "cabang_id" => $request->cabang_id,
             "sekolah_id" => $request->sekolah_id,
             "user_id" => (int) session("id_akun"),
@@ -405,6 +406,7 @@ class modulGuruController extends Controller
         $data_guru->tutup_buku = (int) $request->tutup_buku;
         $data_guru->koordinator_tahfiz = (int) $request->koordinator_tahfiz;
         $data_guru->kepala_sekolah = (int) $request->kepala_sekolah;
+        $data_guru->wakil_sekolah = (int) $request->wakil_sekolah;
         $data_guru->cabang_id = (int) $request->cabang_id;
         $data_guru->sekolah_id = (int) $request->sekolah_id;
 

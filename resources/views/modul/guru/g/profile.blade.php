@@ -239,6 +239,14 @@
                                     </div>
                                 </label>
 
+                                <label class="checkbox-card {{$data_guru->wakil_sekolah ? 'active' : ''}}">
+                                    <input type="checkbox" name="wakil_sekolah" value="0" disabled {{$data_guru->wakil_sekolah ? 'checked' : ""}}>
+                                    <div class="checkbox-content">
+                                        <i class="fa-solid fa-award"></i>
+                                        <span>Wakil Kepala Sekolah</span>
+                                    </div>
+                                </label>
+                                
                                 <label class="checkbox-card {{$data_guru->kepala_sekolah ? 'active' : ''}}">
                                     <input type="checkbox" name="kepala_sekolah" value="0" disabled {{$data_guru->kepala_sekolah ? 'checked' : ""}}>
                                     <div class="checkbox-content">

@@ -29,6 +29,7 @@ return new class extends Migration
             $table->boolean("koordinator_tahfiz")->default(0);
             $table->boolean("pengampu_tahfiz")->default(0);
             $table->boolean("kepala_sekolah")->default(0);
+            $table->boolean("wakil_sekolah")->default(0);
             $table->integer("tutup_buku")->default(1);
             $table->enum("gender",["p","l"]);
             $table->foreignId("cabang_id")->constrained("cabang_guru")->cascadeOnDelete();

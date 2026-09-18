@@ -259,7 +259,6 @@ class akunController extends Controller
                 "success",
                 "Email berhasil dikirim ke " . $user->email
             );
-
         } catch (\Exception $e) {
 
             return back()->with(

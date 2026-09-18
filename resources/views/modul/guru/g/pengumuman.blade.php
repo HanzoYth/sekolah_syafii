@@ -28,7 +28,7 @@
                     <h2>Daftar Pengumuman</h2>
                     <p>Kelola seluruh informasi dan pengumuman untuk guru & staf</p>
                 </div>
-                @if ($data_guru->kepala_sekolah)
+                @if ($data_guru->kepala_sekolah || $data_guru->wakil_sekolah)
                     <button class="btn btn-primary" onclick="openModal('modalTambah')">
                         <i class="fa-solid fa-plus"></i> Tambah Pengumuman
                     </button>

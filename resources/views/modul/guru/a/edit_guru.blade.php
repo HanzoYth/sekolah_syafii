@@ -136,6 +136,11 @@
                             <input type="checkbox" name="kepala_sekolah" value="0" {{$data_guru->kepala_sekolah ? 'checked' : ""}}>
                             <span>Kepala Sekolah</span>
                         </label>
+
+                        <label class="checkbox-card">
+                            <input type="checkbox" name="wakil_sekolah" value="0" {{$data_guru->wakil_sekolah ? 'checked' : ""}}>
+                            <span>Wakil Kepala Sekolah</span>
+                        </label>
                     </div>
                 </div>
 
@@ -221,7 +226,6 @@
             }
             reader.readAsDataURL(event.target.files[0]);
         }
-        console.log(document.getElementById("id_guru").value)
 
         // Reset dan handler value checkbox (Section 3)
         document.querySelectorAll(".checkbox-card").forEach(item => {
