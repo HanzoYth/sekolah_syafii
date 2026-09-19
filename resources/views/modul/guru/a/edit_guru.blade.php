@@ -162,7 +162,7 @@
                             <select id="cabang_id" name="cabang_id" class="form-control" required>
                                 <option value="">-- Pilih Cabang --</option>
                                 @if(isset($data_cabang))
-                                    @foreach ($data_cabang as$cb)
+                                    @foreach ($data_cabang as $cb)
                                         <option value="{{ $cb->id }}" {{ $cb->id == ($data_guru->cabang_id ?? '') ? 'selected' : '' }}>{{ $cb->nama_cabang }}</option>
                                     @endforeach
                                 @else
@@ -178,7 +178,7 @@
                             <select id="sekolah_id" name="sekolah_id" class="form-control" required>
                                 <option value="">-- Pilih Sekolah --</option>
                                 @if(isset($data_jenis_sekolah))
-                                    @foreach ($data_jenis_sekolah as$djs)
+                                    @foreach ($data_jenis_sekolah as $djs)
                                         <option value="{{ $djs->id }}" {{ $djs->id == ($data_guru->sekolah_id ?? '') ? 'selected' : '' }}>{{ $djs->jenis }}</option>
                                     @endforeach
                                 @else
@@ -211,7 +211,7 @@
                             <select id="kelas_id" name="kelas_id" class="form-control">
                                 <option value="">-- Pilih Kelas --</option>
                                 @if(isset($data_kelas))
-                                    @foreach ($data_kelas as$value)
+                                    @foreach ($data_kelas as $value)
                                         <option value="{{ $value->id }}" {{ $value->nama_ruang == ($nama_kelas ?? '') ? 'selected' : '' }}>{{ $value->nama_ruang }}</option>
                                     @endforeach
                                 @else
@@ -245,7 +245,7 @@
                             $listPiket = (isset($data_piket) && count($data_piket) > 0) ? $data_piket :$dummyPiket;
                         @endphp
 
-                        @foreach($listPiket as$piket)
+                        @foreach($listPiket as $piket)
                             <div class="piket-item">
                                 <div class="form-group flex-1">
                                     <label>Tanggal Piket</label>
