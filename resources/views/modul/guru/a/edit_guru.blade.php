@@ -239,11 +239,11 @@
                             <div class="piket-item">
                                 <div class="form-group flex-1">
                                     <label>Tanggal Piket</label>
-                                    <input type="date" name="piket_tanggal[]" class="form-control" value="{{ $data_piket->tanggal }}" required>
+                                    <input type="date" name="piket_tanggal[]" class="form-control" value="{{ $piket->tanggal }}" required>
                                 </div>
                                 <div class="form-group flex-1">
                                     <label>Waktu Piket (Jam & Menit)</label>
-                                    <input type="time" name="piket_waktu[]" class="form-control" value="{{ $data_piket->waktu }}" required>
+                                    <input type="time" name="piket_waktu[]" class="form-control" value="{{ $piket->jam }}" required>
                                 </div>
                                 <button type="button" class="btn-remove-piket btnRemovePiket" title="Hapus Piket">
                                     <i class="fa-solid fa-trash-can"></i>
