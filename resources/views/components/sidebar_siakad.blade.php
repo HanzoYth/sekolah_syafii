@@ -152,7 +152,7 @@
         </div>
 
         <div class="sidebar-footer">
-            <a href="/mod" class="logout-btn">
+            <a href="/mod" class="logout-btn" style="margin-bottom:10px;">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 <span>Modul</span>
             </a>
