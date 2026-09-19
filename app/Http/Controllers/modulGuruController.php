@@ -405,7 +405,7 @@ class modulGuruController extends Controller
         jadwal_piket::create([
             "tanggal" => $tanggal,
             "jam" => $jam,
-            "id" => $id
+            "id_guru" => $id
         ]);
 
         return;
