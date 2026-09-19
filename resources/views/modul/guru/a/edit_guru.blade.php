@@ -141,6 +141,11 @@
                             <input type="checkbox" name="wakil_sekolah" value="0" {{$data_guru->wakil_sekolah ? 'checked' : ""}}>
                             <span>Wakil Kepala Sekolah</span>
                         </label>
+
+                        <label class="checkbox-card">
+                            <input type="checkbox" name="asisten" value="0" {{$data_guru->ast_krk ? 'checked' : ""}}>
+                            <span>Asisten Kurikulum</span>
+                        </label>
                     </div>
                 </div>
 

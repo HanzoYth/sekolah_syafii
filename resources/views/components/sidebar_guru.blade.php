@@ -173,7 +173,7 @@
     </aside>
 </div>
 
-<script>
+<script>                                                                                                                                                                                                   34
 (function () {
     var sidebar     = document.getElementById('sidebar');
     var hamburger   = document.getElementById('mobile-hamburger-btn');

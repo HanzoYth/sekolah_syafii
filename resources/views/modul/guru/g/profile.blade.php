@@ -246,12 +246,20 @@
                                         <span>Wakil Kepala Sekolah</span>
                                     </div>
                                 </label>
-                                
+
                                 <label class="checkbox-card {{$data_guru->kepala_sekolah ? 'active' : ''}}">
                                     <input type="checkbox" name="kepala_sekolah" value="0" disabled {{$data_guru->kepala_sekolah ? 'checked' : ""}}>
                                     <div class="checkbox-content">
                                         <i class="fa-solid fa-award"></i>
                                         <span>Kepala Sekolah</span>
+                                    </div>
+                                </label>
+
+                                <label class="checkbox-card {{$data_guru->ast_ark ? 'active' : ''}}">
+                                    <input type="checkbox" name="kepala_sekolah" value="0" disabled {{$data_guru->ast_krk ? 'checked' : ""}}>
+                                    <div class="checkbox-content">
+                                        <i class="fa-solid fa-award"></i>
+                                        <span>Asisten Kurikulum</span>
                                     </div>
                                 </label>
                             </div>
