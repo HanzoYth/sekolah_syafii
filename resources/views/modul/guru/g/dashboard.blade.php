@@ -175,51 +175,23 @@
                             <span class="badge-status-piket">Aktif</span>
                         </div>
                         <div class="card-body">
-                            @if(isset($jadwal_piket) && count($jadwal_piket) > 0)
-                                <div class="piket-list">
-                                    @foreach($jadwal_piket as $piket)
-                                        <div class="piket-item {{ isset($piket->is_today) && $piket->is_today ? 'piket-today' : '' }}">
-                                            <div class="piket-date-box">
-                                                <span class="piket-day">{{ $piket->nama_hari }}</span>
-                                                <span class="piket-date">{{ Carbon\Carbon::parse($piket->tanggal)->translatedFormat('d M') }}</span>
-                                            </div>
-                                            <div class="piket-info">
-                                                <h5>{{ $piket->nama_tugas ?? 'Guru Piket Harian' }}</h5>
-                                                <p><i class="fa-regular fa-clock"></i> {{ $piket->jam_mulai }} - {{ $piket->jam_selesai }} WITA</p>
-                                            </div>
-                                            @if(isset($piket->is_today) && $piket->is_today)
-                                                <span class="badge-today">Hari Ini</span>
-                                            @endif
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                <!-- Layout Default (Static/Dummy Contoh jika variabel $jadwal_piket belum dikirim dari Controller) -->
-                                <div class="piket-list">
-                                    <div class="piket-item piket-today">
+                            <div class="piket-list">
+                                @foreach($data_piket as $piket)
+                                    <div class="piket-item {{ Carbon\Carbon::parse($piket->tanggal)->locale('id')->translatedFormat('d') == Carbon\Carbon::now()->locale('id')->translatedFormat('d') ? 'piket-today' : '' }}">
                                         <div class="piket-date-box">
-                                            <span class="piket-day">{{ $nama_hari }}</span>
-                                            <span class="piket-date">{{ Carbon\Carbon::parse($tanggal_hari_ini)->translatedFormat('d M') }}</span>
+                                            <span class="piket-day">{{ Carbon\Carbon::parse($piket->tanggal)->locale("id")->isoFormat("ddd") }}</span>
+                                            <span class="piket-date">{{ Carbon\Carbon::parse($piket->tanggal)->locale("id")->translatedFormat('d M') }}</span>
                                         </div>
                                         <div class="piket-info">
-                                            <h5>Guru Piket Utama</h5>
-                                            <p><i class="fa-regular fa-clock"></i> 06:30 - 14:00 WITA</p>
+                                            <h5>{{ $piket->nama_tugas ?? 'Guru Piket Harian' }}</h5>
+                                            <p><i class="fa-regular fa-clock"></i> {{ $piket->jam_mulai }} - {{ $piket->jam_selesai }} WITA</p>
                                         </div>
-                                        <span class="badge-today">Hari Ini</span>
+                                        @if(Carbon\Carbon::parse($piket->tanggal)->locale('id')->translatedFormat('d') == Carbon\Carbon::now()->locale('id')->translatedFormat('d'))
+                                            <span class="badge-today">Hari Ini</span>
+                                        @endif
                                     </div>
-
-                                    <div class="piket-item">
-                                        <div class="piket-date-box">
-                                            <span class="piket-day">Jumat</span>
-                                            <span class="piket-date">26 Sep</span>
-                                        </div>
-                                        <div class="piket-info">
-                                            <h5>Piket Kedisiplinan & Gerbang</h5>
-                                            <p><i class="fa-regular fa-clock"></i> 06:30 - 11:30 WITA</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
+                                @endforeach
+                            </div>
                         </div>
                     </div>
 
@@ -401,4 +373,4 @@
         });
     </script>
 </body>
-</html>
+</html> 

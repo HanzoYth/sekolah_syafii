@@ -49,6 +49,8 @@ class modulGuruController extends Controller
             $jam_masuk = Carbon::parse("00:00:00")->translatedFormat("H:i:s");
             $jam_keluar = Carbon::parse("00:00:00")->translatedFormat("H:i:s");
 
+            $data_piket = jadwal_piket::where("id_guru",session("id"))->get();
+
             $data_pengumuman = pengumuman::where("sekolah_id",$data_guru->sekolah_id)->get();
 
             
@@ -98,7 +100,8 @@ class modulGuruController extends Controller
                 "cek_sudah_absen_oleh_admin" => $cek_sudah_absen_oleh_admin,
                 "cek_sudah_keluar" => $cek_sudah_keluar,
                 "data_pengumuman" => $data_pengumuman,
-                "jumlah_hari_aktif" => $jumlah_hari_aktif
+                "jumlah_hari_aktif" => $jumlah_hari_aktif,
+                "data_piket" => $data_piket
             ]);
         }
         return redirect("/reg");
