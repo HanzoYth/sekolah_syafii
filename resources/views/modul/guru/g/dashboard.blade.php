@@ -183,7 +183,7 @@
                                             <span class="piket-date">{{ Carbon\Carbon::parse($piket->tanggal)->locale("id")->translatedFormat('d M') }}</span>
                                         </div>
                                         <div class="piket-info">
-                                            <p><i class="fa-regular fa-clock"></i> {{ Carbon\Carbon::parse($piket->jam)->->translatedFormat('H:i') }}WITA</p>
+                                            <p><i class="fa-regular fa-clock"></i> {{ Carbon\Carbon::parse($piket->jam)->translatedFormat('H:i') }}WITA</p>
                                         </div>
                                         @if(Carbon\Carbon::parse($piket->tanggal)->locale('id')->translatedFormat('d') == Carbon\Carbon::now()->locale('id')->translatedFormat('d'))
                                             <span class="badge-today">Hari Ini</span>
