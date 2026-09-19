@@ -28,7 +28,8 @@ class sendLink extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Link Reset Password Anda',
+            subject: 'Permintaan Atur Ulang Kata Sandi - Nama Sekolah',
+            replyTo: [new \Illuminate\Mail\Mailables\Address('hanzoziu9@domainsekolah.sch.id', 'Admin Sekolah')],
         );
     }
 

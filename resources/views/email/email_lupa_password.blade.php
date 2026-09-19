@@ -130,10 +130,6 @@
 
             <p style="margin-bottom:8px;">Atau salin dan tempel link berikut ke browser Anda:</p>
             <p class="link-fallback">{{ $resetUrl }}</p>
-
-            <div class="notice">
-                Link ini hanya berlaku selama <strong>60 menit</strong>. Jika Anda tidak merasa meminta reset password, abaikan email ini — password Anda tidak akan berubah.
-            </div>
         </div>
         <div class="footer">
             <div class="divider"></div>
