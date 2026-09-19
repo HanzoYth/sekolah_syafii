@@ -8,6 +8,7 @@ use App\Models\master_lokasi_absen_guru;
 use App\Models\master_waktu_absen_guru;
 use App\Models\cabang_guru;
 use App\Models\guru;
+use App\Models\jadwal_piket;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Redirect;
 
@@ -115,7 +116,7 @@ class MasterAbsenController extends Controller
             $data_guru = guru::find((int) session("id"));
             $hari = Carbon::now()->translatedFormat("l");
             $waktu_absen = Carbon::now();
-            $waktu_jadwal = Carbon::parse(master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->first()->waktu_masuk);
+            $waktu_jadwal = jadwal_piket::where("tanggal",Carbon::now()->translatedFormat("Y-m-d"))->where("id_guru",(int) session("id"))->exists() ? Carbon::parse(jadwal_piket::where("tanggal",Carbon::now()->translatedFormat("Y-m-d"))->where("id_guru",(int) session("id"))->first()->jam)->translatedFormat("Y-m-d") : Carbon::parse(master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->first()->waktu_masuk);
             $terlambat = $waktu_jadwal->diffInMinutes($waktu_absen);
             if (!$waktu_absen->greaterThan($waktu_jadwal)){
                 $terlambat = 0;
