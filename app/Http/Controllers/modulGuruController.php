@@ -13,6 +13,7 @@ use App\Models\cabang_guru;
 use App\Models\tanggal_merah;
 use App\Models\jenis_sekolah;
 use App\Models\gaji;
+use App\Models\jadwal_piket;
 use App\Models\wallas;
 use App\Models\ruang_kelas;
 use App\Models\pengajuan;
@@ -351,6 +352,8 @@ class modulGuruController extends Controller
             $data_sekolah = jenis_sekolah::all();
             $data_akun = akun::find((int) $data_guru->user_id);
             $data_kelas = ruang_kelas::all();
+
+            $data_piket = jadwal_piket::where("id_guru",$id)->get();
     
             $cek_wallas = wallas::where("guru_id",$id)->exists();
             $nama_kelas_terpilih = null;
@@ -370,7 +373,8 @@ class modulGuruController extends Controller
                 "data_akun" => $data_akun,
                 "data_kelas" => $data_kelas,
                 "cek_wallas" => $cek_wallas,
-                "nama_kelas" => $nama_kelas_terpilih
+                "nama_kelas" => $nama_kelas_terpilih,
+                "data_piket" => $data_piket
             ]);
         }
         return redirect("/reg");
@@ -899,5 +903,10 @@ class modulGuruController extends Controller
         ]);
 
         return back()->with("success","berhasil tambah kelas");
+    }
+
+
+    function tambah_piket(Request $request){
+
     }
 }

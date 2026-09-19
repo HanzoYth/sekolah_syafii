@@ -11,7 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create("piket_guru",function (Blueprint $table) {
+            $table->id();
+            $table->date("tanggal");
+            $table->time("jam");
+            $table->foreignId("id_guru")->constrained("guru")->cascadeOnDelete();
+        });
     }
 
     /**
@@ -19,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists("piket_guru");
     }
 };

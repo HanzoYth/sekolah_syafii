@@ -234,18 +234,8 @@
                     </div>
 
                     <div id="piketContainer" class="piket-container">
-                        @php
-                            // Data Dummy Jadwal Piket jika dari Backend belum dikirim
-                            $dummyPiket = collect([
-                                (object)['tanggal' => '2026-03-23', 'waktu' => '07:00'],
-                                (object)['tanggal' => '2026-03-25', 'waktu' => '13:00'],
-                                (object)['tanggal' => '2026-03-27', 'waktu' => '07:00']
-                            ]);
 
-                            $listPiket = (isset($data_piket) && count($data_piket) > 0) ? $data_piket :$dummyPiket;
-                        @endphp
-
-                        @foreach($listPiket as $piket)
+                        @foreach($data_piket as $piket)
                             <div class="piket-item">
                                 <div class="form-group flex-1">
                                     <label>Tanggal Piket</label>
