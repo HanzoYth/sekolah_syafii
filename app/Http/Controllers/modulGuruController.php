@@ -401,6 +401,16 @@ class modulGuruController extends Controller
         return redirect("/reg");
     }
 
+    function tambah_piket($tanggal,$jam,$id){
+        jadwal_piket::create([
+            "tanggal" => $tanggal,
+            "jam" => $jam,
+            "id" => $id
+        ]);
+
+        return;
+    }
+
     function update_dataGuru(Request $request){
 
         $data_guru = guru::find((int) $request->id_guru);
@@ -415,6 +425,12 @@ class modulGuruController extends Controller
         $data_guru->ast_krk = (int) $request->asisten;
         $data_guru->cabang_id = (int) $request->cabang_id;
         $data_guru->sekolah_id = (int) $request->sekolah_id;
+
+        for ($i = 0 ; count($request->piket_tanggal);$i++){
+            if (!jadwal_piket::where("tanggal",Carbon::parse($request->piket_tanggal[$i])->translatedFormat("Y-m-d"))->where("id_guru",$request->id_guru)->exists()){
+                $this->tambah_piket(Carbon::parse($request->piket_tanggal)->translatedFormat("Y-m-d"),Carbon::parse($request->piket_waktu[$i])->translatedFormat("H:i:s"),$request->id_guru);
+            }
+        }
 
 
         if ($request->is_wali_kelas && !wallas::where("guru_id",$request->id_guru)->exists()){
@@ -906,7 +922,5 @@ class modulGuruController extends Controller
     }
 
 
-    function tambah_piket(Request $request){
 
-    }
 }
