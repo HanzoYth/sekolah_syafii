@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Address;
 
 class sendLink extends Mailable
 {
@@ -28,11 +29,12 @@ class sendLink extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Permintaan Atur Ulang Kata Sandi - Nama Sekolah',
-            replyTo: [new \Illuminate\Mail\Mailables\Address('hanzoziu9@domainsekolah.sch.id', 'Admin Sekolah')],
+            from: new Address('hanzoziu9@gmail.com', 'Nama Sekolah Anda'),
+            subject: 'Permintaan Atur Ulang Kata Sandi - Nama Sekolah Anda',
+            replyTo: [new Address('hanzoziu9@gmail.com', 'Admin Sekolah')],
         );
     }
-
+    
     public function content(): Content
     {
         return new Content(
