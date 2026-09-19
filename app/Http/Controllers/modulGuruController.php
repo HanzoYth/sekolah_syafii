@@ -426,7 +426,7 @@ class modulGuruController extends Controller
         $data_guru->cabang_id = (int) $request->cabang_id;
         $data_guru->sekolah_id = (int) $request->sekolah_id;
 
-        if ($request->piket_tanggal ?? true){
+        if ($request->piket_tanggal ?? false){
             for ($i = 0 ; count($request->piket_tanggal);$i++){
                 dd([
                     "tes" => $request->piket_tanggal[$i]
