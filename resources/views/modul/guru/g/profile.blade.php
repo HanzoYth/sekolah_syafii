@@ -255,7 +255,7 @@
                                     </div>
                                 </label>
 
-                                <label class="checkbox-card {{$data_guru->ast_ark ? 'active' : ''}}">
+                                <label class="checkbox-card {{$data_guru->ast_krk ? 'active' : ''}}">
                                     <input type="checkbox" name="kepala_sekolah" value="0" disabled {{$data_guru->ast_krk ? 'checked' : ""}}>
                                     <div class="checkbox-content">
                                         <i class="fa-solid fa-award"></i>
