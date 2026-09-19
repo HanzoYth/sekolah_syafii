@@ -29,12 +29,12 @@ class sendLink extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('hanzoziu9@gmail.com', 'Nama Sekolah Anda'),
-            subject: 'Permintaan Atur Ulang Kata Sandi - Nama Sekolah Anda',
+            from: new Address('hanzoziu9@gmail.com', 'Sekolah Quran Syafii'),
+            subject: 'Permintaan Atur Ulang Kata Sandi - Sekolah Quran Syafii',
             replyTo: [new Address('hanzoziu9@gmail.com', 'Admin Sekolah')],
         );
     }
-    
+
     public function content(): Content
     {
         return new Content(
