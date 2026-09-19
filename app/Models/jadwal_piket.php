@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class jadwal_piket extends Model
 {
     protected $table = "piket_guru";
+    public $timestamps =false;
     protected $fillable = [
         "tanggal",
         "jam",
