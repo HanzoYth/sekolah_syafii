@@ -427,7 +427,7 @@ class modulGuruController extends Controller
         $data_guru->sekolah_id = (int) $request->sekolah_id;
 
         if ($request->piket_tanggal ?? false){
-            for ($i = 0 ; count($request->piket_tanggal);$i++){
+            for ($i = 0 ; $i < count($request->piket_tanggal);$i++){
                 if (!jadwal_piket::where("tanggal",Carbon::parse($request->piket_tanggal[$i])->translatedFormat("Y-m-d"))->where("id_guru",$request->id_guru)->exists()){
                     $this->tambah_piket(Carbon::parse($request->piket_tanggal[$i])->translatedFormat("Y-m-d"),Carbon::parse($request->piket_waktu[$i])->translatedFormat("H:i:s"),$request->id_guru);
                 }
