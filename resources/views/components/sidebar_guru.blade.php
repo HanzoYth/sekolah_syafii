@@ -16,9 +16,6 @@
                 <i class="fa-solid fa-mosque"></i>
                 <span>EduHRIS</span>
             </div>
-            <button class="toggle-btn" id="sidebar-toggle" aria-label="Ciutkan sidebar">
-                <i class="fa-solid fa-angles-left"></i>
-            </button>
         </div>
         @php
             $route = $_SERVER['REQUEST_URI'];
@@ -164,6 +161,10 @@
         </div>
 
         <div class="sidebar-footer">
+            <a href="/mod" class="logout-btn">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Modul</span>
+            </a>
             <a href="/reg/logout" class="logout-btn">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 <span>Keluar</span>
@@ -177,7 +178,6 @@
     var sidebar     = document.getElementById('sidebar');
     var hamburger   = document.getElementById('mobile-hamburger-btn');
     var overlay     = document.getElementById('sidebar-overlay');
-    var collapseBtn = document.getElementById('sidebar-toggle');
 
     if (!sidebar) return;
 
@@ -233,22 +233,6 @@
             closeMobileSidebar();
         }
     });
-
-    // ===== Desktop: collapse/expand via tombol panah =====
-    if (collapseBtn) {
-        collapseBtn.addEventListener('click', function () {
-            if (isMobile()) {
-                closeMobileSidebar();
-                return;
-            }
-            sidebar.classList.toggle('collapsed');
-            localStorage.setItem('sidebar-collapsed', sidebar.classList.contains('collapsed'));
-        });
-
-        if (!isMobile() && localStorage.getItem('sidebar-collapsed') === 'true') {
-            sidebar.classList.add('collapsed');
-        }
-    }
 
     // Reset state saat resize melewati breakpoint
     window.addEventListener('resize', function () {

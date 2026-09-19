@@ -10,9 +10,6 @@
                 <i class="fa-solid fa-mosque"></i>
                 <span>SIAKAD</span>
             </div>
-            <a class="toggle-btn" id="sidebar-toggle" href="/mod" style="text-decoration: none;">
-                <i class="fa-solid fa-angles-left"></i>
-            </a>
         </div>
 
         <div class="sidebar-menu-wrapper">
@@ -155,6 +152,10 @@
         </div>
 
         <div class="sidebar-footer">
+            <a href="/mod" class="logout-btn">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Modul</span>
+            </a>
             <a href="/reg/logout" class="logout-btn">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 <span>Keluar</span>
