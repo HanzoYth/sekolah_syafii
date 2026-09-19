@@ -112,6 +112,10 @@ body {
     margin-bottom: 24px;
 }
 
+.section-title-flex {
+    justify-content: space-between;
+}
+
 /* FOTO PROFIL SECTION */
 .photo-upload-wrapper {
     display: flex;
@@ -247,6 +251,84 @@ textarea.form-control {
     color: var(--text-main);
 }
 
+/* STYLING DYNAMIC SECTION PIKET */
+.piket-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.piket-item {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    background-color: #f8fafc;
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    animation: fadeIn 0.25s ease-in-out;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.btn-add-piket {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition);
+}
+
+.btn-add-piket:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.btn-remove-piket {
+    background-color: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
+    height: 42px;
+    width: 42px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.btn-remove-piket:hover {
+    background-color: #dc2626;
+    color: #ffffff;
+}
+
+.text-muted-note {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    font-style: italic;
+    text-align: center;
+    padding: 16px;
+    background-color: #f8fafc;
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* BUTTON AKSI (SIMPAN) */
 .form-actions {
     display: flex;
@@ -299,6 +381,16 @@ textarea.form-control {
     .photo-upload-wrapper {
         flex-direction: column;
         text-align: center;
+    }
+
+    .piket-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-remove-piket {
+        width: 100%;
+        margin-top: 4px;
     }
 
     .btn-submit {

@@ -161,7 +161,7 @@
                             <label for="cabang_id">Cabang Unit</label>
                             <select id="cabang_id" name="cabang_id" class="form-control" required>
                                 <option value="">-- Pilih Cabang --</option>
-                                @foreach ($data_cabang as $cb)
+                                @foreach ($data_cabang as$cb)
                                     <option value="{{$cb->id}}" {{$cb->id == $data_guru->cabang_id ? 'selected' : ''}}>{{$cb->nama_cabang}}</option>
                                 @endforeach
                             </select>
@@ -172,7 +172,7 @@
                             <label for="sekolah_id">Unit Sekolah</label>
                             <select id="sekolah_id" name="sekolah_id" class="form-control" required>
                                 <option value="">-- Pilih Sekolah --</option>
-                                @foreach ($data_jenis_sekolah as $djs)
+                                @foreach ($data_jenis_sekolah as$djs)
                                     <option value="{{$djs->id}}" {{$djs->id == $data_guru->sekolah_id ? 'selected' : ''}}>{{$djs->jenis}}</option>
                                 @endforeach
                             </select>
@@ -200,12 +200,46 @@
                             <label for="kelas_id">Pilih Kelas Binaan</label>
                             <select id="kelas_id" name="kelas_id" class="form-control" {{$data_guru->is_wali_kelas ? '' : 'disabled'}}>
                                 <option value="">-- Pilih Kelas --</option>
-                                @foreach ($data_kelas as $value)
+                                @foreach ($data_kelas as$value)
                                     <option value="{{$value->id}}" {{$value->nama_ruang == $nama_kelas ? 'selected' : ''}}>{{$value->nama_ruang}}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
+                </div>
+
+                <!-- SECTION 6: JADWAL PIKET (DYNAMIC INPUT) -->
+                <div class="form-section">
+                    <div class="section-title section-title-flex">
+                        <span><i class="fa-solid fa-calendar-days"></i> Jadwal Piket Guru</span>
+                        <button type="button" class="btn-add-piket" id="btnAddPiket">
+                            <i class="fa-solid fa-plus"></i> Tambah Piket
+                        </button>
+                    </div>
+
+                    <div id="piketContainer" class="piket-container">
+                        @if(isset($data_piket) && count($data_piket) > 0)
+                            @foreach($data_piket as$piket)
+                                <div class="piket-item">
+                                    <div class="form-group flex-1">
+                                        <label>Tanggal Piket</label>
+                                        <input type="date" name="piket_tanggal[]" class="form-control" value="{{ $piket->tanggal }}" required>
+                                    </div>
+                                    <div class="form-group flex-1">
+                                        <label>Waktu Piket (Jam & Menit)</label>
+                                        <input type="time" name="piket_waktu[]" class="form-control" value="{{ $piket->waktu }}" required>
+                                    </div>
+                                    <button type="button" class="btn-remove-piket btnRemovePiket" title="Hapus Piket">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+
+                    <p id="emptyPiketNote" class="text-muted-note">
+                        Belum ada jadwal piket ditambahkan. Klik tombol <strong>+ Tambah Piket</strong> di atas.
+                    </p>
                 </div>
 
                 <!-- TOMBOL SIMPAN -->
@@ -221,7 +255,7 @@
     </div>
     <x-warning />
 
-    <!-- Script Sederhana Preview Foto & Handlers -->
+    <!-- Script Preview Foto, Checkbox Handlers & Dynamic Piket -->
     <script>
         function previewImage(event) {
             const reader = new FileReader();
@@ -270,6 +304,53 @@
                 }
             });
         }
+
+        // HANDLER DYNAMIC JADWAL PIKET
+        const btnAddPiket = document.getElementById('btnAddPiket');
+        const piketContainer = document.getElementById('piketContainer');
+        const emptyPiketNote = document.getElementById('emptyPiketNote');
+
+        function checkEmptyNote() {
+            if (piketContainer.children.length === 0) {
+                emptyPiketNote.style.display = 'block';
+            } else {
+                emptyPiketNote.style.display = 'none';
+            }
+        }
+
+        // Event Tambah Baris Piket Baru
+        btnAddPiket.addEventListener('click', function() {
+            const piketRow = document.createElement('div');
+            piketRow.className = 'piket-item';
+            
+            piketRow.innerHTML = `
+                <div class="form-group flex-1">
+                    <label>Tanggal Piket</label>
+                    <input type="date" name="piket_tanggal[]" class="form-control" required>
+                </div>
+                <div class="form-group flex-1">
+                    <label>Waktu Piket (Jam & Menit)</label>
+                    <input type="time" name="piket_waktu[]" class="form-control" required>
+                </div>
+                <button type="button" class="btn-remove-piket btnRemovePiket" title="Hapus Piket">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            `;
+
+            piketContainer.appendChild(piketRow);
+            checkEmptyNote();
+        });
+
+        // Event Hapus Baris Piket
+        piketContainer.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btnRemovePiket') || e.target.closest('.btnRemovePiket')) {
+                const item = e.target.closest('.piket-item');
+                if (item) {
+                    item.remove();
+                    checkEmptyNote();
+                }
+            }
+        });
     </script>
 </body>
 </html>
