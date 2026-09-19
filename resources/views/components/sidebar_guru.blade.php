@@ -162,7 +162,7 @@
 
         <div class="sidebar-footer">
             <a href="/mod" class="logout-btn" style="margin-bottom:10px;">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <i class="fas fa-cubes"></i>
                 <span>Modul</span>
             </a>
             <a href="/reg/logout" class="logout-btn">
