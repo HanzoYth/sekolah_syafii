@@ -89,7 +89,7 @@
                     </div>
                 </div>
 
-                <!-- 2. MAIN SECTION: PRESENSI & RIWAYAT TERAKHIR -->
+                <!-- 2. MAIN SECTION: PRESENSI, JADWAL PIKET & PENGUMUMAN -->
                 <div class="dashboard-grid">
                     
                     <!-- Widget Absensi Hari Ini -->
@@ -153,26 +153,9 @@
                             <div id="location-status" style="margin-top: 15px; font-size: 0.9rem;"></div>
 
                             @php
-                                /*
-                                  KUNCI PERBAIKAN #1:
-                                  data-status di sini HANYA menyatakan apakah SECARA BISNIS
-                                  (sudah absen masuk, belum absen pulang, belum ditutup admin)
-                                  guru ini BOLEH melakukan absen pulang -- terlepas dari lokasi.
-                                  Keputusan lokasi (dalam/luar radius) sepenuhnya dikendalikan
-                                  oleh JavaScript di bawah, bukan oleh Blade di sini.
-                                */
                                 $bolehAbsenPulangSecaraBisnis = $cek_sudah_absen && $cek_sudah_keluar && !$cek_sudah_absen_oleh_admin;
                             @endphp
                             <div class="action-buttons" style="margin-top: 15px;">
-                                {{--
-                                    KUNCI PERBAIKAN #2:
-                                    Tombol SELALU dirender dalam keadaan disabled di HTML awal,
-                                    apapun kondisi bisnisnya. Ini mencegah jendela waktu di mana
-                                    tombol sempat aktif sebelum geolocation selesai mengecek lokasi.
-                                    JS di bawah yang akan meng-aktifkan tombol ini HANYA jika:
-                                    (a) data-status == "boleh", DAN
-                                    (b) posisi guru terkonfirmasi berada dalam radius sekolah.
-                                --}}
                                 <button
                                     class="btn btn-primary"
                                     id="btn_keluar"
@@ -182,6 +165,61 @@
                                     <i class="fa-solid fa-right-from-bracket"></i> Absen Pulang
                                 </button>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD BARU: Widget Jadwal Piket Guru -->
+                    <div class="card widget-piket">
+                        <div class="card-header">
+                            <h4><i class="fa-solid fa-user-shield"></i> Jadwal Piket Minggu Ini</h4>
+                            <span class="badge-status-piket">Aktif</span>
+                        </div>
+                        <div class="card-body">
+                            @if(isset($jadwal_piket) && count($jadwal_piket) > 0)
+                                <div class="piket-list">
+                                    @foreach($jadwal_piket as $piket)
+                                        <div class="piket-item {{ isset($piket->is_today) && $piket->is_today ? 'piket-today' : '' }}">
+                                            <div class="piket-date-box">
+                                                <span class="piket-day">{{ $piket->nama_hari }}</span>
+                                                <span class="piket-date">{{ Carbon\Carbon::parse($piket->tanggal)->translatedFormat('d M') }}</span>
+                                            </div>
+                                            <div class="piket-info">
+                                                <h5>{{ $piket->nama_tugas ?? 'Guru Piket Harian' }}</h5>
+                                                <p><i class="fa-regular fa-clock"></i> {{ $piket->jam_mulai }} - {{ $piket->jam_selesai }} WITA</p>
+                                            </div>
+                                            @if(isset($piket->is_today) && $piket->is_today)
+                                                <span class="badge-today">Hari Ini</span>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <!-- Layout Default (Static/Dummy Contoh jika variabel $jadwal_piket belum dikirim dari Controller) -->
+                                <div class="piket-list">
+                                    <div class="piket-item piket-today">
+                                        <div class="piket-date-box">
+                                            <span class="piket-day">{{ $nama_hari }}</span>
+                                            <span class="piket-date">{{ Carbon\Carbon::parse($tanggal_hari_ini)->translatedFormat('d M') }}</span>
+                                        </div>
+                                        <div class="piket-info">
+                                            <h5>Guru Piket Utama</h5>
+                                            <p><i class="fa-regular fa-clock"></i> 06:30 - 14:00 WITA</p>
+                                        </div>
+                                        <span class="badge-today">Hari Ini</span>
+                                    </div>
+
+                                    <div class="piket-item">
+                                        <div class="piket-date-box">
+                                            <span class="piket-day">Jumat</span>
+                                            <span class="piket-date">26 Sep</span>
+                                        </div>
+                                        <div class="piket-info">
+                                            <h5>Piket Kedisiplinan & Gerbang</h5>
+                                            <p><i class="fa-regular fa-clock"></i> 06:30 - 11:30 WITA</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
@@ -220,16 +258,6 @@
         const statusElement = document.getElementById('location-status');
         const button = document.getElementById('btn_keluar');
 
-        /*
-          KUNCI PERBAIKAN #3:
-          Satu fungsi terpusat untuk menentukan aktif/nonaktifnya tombol.
-          Dipanggil di SETIAP kondisi (dalam radius, luar radius, ATAU
-          gagal mendapat lokasi) supaya tombol selalu konsisten dengan
-          kondisi lokasi TERBARU -- bisa aktif lagi kalau user/guru
-          bergerak kembali masuk radius, dan bisa nonaktif lagi kalau
-          keluar radius. Sebelumnya kode lama HANYA menonaktifkan
-          tombol dan tidak pernah mengaktifkannya kembali.
-        */
         function updateButtonState(bolehKarenaLokasi) {
             if (!button) return;
 
@@ -248,14 +276,6 @@
             statusElement.innerHTML = html;
         }
 
-        /*
-          KUNCI PERBAIKAN #4 (soal "kenapa di laptop tidak bisa"):
-          Geolocation API browser modern WAJIB secure context (https://
-          atau localhost). Kalau halaman diakses lewat http:// biasa,
-          browser akan menolak permintaan lokasi TANPA pernah memanggil
-          watchPosition sama sekali. Kita cek dan beri tahu user secara
-          jelas, bukan cuma diam di console seperti sebelumnya.
-        */
         const isSecureContext = window.isSecureContext ||
             location.protocol === 'https:' ||
             location.hostname === 'localhost';
@@ -272,7 +292,7 @@
                 function (position) {
                     const userLat = position.coords.latitude;
                     const userLng = position.coords.longitude;
-                    const akurasi = position.coords.accuracy; // dalam meter
+                    const akurasi = position.coords.accuracy;
 
                     const latInput = document.querySelector(".latitude");
                     const lngInput = document.querySelector(".longitude");
@@ -292,9 +312,6 @@
                             'location-status status-ok'
                         );
                     } else {
-                        // Kalau akurasi GPS-nya sangat kasar (umum terjadi di laptop
-                        // tanpa GPS, hanya mengandalkan WiFi/IP), beri tahu user supaya
-                        // tidak bingung kenapa jaraknya kelihatan jauh padahal di lokasi.
                         let pesanAkurasi = '';
                         if (akurasi && akurasi > 200) {
                             pesanAkurasi = ' Akurasi lokasi perangkat ini rendah (\u00b1' + Math.round(akurasi) +
@@ -311,8 +328,6 @@
                     updateButtonState(dalamRadius);
                 },
                 function (error) {
-                    // KUNCI PERBAIKAN #5: error ditampilkan ke user, bukan cuma console,
-                    // dan tombol dipastikan nonaktif karena lokasi belum terkonfirmasi.
                     let pesan = 'Gagal mendapatkan lokasi Anda.';
                     if (error.code === error.PERMISSION_DENIED) {
                         pesan = 'Izin lokasi ditolak. Aktifkan izin lokasi di browser/perangkat Anda untuk bisa absen pulang.';
@@ -345,7 +360,7 @@
         }
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3; // Radius bumi dalam meter
+            const R = 6371e3;
             const φ1 = lat1 * Math.PI / 180;
             const φ2 = lat2 * Math.PI / 180;
             const Δφ = (lat2 - lat1) * Math.PI / 180;
