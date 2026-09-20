@@ -54,175 +54,178 @@
                             <label for="nama">Nama Lengkap & Gelar</label>
                             <input type="text" id="nama" name="nama" class="form-control" value="{{ $data_guru->nama ?? 'Ahmad Fauzi, S.Pd.' }}" readonly>
                         </div>
+                        @if (session("role") == "a")
+                            <!-- NIG (Nomor Induk Guru) -->
+                            <div class="form-group">
+                                <label for="nig">NIG (Nomor Induk Guru)</label>
+                                <input type="text" id="nig" name="nig" class="form-control" value="{{ $data_guru->nig ?? '19850101202301' }}" readonly>
+                            </div>
+                            <!-- Nomor Wa -->
+                            <div class="form-group">
+                                <label for="wa">WA (Nomor WA Aktif)</label>
+                                <input type="text" id="wa" name="wa" class="form-control" value="{{ $nomor_wa ?? '081234567890' }}" readonly>
+                            </div>
 
-                        <!-- NIG (Nomor Induk Guru) -->
-                        <div class="form-group">
-                            <label for="nig">NIG (Nomor Induk Guru)</label>
-                            <input type="text" id="nig" name="nig" class="form-control" value="{{ $data_guru->nig ?? '19850101202301' }}" readonly>
-                        </div>
-                        <!-- Nomor Wa -->
-                        <div class="form-group">
-                            <label for="wa">WA (Nomor WA Aktif)</label>
-                            <input type="text" id="wa" name="wa" class="form-control" value="{{ $nomor_wa ?? '081234567890' }}" readonly>
-                        </div>
+                            <!-- Tempat Lahir -->
+                            <div class="form-group">
+                                <label for="tempat_lahir">Tempat Lahir</label>
+                                <input type="text" id="tempat_lahir" name="tempat_lahir" class="form-control" value="{{ $data_guru->tempat_lahir ?? 'Jakarta' }}" readonly>
+                            </div>
 
-                        <!-- Tempat Lahir -->
-                        <div class="form-group">
-                            <label for="tempat_lahir">Tempat Lahir</label>
-                            <input type="text" id="tempat_lahir" name="tempat_lahir" class="form-control" value="{{ $data_guru->tempat_lahir ?? 'Jakarta' }}" readonly>
-                        </div>
+                            <!-- Tanggal Lahir -->
+                            <div class="form-group">
+                                <label for="tanggal_lahir">Tanggal Lahir</label>
+                                <input type="date" id="tanggal_lahir" name="tanggal_lahir" class="form-control" value="{{ $data_guru->tanggal_lahir ?? '1990-05-15' }}" readonly>
+                            </div>
 
-                        <!-- Tanggal Lahir -->
-                        <div class="form-group">
-                            <label for="tanggal_lahir">Tanggal Lahir</label>
-                            <input type="date" id="tanggal_lahir" name="tanggal_lahir" class="form-control" value="{{ $data_guru->tanggal_lahir ?? '1990-05-15' }}" readonly>
-                        </div>
+                            <!-- Agama -->
+                            <div class="form-group">
+                                <label for="agama">Agama</label>
+                                <input type="text" id="agama" name="agama" class="form-control" value="{{ $data_guru->agama ?? 'Islam' }}" readonly>
+                            </div>
 
-                        <!-- Agama -->
-                        <div class="form-group">
-                            <label for="agama">Agama</label>
-                            <input type="text" id="agama" name="agama" class="form-control" value="{{ $data_guru->agama ?? 'Islam' }}" readonly>
-                        </div>
+                            <!-- Pendidikan Terakhir -->
+                            <div class="form-group">
+                                <label for="pendidikan_terakhir">Pendidikan Terakhir</label>
+                                <select id="pendidikan_terakhir" name="pendidikan_terakhir" class="form-control" disabled>
+                                    <option value="" disabled>-- Pilih Pendidikan --</option>
+                                    <option value="smp" {{ ($data_guru->pendidikan_terakhir ?? '') == 'smp' ? 'selected' : '' }}>SMP / Sederajat</option>
+                                    <option value="sma" {{ ($data_guru->pendidikan_terakhir ?? '') == 'sma' ? 'selected' : '' }}>SMA / MA / Sederajat</option>
+                                    <option value="s1" {{ ($data_guru->pendidikan_terakhir ?? 's1') == 's1' ? 'selected' : '' }}>S1 (Sarjana)</option>
+                                    <option value="s2" {{ ($data_guru->pendidikan_terakhir ?? '') == 's2' ? 'selected' : '' }}>S2 (Magister)</option>
+                                    <option value="s3" {{ ($data_guru->pendidikan_terakhir ?? '') == 's3' ? 'selected' : '' }}>S3 (Doktor)</option>
+                                </select>
+                            </div>
 
-                        <!-- Pendidikan Terakhir -->
-                        <div class="form-group">
-                            <label for="pendidikan_terakhir">Pendidikan Terakhir</label>
-                            <select id="pendidikan_terakhir" name="pendidikan_terakhir" class="form-control" disabled>
-                                <option value="" disabled>-- Pilih Pendidikan --</option>
-                                <option value="smp" {{ ($data_guru->pendidikan_terakhir ?? '') == 'smp' ? 'selected' : '' }}>SMP / Sederajat</option>
-                                <option value="sma" {{ ($data_guru->pendidikan_terakhir ?? '') == 'sma' ? 'selected' : '' }}>SMA / MA / Sederajat</option>
-                                <option value="s1" {{ ($data_guru->pendidikan_terakhir ?? 's1') == 's1' ? 'selected' : '' }}>S1 (Sarjana)</option>
-                                <option value="s2" {{ ($data_guru->pendidikan_terakhir ?? '') == 's2' ? 'selected' : '' }}>S2 (Magister)</option>
-                                <option value="s3" {{ ($data_guru->pendidikan_terakhir ?? '') == 's3' ? 'selected' : '' }}>S3 (Doktor)</option>
-                            </select>
-                        </div>
-
-                        <!-- Alamat Lengkap -->
-                        <div class="form-group span-2">
-                            <label for="alamat">Alamat Lengkap</label>
-                            <textarea id="alamat" name="alamat" class="form-control" rows="3" readonly>{{ $data_guru->alamat ?? 'Jl. Pendidikan No. 45, Jakarta Selatan' }}</textarea>
-                        </div>
+                            <!-- Alamat Lengkap -->
+                            <div class="form-group span-2">
+                                <label for="alamat">Alamat Lengkap</label>
+                                <textarea id="alamat" name="alamat" class="form-control" rows="3" readonly>{{ $data_guru->alamat ?? 'Jl. Pendidikan No. 45, Jakarta Selatan' }}</textarea>
+                            </div>
+                        @endif
                     </div>
                 </div>
-
-                <!-- SECTION 3: JABATAN & PENUGASAN -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fa-solid fa-briefcase"></i> Status & Peran Guru
-                    </div>
-
-                    <div class="checkbox-grid">
-                        <label class="checkbox-card">
-                            <input type="checkbox" name="guru_tetap" value="1" {{ ($data_guru->guru_tetap ?? true) ? 'checked' : '' }}>
-                            <span>Guru Tetap</span>
-                        </label>
-
-                        <label class="checkbox-card">
-                            <input type="checkbox" name="guru_honor" value="0" {{ ($data_guru->guru_honor ?? false) ? 'checked' : '' }}>
-                            <span>Guru Honor</span>
-                        </label>
-
-                        <label class="checkbox-card">
-                            <input type="checkbox" name="pengampu_tahfiz" value="1" {{ ($data_guru->pengampu_tahfiz ?? true) ? 'checked' : '' }}>
-                            <span>Pengampu Tahfiz</span>
-                        </label>
-
-                        <label class="checkbox-card">
-                            <input type="checkbox" name="koordinator_tahfiz" value="0" {{ ($data_guru->koordinator_tahfiz ?? false) ? 'checked' : '' }}>
-                            <span>Koordinator Tahfiz</span>
-                        </label>
-
-                        <label class="checkbox-card">
-                            <input type="checkbox" name="kepala_sekolah" value="0" {{ ($data_guru->kepala_sekolah ?? false) ? 'checked' : '' }}>
-                            <span>Kepala Sekolah</span>
-                        </label>
-
-                        <label class="checkbox-card">
-                            <input type="checkbox" name="wakil_sekolah" value="0" {{ ($data_guru->wakil_sekolah ?? false) ? 'checked' : '' }}>
-                            <span>Wakil Kepala Sekolah</span>
-                        </label>
-
-                        <label class="checkbox-card">
-                            <input type="checkbox" name="asisten" value="0" {{ ($data_guru->ast_krk ?? false) ? 'checked' : '' }}>
-                            <span>Asisten Kurikulum</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- SECTION 4: CABANG & SEKOLAH -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fa-solid fa-school"></i> Penempatan Unit
-                    </div>
-
-                    <div class="form-grid">
-                        <!-- Cabang ID -->
-                        <div class="form-group">
-                            <label for="cabang_id">Cabang Unit</label>
-                            <select id="cabang_id" name="cabang_id" class="form-control" required>
-                                <option value="">-- Pilih Cabang --</option>
-                                @if(isset($data_cabang))
-                                    @foreach ($data_cabang as $cb)
-                                        <option value="{{ $cb->id }}" {{ $cb->id == ($data_guru->cabang_id ?? '') ? 'selected' : '' }}>{{ $cb->nama_cabang }}</option>
-                                    @endforeach
-                                @else
-                                    <option value="1" selected>Cabang Pusat - Jakarta</option>
-                                    <option value="2">Cabang Cabang 2 - Bandung</option>
-                                @endif
-                            </select>
+                
+                @if (session('role') == "a")
+                    <!-- SECTION 3: JABATAN & PENUGASAN -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fa-solid fa-briefcase"></i> Status & Peran Guru
                         </div>
 
-                        <!-- Sekolah ID -->
-                        <div class="form-group">
-                            <label for="sekolah_id">Unit Sekolah</label>
-                            <select id="sekolah_id" name="sekolah_id" class="form-control" required>
-                                <option value="">-- Pilih Sekolah --</option>
-                                @if(isset($data_jenis_sekolah))
-                                    @foreach ($data_jenis_sekolah as $djs)
-                                        <option value="{{ $djs->id }}" {{ $djs->id == ($data_guru->sekolah_id ?? '') ? 'selected' : '' }}>{{ $djs->jenis }}</option>
-                                    @endforeach
-                                @else
-                                    <option value="1" selected>SMP Tahfiz</option>
-                                    <option value="2">SMA Tahfiz</option>
-                                @endif
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SECTION 5: TUGAS WALI KELAS -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fa-solid fa-user-graduate"></i> Penugasan Wali Kelas
-                    </div>
-
-                    <div class="form-grid">
-                        <!-- Checkbox Status Wali Kelas -->
-                        <div class="form-group">
+                        <div class="checkbox-grid">
                             <label class="checkbox-card">
-                                <input type="checkbox" id="is_wali_kelas" name="is_wali_kelas" value="1" {{ ($cek_wallas ?? true) ? 'checked' : '' }}>
-                                <span>Bertugas Sebagai Wali Kelas</span>
+                                <input type="checkbox" name="guru_tetap" value="1" {{ ($data_guru->guru_tetap ?? true) ? 'checked' : '' }}>
+                                <span>Guru Tetap</span>
+                            </label>
+
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="guru_honor" value="0" {{ ($data_guru->guru_honor ?? false) ? 'checked' : '' }}>
+                                <span>Guru Honor</span>
+                            </label>
+
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="pengampu_tahfiz" value="1" {{ ($data_guru->pengampu_tahfiz ?? true) ? 'checked' : '' }}>
+                                <span>Pengampu Tahfiz</span>
+                            </label>
+
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="koordinator_tahfiz" value="0" {{ ($data_guru->koordinator_tahfiz ?? false) ? 'checked' : '' }}>
+                                <span>Koordinator Tahfiz</span>
+                            </label>
+
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="kepala_sekolah" value="0" {{ ($data_guru->kepala_sekolah ?? false) ? 'checked' : '' }}>
+                                <span>Kepala Sekolah</span>
+                            </label>
+
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="wakil_sekolah" value="0" {{ ($data_guru->wakil_sekolah ?? false) ? 'checked' : '' }}>
+                                <span>Wakil Kepala Sekolah</span>
+                            </label>
+
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="asisten" value="0" {{ ($data_guru->ast_krk ?? false) ? 'checked' : '' }}>
+                                <span>Asisten Kurikulum</span>
                             </label>
                         </div>
+                    </div>
 
-                        <!-- Select Pilihan Kelas -->
-                        <div class="form-group">
-                            <label for="kelas_id">Pilih Kelas Binaan</label>
-                            <select id="kelas_id" name="kelas_id" class="form-control">
-                                <option value="">-- Pilih Kelas --</option>
-                                @if(isset($data_kelas))
-                                    @foreach ($data_kelas as $value)
-                                        <option value="{{ $value->id }}" {{ $value->nama_ruang == ($nama_kelas ?? '') ? 'selected' : '' }}>{{ $value->nama_ruang }}</option>
-                                    @endforeach
-                                @else
-                                    <option value="1" selected>Kelas 7-A</option>
-                                    <option value="2">Kelas 8-B</option>
-                                    <option value="3">Kelas 9-C</option>
-                                @endif
-                            </select>
+                    <!-- SECTION 4: CABANG & SEKOLAH -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fa-solid fa-school"></i> Penempatan Unit
+                        </div>
+
+                        <div class="form-grid">
+                            <!-- Cabang ID -->
+                            <div class="form-group">
+                                <label for="cabang_id">Cabang Unit</label>
+                                <select id="cabang_id" name="cabang_id" class="form-control" required>
+                                    <option value="">-- Pilih Cabang --</option>
+                                    @if(isset($data_cabang))
+                                        @foreach ($data_cabang as $cb)
+                                            <option value="{{ $cb->id }}" {{ $cb->id == ($data_guru->cabang_id ?? '') ? 'selected' : '' }}>{{ $cb->nama_cabang }}</option>
+                                        @endforeach
+                                    @else
+                                        <option value="1" selected>Cabang Pusat - Jakarta</option>
+                                        <option value="2">Cabang Cabang 2 - Bandung</option>
+                                    @endif
+                                </select>
+                            </div>
+
+                            <!-- Sekolah ID -->
+                            <div class="form-group">
+                                <label for="sekolah_id">Unit Sekolah</label>
+                                <select id="sekolah_id" name="sekolah_id" class="form-control" required>
+                                    <option value="">-- Pilih Sekolah --</option>
+                                    @if(isset($data_jenis_sekolah))
+                                        @foreach ($data_jenis_sekolah as $djs)
+                                            <option value="{{ $djs->id }}" {{ $djs->id == ($data_guru->sekolah_id ?? '') ? 'selected' : '' }}>{{ $djs->jenis }}</option>
+                                        @endforeach
+                                    @else
+                                        <option value="1" selected>SMP Tahfiz</option>
+                                        <option value="2">SMA Tahfiz</option>
+                                    @endif
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
+
+                    <!-- SECTION 5: TUGAS WALI KELAS -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fa-solid fa-user-graduate"></i> Penugasan Wali Kelas
+                        </div>
+
+                        <div class="form-grid">
+                            <!-- Checkbox Status Wali Kelas -->
+                            <div class="form-group">
+                                <label class="checkbox-card">
+                                    <input type="checkbox" id="is_wali_kelas" name="is_wali_kelas" value="1" {{ ($cek_wallas ?? true) ? 'checked' : '' }}>
+                                    <span>Bertugas Sebagai Wali Kelas</span>
+                                </label>
+                            </div>
+
+                            <!-- Select Pilihan Kelas -->
+                            <div class="form-group">
+                                <label for="kelas_id">Pilih Kelas Binaan</label>
+                                <select id="kelas_id" name="kelas_id" class="form-control">
+                                    <option value="">-- Pilih Kelas --</option>
+                                    @if(isset($data_kelas))
+                                        @foreach ($data_kelas as $value)
+                                            <option value="{{ $value->id }}" {{ $value->nama_ruang == ($nama_kelas ?? '') ? 'selected' : '' }}>{{ $value->nama_ruang }}</option>
+                                        @endforeach
+                                    @else
+                                        <option value="1" selected>Kelas 7-A</option>
+                                        <option value="2">Kelas 8-B</option>
+                                        <option value="3">Kelas 9-C</option>
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- SECTION 6: JADWAL PIKET (DENGAN DATA DUMMY) -->
                 <div class="form-section">

@@ -18,18 +18,33 @@
     <!-- MAIN CONTENT -->
     <main class="main-wrapper">
         <!-- TOPBAR HEADER -->
-        <header class="topbar">
-            <div class="topbar-title">
-                <div class="title-with-date">
-                    <h2>Kelola Data Guru</h2>
-                    <span class="date-badge">
-                        <i class="fa-regular fa-calendar-days"></i>
-                        <span id="currentDateText">Loading...</span>
-                    </span>
+        @if (session("role" == "a"))
+            <header class="topbar">
+                <div class="topbar-title">
+                    <div class="title-with-date">
+                        <h2>Kelola Data Guru</h2>
+                        <span class="date-badge">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span id="currentDateText">Loading...</span>
+                        </span>
+                    </div>
+                    <p>Kelola data induk, status keaktifan, dan informasi pengajar</p>
                 </div>
-                <p>Kelola data induk, status keaktifan, dan informasi pengajar</p>
-            </div>
-        </header>
+            </header>
+        @else
+            <header class="topbar">
+                <div class="topbar-title">
+                    <div class="title-with-date">
+                        <h2>Jadwal Piket Guru</h2>
+                        <span class="date-badge">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span id="currentDateText">Loading...</span>
+                        </span>
+                    </div>
+                    <p>Kelola Dan Atur Jadwal Piket Guru</p>
+                </div>
+            </header>
+        @endif
 
         <!-- CARD FILTER -->
         <section class="card filter-card">
@@ -68,9 +83,11 @@
                         <tr>
                             <th width="60">No</th>
                             <th>Nama Guru</th>
-                            <th>NIG</th>
-                            <th>Kode Identitas</th>
-                            <th>Jenis Sekolah</th>
+                            @if (session("role") == "a")
+                                <th>NIG</th>
+                                <th>Kode Identitas</th>
+                                <th>Jenis Sekolah</th>
+                            @endif
                             <th class="text-center">Status</th>
                             <th class="text-center" width="160">Aksi</th>
                         </tr>
@@ -96,13 +113,17 @@
                                         </div>
                                         <div class="teacher-detail">
                                             <strong>{{$value->nama}}</strong>
-                                            <small>{{$data_akun->email}}</small>
+                                            @if (session("role") == "a")
+                                                <small>{{$data_akun->email}}</small>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>
-                                <td><span class="nig-badge">{{$value->nig}}</span></td>
-                                <td><span class="nig-badge">{{$data_identitas->identitas    }}</span></td>
-                                <td><span class="school-tag sma">{{$jenis_sekolah->jenis}}</span></td>
+                                @if (session("role") == "a")
+                                    <td><span class="nig-badge">{{$value->nig}}</span></td>
+                                    <td><span class="nig-badge">{{$data_identitas->identitas}}</span></td>
+                                    <td><span class="school-tag sma">{{$jenis_sekolah->jenis}}</span></td>
+                                @endif
                                 <td class="text-center">
                                     @if ($data_akun->aktif)
                                     <span class="status-badge status-active">
@@ -120,9 +141,11 @@
                                             <a href="/gr/edgr/{{$value->id}}" class="btn-action btn-edit" title="Edit Data">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </a>
-                                            <button class="btn-action btn-deactivate btn-trigger-modal" title="Nonaktifkan Guru" data-akun-guru = "{{$data_akun->id}}">
-                                                <i class="fa-solid fa-user-xmark"></i>
-                                            </button>
+                                            @if (session("role") == "a")
+                                                <button class="btn-action btn-deactivate btn-trigger-modal" title="Nonaktifkan Guru" data-akun-guru = "{{$data_akun->id}}">
+                                                    <i class="fa-solid fa-user-xmark"></i>
+                                                </button>
+                                            @endif
                                         @else
                                             <button class="btn-action btn-deactivate btn-trigger-modal" title="Nonaktifkan Guru" disabled>
                                                 <i class="fa-solid fa-user-xmark"></i>

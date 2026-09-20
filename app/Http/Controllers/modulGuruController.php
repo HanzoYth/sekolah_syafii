@@ -101,7 +101,7 @@ class modulGuruController extends Controller
                 "cek_sudah_keluar" => $cek_sudah_keluar,
                 "data_pengumuman" => $data_pengumuman,
                 "jumlah_hari_aktif" => $jumlah_hari_aktif,
-                "data_piket" => $data_piket
+                "data_piket" => $data_piket  
             ]);
         }
         return redirect("/reg");
@@ -414,51 +414,61 @@ class modulGuruController extends Controller
         return;
     }
 
+
     function update_dataGuru(Request $request){
 
         $data_guru = guru::find((int) $request->id_guru);
 
-        $data_guru->guru_honor = (int) $request->guru_honor;
-        $data_guru->pengampu_tahfiz = (int) $request->pengampu_tahfiz;
-        $data_guru->guru_tetap = (int) $request->guru_tetap;
-        $data_guru->tutup_buku = (int) $request->tutup_buku;
-        $data_guru->koordinator_tahfiz = (int) $request->koordinator_tahfiz;
-        $data_guru->kepala_sekolah = (int) $request->kepala_sekolah;
-        $data_guru->wakil_sekolah = (int) $request->wakil_sekolah;
-        $data_guru->ast_krk = (int) $request->asisten;
-        $data_guru->cabang_id = (int) $request->cabang_id;
-        $data_guru->sekolah_id = (int) $request->sekolah_id;
+        if (session("role") == "a"){
+            $data_guru->guru_honor = (int) $request->guru_honor;
+            $data_guru->pengampu_tahfiz = (int) $request->pengampu_tahfiz;
+            $data_guru->guru_tetap = (int) $request->guru_tetap;
+            $data_guru->tutup_buku = (int) $request->tutup_buku;
+            $data_guru->koordinator_tahfiz = (int) $request->koordinator_tahfiz;
+            $data_guru->kepala_sekolah = (int) $request->kepala_sekolah;
+            $data_guru->wakil_sekolah = (int) $request->wakil_sekolah;
+            $data_guru->ast_krk = (int) $request->asisten;
+            $data_guru->cabang_id = (int) $request->cabang_id;
+            $data_guru->sekolah_id = (int) $request->sekolah_id;
 
 
-        jadwal_piket::query()->delete();
-        if ($request->piket_tanggal ?? false){
-            for ($i = 0 ; $i < count($request->piket_tanggal);$i++){
-                if (!jadwal_piket::where("tanggal",Carbon::parse($request->piket_tanggal[$i])->translatedFormat("Y-m-d"))->where("id_guru",$request->id_guru)->exists()){
+            jadwal_piket::query()->delete();
+            if ($request->piket_tanggal ?? false){
+                for ($i = 0 ; $i < count($request->piket_tanggal);$i++){
                     $this->tambah_piket(Carbon::parse($request->piket_tanggal[$i])->translatedFormat("Y-m-d"),Carbon::parse($request->piket_waktu[$i])->translatedFormat("H:i:s"),$request->id_guru);
                 }
             }
-        }
 
 
-        if ($request->is_wali_kelas && !wallas::where("guru_id",$request->id_guru)->exists()){
-            wallas::create([
-                "guru_id" => (int) $request->id_guru,
-                "kelas_id" => (int) $request->kelas_id
-            ]);
-        }elseif(!$request->is_wali_kelas && wallas::where("guru_id",$request->id_guru)->exists()){
-            $data_wallas = wallas::where("guru_id",$request->id_guru)->first();
-            $data_wallas->delete();
-        }else{
-            if ($request->is_wali_kelas){
+            if ($request->is_wali_kelas && !wallas::where("guru_id",$request->id_guru)->exists()){
+                wallas::create([
+                    "guru_id" => (int) $request->id_guru,
+                    "kelas_id" => (int) $request->kelas_id
+                ]);
+            }elseif(!$request->is_wali_kelas && wallas::where("guru_id",$request->id_guru)->exists()){
                 $data_wallas = wallas::where("guru_id",$request->id_guru)->first();
-                $data_wallas->kelas_id = $request->kelas_id;
+                $data_wallas->delete();
+            }else{
+                if ($request->is_wali_kelas){
+                    $data_wallas = wallas::where("guru_id",$request->id_guru)->first();
+                    $data_wallas->kelas_id = $request->kelas_id;
 
-                $data_wallas->save();
+                    $data_wallas->save();
+                }
             }
-        }
 
-        $data_guru->save();
-        return redirect("/gr/klgr")->with("success","berhasil update data guru");
+            $data_guru->save();
+            return redirect("/gr/klgr")->with("success","berhasil update data guru");
+        }else{
+            jadwal_piket::query()->delete();
+            if ($request->piket_tanggal ?? false){
+                for ($i = 0 ; $i < count($request->piket_tanggal);$i++){
+                    $this->tambah_piket(Carbon::parse($request->piket_tanggal[$i])->translatedFormat("Y-m-d"),Carbon::parse($request->piket_waktu[$i])->translatedFormat("H:i:s"),$request->id_guru);
+                }
+            }
+
+            return redirect("/gr/klgr")->with("success","berhasil atur piket guru");
+        }
     }
 
     function update_profileGuru(Request $request){

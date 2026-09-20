@@ -24,7 +24,7 @@ class otpController extends Controller
         $data_guru = guru::where("id", session('id'))->first();
 
         do {
-            $kode = random_int(100000, 999999);
+            $kode = random_int(100000, 999999); //992012
         } while (otp_guru::where("kode_otp", $kode)->exists());
 
         $expiredAt = now()->addMinutes(2); // samain sama durasi timer 01:59 di view
