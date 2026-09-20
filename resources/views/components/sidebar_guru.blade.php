@@ -65,10 +65,10 @@
                             </a>
                         </li>
                         @if (App\Models\guru::where("id",session("id"))->first()->ast_krk)
-                            <li class="menu-item {{$route == '/gr/klgr ? 'active' : ''}}">
+                            <li class="menu-item {{$route == '/gr/klgr' ? 'active' : ''}}">
                                 <a href="/gr/edprgr">
                                     <i class="fa-solid fa-user"></i>
-                                    <span>Profile</span>
+                                    <span>Jadwal Piket</span>
                                 </a>
                             </li>
                         @endif
