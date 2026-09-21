@@ -157,7 +157,7 @@
                                 <!-- ===== KTP ===== -->
                                 <div class="form-group">
                                     <label for="ktp">Kartu Tanda Penduduk (KTP)</label>
-                                    <div class="doc-card" data-doc="ktp">
+                                    <div class="doc-card" data-doc="ktp" data_name = "{{$data_guru->ktp}}" data_url="{{route('pdf.show',$data_guru->ktp)}}">
                                         <!-- Berkas yang sudah tersimpan -->
                                         <div class="doc-saved">
                                             <span class="doc-thumb"><i class="fa-solid fa-file-pdf" id="docIcon-ktp"></i></span>
@@ -175,7 +175,7 @@
                                             <label for="ktp" class="custom-file-label">
                                                 <i class="fa-solid fa-id-card"></i> Pilih File KTP
                                             </label>
-                                            <input type="file" id="ktp" class="file-input-hidden" accept="image/*,.pdf" value="{{route('pdf.show',$data_guru->ktp)}}" onchange="previewDocument(event, 'ktp')">
+                                            <input type="file" id="ktp" class="file-input-hidden" accept="image/*,.pdf" onchange="previewDocument(event, 'ktp')">
                                             <span class="file-name-indicator" id="fileName-ktp">Belum ada file baru dipilih</span>
                                             <button type="button" class="btn-preview-new" id="previewBtn-ktp" onclick="openDocViewer('ktp', 'new')" hidden>
                                                 <i class="fa-solid fa-magnifying-glass"></i> Pratinjau file baru
@@ -187,7 +187,7 @@
                                 <!-- ===== KK ===== -->
                                 <div class="form-group">
                                     <label for="kk">Kartu Keluarga (KK)</label>
-                                    <div class="doc-card" data-doc="kk">
+                                    <div class="doc-card" data-doc="kk" data_name = "{{$data_guru->kk}}" data_url="{{route('pdf.show',$data_guru->kk)}}">
                                         <div class="doc-saved">
                                             <span class="doc-thumb"><i class="fa-solid fa-file-pdf" id="docIcon-kk"></i></span>
                                             <div class="doc-meta">
@@ -203,7 +203,7 @@
                                             <label for="kk" class="custom-file-label">
                                                 <i class="fa-solid fa-users"></i> Pilih File KK
                                             </label>
-                                            <input type="file" id="kk" class="file-input-hidden" accept="image/*,.pdf" value="{{route('pdf.show',$data_guru->kk)}}" onchange="previewDocument(event, 'kk')">
+                                            <input type="file" id="kk" class="file-input-hidden" accept="image/*,.pdf" onchange="previewDocument(event, 'kk')">
                                             <span class="file-name-indicator" id="fileName-kk">Belum ada file baru dipilih</span>
                                             <button type="button" class="btn-preview-new" id="previewBtn-kk" onclick="openDocViewer('kk', 'new')" hidden>
                                                 <i class="fa-solid fa-magnifying-glass"></i> Pratinjau file baru
@@ -215,7 +215,7 @@
                                 <!-- ===== IJAZAH ===== -->
                                 <div class="form-group span-2">
                                     <label for="ijazah">Ijazah Terakhir</label>
-                                    <div class="doc-card" data-doc="ijazah">
+                                    <div class="doc-card" data-doc="ijazah" data_name = "{{$data_guru->ijazah}}" data_url="{{route('pdf.show',$data_guru->ijazah)}}">
                                         <div class="doc-saved">
                                             <span class="doc-thumb"><i class="fa-solid fa-file-pdf" id="docIcon-ijazah"></i></span>
                                             <div class="doc-meta">
@@ -231,7 +231,7 @@
                                             <label for="ijazah" class="custom-file-label">
                                                 <i class="fa-solid fa-scroll"></i> Pilih File Ijazah
                                             </label>
-                                            <input type="file" id="ijazah" class="file-input-hidden" accept="image/*,.pdf" value="{{route('pdf.show',$data_guru->ijazah)}}" onchange="previewDocument(event, 'ijazah')">
+                                            <input type="file" id="ijazah" class="file-input-hidden" accept="image/*,.pdf" onchange="previewDocument(event, 'ijazah')">
                                             <span class="file-name-indicator" id="fileName-ijazah">Belum ada file baru dipilih</span>
                                             <button type="button" class="btn-preview-new" id="previewBtn-ijazah" onclick="openDocViewer('ijazah', 'new')" hidden>
                                                 <i class="fa-solid fa-magnifying-glass"></i> Pratinjau file baru
@@ -239,9 +239,6 @@
                                         </div>
                                     </div>
 <!-- 
-                                    <input type="hidden">
-                                    <input type="hidden">
-                                    <input type="text"> -->
                                 </div>
 
                             </div>
@@ -448,8 +445,6 @@
     <x-warning />
 
     <script>
-
-        console.log(document.getElementById("ijazah").value);
         function previewImage(event) {
             const input = event.target;
             const fileNameText = document.getElementById('fileName');
@@ -502,23 +497,25 @@
            - isi "url" dengan URL dari route pdf.show
            - kosongkan name dan url jika guru belum upload berkas
            ===================================================== */
-        const docConfig = {
-            ktp: {
-                label: 'Kartu Tanda Penduduk (KTP)',
-                saved: { name: 'ktp.pdf', url: '' },
-                fresh: null
-            },
-            kk: {
-                label: 'Kartu Keluarga (KK)',
-                saved: { name: 'kk-contoh.jpg', url: '' },
-                fresh: null
-            },
-            ijazah: {
-                label: 'Ijazah Terakhir',
-                saved: { name: 'ijazah-contoh.pdf', url: '' },
-                fresh: null
-            }
+        const docLabels = {
+            ktp: 'Kartu Tanda Penduduk (KTP)',
+            kk: 'Kartu Keluarga (KK)',
+            ijazah: 'Ijazah Terakhir'
         };
+
+        /* Ambil data berkas dari atribut data-name dan data-url yang diisi Blade */
+        const docConfig = {};
+        document.querySelectorAll('.doc-card[data-doc]').forEach(function(card) {
+            const key = card.dataset.doc;
+            docConfig[key] = {
+                label: docLabels[key],
+                saved: {
+                    name: card.dataset.name || '',
+                    url: card.dataset.url || ''
+                },
+                fresh: null
+            };
+        });
 
         const docViewer = document.getElementById('docViewer');
         const docViewerBody = document.getElementById('docViewerBody');
