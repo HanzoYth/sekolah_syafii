@@ -238,6 +238,10 @@
                                             </button>
                                         </div>
                                     </div>
+<!-- 
+                                    <input type="hidden">
+                                    <input type="hidden">
+                                    <input type="text"> -->
                                 </div>
 
                             </div>
@@ -444,6 +448,8 @@
     <x-warning />
 
     <script>
+
+        console.log(document.getElementById("ijazah").value);
         function previewImage(event) {
             const input = event.target;
             const fileNameText = document.getElementById('fileName');
@@ -499,7 +505,7 @@
         const docConfig = {
             ktp: {
                 label: 'Kartu Tanda Penduduk (KTP)',
-                saved: { name: 'ktp-contoh.pdf', url: '' },
+                saved: { name: 'ktp.pdf', url: '' },
                 fresh: null
             },
             kk: {
