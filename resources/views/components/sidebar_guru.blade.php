@@ -1,3 +1,6 @@
+<head>
+    <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
+</head>
 <div>
     <!-- SIDEBAR COMPONENT -->
 
