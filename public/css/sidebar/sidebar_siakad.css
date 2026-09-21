@@ -537,4 +537,38 @@ body.sidebar-is-open .mobile-hamburger-btn {
   }
 
   .sidebar {
-    width:
+    width: var(--sidebar-w) !important;
+    max-height: 100vh;
+    max-height: 100dvh;
+    transform: translateX(-100%);
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.4);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar .brand-logo span,
+  .sidebar .menu-item a span,
+  .sidebar .menu-link-content span,
+  .sidebar .menu-label,
+  .sidebar .logout-btn span,
+  .sidebar .submenu-icon {
+    display: inline !important;
+  }
+
+  .sidebar .submenu-wrapper[open] .submenu-list {
+    display: flex !important;
+  }
+
+  .sidebar .menu-item a,
+  .sidebar .menu-link {
+    justify-content: flex-start !important;
+    padding: 12px 24px !important;
+    margin: 0 12px !important;
+  }
+
+  .sidebar .logout-btn {
+    justify-content: flex-start !important;
+  }
+}
