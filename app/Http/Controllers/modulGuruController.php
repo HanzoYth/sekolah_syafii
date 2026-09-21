@@ -478,29 +478,58 @@ class modulGuruController extends Controller
         $data_guru = guru::find((int) $request->id_guru);
         $data_akun = akun::find((int) $data_guru->user_id);
 
-
-        $validator = Validator::make($request->all(),
+        if ($request->file_ktp ?? false){
+            $validator = Validator::make($request->all(),
             [
                 "file_ktp" => 'required|file|mimes:pdf|max:2048',
-                "file_kk" => 'required|file|mimes:pdf|max:2048',
-                "file_ijazah" => 'required|file|mimes:pdf|max:2048'
             ],
             [
                 "file_ktp.mimes" => "file harus berupa pdf",
                 "file_ktp.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+            ]
+            );
+
+            if ($validator->fails()){
+                return back()->withErrors($validator)->withInput();
+            }
+            $path_ktp = $request->file("file_ktp")->store('file-kirim');
+            $data_guru->ktp = $path_ktp;
+        }
+        
+        if ($request->file_kk ?? false){
+            $validator = Validator::make($request->all(),
+            [
+                "file_kk" => 'required|file|mimes:pdf|max:2048',
+            ],
+            [
                 "file_kk.mimes" => "file harus berupa pdf",
                 "file_kk.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+            ]
+            );
+
+            if ($validator->fails()){
+                return back()->withErrors($validator)->withInput();
+            }
+            $path_kk = $request->file("file_kk")->store('file-kirim');
+            $data_guru->kk = $path_kk;
+        }
+
+        if ($request->file_ijazaj ?? false){
+            $validator = Validator::make($request->all(),
+            [
+                "file_ijazah" => 'required|file|mimes:pdf|max:2048'
+            ],
+            [
                 "file_ijazah.mimes" => "file harus berupa pdf",
                 "file_ijazah.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
             ]
-        );
+            );
 
-        $path_ktp = $request->file("file_ktp")->store('file-kirim');
-        $path_kk = $request->file("file_kk")->store('file-kirim');
-        $path_ijazah = $request->file("file_ijazah")->store('file-kirim');
-        
-        if ($validator->fails()){
-            return back()->withErrors($validator)->withInput();
+            if ($validator->fails()){
+                return back()->withErrors($validator)->withInput();
+            }
+            $path_ijazah = $request->file("file_ijazah")->store('file-kirim');
+            $data_guru->ijazah = $path_ijazah;
         }
 
         if ($request->password != ""){
@@ -607,9 +636,7 @@ class modulGuruController extends Controller
         $data_guru->agama = $request->agama;
         $data_guru->pendidikan_terakhir = $request->pendidikan_terakhir;
         $data_guru->alamat = $request->alamat;
-        $data_guru->ktp = $path_ktp;
-        $data_guru->kk = $path_kk;
-        $data_guru->ijazah = $path_ijazah;
+
         $data_guru->save();
         $data_akun->save();
 
