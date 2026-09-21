@@ -481,14 +481,11 @@ class modulGuruController extends Controller
 
         $validator = Validator::make($request->all(),
             [
-                "foto" => 'required|file|mimes:jpg,jpeg,png|max:2048',
                 "file_ktp" => 'required|file|mimes:pdf|max:2048',
                 "file_kk" => 'required|file|mimes:pdf|max:2048',
                 "file_ijazah" => 'required|file|mimes:pdf|max:2048'
             ],
             [
-                "foto.mimes" => "file harus berupa jpg, jpeg, atau png",
-                "foto.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
                 "file_ktp.mimes" => "file harus berupa pdf",
                 "file_ktp.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
                 "file_kk.mimes" => "file harus berupa pdf",
