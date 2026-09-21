@@ -161,7 +161,7 @@
                                             <label for="ktp" class="custom-file-label">
                                                 <i class="fa-solid fa-id-card"></i> Pilih File KTP
                                             </label>
-                                            <input type="file" id="ktp" class="file-input-hidden" accept="image/*,.pdf" onchange="previewDocument(event, 'fileNameKtp')">
+                                            <input type="file" id="ktp" class="file-input-hidden" accept="image/*,.pdf" value="{{route('pdf.show',$data_guru->ktp)}}" onchange="previewDocument(event, 'fileNameKtp')">
                                             <span class="file-name-indicator" id="fileNameKtp">Belum ada file dipilih</span>
                                         </div>
                                     </div>
@@ -175,7 +175,7 @@
                                             <label for="kk" class="custom-file-label">
                                                 <i class="fa-solid fa-users"></i> Pilih File KK
                                             </label>
-                                            <input type="file" id="kk" class="file-input-hidden" accept="image/*,.pdf" onchange="previewDocument(event, 'fileNameKk')">
+                                            <input type="file" id="kk" class="file-input-hidden" accept="image/*,.pdf" value="{{route('pdf.show',$data_guru->kk)}}" onchange="previewDocument(event, 'fileNameKk')">
                                             <span class="file-name-indicator" id="fileNameKk">Belum ada file dipilih</span>
                                         </div>
                                     </div>
@@ -189,7 +189,7 @@
                                             <label for="ijazah" class="custom-file-label">
                                                 <i class="fa-solid fa-file-certificate"></i> Pilih File Ijazah
                                             </label>
-                                            <input type="file" id="ijazah" class="file-input-hidden" accept="image/*,.pdf" onchange="previewDocument(event, 'fileNameIjazah')">
+                                            <input type="file" id="ijazah" class="file-input-hidden" accept="image/*,.pdf" value="{{route('pdf.show',$data_guru->ijazah)}}" onchange="previewDocument(event, 'fileNameIjazah')">
                                             <span class="file-name-indicator" id="fileNameIjazah">Belum ada file dipilih</span>
                                         </div>
                                     </div>
