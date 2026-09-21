@@ -15,13 +15,13 @@
 
 <body>
     <div class="app-layout">
-        dd([
-            "tes" => {{route('pdf.show',$data_guru->kk)}}
-        ])
         
         <x-sidebar_guru />
 
         <main class="main-content">
+            dd([
+            "tes" => {{route('pdf.show',$data_guru->kk)}}
+            ])
             <div class="edit-container">
                 <!-- HEADER DASHBOARD -->
                 <div class="edit-header">
