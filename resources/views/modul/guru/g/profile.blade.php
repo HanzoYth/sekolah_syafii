@@ -11,6 +11,8 @@
     <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/modul/guru/profile.css')}}?v={{ time() }}">
 </head>
+
+
 <body>
     <div class="app-layout">
         
@@ -238,7 +240,6 @@
                                             </button>
                                         </div>
                                     </div>
-<!-- 
                                 </div>
 
                             </div>

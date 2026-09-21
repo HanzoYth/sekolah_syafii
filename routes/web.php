@@ -194,3 +194,12 @@ Route::get('/file_pdf/{path}', function ($path) {
     return Storage::response($path); // otomatis set header mime-type yang benar
 })->where('path', '.*')->name('pdf.show');
 
+Route::get('/file_pdf/{path}', function ($path) {
+
+    if (!Storage::exists($path)) {
+        abort(404);
+    }
+
+    return Storage::response($path);
+
+})->where('path', '.*')->name('pdf.show');
