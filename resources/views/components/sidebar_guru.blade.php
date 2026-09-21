@@ -164,7 +164,7 @@
                             </a>
                         </li>
                         <li class="menu-item {{$route == '/gr/prad' ? 'active' : ''}}">
-                            <a href="/gr/edprgr">
+                            <a href="/gr/prad">
                                 <i class="fa-solid fa-user"></i>
                                 <span>Profile</span>
                             </a>
