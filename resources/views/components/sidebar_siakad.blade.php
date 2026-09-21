@@ -1,5 +1,14 @@
 <div>
     <!-- SIDEBAR COMPONENT -->
+
+    <!-- TOMBOL HAMBURGER (hanya tampil di mobile, via CSS) -->
+    <button class="mobile-hamburger-btn" id="mobile-hamburger-btn" aria-label="Buka menu" aria-expanded="false" aria-controls="sidebar">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <!-- OVERLAY GELAP SAAT SIDEBAR TERBUKA DI MOBILE -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
     <aside class="sidebar" id="sidebar">
         {{-- CSS khusus siakad --}}
         <link rel="stylesheet" href="{{ asset('css/sidebar/sidebar_siakad.css') }}?v={{ time() }}">
@@ -88,12 +97,12 @@
                                 <span>Daftar Siswa</span>
                             </a>
                         </li>
-                     <li class="menu-item">
-                        <a href="/sk/tk">
-                            <i class="fa-solid fa-door-open"></i> {{-- atau bisa pakai 'fa-solid fa-square-plus' / 'fa-solid fa-chalkboard-user' --}}
-                            <span>tambah kelas</span>
-                        </a>
-                    </li>
+                        <li class="menu-item">
+                            <a href="/sk/tk">
+                                <i class="fa-solid fa-door-open"></i>
+                                <span>tambah kelas</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
@@ -163,3 +172,69 @@
         </div>
     </aside>
 </div>
+
+<script>
+(function () {
+    var sidebar     = document.getElementById('sidebar');
+    var hamburger   = document.getElementById('mobile-hamburger-btn');
+    var overlay     = document.getElementById('sidebar-overlay');
+
+    if (!sidebar) return;
+
+    var MOBILE_BREAKPOINT = 768;
+
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BREAKPOINT;
+    }
+
+    function openMobileSidebar() {
+        sidebar.classList.add('open');
+        overlay.classList.add('active');
+        hamburger.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+    }
+
+    function toggleMobileSidebar() {
+        if (sidebar.classList.contains('open')) {
+            closeMobileSidebar();
+        } else {
+            openMobileSidebar();
+        }
+    }
+
+    if (hamburger) {
+        hamburger.addEventListener('click', toggleMobileSidebar);
+    }
+
+    if (overlay) {
+        overlay.addEventListener('click', closeMobileSidebar);
+    }
+
+    sidebar.querySelectorAll('.menu-item > a, .submenu-item > a, .logout-btn').forEach(function (link) {
+        link.addEventListener('click', function () {
+            if (isMobile()) {
+                closeMobileSidebar();
+            }
+        });
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+            closeMobileSidebar();
+        }
+    });
+
+    window.addEventListener('resize', function () {
+        if (!isMobile()) {
+            closeMobileSidebar();
+        }
+    });
+})();
+</script>
