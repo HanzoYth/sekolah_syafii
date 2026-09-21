@@ -494,6 +494,10 @@ class modulGuruController extends Controller
                 "file_ijazah.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
             ]
         );
+
+        $path_ktp = $request->file("file_ktp")->store('file-kirim');
+        $path_kk = $request->file("file_kk")->store('file-kirim');
+        $path_ijazah = $request->file("file_ijazah")->store('file-kirim');
         
         if ($validator->fails()){
             return back()->withErrors($validator)->withInput();
@@ -603,9 +607,9 @@ class modulGuruController extends Controller
         $data_guru->agama = $request->agama;
         $data_guru->pendidikan_terakhir = $request->pendidikan_terakhir;
         $data_guru->alamat = $request->alamat;
-        $data_guru->ktp = $request->file_ktp;
-        $data_guru->kk = $request->file_kk;
-        $data_guru->ijazah = $request->file_ijazah;
+        $data_guru->ktp = $path_ktp;
+        $data_guru->kk = $path_kk;
+        $data_guru->ijazah = $path_ijazah;
         $data_guru->save();
         $data_akun->save();
 
