@@ -105,6 +105,8 @@ Route::get('/gr/edgr/{id}',[modulGuruController::class,"tampilan_editGuru"]);
 Route::post('/gr/updgr',[modulGuruController::class,"update_dataGuru"]);
 Route::post('/gr/upprgr',[modulGuruController::class,"update_profileGuru"]);
 Route::get('/gr/edprgr',[modulGuruController::class,"tampilan_editProfileGuru"]);
+Route::get('/gr/prad',[modulGuruController::class,"tampilan_profileAdmin"]);
+Route::post('/gr/edprad',[modulGuruController::class,"update_profileAdmin"]);
 
 Route::get('/tes/{id}',[modulGuruController::class,"tambah_gaji"]);
 

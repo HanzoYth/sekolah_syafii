@@ -588,6 +588,124 @@ class modulGuruController extends Controller
         return back()->with("success","berhasil update data guru");
     }
 
+    function tampilan_profileAdmin(){
+        $data_admin = admin::find((int) session("id"));
+        $data_akun = akun::find((int) $data_admin->user_id);
+
+        return view("modul/guru/a/profile",compact("data_admin","data_akun"));
+    }
+
+    function update_profileAdmin(Request $request){
+        $data_admin = admin::find((int) session("id"));
+        $data_akun = akun::find((int) $data_admin->user_id);
+        if ($request->password != ""){
+            $validator = Validator::make($request->all(), [
+                'password' => [
+                    'min:8',
+                ],
+            ], [
+                'password.min' => 'Password minimal 8 karakter.',
+            ]);
+
+            $validator->after(function ($validator) use ($request) {
+
+                $password = $request->password;
+
+                if ($password !== null) {
+
+                    if (!preg_match('/[A-Z]/', $password) ||
+                        !preg_match('/[a-z]/', $password)) {
+
+                        $validator->errors()->add(
+                            'password',
+                            'Password harus memiliki huruf kapital dan huruf kecil.'
+                        );
+                    }
+
+                    if (!preg_match('/[0-9]/', $password)) {
+
+                        $validator->errors()->add(
+                            'password',
+                            'Password harus memiliki sebuah angka.'
+                        );
+                    }
+                }
+            });
+
+            if ($validator->fails()) {
+                return back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
+            $data_akun->password = Hash::make($request->password);
+        }
+
+        if (strcasecmp(trim($request->email), trim($data_akun->email)) !== 0){
+            $validator = Validator::make($request->all(),[
+                'email' => [
+                    'required',
+                    'unique:akun,email'
+                ],  
+            ],[
+                'email.required' => 'email wajib di isi',
+                'email.unique' => 'email sudah di gunakan',
+            ]
+            );
+
+            if ($validator->fails()) {
+                return back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+            $data_akun->email = $request->email;
+        }
+
+
+        if ($request->username != $data_akun->username){
+            $validator = Validator::make($request->all(),[
+                'username' => [
+                    'required',
+                    'unique:akun,username',
+                ],
+            ],[
+                'username.required' => 'Username wajib diisi.',
+                'username.unique' => 'Username sudah digunakan.',
+            ]
+            );
+
+            if ($validator->fails()) {
+                return back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
+            $data_akun->username = $request->username;
+        }
+        
+        if (isset($request->foto)){
+            $request->validate([
+            "foto" => 'required|file|mimes:jpg,jpeg,png|max:2048'
+            ]);
+
+            $path_foto = $request->file("foto")->store('uploads');
+
+            $data_admin->url_foto = $path_foto;
+        }
+        $data_akun->noWa = $request->wa;
+        
+        $data_admin->nama = $request->nama;
+        $data_admin->nig = $request->nig;
+        $data_admin->tempat_lahir = $request->tempat_lahir;
+        $data_admin->tanggal_lahir = $request->tanggal_lahir;
+        $data_admin->agama = $request->agama;
+        $data_admin->pendidikan_terakhir = $request->pendidikan_terakhir;
+        $data_admin->alamat = $request->alamat;
+        $data_admin->save();
+        $data_akun->save();
+        return back()->with("success","berhasil update data");
+    }
+
 
     function tambah_riwayatGajiGuru($id_guru,$gaji_pokok,$gaji_honor,$gaji_tugas_tambahan,$potongan_tidak_hadir,$potongan_keterlambatan,$kasbon,$gaji_tambahan,$bonus,$ketidakhadiran,$keterlambatan){
         riwayat_gaji::create([

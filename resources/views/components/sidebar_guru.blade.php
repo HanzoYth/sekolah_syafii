@@ -163,6 +163,12 @@
                                 <span>tambah kelas</span>
                             </a>
                         </li>
+                        <li class="menu-item {{$route == '/gr/prad' ? 'active' : ''}}">
+                            <a href="/gr/edprgr">
+                                <i class="fa-solid fa-user"></i>
+                                <span>Profile</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             @endif
