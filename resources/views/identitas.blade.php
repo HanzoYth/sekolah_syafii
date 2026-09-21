@@ -10,7 +10,7 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
     <!-- CSS khusus tanpa sidebar -->
     <link rel="stylesheet" href="{{ asset('css/identitas.css') }}?v={{ time() }}">
 </head>

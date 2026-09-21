@@ -11,7 +11,6 @@
 
     <aside class="sidebar" id="sidebar">
         <link rel="stylesheet" href="{{ asset('css/sidebar/sidebar_guru.css') }}?v={{ time() }}">
-        <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
         <div class="sidebar-header">
             <div class="brand-logo">
                 <i class="fa-solid fa-mosque"></i>

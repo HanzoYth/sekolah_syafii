@@ -12,6 +12,7 @@
     {{-- Font Awesome Icons --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
     {{-- Stylesheet dashboard SIAKAD --}}
     <link rel="stylesheet" href="{{ asset('css/modul/siakad/pembayaran.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modul/siakad/pangkal.css') }}">

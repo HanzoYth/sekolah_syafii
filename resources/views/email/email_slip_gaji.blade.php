@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Slip Gaji</title>
+    <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
 </head>
 
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">

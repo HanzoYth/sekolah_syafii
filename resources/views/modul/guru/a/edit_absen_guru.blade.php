@@ -6,6 +6,7 @@
     <title>Detail Absensi Guru - EduHRIS</title>
     <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Ubah path CSS sesuai lokasi file kamu jika untuk testing lokal, misal: edit_absen_guru.css -->
     <link rel="stylesheet" href="{{asset('css/modul/guru/edit_absen_guru.css')}}?v={{ time() }}">
