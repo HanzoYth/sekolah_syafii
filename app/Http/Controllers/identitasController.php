@@ -8,9 +8,12 @@ use App\Models\identitas_rahasia;
 class identitasController extends Controller
 {
     function tampilan_identitas(){
-        $identitas = identitas_rahasia::orderBy("id","desc")->first()->identitas;
-        $data = explode("-",$identitas)[1];
-        $to_data = ltrim($data,"0");
+        $to_data = 0;
+        if (identitas_rahasia::count() != 0){
+            $identitas = identitas_rahasia::orderBy("id","desc")->first()->identitas;
+            $data = explode("-",$identitas)[1];
+            $to_data = ltrim($data,"0");
+        }
         return view("identitas",["jumlah" => (int) $to_data]);
     }
 
