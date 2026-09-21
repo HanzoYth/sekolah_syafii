@@ -248,19 +248,23 @@ body {
 
 /* =====================================================
    DOKUMEN PENDUKUNG (KTP, KK, IJAZAH)
+   Ukuran kotak tetap, nama file panjang dipotong (...)
    ===================================================== */
 .doc-card {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
 }
 
 /* Baris berkas yang sudah tersimpan */
 .doc-saved {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 14px 16px;
+    gap: 10px;
+    min-width: 0;
+    padding: 10px 12px;
     background-color: #ffffff;
     border: 1.5px solid var(--border-color);
     border-radius: var(--radius-md);
@@ -268,16 +272,16 @@ body {
 }
 
 .doc-thumb {
-    width: 46px;
-    height: 46px;
+    width: 38px;
+    height: 38px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: var(--primary-light);
     color: var(--primary-color);
-    border-radius: 12px;
-    font-size: 1.25rem;
+    border-radius: 10px;
+    font-size: 1rem;
 }
 
 .doc-meta {
@@ -285,11 +289,13 @@ body {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
 }
 
 .doc-name {
-    font-size: 0.9rem;
+    display: block;
+    max-width: 100%;
+    font-size: 0.85rem;
     font-weight: 700;
     color: var(--text-main);
     white-space: nowrap;
@@ -300,10 +306,11 @@ body {
 .doc-status {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.78rem;
+    gap: 5px;
+    font-size: 0.74rem;
     font-weight: 600;
     color: var(--text-muted);
+    white-space: nowrap;
 }
 
 .doc-status.is-saved {
@@ -319,13 +326,13 @@ body {
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 9px 16px;
+    gap: 6px;
+    padding: 7px 12px;
     background-color: var(--primary-light);
     color: var(--primary-color);
     border: 1.5px solid rgba(16, 185, 129, 0.35);
     border-radius: var(--radius-sm);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 700;
     text-decoration: none;
     cursor: pointer;
@@ -356,8 +363,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
-    padding: 16px;
+    gap: 8px;
+    min-width: 0;
+    padding: 10px 12px;
     background-color: #f8fafc;
     border: 1.5px dashed #cbd5e1;
     border-radius: var(--radius-md);
@@ -369,10 +377,33 @@ body {
     background-color: var(--primary-light);
 }
 
-/* FORM GRID LAYOUT */
+.doc-upload .custom-file-label {
+    padding: 7px 14px;
+    font-size: 0.8rem;
+    box-shadow: none;
+}
+
+/* Nama file baru: satu baris saja, dipotong jika terlalu panjang */
+.doc-upload .file-name-indicator {
+    display: block;
+    max-width: 100%;
+    font-size: 0.76rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: normal;
+}
+
+/* Kartu Ijazah (span 2 kolom) tetap seukuran kartu KTP dan KK */
+.form-group.span-2 .doc-card {
+    max-width: calc(50% - 12px);
+}
+
+/* FORM GRID LAYOUT
+   minmax(0, 1fr) mencegah kolom melebar mengikuti isi yang panjang */
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px;
 }
 
@@ -380,6 +411,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    min-width: 0;
 }
 
 .form-group.span-2 {
@@ -569,11 +601,16 @@ textarea.form-control {
     }
 
     .form-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .form-group.span-2 {
         grid-column: span 1;
+    }
+
+    /* Di HP semua kartu dokumen selebar layar */
+    .form-group.span-2 .doc-card {
+        max-width: 100%;
     }
 
     .photo-upload-wrapper {
