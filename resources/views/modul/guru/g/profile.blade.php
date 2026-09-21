@@ -15,6 +15,9 @@
 
 <body>
     <div class="app-layout">
+        dd([
+            "tes" => {{route('pdf.show',$data_guru->kk)}}
+        ])
         
         <x-sidebar_guru />
 
