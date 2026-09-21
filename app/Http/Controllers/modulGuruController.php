@@ -233,8 +233,11 @@ class modulGuruController extends Controller
         }
 
         if (session("hasLogin")){
-            return view("modul/guru/g/presensi_absen",["lokasi" => $lokasi,"cabang" => $cabang]);
+            $total_kehadiran = master_absen_guru::where("status_kehadiran","h")->where("guru_id",session("id"))->where("tgl_masuk",Carbon::now()->translatedFormat("m"))->count();
+            $total_lambat = master_absen_guru::where("status_kehadiran","h")->where("guru_id",session("id"))->where("tgl_masuk",Carbon::now()->translatedFormat("m"))->where("terlambat_menit","!=",0)->count();
+            return view("modul/guru/g/presensi_absen",["lokasi" => $lokasi,"cabang" => $cabang,"total_kehadiran" => $total_kehadiran,"total_lambat" => $total_lambat]);
         }
+
         return redirect("/reg");
     }
 

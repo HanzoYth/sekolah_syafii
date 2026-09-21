@@ -32,34 +32,10 @@
         <!-- Ringkasan Stat Cards Hari Ini & Bulan Ini -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon status-icon"><i class="fa-solid fa-user-check"></i></div>
-                <div class="stat-info">
-                    <span class="label">Status Hari Ini</span>
-                    <div class="value text-success">Sudah Absen</div>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon masuk-icon"><i class="fa-solid fa-right-to-bracket"></i></div>
-                <div class="stat-info">
-                    <span class="label">Jam Masuk</span>
-                    <div class="value">06:45 WITA</div>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon pulang-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
-                <div class="stat-info">
-                    <span class="label">Jam Pulang</span>
-                    <div class="value">-- : --</div>
-                </div>
-            </div>
-
-            <div class="stat-card">
                 <div class="stat-icon bulan-icon"><i class="fa-solid fa-calendar-check"></i></div>
                 <div class="stat-info">
                     <span class="label">Hadir Bulan Ini</span>
-                    <div class="value">18 Hari</div>
+                    <div class="value">{{$total_kehadiran}} Hari</div>
                 </div>
             </div>
 
@@ -67,7 +43,7 @@
                 <div class="stat-icon terlambat-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
                 <div class="stat-info">
                     <span class="label">Total Terlambat</span>
-                    <div class="value">1 Kali</div>
+                    <div class="value">{{$total_lambat}} Kali</div>
                 </div>
             </div>
         </div>
