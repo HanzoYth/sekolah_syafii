@@ -603,6 +603,9 @@ class modulGuruController extends Controller
         $data_guru->agama = $request->agama;
         $data_guru->pendidikan_terakhir = $request->pendidikan_terakhir;
         $data_guru->alamat = $request->alamat;
+        $data_guru->ktp = $request->file_ktp;
+        $data_guru->kk = $request->file_kk;
+        $data_guru->ijazah = $request->file_ijazah;
         $data_guru->save();
         $data_akun->save();
 
