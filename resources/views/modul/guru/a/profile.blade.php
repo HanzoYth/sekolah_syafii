@@ -88,7 +88,7 @@
                                     <label for="wa">Nomor WhatsApp Aktif</label>
                                     <div class="input-icon-wrapper">
                                         <i class="fa-brands fa-whatsapp input-icon"></i>
-                                        <input type="text" id="wa" name="wa" class="form-control" value="{{$nomor_wa}}" required placeholder="08xxxxxxxxxx">
+                                        <input type="text" id="wa" name="wa" class="form-control" value="{{$data_akun->noWa}}" required placeholder="08xxxxxxxxxx">
                                     </div>
                                 </div>
 
