@@ -19,9 +19,6 @@
         <x-sidebar_guru />
 
         <main class="main-content">
-            dd([
-            "tes" => {{route('pdf.show',$data_guru->kk)}}
-            ])
             <div class="edit-container">
                 <!-- HEADER DASHBOARD -->
                 <div class="edit-header">
@@ -157,94 +154,66 @@
                                 </div>
                             </div>
 
+                            @php
+                                // kunci = nama kolom di tabel guru
+                                // input = nama input file yang dibaca controller
+                                $dokumen = [
+                                    'ktp'    => ['label' => 'Kartu Tanda Penduduk (KTP)', 'input' => 'file_ktp',    'tombol' => 'Pilih File KTP',    'ikon' => 'fa-id-card', 'lebar' => false],
+                                    'kk'     => ['label' => 'Kartu Keluarga (KK)',       'input' => 'file_kk',     'tombol' => 'Pilih File KK',     'ikon' => 'fa-users',   'lebar' => false],
+                                    'ijazah' => ['label' => 'Ijazah Terakhir',            'input' => 'file_ijazah', 'tombol' => 'Pilih File Ijazah', 'ikon' => 'fa-scroll',  'lebar' => true],
+                                ];
+                            @endphp
+
                             <div class="form-grid">
+                                @foreach ($dokumen as $kolom => $doc)
+                                    @php $berkas = $data_guru->$kolom; @endphp
 
-                                <!-- ===== KTP ===== -->
-                                <div class="form-group">
-                                    <label for="ktp">Kartu Tanda Penduduk (KTP)</label>
-                                    <div class="doc-card" data-doc="ktp" data_name = "{{$data_guru->ktp}}" data_url="{{route('pdf.show',$data_guru->ktp)}}">
-                                        <!-- Berkas yang sudah tersimpan -->
-                                        <div class="doc-saved">
-                                            <span class="doc-thumb"><i class="fa-solid fa-file-pdf" id="docIcon-ktp"></i></span>
-                                            <div class="doc-meta">
-                                                <span class="doc-name" id="docName-ktp">-</span>
-                                                <span class="doc-status" id="docStatus-ktp"></span>
+                                    <div class="form-group {{ $doc['lebar'] ? 'span-2' : '' }}">
+                                        <label for="{{ $doc['input'] }}">{{ $doc['label'] }}</label>
+
+                                        <div class="doc-card">
+                                            <!-- Berkas yang sudah tersimpan -->
+                                            <div class="doc-saved">
+                                                <span class="doc-thumb">
+                                                    <i class="fa-solid {{ $berkas ? 'fa-file-lines' : 'fa-file' }}"></i>
+                                                </span>
+
+                                                <div class="doc-meta">
+                                                    @if ($berkas)
+                                                        <span class="doc-name">{{ basename($berkas) }}</span>
+                                                        <span class="doc-status is-saved">
+                                                            <i class="fa-solid fa-circle-check"></i> Sudah diunggah
+                                                        </span>
+                                                    @else
+                                                        <span class="doc-name">Belum ada berkas tersimpan</span>
+                                                        <span class="doc-status is-empty">
+                                                            <i class="fa-solid fa-circle-exclamation"></i> Belum diunggah
+                                                        </span>
+                                                    @endif
+                                                </div>
+
+                                                @if ($berkas)
+                                                    <a href="{{ route('pdf.show', $berkas) }}" target="_blank" rel="noopener" class="btn-view-doc">
+                                                        <i class="fa-solid fa-eye"></i> Lihat
+                                                    </a>
+                                                @else
+                                                    <span class="btn-view-doc is-disabled" aria-disabled="true">
+                                                        <i class="fa-solid fa-eye"></i> Lihat
+                                                    </span>
+                                                @endif
                                             </div>
-                                            <button type="button" class="btn-view-doc" id="viewBtn-ktp" onclick="openDocViewer('ktp', 'saved')">
-                                                <i class="fa-solid fa-eye"></i> Lihat
-                                            </button>
-                                        </div>
 
-                                        <!-- Ganti dengan berkas baru -->
-                                        <div class="doc-upload">
-                                            <label for="ktp" class="custom-file-label">
-                                                <i class="fa-solid fa-id-card"></i> Pilih File KTP
-                                            </label>
-                                            <input type="file" id="ktp" class="file-input-hidden" accept="image/*,.pdf" onchange="previewDocument(event, 'ktp')">
-                                            <span class="file-name-indicator" id="fileName-ktp">Belum ada file baru dipilih</span>
-                                            <button type="button" class="btn-preview-new" id="previewBtn-ktp" onclick="openDocViewer('ktp', 'new')" hidden>
-                                                <i class="fa-solid fa-magnifying-glass"></i> Pratinjau file baru
-                                            </button>
+                                            <!-- Ganti dengan berkas baru -->
+                                            <div class="doc-upload">
+                                                <label for="{{ $doc['input'] }}" class="custom-file-label">
+                                                    <i class="fa-solid {{ $doc['ikon'] }}"></i> {{ $doc['tombol'] }}
+                                                </label>
+                                                <input type="file" id="{{ $doc['input'] }}" name="{{ $doc['input'] }}" class="file-input-hidden" accept="image/*,.pdf" onchange="showFileName(event, '{{ $kolom }}')">
+                                                <span class="file-name-indicator" id="fileName-{{ $kolom }}">Belum ada file baru dipilih</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <!-- ===== KK ===== -->
-                                <div class="form-group">
-                                    <label for="kk">Kartu Keluarga (KK)</label>
-                                    <div class="doc-card" data-doc="kk" data_name = "{{$data_guru->kk}}" data_url="{{route('pdf.show',$data_guru->kk)}}">
-                                        <div class="doc-saved">
-                                            <span class="doc-thumb"><i class="fa-solid fa-file-pdf" id="docIcon-kk"></i></span>
-                                            <div class="doc-meta">
-                                                <span class="doc-name" id="docName-kk">-</span>
-                                                <span class="doc-status" id="docStatus-kk"></span>
-                                            </div>
-                                            <button type="button" class="btn-view-doc" id="viewBtn-kk" onclick="openDocViewer('kk', 'saved')">
-                                                <i class="fa-solid fa-eye"></i> Lihat
-                                            </button>
-                                        </div>
-
-                                        <div class="doc-upload">
-                                            <label for="kk" class="custom-file-label">
-                                                <i class="fa-solid fa-users"></i> Pilih File KK
-                                            </label>
-                                            <input type="file" id="kk" class="file-input-hidden" accept="image/*,.pdf" onchange="previewDocument(event, 'kk')">
-                                            <span class="file-name-indicator" id="fileName-kk">Belum ada file baru dipilih</span>
-                                            <button type="button" class="btn-preview-new" id="previewBtn-kk" onclick="openDocViewer('kk', 'new')" hidden>
-                                                <i class="fa-solid fa-magnifying-glass"></i> Pratinjau file baru
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- ===== IJAZAH ===== -->
-                                <div class="form-group span-2">
-                                    <label for="ijazah">Ijazah Terakhir</label>
-                                    <div class="doc-card" data-doc="ijazah" data_name = "{{$data_guru->ijazah}}" data_url="{{route('pdf.show',$data_guru->ijazah)}}">
-                                        <div class="doc-saved">
-                                            <span class="doc-thumb"><i class="fa-solid fa-file-pdf" id="docIcon-ijazah"></i></span>
-                                            <div class="doc-meta">
-                                                <span class="doc-name" id="docName-ijazah">-</span>
-                                                <span class="doc-status" id="docStatus-ijazah"></span>
-                                            </div>
-                                            <button type="button" class="btn-view-doc" id="viewBtn-ijazah" onclick="openDocViewer('ijazah', 'saved')">
-                                                <i class="fa-solid fa-eye"></i> Lihat
-                                            </button>
-                                        </div>
-
-                                        <div class="doc-upload">
-                                            <label for="ijazah" class="custom-file-label">
-                                                <i class="fa-solid fa-scroll"></i> Pilih File Ijazah
-                                            </label>
-                                            <input type="file" id="ijazah" class="file-input-hidden" accept="image/*,.pdf" onchange="previewDocument(event, 'ijazah')">
-                                            <span class="file-name-indicator" id="fileName-ijazah">Belum ada file baru dipilih</span>
-                                            <button type="button" class="btn-preview-new" id="previewBtn-ijazah" onclick="openDocViewer('ijazah', 'new')" hidden>
-                                                <i class="fa-solid fa-magnifying-glass"></i> Pratinjau file baru
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
+                                @endforeach
                             </div>
                         </div>
 
@@ -411,41 +380,6 @@
         </main>
     </div>
 
-    <!-- ============================================================
-         MODAL PENAMPIL DOKUMEN (KTP / KK / IJAZAH)
-         Murni HTML + CSS + JS, belum terhubung ke PHP.
-         ============================================================ -->
-    <div class="doc-viewer" id="docViewer" hidden>
-        <div class="doc-viewer__backdrop" data-close></div>
-
-        <div class="doc-viewer__dialog" role="dialog" aria-modal="true" aria-labelledby="docViewerTitle">
-            <header class="doc-viewer__header">
-                <div class="doc-viewer__heading">
-                    <span class="doc-viewer__icon"><i class="fa-solid fa-file-lines" id="docViewerIcon"></i></span>
-                    <div>
-                        <h3 id="docViewerTitle">Dokumen</h3>
-                        <small id="docViewerSubtitle">-</small>
-                    </div>
-                </div>
-                <button type="button" class="doc-viewer__close" data-close aria-label="Tutup pratinjau">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </header>
-
-            <div class="doc-viewer__body" id="docViewerBody"></div>
-
-            <footer class="doc-viewer__footer">
-                <span class="doc-viewer__badge" id="docViewerBadge">Berkas tersimpan</span>
-                <div class="doc-viewer__actions">
-                    <a href="#" target="_blank" rel="noopener" class="btn-viewer btn-viewer--ghost" id="docViewerOpen" hidden>
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka di tab baru
-                    </a>
-                    <button type="button" class="btn-viewer" data-close>Tutup</button>
-                </div>
-            </footer>
-        </div>
-    </div>
-
     <x-warning />
 
     <script>
@@ -460,6 +394,13 @@
                 reader.readAsDataURL(input.files[0]);
                 fileNameText.textContent = input.files[0].name;
             }
+        }
+
+        /* Tampilkan nama file baru yang dipilih (KTP, KK, Ijazah) */
+        function showFileName(event, kolom) {
+            const file = event.target.files && event.target.files[0];
+            document.getElementById('fileName-' + kolom).textContent =
+                file ? file.name : 'Belum ada file baru dipilih';
         }
 
         function togglePasswordVisibility() {
@@ -489,199 +430,6 @@
             btn.classList.add('loading');
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Menyimpan...</span>';
         });
-
-        /* =====================================================
-           DOKUMEN PENDUKUNG: LIHAT BERKAS (KTP, KK, IJAZAH)
-           -----------------------------------------------------
-           Bagian ini sengaja belum tersambung ke PHP.
-           Data di bawah adalah contoh statis.
-
-           NANTI saat mau disambungkan:
-           - isi "name" dengan nama file dari database
-           - isi "url" dengan URL dari route pdf.show
-           - kosongkan name dan url jika guru belum upload berkas
-           ===================================================== */
-        const docLabels = {
-            ktp: 'Kartu Tanda Penduduk (KTP)',
-            kk: 'Kartu Keluarga (KK)',
-            ijazah: 'Ijazah Terakhir'
-        };
-
-        /* Ambil data berkas dari atribut data-name dan data-url yang diisi Blade */
-        const docConfig = {};
-        document.querySelectorAll('.doc-card[data-doc]').forEach(function(card) {
-            const key = card.dataset.doc;
-            docConfig[key] = {
-                label: docLabels[key],
-                saved: {
-                    name: card.dataset.name || '',
-                    url: card.dataset.url || ''
-                },
-                fresh: null
-            };
-        });
-
-        const docViewer = document.getElementById('docViewer');
-        const docViewerBody = document.getElementById('docViewerBody');
-        let lastFocusedElement = null;
-        let closeTimer = null;
-
-        /* Tentukan jenis file: 'image' atau 'pdf' */
-        function detectType(name, mime) {
-            if (mime) {
-                return mime.indexOf('image/') === 0 ? 'image' : 'pdf';
-            }
-            return /\.(jpe?g|png|webp|gif)$/i.test(name || '') ? 'image' : 'pdf';
-        }
-
-        /* Tampilkan nama & status berkas tersimpan pada tiap kartu */
-        function initSavedDocs() {
-            Object.keys(docConfig).forEach(function(key) {
-                const saved = docConfig[key].saved;
-                const nameEl = document.getElementById('docName-' + key);
-                const statusEl = document.getElementById('docStatus-' + key);
-                const iconEl = document.getElementById('docIcon-' + key);
-                const viewBtn = document.getElementById('viewBtn-' + key);
-
-                if (saved.name) {
-                    nameEl.textContent = saved.name;
-                    statusEl.className = 'doc-status is-saved';
-                    statusEl.innerHTML = '<i class="fa-solid fa-circle-check"></i> Sudah diunggah';
-                    iconEl.className = detectType(saved.name) === 'image'
-                        ? 'fa-solid fa-file-image'
-                        : 'fa-solid fa-file-pdf';
-                    viewBtn.disabled = false;
-                } else {
-                    nameEl.textContent = 'Belum ada berkas tersimpan';
-                    statusEl.className = 'doc-status is-empty';
-                    statusEl.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Belum diunggah';
-                    iconEl.className = 'fa-solid fa-file';
-                    viewBtn.disabled = true;
-                }
-            });
-        }
-
-        /* Dipanggil saat guru memilih file baru */
-        function previewDocument(event, key) {
-            const file = event.target.files && event.target.files[0];
-            const doc = docConfig[key];
-            const nameEl = document.getElementById('fileName-' + key);
-            const previewBtn = document.getElementById('previewBtn-' + key);
-
-            /* Bersihkan URL sementara dari pilihan sebelumnya */
-            if (doc.fresh && doc.fresh.url) {
-                URL.revokeObjectURL(doc.fresh.url);
-            }
-
-            if (!file) {
-                doc.fresh = null;
-                nameEl.textContent = 'Belum ada file baru dipilih';
-                previewBtn.hidden = true;
-                return;
-            }
-
-            doc.fresh = {
-                name: file.name,
-                url: URL.createObjectURL(file),
-                type: detectType(file.name, file.type)
-            };
-            nameEl.textContent = file.name;
-            previewBtn.hidden = false;
-        }
-
-        /* Buka modal. source = 'saved' (berkas tersimpan) atau 'new' (file baru dipilih) */
-        function openDocViewer(key, source) {
-            const doc = docConfig[key];
-            const isNew = source === 'new';
-            const file = isNew ? doc.fresh : doc.saved;
-            if (!file) return;
-
-            const type = file.type || detectType(file.name);
-
-            document.getElementById('docViewerTitle').textContent = doc.label;
-            document.getElementById('docViewerSubtitle').textContent = file.name || '-';
-            document.getElementById('docViewerIcon').className = type === 'image'
-                ? 'fa-solid fa-file-image'
-                : 'fa-solid fa-file-pdf';
-
-            const badge = document.getElementById('docViewerBadge');
-            badge.textContent = isNew ? 'File baru (belum disimpan)' : 'Berkas tersimpan';
-            badge.className = 'doc-viewer__badge' + (isNew ? ' is-new' : '');
-
-            /* Isi area pratinjau */
-            docViewerBody.innerHTML = '';
-            if (file.url) {
-                if (type === 'image') {
-                    const img = document.createElement('img');
-                    img.src = file.url;
-                    img.alt = doc.label;
-                    img.className = 'doc-viewer__image';
-                    docViewerBody.appendChild(img);
-                } else {
-                    const frame = document.createElement('iframe');
-                    frame.src = file.url;
-                    frame.title = doc.label;
-                    frame.className = 'doc-viewer__frame';
-                    docViewerBody.appendChild(frame);
-                }
-            } else {
-                docViewerBody.innerHTML =
-                    '<div class="doc-viewer__empty">' +
-                        '<i class="fa-solid fa-file-circle-question"></i>' +
-                        '<strong>Pratinjau belum tersedia</strong>' +
-                        '<p>Berkas ini belum tersambung ke server. Isi <code>url</code> pada <code>docConfig</code> untuk menampilkan isinya.</p>' +
-                    '</div>';
-            }
-
-            /* Tombol "Buka di tab baru" hanya muncul jika ada URL */
-            const openLink = document.getElementById('docViewerOpen');
-            if (file.url) {
-                openLink.href = file.url;
-                openLink.hidden = false;
-            } else {
-                openLink.removeAttribute('href');
-                openLink.hidden = true;
-            }
-
-            /* Tampilkan modal */
-            clearTimeout(closeTimer);
-            lastFocusedElement = document.activeElement;
-            docViewer.hidden = false;
-            document.body.classList.add('no-scroll');
-            requestAnimationFrame(function() {
-                docViewer.classList.add('is-open');
-                docViewer.querySelector('.doc-viewer__close').focus();
-            });
-        }
-
-        function closeDocViewer() {
-            if (docViewer.hidden) return;
-            docViewer.classList.remove('is-open');
-            document.body.classList.remove('no-scroll');
-            closeTimer = setTimeout(function() {
-                docViewer.hidden = true;
-                docViewerBody.innerHTML = '';   /* hentikan iframe / lepas gambar */
-            }, 200);
-            if (lastFocusedElement && lastFocusedElement.focus) {
-                lastFocusedElement.focus();
-            }
-        }
-
-        /* Tutup lewat backdrop, tombol X, atau tombol "Tutup" */
-        docViewer.addEventListener('click', function(e) {
-            if (e.target.closest('[data-close]')) {
-                closeDocViewer();
-            }
-        });
-
-        /* Tutup dengan tombol Esc */
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeDocViewer();
-            }
-        });
-
-        initSavedDocs();
     </script>
 </body>
 </html>

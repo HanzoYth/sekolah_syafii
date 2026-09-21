@@ -31,19 +31,10 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-/* Pastikan atribut hidden selalu menyembunyikan elemen */
-[hidden] {
-    display: none !important;
-}
-
 body {
     background-color: var(--bg-main);
     color: var(--text-main);
     min-height: 100vh;
-}
-
-body.no-scroll {
-    overflow: hidden;
 }
 
 /* LAYOUT STRUCTURAL WRAPPER */
@@ -323,7 +314,7 @@ body.no-scroll {
     color: #b45309;
 }
 
-/* Tombol "Lihat" */
+/* Tautan "Lihat" (tag a) */
 .btn-view-doc {
     flex-shrink: 0;
     display: inline-flex;
@@ -336,17 +327,24 @@ body.no-scroll {
     border-radius: var(--radius-sm);
     font-size: 0.85rem;
     font-weight: 700;
+    text-decoration: none;
     cursor: pointer;
     transition: var(--transition);
 }
 
-.btn-view-doc:hover:not(:disabled) {
+.btn-view-doc:hover:not(.is-disabled) {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
     color: #ffffff;
 }
 
-.btn-view-doc:disabled {
+.btn-view-doc:focus-visible {
+    outline: 3px solid rgba(16, 185, 129, 0.45);
+    outline-offset: 2px;
+}
+
+/* Keadaan belum ada berkas: tidak bisa diklik */
+.btn-view-doc.is-disabled {
     background-color: #f8fafc;
     border-color: var(--border-color);
     color: #94a3b8;
@@ -369,283 +367,6 @@ body.no-scroll {
 .doc-upload:hover {
     border-color: var(--primary-accent);
     background-color: var(--primary-light);
-}
-
-/* Tombol pratinjau file yang baru dipilih */
-.btn-preview-new {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 14px;
-    background-color: transparent;
-    color: var(--primary-color);
-    border: 1.5px solid var(--primary-color);
-    border-radius: var(--radius-sm);
-    font-size: 0.82rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.btn-preview-new:hover {
-    background-color: var(--primary-color);
-    color: #ffffff;
-}
-
-/* Fokus keyboard yang jelas */
-.btn-view-doc:focus-visible,
-.btn-preview-new:focus-visible,
-.btn-viewer:focus-visible,
-.doc-viewer__close:focus-visible {
-    outline: 3px solid rgba(16, 185, 129, 0.45);
-    outline-offset: 2px;
-}
-
-/* =====================================================
-   MODAL PENAMPIL DOKUMEN
-   ===================================================== */
-.doc-viewer {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.doc-viewer.is-open {
-    opacity: 1;
-}
-
-.doc-viewer__backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.62);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-}
-
-.doc-viewer__dialog {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: min(960px, 100%);
-    height: min(88vh, 820px);
-    background-color: var(--card-bg);
-    border-radius: var(--radius-lg);
-    box-shadow: 0 30px 60px -15px rgba(2, 44, 34, 0.45);
-    overflow: hidden;
-    transform: translateY(14px) scale(0.98);
-    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.doc-viewer.is-open .doc-viewer__dialog {
-    transform: none;
-}
-
-/* Header modal */
-.doc-viewer__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 16px 20px;
-    border-bottom: 2px solid var(--primary-light);
-}
-
-.doc-viewer__heading {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    min-width: 0;
-}
-
-.doc-viewer__icon {
-    width: 42px;
-    height: 42px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--primary-light);
-    color: var(--primary-color);
-    border-radius: 12px;
-    font-size: 1.1rem;
-}
-
-.doc-viewer__heading h3 {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    line-height: 1.25;
-}
-
-.doc-viewer__heading small {
-    display: block;
-    max-width: 100%;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.doc-viewer__heading > div {
-    min-width: 0;
-}
-
-.doc-viewer__close {
-    width: 38px;
-    height: 38px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f1f5f9;
-    color: var(--text-muted);
-    border: none;
-    border-radius: 50%;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.doc-viewer__close:hover {
-    background-color: #fee2e2;
-    color: #b91c1c;
-}
-
-/* Area isi dokumen */
-.doc-viewer__body {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #e2e8f0;
-    overflow: auto;
-}
-
-.doc-viewer__frame {
-    width: 100%;
-    height: 100%;
-    border: none;
-    background-color: #ffffff;
-}
-
-.doc-viewer__image {
-    display: block;
-    max-width: 100%;
-    max-height: 100%;
-    margin: auto;
-    padding: 16px;
-    object-fit: contain;
-}
-
-/* Keadaan kosong */
-.doc-viewer__empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    max-width: 380px;
-    padding: 32px 24px;
-    text-align: center;
-    color: var(--text-muted);
-}
-
-.doc-viewer__empty i {
-    font-size: 2.6rem;
-    color: #94a3b8;
-    margin-bottom: 6px;
-}
-
-.doc-viewer__empty strong {
-    font-size: 1rem;
-    color: var(--text-main);
-}
-
-.doc-viewer__empty p {
-    font-size: 0.86rem;
-    line-height: 1.55;
-}
-
-.doc-viewer__empty code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 0.8rem;
-    padding: 1px 6px;
-    background-color: #f1f5f9;
-    border-radius: 6px;
-    color: var(--primary-color);
-}
-
-/* Footer modal */
-.doc-viewer__footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-    padding: 14px 20px;
-    border-top: 1px solid var(--border-color);
-    background-color: #ffffff;
-}
-
-.doc-viewer__badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 5px 12px;
-    background-color: var(--primary-light);
-    color: #047857;
-    border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 700;
-}
-
-.doc-viewer__badge.is-new {
-    background-color: #fef3c7;
-    color: #b45309;
-}
-
-.doc-viewer__actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.btn-viewer {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    background-color: var(--primary-color);
-    color: #ffffff;
-    border: 1.5px solid var(--primary-color);
-    border-radius: var(--radius-sm);
-    font-size: 0.86rem;
-    font-weight: 700;
-    text-decoration: none;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.btn-viewer:hover {
-    background-color: var(--primary-hover);
-    border-color: var(--primary-hover);
-}
-
-.btn-viewer--ghost {
-    background-color: transparent;
-    color: var(--primary-color);
-}
-
-.btn-viewer--ghost:hover {
-    background-color: var(--primary-light);
-    border-color: var(--primary-color);
 }
 
 /* FORM GRID LAYOUT */
@@ -880,38 +601,5 @@ textarea.form-control {
     .btn-view-doc {
         width: 100%;
         justify-content: center;
-    }
-
-    /* Modal jadi layar penuh di HP */
-    .doc-viewer {
-        padding: 0;
-    }
-
-    .doc-viewer__dialog {
-        width: 100%;
-        height: 100%;
-        border-radius: 0;
-    }
-
-    .doc-viewer__footer {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .doc-viewer__actions {
-        flex-direction: column-reverse;
-        align-items: stretch;
-    }
-
-    .btn-viewer {
-        justify-content: center;
-    }
-}
-
-/* Hormati preferensi pengurangan animasi */
-@media (prefers-reduced-motion: reduce) {
-    .doc-viewer,
-    .doc-viewer__dialog {
-        transition: none;
     }
 }
