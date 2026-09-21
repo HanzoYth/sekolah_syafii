@@ -8,7 +8,7 @@ use App\Models\identitas_rahasia;
 class identitasController extends Controller
 {
     function tampilan_identitas(){
-        $jumlah = 19902;
+        $jumlah = identitas_rahasia::latest()->first()->id;
         return view("identitas",["jumlah" => (int) $jumlah]);
     }
 
