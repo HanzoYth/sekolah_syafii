@@ -478,6 +478,30 @@ class modulGuruController extends Controller
         $data_guru = guru::find((int) $request->id_guru);
         $data_akun = akun::find((int) $data_guru->user_id);
 
+
+        $validator = Validator::make($request->all(),
+            [
+                "foto" => 'required|file|mimes:jpg,jpeg,png|max:2048',
+                "file_ktp" => 'required|file|mimes:pdf|max:2048',
+                "file_kk" => 'required|file|mimes:pdf|max:2048',
+                "file_ijazah" => 'required|file|mimes:pdf|max:2048'
+            ],
+            [
+                "foto.mimes" => "file harus berupa jpg, jpeg, atau png",
+                "foto.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+                "file_ktp.mimes" => "file harus berupa pdf",
+                "file_ktp.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+                "file_kk.mimes" => "file harus berupa pdf",
+                "file_kk.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+                "file_ijazah.mimes" => "file harus berupa pdf",
+                "file_ijazah.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+            ]
+        );
+        
+        if ($validator->fails()){
+            return back()->withErrors($validator)->withInput();
+        }
+
         if ($request->password != ""){
             $validator = Validator::make($request->all(), [
                 'password' => [
