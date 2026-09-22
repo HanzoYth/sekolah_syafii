@@ -13,7 +13,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="stylesheet" href="{{ asset('css/modul/siakad/dashboard.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/modul/siakad/dasboard.css') }}?v={{ time() }}">
 </head>
 <body>
 
