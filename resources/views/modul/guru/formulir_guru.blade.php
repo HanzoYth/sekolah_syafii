@@ -75,6 +75,14 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label for="tanggalLahir">Agama<span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-calendar-days"></i>
+                                <input type="text" id="agama" name="agama" class="form-control" required placeholder="Agama">
+                            </div>
+                        </div>
+
                         <!-- 5. PENDIDIKAN TERAKHIR -->
                         <div class="form-group">
                             <label for="pendidikanTerakhir">Pendidikan Terakhir <span class="required">*</span></label>

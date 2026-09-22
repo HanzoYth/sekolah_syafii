@@ -55,6 +55,9 @@
                                 <option value="a">Admin</option>
                                 <option value="g">Guru</option>
                                 <option value="s">Siswa</option>
+                                <option value="b">Bendahara</option>
+                                <option value="o">Operator</option>
+                                <option value="p">Satpam</option>
                             </select>
                         </div>
 
@@ -98,6 +101,15 @@
                     </button>
                     <button type="button" class="role-tab-btn" data-role="s">
                         <i class="fa-solid fa-user-graduate"></i> Siswa
+                    </button>
+                    <button type="button" class="role-tab-btn" data-role="b">
+                        <i class="fa-solid fa-user-graduate"></i> Bendahara
+                    </button>
+                    <button type="button" class="role-tab-btn" data-role="o">
+                        <i class="fa-solid fa-user-graduate"></i> Operator
+                    </button>
+                    <button type="button" class="role-tab-btn" data-role="p">
+                        <i class="fa-solid fa-user-graduate"></i> Satpam
                     </button>
                 </div>
 

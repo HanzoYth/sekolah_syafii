@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Data Admin - Sekolah Al-Qur'an Imam Syafi'i</title>
+    <title>Tambah Data Yayasan - Sekolah Al-Qur'an Imam Syafi'i</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">  
     <!-- Font Awesome -->
@@ -20,8 +20,8 @@
         <!-- HEADER / TOPBAR -->
         <header class="topbar">
             <div class="topbar-title">
-                <h2>Tambah Data Admin</h2>
-                <p>Input data pribadi admin</p>
+                <h2>Tambah Data Yayasan</h2>
+                <p>Input data pribadi Yayasan</p>
             </div>
             <a href="/reg" class="btn-back">
                 <i class="fa-solid fa-arrow-left"></i> Kembali
@@ -32,10 +32,10 @@
         <section class="content-body">
             <div class="card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-user-plus"></i> Formulir Bio Data Admin</h3>
+                    <h3><i class="fa-solid fa-user-plus"></i> Formulir Bio Data Yayasan</h3>
                 </div>
 
-                <form id="formGuru" action="/ad/tbad" method="POST" enctype="multipart/form-data">
+                <form id="formGuru" action="/ys/tbys" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-grid">
                         
@@ -45,15 +45,6 @@
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-user"></i>
                                 <input type="text" id="namaGuru" name="nama" placeholder="Contoh: Ustadz Ahmad, S.Pd." required autocomplete="off">
-                            </div>
-                        </div>
-
-                        <!-- 2. NOMOR NIG -->
-                        <div class="form-group">
-                            <label for="nomorNig">Nomor Induk Guru (NIG) <span class="required">*</span></label>
-                            <div class="input-wrapper">
-                                <i class="fa-solid fa-id-card"></i>
-                                <input type="text" id="nomorNig" name="nig" placeholder="Contoh: 19920812202401" required autocomplete="off">
                             </div>
                         </div>
 
@@ -74,14 +65,14 @@
                                 <input type="date" id="tanggalLahir" name="tanggal_lahir" required>
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <label for="agama">Tanggal Lahir <span class="required">*</span></label>
+                            <label for="tanggalLahir">Agama<span class="required">*</span></label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-calendar-days"></i>
                                 <input type="text" id="agama" name="agama" class="form-control" required placeholder="Agama">
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label for="jenisKelamin">Jenis Kelamin <span class="required">*</span></label>
                             <div class="input-wrapper">
@@ -94,35 +85,6 @@
                             </div>
                         </div>
 
-                        <!-- 5. PENDIDIKAN TERAKHIR -->
-                        <div class="form-group">
-                            <label for="pendidikanTerakhir">Pendidikan Terakhir <span class="required">*</span></label>
-                            <div class="input-wrapper">
-                                <i class="fa-solid fa-graduation-cap"></i>
-                                <select id="pendidikanTerakhir" name="pendidikan_terakhir" required>
-                                    <option value="" disabled selected>-- Pilih Pendidikan --</option>
-                                    <option value="smp">SMP / Sederajat</option>
-                                    <option value="sma">SMA / MA / Sederajat</option>
-                                    <option value="s1">S1 (Sarjana)</option>
-                                    <option value="s2">S2 (Magister)</option>
-                                    <option value="s3">S3 (Doktor)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- 6. UPLOAD FOTO & PREVIEW -->
-                        <div class="form-group full-width">
-                            <label for="inputFoto">Foto Profil Admin</label>
-                            <div class="photo-preview-container">
-                                <div class="avatar-preview" id="avatarPreview">
-                                    <i class="fa-solid fa-user"></i>
-                                </div>
-                                <div class="input-wrapper">
-                                    <i class="fa-solid fa-upload"></i>
-                                    <input type="file" id="inputFoto" name="foto" accept="image/*">
-                                </div>
-                            </div>
-                        </div>
 
                         <!-- 7. ALAMAT LENGKAP -->
                         <div class="form-group full-width">
@@ -139,7 +101,7 @@
                     <div class="form-actions">
                         <button type="reset" class="btn-reset" id="btnReset">Reset</button>
                         <button type="submit" class="btn-save">
-                            <i class="fa-solid fa-floppy-disk"></i> Simpan Data Admin
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Data Yayasan
                         </button>
                     </div>
                 </form>

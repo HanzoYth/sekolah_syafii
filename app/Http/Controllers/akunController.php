@@ -8,8 +8,12 @@ use App\Models\akun;
 use App\Models\identitas_rahasia;
 use App\Models\guru;
 use App\Models\admin;
+use App\Models\bendahara;
 use App\Models\cabang_guru;
+use App\Models\operator;
+use App\Models\satpam;
 use App\Models\siswa;
+use App\Models\yayasan;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -115,6 +119,14 @@ class akunController extends Controller
             return redirect("/gr/frgr");
         }elseif ($identitas->jenis_role == "a"){
             return redirect("/ad/frad");
+        }elseif ($identitas->jenis_role == "p"){
+            return redirect("/sp/frsp");
+        }elseif ($identitas->jenis_role == "b"){
+            return redirect("/bd/frbd");
+        }elseif ($identitas->jenis_role == "o"){
+            return redirect("/op/frop");
+        }elseif ($identitas->jenis_role == "y"){
+            return redirect("/ys/frys");
         }else{
             return redirect("/sk/frss");
         }
@@ -150,6 +162,26 @@ class akunController extends Controller
                 return redirect("/ad/frad");
             }
             $user = admin::where("user_id",$akun->id)->first();
+        }else if ($identitas == "b"){   
+            if (!bendahara::where("user_id",$akun->id)->exists()){
+                return redirect("/bd/frbd");
+            }
+            $user = bendahara::where("user_id",$akun->id)->first();
+        }else if ($identitas == "o"){   
+            if (!operator::where("user_id",$akun->id)->exists()){
+                return redirect("/op/frop");
+            }
+            $user = operator::where("user_id",$akun->id)->first();
+        }else if ($identitas == "p"){   
+            if (!satpam::where("user_id",$akun->id)->exists()){
+                return redirect("/sp/frsp");
+            }
+            $user = satpam::where("user_id",$akun->id)->first();
+        }else if ($identitas == "y"){   
+            if (!yayasan::where("user_id",$akun->id)->exists()){
+                return redirect("/ys/frys");
+            }
+            $user = yayasan::where("user_id",$akun->id)->first();
         }else{
             if (!siswa::where("user_id",$akun->id)->exists()){
                 return redirect("/sk/frss");

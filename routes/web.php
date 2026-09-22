@@ -9,13 +9,16 @@ use App\Http\Controllers\MasterAbsenController;
 use App\Http\Controllers\otpController;
 use App\Http\Controllers\cabangGuruController;
 use App\Http\Controllers\adminController;
+use App\Http\Controllers\bendaharaController;
 use App\Http\Controllers\dataSiswaController;
 use App\Http\Controllers\modulSiakadController;
 use App\Http\Controllers\tanggalMerahController;
 use App\Http\Controllers\modulTahfidzController;
 use App\Http\Controllers\kelasHalaqahController;
 use App\Http\Controllers\file_surat;
+use App\Http\Controllers\operatorController;
 use App\Http\Controllers\pembayaranController;
+use App\Http\Controllers\satpamController;
 use App\Http\Controllers\siswaController;
 use App\Http\Controllers\siakadController;
 use App\Http\Controllers\yayasanController;
@@ -50,6 +53,19 @@ Route::get('/gr/lpabs',[modulGuruController::class,"tampilan_laporanAbsen"]);
 Route::get('/gr/frgr',[modulGuruController::class,"tampilan_formulirGuru"]);
 Route::get('/gr/cb',[cabangGuruController::class,"tampilanCabangGuru"]);
 Route::post('/gr/tbgr',[modulGuruController::class,"tambahGuru"]);
+
+
+Route::get('/bd/frbd',[bendaharaController::class,"tampilan_FormulirBendahara"]);
+Route::get('/op/frop',[operatorController::class,"tampilan_FormulirOperator"]);
+Route::get('/sp/frsp',[satpamController::class,"tampilan_FormulirSatpam"]);
+Route::get('/ys/frys',[yayasanController::class,"tampilan_FormulirYayasan"]);
+
+Route::post('/bd/tbbd',[bendaharaController::class,"tambah_Bendahara"]);
+Route::post('/op/tbop',[operatorController::class,"tambah_Operator"]);
+Route::post('/sp/tbsp',[satpamController::class,"tambah_satpam"]);
+Route::post('/ys/tbys',[yayasanController::class,"tambah_Yayasan"]);
+
+
 
 //kelola gaji guru
 Route::get('/gr/slpgjgr',[modulGuruController::class,"tampilan_slipGaji"]);

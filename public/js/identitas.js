@@ -1,10 +1,6 @@
 const role = document.getElementById("role_type");
 const total = document.getElementById("total");
 const inp_kode_identitas = document.getElementById("kode_identitas");
-const simbolAdmin = "a";
-const simbolGuru = "g";
-const simbolSiswa = "a";
-
 role.addEventListener("change",() => {
     inp_kode_identitas.value = generateKode(role.value);
 });
@@ -20,6 +16,12 @@ function generateKode(role){
         choice_simbol = "g";
     }else if (role == "y"){
         choice_simbol = "y";
+    }else if (role == "b"){
+        choice_simbol = "b";
+    }else if (role == "o"){
+        choice_simbol = "o";
+    }else{
+        choice_simbol = "p";
     }
 
     return choice_simbol + "-" + new_code;

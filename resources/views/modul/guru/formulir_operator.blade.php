@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Data Admin - Sekolah Al-Qur'an Imam Syafi'i</title>
+    <title>Tambah Data Operator - Sekolah Al-Qur'an Imam Syafi'i</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">  
     <!-- Font Awesome -->
@@ -20,8 +20,8 @@
         <!-- HEADER / TOPBAR -->
         <header class="topbar">
             <div class="topbar-title">
-                <h2>Tambah Data Admin</h2>
-                <p>Input data pribadi admin</p>
+                <h2>Tambah Data Operator</h2>
+                <p>Input data pribadi Operator</p>
             </div>
             <a href="/reg" class="btn-back">
                 <i class="fa-solid fa-arrow-left"></i> Kembali
@@ -32,10 +32,10 @@
         <section class="content-body">
             <div class="card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-user-plus"></i> Formulir Bio Data Admin</h3>
+                    <h3><i class="fa-solid fa-user-plus"></i> Formulir Bio Data Operator</h3>
                 </div>
 
-                <form id="formGuru" action="/ad/tbad" method="POST" enctype="multipart/form-data">
+                <form id="formGuru" action="/op/tbop" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-grid">
                         
@@ -74,14 +74,14 @@
                                 <input type="date" id="tanggalLahir" name="tanggal_lahir" required>
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <label for="agama">Tanggal Lahir <span class="required">*</span></label>
+                            <label for="tanggalLahir">Agama <span class="required">*</span></label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-calendar-days"></i>
                                 <input type="text" id="agama" name="agama" class="form-control" required placeholder="Agama">
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label for="jenisKelamin">Jenis Kelamin <span class="required">*</span></label>
                             <div class="input-wrapper">
@@ -90,6 +90,19 @@
                                     <option value="" disabled selected>-- Pilih Jenis Kelamin --</option>
                                     <option value="l">Laki-laki</option>
                                     <option value="p">Perempuan</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="jenisKelamin">Cabang <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <select id="cabangSekolah" name="cabang_id" required>
+                                    <option value="" disabled selected>-- Pilih Cabang --</option>
+                                    @foreach($cabang as $value)
+                                        <option value="{{$value->id}}">{{$value->nama_cabang}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -139,7 +152,7 @@
                     <div class="form-actions">
                         <button type="reset" class="btn-reset" id="btnReset">Reset</button>
                         <button type="submit" class="btn-save">
-                            <i class="fa-solid fa-floppy-disk"></i> Simpan Data Admin
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Data Operator
                         </button>
                     </div>
                 </form>

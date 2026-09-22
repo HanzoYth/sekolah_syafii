@@ -74,6 +74,13 @@
                                 <input type="date" id="tanggalLahir" name="tanggal_lahir">
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label for="tanggalLahir">Agama</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-calendar-days"></i>
+                                <input type="text" id="agama" name="agama" class="form-control" required placeholder="Agama">
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label for="jenisSekolah">Jenis Sekolah <span class="required">*</span></label>
