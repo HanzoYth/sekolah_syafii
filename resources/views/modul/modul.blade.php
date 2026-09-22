@@ -33,18 +33,43 @@
         <div class="module-grid">
             
             <!-- KOTAK 1: MODUL SIAKAD -->
-             
-            <a href="{{session('role') == 'a' ? ' /sk/das' : session('role') == 'g' ? '/sk/dsg':'/sk/dbs'}}" class="module-card siakad">
-                <div class="icon-wrapper">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                </div>
-                <h3>Modul SIAKAD</h3>
-                <p>Sistem Informasi Akademik untuk pengelolaan nilai, jadwal pelajaran, presensi, dan data santri.</p>
-                <div class="card-action">
-                    <span>Akses SIAKAD</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </a>
+            @if (session("role") == "a")
+                <a href="/sk/das" class="module-card siakad">
+                    <div class="icon-wrapper">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <h3>Modul SIAKAD</h3>
+                    <p>Sistem Informasi Akademik untuk pengelolaan nilai, jadwal pelajaran, presensi, dan data santri.</p>
+                    <div class="card-action">
+                        <span>Akses SIAKAD</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </a>
+            @elseif (session("role") == "g")
+                <a href="/sk/dsg" class="module-card siakad">
+                    <div class="icon-wrapper">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <h3>Modul SIAKAD</h3>
+                    <p>Sistem Informasi Akademik untuk pengelolaan nilai, jadwal pelajaran, presensi, dan data santri.</p>
+                    <div class="card-action">
+                        <span>Akses SIAKAD</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </a>
+            @else
+                <a href="/sk/dbs" class="module-card siakad">
+                    <div class="icon-wrapper">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <h3>Modul SIAKAD</h3>
+                    <p>Sistem Informasi Akademik untuk pengelolaan nilai, jadwal pelajaran, presensi, dan data santri.</p>
+                    <div class="card-action">
+                        <span>Akses SIAKAD</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </a>
+            @endif
 
             <!-- KOTAK 2: MODUL TAHFIDZ -->
             <a href='/tf/das' class="module-card tahfidz">
