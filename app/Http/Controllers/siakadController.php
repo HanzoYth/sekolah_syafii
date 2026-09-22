@@ -20,6 +20,10 @@ class siakadController extends Controller
             "data_siswa" => $data_siswa
         ]);
     }
+
+    function tampilanDashboardGuru(){
+        return view("/modul/siakad/dashboard_guru");
+    }
    
     function tambah_kelas(){
        return view("/modul/siakad/tambahKelas");

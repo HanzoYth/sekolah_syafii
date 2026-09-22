@@ -34,7 +34,7 @@
             
             <!-- KOTAK 1: MODUL SIAKAD -->
              
-            <a href="{{session('role') == 'a' ? ' /sk/das' : '/sk/dbs'}}" class="module-card siakad">
+            <a href="{{session('role') == 'a' ? ' /sk/das' : session('role') == 'g' ? '/sk/dsg':'/sk/dbs'}}" class="module-card siakad">
                 <div class="icon-wrapper">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
