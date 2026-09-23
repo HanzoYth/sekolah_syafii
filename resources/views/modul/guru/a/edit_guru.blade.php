@@ -249,33 +249,36 @@
                                     <label>Hari Piket</label>
 
                                     <select name="piket_hari[]" class="form-control" required>
+                                        @php
+                                            Carbon\Carbon::setlocale("id");
+                                        @endphp
                                         <option value="">-- Pilih Hari --</option>
 
-                                        <option value="Senin" {{ \Carbon\Carbon::parse($piket->tanggal)->translatedFormat('l') == 'Senin' ? 'selected' : '' }}>
+                                        <option value="Senin" {{ $piket->hari == 'Senin' ? 'selected' : '' }}>
                                             Senin
                                         </option>
 
-                                        <option value="Selasa" {{ \Carbon\Carbon::parse($piket->tanggal)->translatedFormat('l') == 'Selasa' ? 'selected' : '' }}>
+                                        <option value="Selasa" {{ $piket->hari == 'Selasa' ? 'selected' : '' }}>
                                             Selasa
                                         </option>
 
-                                        <option value="Rabu" {{ \Carbon\Carbon::parse($piket->tanggal)->translatedFormat('l') == 'Rabu' ? 'selected' : '' }}>
+                                        <option value="Rabu" {{ $piket->hari == 'Rabu' ? 'selected' : '' }}>
                                             Rabu
                                         </option>
 
-                                        <option value="Kamis" {{ \Carbon\Carbon::parse($piket->tanggal)->translatedFormat('l') == 'Kamis' ? 'selected' : '' }}>
+                                        <option value="Kamis" {{ $piket->hari == 'Kamis' ? 'selected' : '' }}>
                                             Kamis
                                         </option>
 
-                                        <option value="Jumat" {{ \Carbon\Carbon::parse($piket->tanggal)->translatedFormat('l') == 'Jumat' ? 'selected' : '' }}>
+                                        <option value="Jumat" {{ $piket->hari == 'Jumat' ? 'selected' : '' }}>
                                             Jumat
                                         </option>
 
-                                        <option value="Sabtu" {{ \Carbon\Carbon::parse($piket->tanggal)->translatedFormat('l') == 'Sabtu' ? 'selected' : '' }}>
+                                        <option value="Sabtu" {{ $piket->hari == 'Sabtu' ? 'selected' : '' }}>
                                             Sabtu
                                         </option>
 
-                                        <option value="Minggu" {{ \Carbon\Carbon::parse($piket->tanggal)->translatedFormat('l') == 'Minggu' ? 'selected' : '' }}>
+                                        <option value="Minggu" {{ $piket->hari == 'Minggu' ? 'selected' : '' }}>
                                             Minggu
                                         </option>
                                     </select>
