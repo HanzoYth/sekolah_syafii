@@ -13,18 +13,26 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="stylesheet" href="{{ asset('css/modul/siakad/dasboard.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/modul/siakad/teacher/dashboard.css') }}?v={{ time() }}">
 </head>
 <body>
 
     <div class="dashboard-container">
 
         {{-- WADAH TEMPLATE SIDEBAR --}}
-        <x-sidebar_siakad />
+        <x-siakad_teacher.sidebar />
 
         {{-- MAIN CONTENT --}}
         <main class="main-content">
 
+            <x-siakad_teacher.topbar
+                name="Ustadzah Fitri"
+                position="Guru Mata Pelajaran"
+                initials="UF"
+            />
+
+            {{-- Header lama disimpan sementara sebagai referensi desain. --}}
+            @if (false)
             {{-- HEADER BAR --}}
             <header class="bg-emerald-900 text-white shadow-md relative overflow-hidden flex-shrink-0 rounded-xl mb-6">
                 <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px]"></div>
@@ -39,6 +47,7 @@
                     </div>
                 </div>
             </header>
+            @endif
 
             {{-- STATISTIC CARDS --}}
             <div class="stats-grid">
@@ -100,7 +109,7 @@
                 </div>
 
                 {{-- JADWAL HARI INI --}}
-                <div class="filter-box">
+                <div class="filter-box" id="jadwal-mengajar">
                     <h4>Jadwal Mengajar Hari Ini</h4>
                     <div class="filter-group">
                         <label>07.30 - 08.10</label>
