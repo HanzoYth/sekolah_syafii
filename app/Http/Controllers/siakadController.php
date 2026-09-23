@@ -21,18 +21,26 @@ class siakadController extends Controller
         ]);
     }
 
+    function edit_siswa(){
+        return view ('/modul/siakad/admin/editSiswa');
+    }
+
+    function dashboard_siakad(){
+      return view('/modul/siakad/admin/dasboard');
+    }
+
     function tampilanDashboardGuru(){
-        return view("/modul/siakad/dashboard_guru");
+        return view("/modul/siakad/guru/dashboard_guru");
     }
    
     function tambah_kelas(){
-       return view("/modul/siakad/tambahKelas");
+       return view("/modul/siakad/admin/tambahKelas");
     }
     function absenSiswa(){
-       return view("/modul/siakad/absensisiswa");
+       return view("/modul/siakad/guru/absensisiswa");
     }
     function tampilanPembayaranPemeliharaan(){
-       return view("/modul/siakad/pemeliharaan");
+       return view("/modul/siakad/admin/pemeliharaan");
        
     }
 
@@ -67,7 +75,7 @@ class siakadController extends Controller
         $data_slip_ipp = slip_pembayaran_ipp::paginate(6)->onEachSide(1);
         $data_kelas = ruang_kelas::all();
         $jumlah_total_bayar_lunas = slip_pembayaran_ipp::where("status",true)->sum("jumlah_dibayar");
-        return view ('/modul/siakad/pembayaran',[
+        return view ('/modul/siakad/admin/pembayaran',[
             "data_slip_ipp" => $data_slip_ipp,
             "data_ruang_kelas" => $data_kelas,
             "total_bayar_lunas" => $jumlah_total_bayar_lunas
@@ -82,7 +90,7 @@ class siakadController extends Controller
         $total_target_pangkal = $target_pangkal_belum_lunas  - $total_lunas_pangkal;
         $total_siswa_lunas = slip_pembayaran_pangkal::where("status",true)->count();
         $total_siswa_belum_lunas = slip_pembayaran_pangkal::where("status",false)->count();
-        return view ('/modul/siakad/pangkal',compact('data_slip_pangkal','data_kelas',"total_target_pangkal","total_lunas_pangkal","total_siswa_lunas","total_siswa_belum_lunas"));  
+        return view ('/modul/siakad/admin/pangkal',compact('data_slip_pangkal','data_kelas',"total_target_pangkal","total_lunas_pangkal","total_siswa_lunas","total_siswa_belum_lunas"));  
     }
 
     function tampilanPembayaranPendidikan(){
@@ -93,7 +101,7 @@ class siakadController extends Controller
         $total_target_pendidikan = $target_pendidikan_belum_lunas  - $total_lunas_pendidikan;
         $total_siswa_lunas = slip_pembayaran_pendidikan::where("status",true)->count();
         $total_siswa_belum_lunas = slip_pembayaran_pendidikan::where("status",false)->count();
-        return view("/modul/siakad/pendidikan",compact("data_slip_pendidikan","data_kelas","total_lunas_pendidikan","total_target_pendidikan","total_siswa_lunas","total_siswa_belum_lunas"));
+        return view("/modul/siakad/admin/pendidikan",compact("data_slip_pendidikan","data_kelas","total_lunas_pendidikan","total_target_pendidikan","total_siswa_lunas","total_siswa_belum_lunas"));
        
     }
 
@@ -165,12 +173,12 @@ class siakadController extends Controller
 
     function tampian_daftarSiswa(){
         $data_siswa = siswa::all();
-        return view ('/modul/siakad/daftar_siswa',compact("data_siswa"));
+        return view ('/modul/siakad/admin/daftar_siswa',compact("data_siswa"));
     }
 
     function tampilan_detailSiswa($id){
         $data_siswa = siswa::where("id",$id)->first();
         $data_kelas = ruang_kelas::where("id",$data_siswa->kelas_id)->first();
-        return view ('/modul/siakad/detailSiswa',compact("data_siswa","data_kelas"));
+        return view ('/modul/siakad/admin/detailSiswa',compact("data_siswa","data_kelas"));
     }
 }

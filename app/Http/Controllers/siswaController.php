@@ -16,26 +16,26 @@ class siswaController extends Controller
     function dashboardSiswa (){
         $data_siswa = siswa:: where("id",session("id"))->first();
         $data_kelas = ruang_kelas:: where("id",$data_siswa->kelas_id)->first();
-        return view('/modul/siakad/dashboardSiswa',compact("data_siswa","data_kelas"));
+        return view('/modul/siakad/siswa/dashboardSiswa',compact("data_siswa","data_kelas"));
     }
 
     function pembayaranSiswa (){
         $data_siswa = siswa:: where("id",session("id"))->first();
         $data_kelas = ruang_kelas:: where("id",$data_siswa->kelas_id)->first();
-        return view('/modul/siakad/pembayaranSiswa',compact("data_siswa","data_kelas"));
+        return view('/modul/siakad/siswa/pembayaranSiswa',compact("data_siswa","data_kelas"));
     }
     function profilSiswa (){
         $data_siswa = siswa:: where("id",session("id"))->first();
         $data_kelas = ruang_kelas:: where("id",$data_siswa->kelas_id)->first();
-        return view('/modul/siakad/profilSiswa',compact("data_siswa","data_kelas"));
+        return view('/modul/siakad/siswa/profilSiswa',compact("data_siswa","data_kelas"));
     }
      function DetailSlipPembayaran (){
-        return view('/modul/siakad/detailSlipPembayaran');
+        return view('/modul/siakad/admin/detailSlipPembayaran');
     }
     function pengumumanSiswa (){
         $data_siswa = siswa:: where("id",session("id"))->first();
         $data_kelas = ruang_kelas:: where("id",$data_siswa->kelas_id)->first();
-        return view('/modul/siakad/pengumumanSiswa',compact("data_siswa","data_kelas"));
+        return view('/modul/siakad/siswa/pengumumanSiswa',compact("data_siswa","data_kelas"));
     }
 
     function tampilan_formulirSiswa(){

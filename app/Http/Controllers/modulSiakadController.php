@@ -7,8 +7,6 @@ use Illuminate\View\View;
 
 class modulSiakadController extends Controller
 {
-      function dashboard_siakad(){
-        return view('/modul/siakad/dasboard');
-      }
+
 
 }
