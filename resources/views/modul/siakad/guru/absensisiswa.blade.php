@@ -14,7 +14,7 @@
 
     <div class="dashboard-container">
 
-        <x-siakad_teacher.sidebar />
+        <x-siakad_teacher.sidebar_siakad />
 
         <main class="main-content teacher-attendance">
 

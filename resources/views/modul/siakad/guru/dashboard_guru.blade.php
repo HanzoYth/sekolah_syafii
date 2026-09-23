@@ -18,7 +18,7 @@
     <div class="dashboard-container">
 
         {{-- WADAH TEMPLATE SIDEBAR --}}
-        <x-siakad_teacher.sidebar />
+        <x-siakad_teacher.sidebar_siakad />
 
         {{-- MAIN CONTENT --}}
         <main class="main-content">
