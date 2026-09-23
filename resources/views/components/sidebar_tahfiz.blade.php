@@ -37,7 +37,7 @@
                     <a href="/tf/pg"><i class="fa-solid fa-user-tie"></i> <span>Pengampu</span></a>
                 </li>
                 <li class="menu-item">
-                    <a href="/tf/pg"><i class="fa-solid fa-user-tie"></i> <span>Pengumuman</span></a>
+                    <a href="/tf/pgm"><i class="fa-solid fa-user-tie"></i> <span>Pengumuman</span></a>
                 </li>
                 <li class="menu-item">
                     <a href="/tf/nt"><i class="fa-solid fa-bell"></i> <span>Notifikasi</span></a>

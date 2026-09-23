@@ -21,6 +21,7 @@ use App\Http\Controllers\pembayaranController;
 use App\Http\Controllers\satpamController;
 use App\Http\Controllers\siswaController;
 use App\Http\Controllers\siakadController;
+use App\Http\Controllers\tahfizController;
 use App\Http\Controllers\yayasanController;
 use Illuminate\Support\Facades\Storage;
 
@@ -55,7 +56,7 @@ Route::get('/gr/cb',[cabangGuruController::class,"tampilanCabangGuru"]);
 Route::post('/gr/tbgr',[modulGuruController::class,"tambahGuru"]);
 
 
-Route::get('/bd/frbd',[bendaharaController::class,"tampilan_FormulirBendahara"]);
+Route::get('/bd/frbd',[bendaharaController ::class,"tampilan_FormulirBendahara"]);
 Route::get('/op/frop',[operatorController::class,"tampilan_FormulirOperator"]);
 Route::get('/sp/frsp',[satpamController::class,"tampilan_FormulirSatpam"]);
 Route::get('/ys/frys',[yayasanController::class,"tampilan_FormulirYayasan"]);
@@ -220,3 +221,8 @@ Route::get('/file_pdf/{path}', function ($path) {
     return Storage::response($path);
 
 })->where('path', '.*')->name('pdf.show');
+
+
+
+// tahfiz
+Route::get("/tf/pgm",[tahfizController::class,"tampilan_Tahfiz"]);
