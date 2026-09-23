@@ -116,7 +116,8 @@ class MasterAbsenController extends Controller
             $data_guru = guru::find((int) session("id"));
             $hari = Carbon::now()->translatedFormat("l");
             $waktu_absen = Carbon::now();
-            $waktu_jadwal = jadwal_piket::where("tanggal",Carbon::now()->translatedFormat("Y-m-d"))->where("id_guru",(int) session("id"))->exists() ? Carbon::parse(jadwal_piket::where("tanggal",Carbon::now()->translatedFormat("Y-m-d"))->where("id_guru",(int) session("id"))->first()->jam) :Carbon::parse(master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->first()->waktu_masuk);
+            Carbon::setLocale("id");
+            $waktu_jadwal = jadwal_piket::where("hari",Carbon::now()->translatedFormat("l"))->where("id_guru",(int) session("id"))->exists() ? Carbon::parse(jadwal_piket::where("hari",Carbon::now()->translatedFormat("l"))->where("id_guru",(int) session("id"))->first()->jam) :Carbon::parse(master_waktu_absen_guru::where("cabang_id",$data_guru->cabang_id)->where("hari",strtolower($hari))->first()->waktu_masuk);
             $terlambat = $waktu_jadwal->diffInMinutes($waktu_absen);
             if (!$waktu_absen->greaterThan($waktu_jadwal)){
                 $terlambat = 0;

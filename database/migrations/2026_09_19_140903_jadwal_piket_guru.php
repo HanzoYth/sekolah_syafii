@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create("piket_guru",function (Blueprint $table) {
             $table->id();
-            $table->date("tanggal");
+            $table->string("nama");
             $table->time("jam");
             $table->foreignId("id_guru")->constrained("guru")->cascadeOnDelete();
+            $table->string("nama");
         });
     }
 
