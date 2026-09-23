@@ -407,11 +407,12 @@ class modulGuruController extends Controller
         return redirect("/reg");
     }
 
-    function tambah_piket($tanggal,$jam,$id){
+    function tambah_piket($hari,$jam,$id,$nama){
         jadwal_piket::create([
-            "tanggal" => $tanggal,
+            "hari" => $hari,
             "jam" => $jam,
-            "id_guru" => $id
+            "id_guru" => $id,
+            "nama" => $nama
         ]);
 
         return;
@@ -436,9 +437,9 @@ class modulGuruController extends Controller
 
 
             jadwal_piket::query()->delete();
-            if ($request->piket_tanggal ?? false){
-                for ($i = 0 ; $i < count($request->piket_tanggal);$i++){
-                    $this->tambah_piket(Carbon::parse($request->piket_tanggal[$i])->translatedFormat("Y-m-d"),Carbon::parse($request->piket_waktu[$i])->translatedFormat("H:i:s"),$request->id_guru);
+            if ($request->piket_hari ?? false){
+                for ($i = 0 ; $i < count($request->piket_hari);$i++){
+                    $this->tambah_piket($request->piket_hari[$i],Carbon::parse($request->piket_waktu[$i])->translatedFormat("H:i:s"),$request->id_guru,$request->piket_nama[$i]);
                 }
             }
 
@@ -464,9 +465,9 @@ class modulGuruController extends Controller
             return redirect("/gr/klgr")->with("success","berhasil update data guru");
         }else{
             jadwal_piket::query()->delete();
-            if ($request->piket_tanggal ?? false){
-                for ($i = 0 ; $i < count($request->piket_tanggal);$i++){
-                    $this->tambah_piket(Carbon::parse($request->piket_tanggal[$i])->translatedFormat("Y-m-d"),Carbon::parse($request->piket_waktu[$i])->translatedFormat("H:i:s"),$request->id_guru);
+            if ($request->piket_hari ?? false){
+                for ($i = 0 ; $i < count($request->piket_hari);$i++){
+                    $this->tambah_piket($request->piket_hari[$i],Carbon::parse($request->piket_waktu[$i])->translatedFormat("H:i:s"),$request->id_guru,$request->piket_nama[$i]);
                 }
             }
 

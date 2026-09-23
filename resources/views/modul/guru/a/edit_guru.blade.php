@@ -242,8 +242,43 @@
                         @foreach($data_piket as $piket)
                             <div class="piket-item">
                                 <div class="form-group flex-1">
-                                    <label>Tanggal Piket</label>
-                                    <input type="date" name="piket_tanggal[]" class="form-control" value="{{ $piket->tanggal }}" required>
+                                    <label>nama piket</label>
+                                    <input type="text" name="piket_nama[]" class="form-control" value="{{ $piket->nama }}" required>
+                                </div>
+                                <div class="form-group flex-1">
+                                    <label>Hari Piket</label>
+
+                                    <select name="piket_hari[]" class="form-control" required>
+                                        <option value="">-- Pilih Hari --</option>
+
+                                        <option value="Senin" {{ \Carbon\Carbon::parse($piket->tanggal)->translatedFormat('l') == 'Senin' ? 'selected' : '' }}>
+                                            Senin
+                                        </option>
+
+                                        <option value="Selasa" {{ \Carbon\Carbon::parse($piket->tanggal)->translatedFormat('l') == 'Selasa' ? 'selected' : '' }}>
+                                            Selasa
+                                        </option>
+
+                                        <option value="Rabu" {{ \Carbon\Carbon::parse($piket->tanggal)->translatedFormat('l') == 'Rabu' ? 'selected' : '' }}>
+                                            Rabu
+                                        </option>
+
+                                        <option value="Kamis" {{ \Carbon\Carbon::parse($piket->tanggal)->translatedFormat('l') == 'Kamis' ? 'selected' : '' }}>
+                                            Kamis
+                                        </option>
+
+                                        <option value="Jumat" {{ \Carbon\Carbon::parse($piket->tanggal)->translatedFormat('l') == 'Jumat' ? 'selected' : '' }}>
+                                            Jumat
+                                        </option>
+
+                                        <option value="Sabtu" {{ \Carbon\Carbon::parse($piket->tanggal)->translatedFormat('l') == 'Sabtu' ? 'selected' : '' }}>
+                                            Sabtu
+                                        </option>
+
+                                        <option value="Minggu" {{ \Carbon\Carbon::parse($piket->tanggal)->translatedFormat('l') == 'Minggu' ? 'selected' : '' }}>
+                                            Minggu
+                                        </option>
+                                    </select>
                                 </div>
                                 <div class="form-group flex-1">
                                     <label>Waktu Piket (Jam & Menit)</label>
@@ -337,17 +372,52 @@
             piketRow.className = 'piket-item';
             
             piketRow.innerHTML = `
-                <div class="form-group flex-1">
-                    <label>Tanggal Piket</label>
-                    <input type="date" name="piket_tanggal[]" class="form-control" required>
-                </div>
-                <div class="form-group flex-1">
-                    <label>Waktu Piket (Jam & Menit)</label>
-                    <input type="time" name="piket_waktu[]" class="form-control" required>
-                </div>
-                <button type="button" class="btn-remove-piket btnRemovePiket" title="Hapus Piket">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
+                                <div class="form-group flex-1">
+                                    <label>nama piket</label>
+                                    <input type="text" name="piket_nama[]" class="form-control" required>
+                                </div>
+                                <div class="form-group flex-1">
+                                    <label>Hari Piket</label>
+
+                                    <select name="piket_hari[]" class="form-control" required>
+                                        <option value="">-- Pilih Hari --</option>
+
+                                        <option value="Senin">
+                                            Senin
+                                        </option>
+
+                                        <option value="Selasa">
+                                            Selasa
+                                        </option>
+
+                                        <option value="Rabu">
+                                            Rabu
+                                        </option>
+
+                                        <option value="Kamis">
+                                            Kamis
+                                        </option>
+
+                                        <option value="Jumat">
+                                            Jumat
+                                        </option>
+
+                                        <option value="Sabtu">
+                                            Sabtu
+                                        </option>
+
+                                        <option value="Minggu">
+                                            Minggu
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group flex-1">
+                                    <label>Waktu Piket (Jam & Menit)</label>
+                                    <input type="time" name="piket_waktu[]" class="form-control" required>
+                                </div>
+                                <button type="button" class="btn-remove-piket btnRemovePiket" title="Hapus Piket">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
             `;
 
             piketContainer.appendChild(piketRow);

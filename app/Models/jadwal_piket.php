@@ -9,8 +9,9 @@ class jadwal_piket extends Model
     protected $table = "piket_guru";
     public $timestamps =false;
     protected $fillable = [
-        "tanggal",
+        "hari",
         "jam",
-        "id_guru"
+        "id_guru",
+        "nama"
     ];
 }

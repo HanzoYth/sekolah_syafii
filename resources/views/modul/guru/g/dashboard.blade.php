@@ -178,15 +178,19 @@
                         <div class="card-body">
                             <div class="piket-list">
                                 @foreach($data_piket as $piket)
-                                    <div class="piket-item {{ Carbon\Carbon::parse($piket->tanggal)->locale('id')->translatedFormat('d') == Carbon\Carbon::now()->locale('id')->translatedFormat('d') ? 'piket-today' : '' }}">
+                                    @php
+                                        Carbon\Carbon::setlocale("id");
+                                        $cek_hari_ini = Carbon\Carbon::now()->translatedFormat("l") == $piket->hari
+                                    @endphp
+                                    <div class="piket-item {{$cek_hari_ini ? 'piket-today' : '' }}">
                                         <div class="piket-date-box">
                                             <span class="piket-day">{{ Carbon\Carbon::parse($piket->tanggal)->locale("id")->isoFormat("ddd") }}</span>
-                                            <span class="piket-date">{{ Carbon\Carbon::parse($piket->tanggal)->locale("id")->translatedFormat('d M') }}</span>
                                         </div>
                                         <div class="piket-info">
-                                            <p><i class="fa-regular fa-clock"></i> {{ Carbon\Carbon::parse($piket->jam)->translatedFormat('H:i') }}WITA</p>
+                                            <h5>{{$piket->nama}}</h5>
+                                            <p><i class="fa-regular fa-clock"></i> {{ Carbon\Carbon::parse($piket->jam)->translatedFormat('H:i') }} WITA</p>
                                         </div>
-                                        @if(Carbon\Carbon::parse($piket->tanggal)->locale('id')->translatedFormat('d') == Carbon\Carbon::now()->locale('id')->translatedFormat('d'))
+                                        @if($cek_hari_ini)
                                             <span class="badge-today">Hari Ini</span>
                                         @endif
                                     </div>
