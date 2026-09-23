@@ -32,7 +32,7 @@
                                 <span>Dashboard</span>
                             </a>
                         @elseif (session('role') == "g")
-                            <a href="/sk/dg">
+                            <a href="/sk/dsg">
                                 <i class="fa-solid fa-house"></i>
                                 <span>Dashboard</span>
                             </a>

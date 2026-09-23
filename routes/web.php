@@ -159,7 +159,7 @@ Route::get('/sk/das',[siakadController::class,"dashboard_siakad"]);
 Route::get('/sk/ds',[siakadController::class,"tampian_daftarSiswa"]); 
 Route::get('/sk/dls/{id}',[siakadController::class,"tampilan_detailSiswa"]); 
 Route::get('/sk/dts',[siakadController::class,"edit_siswa"]); 
-Route::get('/sk/pb',[siakadController::class,"  tampilanPembayaranIpp_siswa"]);
+Route::get('/sk/pb',[siakadController::class,"tampilanPembayaranIpp_siswa"]);
 Route::get('/sk/dp',[PembayaranController::class,"detail_pembayaran_siswa"]);
 Route::get('/sk/pp',[siakadController::class,"tampilanPembayaranPangkal"]);
 Route::get('/sk/ppl',[siakadController::class,"tampilanPembayaranPemeliharaan"]);
@@ -172,7 +172,7 @@ Route::post('/sk/espp',[siakadController::class,"edit_slipPembayaranPendidikan"]
 Route::get('/sk/tk',[siakadController::class,"tambah_kelas"]);
 Route::post('/sk/pbsp/',[siakadController::class,"publish_slipPembayaran"]);
 Route::post('/sk/hpsp/',[siakadController::class,"hapus_slipPembayaran"]);
-Route::get('/sk/dsg/',[siakadController::class,"tampilanDashboardGuru"]);
+Route::get('/sk/dsg',[siakadController::class,"tampilanDashboardGuru"]);
 
 
 //siswa
@@ -186,7 +186,8 @@ Route::get('/sk/ps',[siswaController::class,"pengumumanSiswa"]);
 
 
 //guru
-Route::get('/sk/ass',[siswaController::class,"absenSiswa"]);
+Route::get('/sk/ass',[siakadController::class,"absenSiswa"]);
+Route::get('/sk/pr',[siakadController::class,"profilGuru"]);
 
 
 //yayasan punya

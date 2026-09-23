@@ -39,6 +39,10 @@ class siakadController extends Controller
     function absenSiswa(){
        return view("/modul/siakad/guru/absensisiswa");
     }
+
+    function profilGuru(){
+       return view("/modul/siakad/guru/profilGuru");
+    }
     function tampilanPembayaranPemeliharaan(){
        return view("/modul/siakad/admin/pemeliharaan");
        
