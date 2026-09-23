@@ -31,6 +31,11 @@
                                 <i class="fa-solid fa-house"></i>
                                 <span>Dashboard</span>
                             </a>
+                        @elseif (session('role') == "g")
+                            <a href="/sk/dg">
+                                <i class="fa-solid fa-house"></i>
+                                <span>Dashboard</span>
+                            </a>
                         @elseif (session('role') == "s")
                             <a href="/sk/dbs">
                                 <i class="fa-solid fa-house"></i>

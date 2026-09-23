@@ -4,407 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - SIAKAD</title>
-
-    {{-- Google Fonts: Amiri untuk sentuhan kaligrafis, Poppins untuk keterbacaan UI --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    {{-- Font Awesome Icons --}}
-    <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
+    <link rel="icon" type="image/png" href="{{ asset('img/logo_sklh.png') }}?v={{ time() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    {{-- Tailwind CSS CDN (Pastikan terhubung agar class Tailwind pada header baru berfungsi) --}}
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    {{-- Stylesheet dashboard SIAKAD --}}
     <link rel="stylesheet" href="{{ asset('css/modul/siakad/dasboard.css') }}">
 </head>
 <body>
-
     <div class="dashboard-container">
-
-        {{-- WADAH TEMPLATE SIDEBAR --}}
         <x-sidebar_siakad />
 
-        {{-- MAIN CONTENT --}}
-        <main class="main-content">
-
-            {{-- HEADER BAR BARU (Islamic Theme with Tailwind) --}}
-            <header class="bg-emerald-900 text-white shadow-md relative overflow-hidden flex-shrink-0 rounded-xl mb-6">
-                <!-- Pattern background Islamic -->
-                <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px]"></div>
-                
-                <div class="px-6 py-5 relative z-10 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div class="text-center md:text-left">
-                        <p class="font-arabic text-xl text-amber-400 mb-0.5">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
-                        <h1 class="text-xl font-bold tracking-wide text-white flex items-center justify-center md:justify-start gap-2">
-                            Sistem Informasi Data Siswa
-                        </h1>
-                        <p class="text-emerald-200 text-xs">Mewujudkan Generasi Rabbani, Berakhlak Mulia & Berprestasi</p>
+        <main class="main-content siakad-overview">
+            <header class="overview-hero">
+                <div class="overview-pattern" aria-hidden="true"></div>
+                <div class="overview-hero-content">
+                    <div>
+                        <p class="arabic-greeting">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+                        <p class="eyebrow">DASHBOARD ADMIN SIAKAD</p>
+                        <h1>Assalamu'alaikum, Admin</h1>
+                        <p class="hero-subtitle">Pantau aktivitas sekolah dan selesaikan pekerjaan penting hari ini.</p>
                     </div>
+                    <div class="academic-period"><i class="fa-regular fa-calendar-days"></i><div><span>Selasa, 04 Agustus 2026</span><strong>TP 2026/2027 · Semester Ganjil</strong></div></div>
                 </div>
             </header>
 
-            {{-- STATISTIC CARDS --}}
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-user-graduate"></i></div>
-                    <div>
-                        <h3>842</h3>
-                        <p>Total Siswa</p>
-                    </div>
+            <section class="overview-section" aria-labelledby="statistik-title">
+                <div class="section-heading"><div><p class="section-kicker">RINGKASAN SEKOLAH</p><h2 id="statistik-title">Statistik utama</h2></div><span class="updated-label"><i class="fa-solid fa-arrows-rotate"></i> Diperbarui hari ini</span></div>
+                <div class="overview-stat-grid">
+                    <article class="overview-stat-card"><span class="stat-icon emerald"><i class="fa-solid fa-user-graduate"></i></span><div><strong>842</strong><span>Siswa aktif</span></div></article>
+                    <article class="overview-stat-card"><span class="stat-icon blue"><i class="fa-solid fa-chalkboard-user"></i></span><div><strong>56</strong><span>Guru &amp; staf</span></div></article>
+                    <article class="overview-stat-card"><span class="stat-icon gold"><i class="fa-solid fa-school"></i></span><div><strong>28</strong><span>Rombel / kelas</span></div></article>
+                    <article class="overview-stat-card"><span class="stat-icon violet"><i class="fa-solid fa-chart-line"></i></span><div><strong>96,4%</strong><span>Kehadiran hari ini</span><small><i class="fa-solid fa-arrow-trend-up"></i> 1,2% dari bulan lalu</small></div></article>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
-                    <div>
-                        <h3>56</h3>
-                        <p>Guru &amp; Staff</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-school"></i></div>
-                    <div>
-                        <h3>28</h3>
-                        <p>Rombel / Kelas</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
-                    <div>
-                        <h3>96,4%</h3>
-                        <p>Rata-rata Kehadiran</p>
-                        <span class="stat-trend up"><i class="fa-solid fa-arrow-up"></i> 1,2% dari bulan lalu</span>
-                    </div>
-                </div>
-            </div>
+            </section>
 
-            {{-- ROW: RINGKASAN KEHADIRAN & FILTER --}}
-            <div class="summary-filter-row">
-
-                {{-- RINGKASAN KEHADIRAN HARI INI --}}
-                <div class="summary-box">
-                    <h4>Ringkasan Kehadiran Hari Ini</h4>
-                    <div class="summary-cards">
-                        <div class="sum-card green">
-                            <h3>798</h3>
-                            <p>Hadir</p>
-                        </div>
-                        <div class="sum-card yellow">
-                            <h3>27</h3>
-                            <p>Izin / Sakit</p>
-                        </div>
-                        <div class="sum-card red">
-                            <h3>9</h3>
-                            <p>Alpa</p>
-                        </div>
-                        <div class="sum-card blue">
-                            <h3>8</h3>
-                            <p>Terlambat</p>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- FILTER --}}
-                <div class="filter-box">
-                    <h4>Filter</h4>
-                    <div class="filter-group">
-                        <label for="filter-jenjang">Jenjang</label>
-                        <select id="filter-jenjang" name="jenjang">
-                            <option value="">Semua Jenjang</option>
-                            <option value="tk">TK</option>
-                            <option value="sd" selected>SD</option>
-                            <option value="smp">SMP</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="filter-kelas">Kelas</label>
-                        <select id="filter-kelas" name="kelas">
-                            <option value="">Semua Kelas</option>
-                            <option value="1a" selected>Kelas 1A</option>
-                            <option value="2b">Kelas 2B</option>
-                            <option value="7a">Kelas 7A</option>
-                            <option value="tkb1">TK B1</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="filter-tanggal">Tanggal</label>
-                        <input type="date" id="filter-tanggal" name="tanggal" value="2026-08-04">
-                    </div>
-                </div>
-            </div>
-
-            {{-- ROW: PENGUMUMAN & KALENDER AKADEMIK --}}
-            <div class="info-row">
-
-                {{-- PENGUMUMAN --}}
-                <div class="info-card">
-                    <h4>Pengumuman Terbaru <a href="#" class="card-link">Lihat semua</a></h4>
-                    <ul class="announcement-list">
-                        <li class="announcement-item">
-                            <div class="announcement-icon"><i class="fa-solid fa-bullhorn"></i></div>
-                            <div class="announcement-body">
-                                <h5>Pembagian Rapor Tengah Semester</h5>
-                                <p>Rapor tengah semester akan dibagikan kepada wali murid melalui wali kelas masing-masing.</p>
-                            </div>
-                            <span class="announcement-date">02 Agu</span>
-                        </li>
-                        <li class="announcement-item">
-                            <div class="announcement-icon"><i class="fa-solid fa-money-check-dollar"></i></div>
-                            <div class="announcement-body">
-                                <h5>Batas Pembayaran SPP Agustus</h5>
-                                <p>Pembayaran SPP bulan Agustus paling lambat tanggal 10, mohon disampaikan ke wali murid.</p>
-                            </div>
-                            <span class="announcement-date">01 Agu</span>
-                        </li>
-                        <li class="announcement-item">
-                            <div class="announcement-icon"><i class="fa-solid fa-flag"></i></div>
-                            <div class="announcement-body">
-                                <h5>Libur Nasional &amp; Cuti Bersama</h5>
-                                <p>Kegiatan belajar mengajar diliburkan sesuai kalender pendidikan yang berlaku.</p>
-                            </div>
-                            <span class="announcement-date">29 Jul</span>
-                        </li>
+            <section class="overview-main-grid" aria-label="Informasi prioritas">
+                <article class="dashboard-panel">
+                    <div class="panel-heading"><div><p class="section-kicker">PRIORITAS HARI INI</p><h2>Perlu ditindaklanjuti</h2></div><span class="count-badge">12 item</span></div>
+                    <ul class="follow-up-list">
+                        <li><span class="follow-up-icon warning"><i class="fa-solid fa-user-clock"></i></span><div><strong>Absensi belum diinput</strong><p>3 kelas belum mengirim absensi hari ini.</p></div><a href="#daftar-kelas">Tinjau <i class="fa-solid fa-chevron-right"></i></a></li>
+                        <li><span class="follow-up-icon danger"><i class="fa-solid fa-file-circle-exclamation"></i></span><div><strong>Data siswa belum lengkap</strong><p>6 profil siswa membutuhkan pembaruan data.</p></div><a href="#">Tinjau <i class="fa-solid fa-chevron-right"></i></a></li>
+                        <li><span class="follow-up-icon info"><i class="fa-solid fa-envelope-open-text"></i></span><div><strong>Pengajuan izin masuk</strong><p>3 pengajuan sedang menunggu persetujuan.</p></div><a href="#">Tinjau <i class="fa-solid fa-chevron-right"></i></a></li>
+                        <li><span class="follow-up-icon success"><i class="fa-solid fa-wallet"></i></span><div><strong>Pembayaran SPP jatuh tempo</strong><p>11 tagihan jatuh tempo dalam 3 hari.</p></div><a href="#">Tinjau <i class="fa-solid fa-chevron-right"></i></a></li>
                     </ul>
-                </div>
+                </article>
+                <article class="dashboard-panel attendance-panel">
+                    <div class="panel-heading"><div><p class="section-kicker">KEHADIRAN</p><h2>Ringkasan hari ini</h2></div><a class="text-link" href="#">Lihat rekap</a></div>
+                    <div class="attendance-progress"><div class="attendance-percent"><strong>96,4%</strong><span>tercatat hadir</span></div><div class="progress-ring" aria-hidden="true"><span><i class="fa-solid fa-check"></i></span></div></div>
+                    <div class="attendance-breakdown"><div><span class="dot hadir"></span><strong>798</strong><small>Hadir</small></div><div><span class="dot izin"></span><strong>27</strong><small>Izin / sakit</small></div><div><span class="dot alpa"></span><strong>9</strong><small>Alpa</small></div><div><span class="dot late"></span><strong>8</strong><small>Terlambat</small></div></div>
+                </article>
+            </section>
 
-                {{-- KALENDER AKADEMIK --}}
-                <div class="info-card">
-                    <h4>Kalender Akademik <a href="#" class="card-link">Lihat semua</a></h4>
-                    <ul class="calendar-list">
-                        <li class="calendar-item">
-                            <div class="calendar-date-box"><span class="day">12</span><span class="month">Agu</span></div>
-                            <div class="calendar-info">
-                                <h5>Penilaian Tengah Semester</h5>
-                                <p>Berlaku untuk seluruh jenjang</p>
-                            </div>
-                        </li>
-                        <li class="calendar-item">
-                            <div class="calendar-date-box"><span class="day">17</span><span class="month">Agu</span></div>
-                            <div class="calendar-info">
-                                <h5>Upacara HUT RI</h5>
-                                <p>Libur kegiatan belajar mengajar</p>
-                            </div>
-                        </li>
-                        <li class="calendar-item">
-                            <div class="calendar-date-box"><span class="day">25</span><span class="month">Agu</span></div>
-                            <div class="calendar-info">
-                                <h5>Rapat Wali Murid</h5>
-                                <p>Aula sekolah, pukul 09.00</p>
-                            </div>
-                        </li>
+            <section class="overview-main-grid school-info-grid" aria-label="Informasi sekolah">
+                <article class="dashboard-panel"><div class="panel-heading"><div><p class="section-kicker">INFORMASI SEKOLAH</p><h2>Pengumuman terbaru</h2></div><a class="text-link" href="#">Lihat semua</a></div>
+                    <ul class="overview-list announcement-list">
+                        <li><span class="list-icon emerald"><i class="fa-solid fa-bullhorn"></i></span><div><strong>Pembagian Rapor Tengah Semester</strong><p>Rapor dibagikan oleh wali kelas kepada wali murid.</p></div><time>02 Agu</time></li>
+                        <li><span class="list-icon gold"><i class="fa-solid fa-money-check-dollar"></i></span><div><strong>Batas Pembayaran SPP Agustus</strong><p>Pembayaran paling lambat tanggal 10 Agustus 2026.</p></div><time>01 Agu</time></li>
+                        <li><span class="list-icon blue"><i class="fa-solid fa-flag"></i></span><div><strong>Libur Nasional &amp; Cuti Bersama</strong><p>KBM diliburkan sesuai kalender pendidikan.</p></div><time>29 Jul</time></li>
                     </ul>
+                </article>
+                <article class="dashboard-panel"><div class="panel-heading"><div><p class="section-kicker">AGENDA</p><h2>Kalender akademik</h2></div><a class="text-link" href="#">Lihat semua</a></div>
+                    <ul class="overview-list calendar-list">
+                        <li><time class="calendar-date"><strong>12</strong><span>Agu</span></time><div><strong>Penilaian Tengah Semester</strong><p>Berlaku untuk seluruh jenjang.</p></div></li>
+                        <li><time class="calendar-date"><strong>17</strong><span>Agu</span></time><div><strong>Upacara HUT RI</strong><p>Libur kegiatan belajar mengajar.</p></div></li>
+                        <li><time class="calendar-date"><strong>25</strong><span>Agu</span></time><div><strong>Rapat Wali Murid</strong><p>Aula sekolah, pukul 09.00 WITA.</p></div></li>
+                    </ul>
+                </article>
+            </section>
+
+            <section class="dashboard-panel class-panel" id="daftar-kelas">
+                <div class="panel-heading"><div><p class="section-kicker">MONITORING KELAS</p><h2>Ringkasan kehadiran kelas</h2></div><a class="text-link" href="#">Lihat semua kelas</a></div>
+                <div class="table-responsive overview-table-wrap"><table class="overview-table"><thead><tr><th>Kelas</th><th>Jenjang</th><th>Wali Kelas</th><th>Jumlah Siswa</th><th>Kehadiran Hari Ini</th><th>Status</th></tr></thead><tbody>
+                    <tr><td><strong>Kelas 1A</strong></td><td><span class="level-pill">SD</span></td><td>Ustadzah Fitri</td><td>28 siswa</td><td><span class="attendance-value good">98%</span></td><td><span class="status-pill complete"><i class="fa-solid fa-circle-check"></i> Lengkap</span></td></tr>
+                    <tr><td><strong>Kelas 2B</strong></td><td><span class="level-pill">SD</span></td><td>Ustadz Rahman</td><td>30 siswa</td><td><span class="attendance-value good">95%</span></td><td><span class="status-pill complete"><i class="fa-solid fa-circle-check"></i> Lengkap</span></td></tr>
+                    <tr><td><strong>Kelas 7A</strong></td><td><span class="level-pill">SMP</span></td><td>Ustadzah Ani</td><td>32 siswa</td><td><span class="attendance-value caution">87%</span></td><td><span class="status-pill attention"><i class="fa-solid fa-triangle-exclamation"></i> Perlu perhatian</span></td></tr>
+                    <tr><td><strong>TK B1</strong></td><td><span class="level-pill">TK</span></td><td>Ustadzah Sari</td><td>20 siswa</td><td><span class="attendance-value good">100%</span></td><td><span class="status-pill pending"><i class="fa-solid fa-clock"></i> Belum input</span></td></tr>
+                </tbody></table></div>
+            </section>
+
+            <section class="quick-action-section" aria-labelledby="aksi-cepat-title">
+                <div class="section-heading"><div><p class="section-kicker">PINTASAN</p><h2 id="aksi-cepat-title">Aksi cepat</h2></div></div>
+                <div class="quick-action-grid">
+                    <a href="#" class="quick-action"><span class="quick-icon emerald"><i class="fa-solid fa-user-plus"></i></span><span>Tambah siswa</span></a><a href="#" class="quick-action"><span class="quick-icon blue"><i class="fa-solid fa-clipboard-check"></i></span><span>Input absensi</span></a><a href="#" class="quick-action"><span class="quick-icon gold"><i class="fa-solid fa-users-rectangle"></i></span><span>Kelola kelas</span></a><a href="#" class="quick-action"><span class="quick-icon violet"><i class="fa-solid fa-user-tie"></i></span><span>Kelola guru</span></a><a href="#" class="quick-action"><span class="quick-icon rose"><i class="fa-solid fa-bullhorn"></i></span><span>Buat pengumuman</span></a><a href="#" class="quick-action"><span class="quick-icon slate"><i class="fa-solid fa-file-export"></i></span><span>Export laporan</span></a>
                 </div>
-            </div>
-
-            {{-- TABEL DAFTAR KELAS --}}
-            <div class="table-card">
-                <h4>Daftar Kelas</h4>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Kelas</th>
-                                <th>Jenjang</th>
-                                <th>Wali Kelas</th>
-                                <th>Jumlah Siswa</th>
-                                <th>Kehadiran Hari Ini</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Kelas 1A</td>
-                                <td><span class="badge info">SD</span></td>
-                                <td>Ustadzah Fitri</td>
-                                <td>28</td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> 98%</span></td>
-                                <td><button class="btn-sm">Lihat</button></td>
-                            </tr>
-                            <tr>
-                                <td>Kelas 2B</td>
-                                <td><span class="badge info">SD</span></td>
-                                <td>Ustadz Rahman</td>
-                                <td>30</td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> 95%</span></td>
-                                <td><button class="btn-sm">Lihat</button></td>
-                            </tr>
-                            <tr>
-                                <td>Kelas 7A</td>
-                                <td><span class="badge info">SMP</span></td>
-                                <td>Ustadzah Ani</td>
-                                <td>32</td>
-                                <td><span class="badge warning"><i class="fa-solid fa-triangle-exclamation"></i> 87%</span></td>
-                                <td><button class="btn-sm">Lihat</button></td>
-                            </tr>
-                            <tr>
-                                <td>TK B1</td>
-                                <td><span class="badge info">TK</span></td>
-                                <td>Ustadzah Sari</td>
-                                <td>20</td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> 100%</span></td>
-                                <td><button class="btn-sm">Lihat</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="text-center mt-15">
-                    <button class="btn-outline"><i class="fa-solid fa-eye"></i> Lihat Semua Kelas</button>
-                </div>
-            </div>
-
-            {{-- ROW DETAIL (DETAIL KELAS & DETAIL SISWA) --}}
-            <div class="detail-row">
-
-                {{-- DETAIL KELAS --}}
-                <div class="detail-box">
-                    <div class="detail-header-tag">DETAIL KELAS (ADMIN VIEW)</div>
-                    <div class="detail-action-bar">
-                        <button class="btn-back">&lt; Kembali</button>
-                        <div class="action-right">
-                            <button class="btn-action-outline"><i class="fa-solid fa-user-pen"></i> Alih Wali Kelas</button>
-                            <button class="btn-action-outline"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
-                        </div>
-                    </div>
-                    <h3>Kelas 1A</h3>
-                    <p class="subtitle-text">
-                        Wali Kelas: Ustadzah Fitri | Jadwal: Selasa, 04 Agustus 2026
-                    </p>
-
-                    <div class="table-responsive mt-15">
-                        <table class="table-compact">
-                            <thead>
-                                <tr>
-                                    <th>Jam</th>
-                                    <th>Mata Pelajaran</th>
-                                    <th>Guru Pengajar</th>
-                                    <th>Status</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>07.30 - 08.10</td>
-                                    <td>Al-Qur'an Hadits</td>
-                                    <td>Ustadzah Fitri</td>
-                                    <td><span class="badge-text green"><i class="fa-solid fa-circle-check"></i> Selesai</span></td>
-                                    <td><button class="btn-xs">Detail</button></td>
-                                </tr>
-                                <tr>
-                                    <td>08.10 - 08.50</td>
-                                    <td>Matematika</td>
-                                    <td>Ustadz Rahman</td>
-                                    <td><span class="badge-text green"><i class="fa-solid fa-circle-check"></i> Selesai</span></td>
-                                    <td><button class="btn-xs">Detail</button></td>
-                                </tr>
-                                <tr>
-                                    <td>08.50 - 09.30</td>
-                                    <td>Bahasa Indonesia</td>
-                                    <td>Ustadzah Sari</td>
-                                    <td><span class="badge-text red"><i class="fa-solid fa-clock"></i> Berlangsung</span></td>
-                                    <td><button class="btn-xs">Detail</button></td>
-                                </tr>
-                                <tr>
-                                    <td>09.30 - 10.10</td>
-                                    <td>IPA</td>
-                                    <td>Ustadz Fajar</td>
-                                    <td><span class="badge-text red"><i class="fa-solid fa-clock"></i> Berlangsung</span></td>
-                                    <td><button class="btn-xs">Detail</button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="bottom-btns">
-                        <button class="btn-action-outline"><i class="fa-solid fa-calendar-week"></i> Rekap Mingguan</button>
-                        <button class="btn-action-outline"><i class="fa-solid fa-calendar-days"></i> Rekap Bulanan</button>
-                    </div>
-                </div>
-
-                {{-- DETAIL SISWA --}}
-                <div class="detail-box">
-                    <div class="detail-header-tag">DETAIL SISWA</div>
-                    <button class="btn-back mb-10">&lt; Kembali</button>
-
-                    <div class="student-profile">
-                        <div class="avatar"><i class="fa-solid fa-user"></i></div>
-                        <div class="student-info">
-                            <h4>Ali Hidayat</h4>
-                            <p>NISN: 0091234567</p>
-                            <p>Kelas: 1A | Wali: Bpk. Hidayat</p>
-                        </div>
-                    </div>
-
-                    <div class="grade-box">
-                        <h5>Nilai Rata-rata per Mata Pelajaran</h5>
-                        <ul class="grade-list">
-                            <li class="grade-row">
-                                <span class="subject">Matematika</span>
-                                <span class="grade-track">
-                                    <span class="grade-fill" style="width: 88%;"></span>
-                                </span>
-                                <span class="score">88</span>
-                            </li>
-                            <li class="grade-row">
-                                <span class="subject">B. Indonesia</span>
-                                <span class="grade-track">
-                                    <span class="grade-fill" style="width: 92%;"></span>
-                                </span>
-                                <span class="score">92</span>
-                            </li>
-                            <li class="grade-row">
-                                <span class="subject">IPA</span>
-                                <span class="grade-track">
-                                    <span class="grade-fill" style="width: 85%;"></span>
-                                </span>
-                                <span class="score">85</span>
-                            </li>
-                            <li class="grade-row">
-                                <span class="subject">Al-Qur'an</span>
-                                <span class="grade-track">
-                                    <span class="grade-fill" style="width: 95%;"></span>
-                                </span>
-                                <span class="score">95</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="history-section">
-                        <h5>Riwayat Kehadiran Terbaru</h5>
-                        <table class="table-compact text-sm">
-                            <thead>
-                                <tr>
-                                    <th>Tgl</th>
-                                    <th>Status</th>
-                                    <th>Jam Masuk</th>
-                                    <th>Keterangan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>04/08</td>
-                                    <td><i class="fa-solid fa-circle-check text-green"></i> Hadir</td>
-                                    <td>06.52</td>
-                                    <td>-</td>
-                                </tr>
-                                <tr>
-                                    <td>03/08</td>
-                                    <td><i class="fa-solid fa-circle-check text-green"></i> Hadir</td>
-                                    <td>06.48</td>
-                                    <td>-</td>
-                                </tr>
-                                <tr>
-                                    <td>02/08</td>
-                                    <td><i class="fa-solid fa-circle-check text-green"></i> Hadir</td>
-                                    <td>06.55</td>
-                                    <td>-</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            </section>
         </main>
     </div>
-
 </body>
 </html>
