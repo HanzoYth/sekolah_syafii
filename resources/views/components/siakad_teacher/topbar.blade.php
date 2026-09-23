@@ -2,6 +2,8 @@
     'name' => 'Ustadzah Fitri',
     'position' => 'Guru Mata Pelajaran',
     'initials' => 'UF',
+    'title' => 'Dashboard Guru',
+    'description' => 'Ringkasan kegiatan belajar dan kelas Anda hari ini.',
 ])
 
 <header class="teacher-topbar">
@@ -12,8 +14,8 @@
             <p class="teacher-arabic">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
             <div>
                 <p class="teacher-topbar-kicker">SISTEM INFORMASI AKADEMIK</p>
-                <h1>Dashboard Guru</h1>
-                <p>Ringkasan kegiatan belajar dan kelas Anda hari ini.</p>
+                <h1>{{ $title }}</h1>
+                <p>{{ $description }}</p>
             </div>
         </div>
 

@@ -3,25 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Absensi - Tahfiz Digital</title>
+    <title>Absensi Siswa - SIAKAD</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
-    <link rel="stylesheet" href="{{ asset('css/modul/siakad/absensiSiswa.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/modul/siakad/teacher/dashboard.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/modul/siakad/teacher/attendance.css') }}?v={{ time() }}">
 </head>
 <body>
 
     <div class="dashboard-container">
 
-        <x-sidebar_tahfiz />
+        <x-siakad_teacher.sidebar />
 
-        <main class="main-content">
+        <main class="main-content teacher-attendance">
+
+            <x-siakad_teacher.topbar
+                name="Ustadzah Fitri"
+                position="Guru Mata Pelajaran"
+                initials="UF"
+                title="Absensi Siswa"
+                description="Catat kehadiran siswa dan pantau rekap kelas hari ini."
+            />
 
             <!-- 1. PAGE HEADER -->
             <div class="page-header">
                 <div class="page-header-left">
-                    <p class="breadcrumb">Tahfiz Digital / <span>Absensi</span></p>
-                    <h1>Absensi Siswa</h1>
+                    <p class="breadcrumb">SIAKAD Guru / <span>Absensi</span></p>
+                    <h1>Pencatatan Kehadiran</h1>
                 </div>
                 <div class="page-header-right">
                     <button class="btn-outline"><i class="fa-solid fa-file-export"></i> Export Data</button>
