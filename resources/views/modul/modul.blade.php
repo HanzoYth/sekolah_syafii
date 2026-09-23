@@ -1,18 +1,17 @@
-<!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pilih Modul - Sekolah Al-Qur'an Imam Syafi'i</title>
-    
-    <!-- Google Fonts: Poppins & Amiri -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Pilih Modul - Sekolah Al-Qur'an Imam Syafi'i</title>
+        
+        <!-- Google Fonts: Poppins & Amiri -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
+        <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        
     <!-- Font Awesome untuk Ikon -->
-
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="{{ asset('css/module.css') }}?v={{ time() }}">
@@ -28,13 +27,13 @@
             <h2>Pilih Portal Layanan</h2>
             <p class="subtitle">Silakan pilih modul sistem yang ingin Anda akses</p>
         </div>
-
+        
         <!-- Grid 2 Kotak Modul -->
         <div class="module-grid">
             @if (session("role") == "a" || session("role") == "g" || session("role") == "s" || session("role") == "b")
-                <!-- KOTAK 1: MODUL SIAKAD -->
-                @if (session("role") == "a")
-                    <a href="/sk/das" class="module-card siakad">
+            <!-- KOTAK 1: MODUL SIAKAD -->
+            @if (session("role") == "a")
+            <a href="/sk/das" class="module-card siakad">
                         <div class="icon-wrapper">
                             <i class="fa-solid fa-graduation-cap"></i>
                         </div>
@@ -45,7 +44,7 @@
                             <i class="fa-solid fa-arrow-right"></i>
                         </div>
                     </a>
-                @elseif (session("role") == "g")
+                    @elseif (session("role") == "g")
                     <a href="/sk/dsg" class="module-card siakad">
                         <div class="icon-wrapper">
                             <i class="fa-solid fa-graduation-cap"></i>
@@ -57,7 +56,8 @@
                             <i class="fa-solid fa-arrow-right"></i>
                         </div>
                     </a>
-                @else
+                    @else
+                    <!DOCTYPE html>
                     <a href="/sk/dbs" class="module-card siakad">
                         <div class="icon-wrapper">
                             <i class="fa-solid fa-graduation-cap"></i>

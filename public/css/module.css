@@ -82,6 +82,7 @@ body::before {
 .module-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 1fr; /* Memastikan semua baris tingginya seragam */
     gap: 25px;
 }
 
@@ -98,6 +99,7 @@ body::before {
     justify-content: space-between;
     transition: var(--transition);
     cursor: pointer;
+    height: 100%; /* Memastikan tinggi kartu mengisi seluruh grid */
 }
 
 .module-card:hover {
@@ -118,6 +120,7 @@ body::before {
     align-items: center;
     margin-bottom: 20px;
     transition: var(--transition);
+    flex-shrink: 0;
 }
 
 .icon-wrapper i {
@@ -159,6 +162,7 @@ body::before {
     color: var(--primary-color);
     padding-top: 15px;
     border-top: 1px solid #e2e8f0;
+    margin-top: auto;
 }
 
 .card-action i {
@@ -204,7 +208,7 @@ body::before {
     }
 }
 
-/* ======== RESPONSIVE (HP & TABLET) ======== */
+/* ======== RESPONSIVE (HP & TABLET) PERBAIKAN SAMA RATAN/KOTAK ======== */
 @media (max-width: 680px) {
     body {
         padding: 12px;
@@ -228,43 +232,56 @@ body::before {
         margin-bottom: 20px;
     }
 
-    /* GRID HP: dibuat otomatis jadi 2 kolom (atau lebih jika muat) */
+    /* GRID HP: Tetap 2 kolom dengan rasio presisi */
     .module-grid {
         grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 1fr; /* Memaksa semua kotak dalam satu baris punya tinggi persis sama */
         gap: 12px;
     }
 
-    /* Penyesuaian ukuran kartu di HP agar ringkas */
+    /* Penyesuaian ukuran kartu di HP agar presisi berbentuk KOTAK SIMETRIS */
     .module-card {
-        padding: 16px 14px;
+        padding: 14px 12px;
         border-radius: 14px;
+        aspect-ratio: 1 / 1; /* Menjaga rasio kartu tetap Bujur Sangkar (Kotak) */
+        overflow: hidden;
     }
 
     .icon-wrapper {
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        margin-bottom: 12px;
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        margin-bottom: 8px;
     }
 
     .icon-wrapper i {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
     }
 
     .module-card h3 {
-        font-size: 0.95rem;
-        margin-bottom: 6px;
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+        /* Batasi judul maks 2 baris agar tidak merusak tinggi */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .module-card p {
-        font-size: 0.78rem;
-        line-height: 1.35;
-        margin-bottom: 14px;
+        font-size: 0.72rem;
+        line-height: 1.25;
+        margin-bottom: 8px;
+        /* Membatasi teks deskripsi maks 2 baris agar kotak tidak melar */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .card-action {
-        font-size: 0.78rem;
-        padding-top: 10px;
+        font-size: 0.72rem;
+        padding-top: 6px;
     }
 
     .module-footer {
@@ -273,13 +290,17 @@ body::before {
     }
 }
 
-/* Untuk HP yang sangat kecil (layar di bawah 360px) */
+/* Untuk HP kecil (di bawah 360px) */
 @media (max-width: 360px) {
     .module-grid {
         gap: 8px;
     }
 
     .module-card {
-        padding: 12px 10px;
+        padding: 10px 8px;
+    }
+
+    .module-card p {
+        display: none; /* Sembunyikan deskripsi di layar sangat kecil agar bentuk kotak terjaga */
     }
 }

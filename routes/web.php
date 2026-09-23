@@ -159,7 +159,7 @@ Route::get('/sk/das',[siakadController::class,"dashboard_siakad"]);
 Route::get('/sk/ds',[siakadController::class,"tampian_daftarSiswa"]); 
 Route::get('/sk/dls/{id}',[siakadController::class,"tampilan_detailSiswa"]); 
 Route::get('/sk/dts',[siakadController::class,"edit_siswa"]); 
-Route::get('/sk/pb',[siakadController::class,"tampilanPembayaranIpp_siswa"]);
+Route::get('/sk/pb',[siakadController::class,"  tampilanPembayaranIpp_siswa"]);
 Route::get('/sk/dp',[PembayaranController::class,"detail_pembayaran_siswa"]);
 Route::get('/sk/pp',[siakadController::class,"tampilanPembayaranPangkal"]);
 Route::get('/sk/ppl',[siakadController::class,"tampilanPembayaranPemeliharaan"]);
