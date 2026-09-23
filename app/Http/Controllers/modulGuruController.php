@@ -245,9 +245,9 @@ class modulGuruController extends Controller
         $validator = Validator::make($request->all(),
             [
                 "foto" => 'required|file|mimes:jpg,jpeg,png|max:2048',
-                "file_ktp" => 'required|file|mimes:pdf|max:2048',
-                "file_kk" => 'required|file|mimes:pdf|max:2048',
-                "file_ijazah" => 'required|file|mimes:pdf|max:2048'
+                "file_ktp" => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                "file_kk" => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                "file_ijazah" => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048'
             ],
             [
                 "foto.mimes" => "file harus berupa jpg, jpeg, atau png",
@@ -359,6 +359,173 @@ class modulGuruController extends Controller
             $data_akun = akun::find((int) $data_guru->user_id);
             $data_kelas = ruang_kelas::all();
 
+            $data_ruang_kelas = [
+                [],
+                [],
+                [],
+                []
+            ];
+
+            // atur urutan kelas
+
+            foreach ($data_kelas as $kelas){
+                $type = explode(" ",$kelas->nama_ruang);
+
+
+                if ($type[0] == "TK"){
+                    if (count($data_ruang_kelas[0]) == 0){
+                        array_push($data_ruang_kelas[0],$kelas->nama_ruang);
+                        continue;
+                    }else{
+                        $idx = 0;
+                        foreach ($data_ruang_kelas[0] as $value){
+                            $var_type = explode(" ",$value);
+                            $huruf_ke_angka_table = ord($type[1]) - ord("A");
+                            $huruf_ke_angka_var = ord($var_type[1]) - ord("A");
+
+                            if ($huruf_ke_angka_var > $huruf_ke_angka_table){
+                                array_splice($data_ruang_kelas[0],$idx,0,$kelas->nama_ruang);
+                                break;
+                            }
+
+                            if ($idx == count($data_ruang_kelas[0])- 1){
+                                array_push($data_ruang_kelas[0],$kelas->nama_ruang);
+                                break;
+                            }
+                            $idx++;
+                        }
+                    }
+
+                }else if ($type[0] == "SD"){
+                    if (count($data_ruang_kelas[1]) == 0){
+                        array_push($data_ruang_kelas[1],$kelas->nama_ruang);
+                    }else{
+                        $idx = 0;
+                        $cek = false;
+                        foreach ($data_ruang_kelas[1] as $value){
+                            $var_type = explode(" ",$value);
+                            $table_type = str_split($type[1]);
+                            $huruf_var = str_split($var_type[1]);
+                            
+                            $nomor_kelas_table = (int) $table_type[0];
+                            $nomor_kelas_var = (int) $huruf_var[0];
+                            $huruf_ke_angka_table = ord($table_type[1]) - ord("A");
+                            $huruf_ke_angka_var = ord($huruf_var[1]) - ord("A");
+
+                            if ($nomor_kelas_var > $nomor_kelas_table){
+                                array_splice($data_ruang_kelas[1],$idx,0,$kelas->nama_ruang);
+                                break;       
+                            }
+
+                            if ($nomor_kelas_var == $nomor_kelas_table){
+                                $cek = true;
+                                if ($huruf_ke_angka_var > $huruf_ke_angka_table){
+                                    array_splice($data_ruang_kelas[1],$idx,0,$kelas->nama_ruang);
+                                    break;
+                                }
+                            }else{
+                                if ($cek){
+                                    array_splice($data_ruang_kelas[1],$idx,0,$kelas->nama_ruang);
+                                    break;
+                                }
+                            }
+                            if ($idx == count($data_ruang_kelas[1])- 1){
+                                array_push($data_ruang_kelas[1],$kelas->nama_ruang);
+                                break;
+                            }
+                            $idx++;
+                        }
+                    }
+                }else if ($type[0] == "SMP"){
+                    if (count($data_ruang_kelas[2]) == 0){
+                        array_push($data_ruang_kelas[2],$kelas->nama_ruang);
+                    }else{
+                        $idx = 0;
+                        $cek = false;
+                        foreach ($data_ruang_kelas[2] as $value){
+                            $var_type = explode(" ",$value);
+                            $table_type = str_split($type[1]);
+                            $huruf_var = str_split($var_type[1]);
+                            
+                            $nomor_kelas_table = (int) $table_type[0];
+                            $nomor_kelas_var = (int) $huruf_var[0];
+                            $huruf_ke_angka_table = ord($table_type[1]) - ord("A");
+                            $huruf_ke_angka_var = ord($huruf_var[1]) - ord("A");
+
+                            if ($nomor_kelas_var > $nomor_kelas_table){
+                                array_splice($data_ruang_kelas[2],$idx,0,$kelas->nama_ruang);
+                                break;       
+                            }
+
+                            if ($nomor_kelas_var == $nomor_kelas_table){
+                                $cek = true;
+                                if ($huruf_ke_angka_var > $huruf_ke_angka_table){
+                                    array_splice($data_ruang_kelas[2],$idx,0,$kelas->nama_ruang);
+                                    break;
+                                }
+                            }else{
+                                if ($cek){
+                                    array_splice($data_ruang_kelas[2],$idx,0,$kelas->nama_ruang);
+                                    break;
+                                }
+                            }
+                            if ($idx == count($data_ruang_kelas[2])- 1){
+                                array_push($data_ruang_kelas[2],$kelas->nama_ruang);
+                                break;
+                            }
+                            $idx++;
+                        }
+                    }
+                }else{
+                    if (count($data_ruang_kelas[3]) == 0){
+                        array_push($data_ruang_kelas[3],$kelas->nama_ruang);
+                    }else{
+                        $idx = 0;
+                        $cek = false;
+                        foreach ($data_ruang_kelas[3] as $value){
+                            $var_type = explode(" ",$value);
+                            $table_type = str_split($type[1]);
+                            $huruf_var = str_split($var_type[1]);
+                            
+                            $nomor_kelas_table = (int) $table_type[0];
+                            $nomor_kelas_var = (int) $huruf_var[0];
+                            $huruf_ke_angka_table = ord($table_type[1]) - ord("A");
+                            $huruf_ke_angka_var = ord($huruf_var[1]) - ord("A");
+
+                            if ($nomor_kelas_var > $nomor_kelas_table){
+                                array_splice($data_ruang_kelas[3],$idx,0,$kelas->nama_ruang);
+                                break;       
+                            }
+
+                            if ($nomor_kelas_var == $nomor_kelas_table){
+                                $cek = true;
+                                if ($huruf_ke_angka_var > $huruf_ke_angka_table){
+                                    array_splice($data_ruang_kelas[3],$idx,0,$kelas->nama_ruang);
+                                    break;
+                                }
+                            }else{
+                                if ($cek){
+                                    array_splice($data_ruang_kelas[3],$idx,0,$kelas->nama_ruang);
+                                    break;
+                                }
+                            }
+                            if ($idx == count($data_ruang_kelas[3])- 1){
+                                array_push($data_ruang_kelas[3],$kelas->nama_ruang);
+                                break;
+                            }
+                            $idx++;
+                        }
+                    }
+                }
+            }
+
+            dd([
+                "tes" => $data_ruang_kelas
+            ]);
+
+
+
+
             $data_piket = jadwal_piket::where("id_guru",$id)->get();
     
             $cek_wallas = wallas::where("guru_id",$id)->exists();
@@ -385,6 +552,7 @@ class modulGuruController extends Controller
         }
         return redirect("/reg");
     }
+
     
     function tampilan_editProfileGuru(){
         if (session("hasLogin")){
