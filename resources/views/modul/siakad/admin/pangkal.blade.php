@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Pembayaran Pendidikan - SIAKAD</title>
+    <title>Dashboard Uang Pangkal - SIAKAD</title>
 
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     {{-- Font Awesome Icons --}}
-    <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
     {{-- Stylesheet dashboard SIAKAD --}}
     <link rel="stylesheet" href="{{ asset('css/modul/siakad/pembayaran.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/modul/siakad/pendidikan.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/modul/siakad/pangkal.css') }}">
 </head>
 <body>
 
@@ -31,12 +31,12 @@
             <header class="topbar">
                 <div class="topbar-left">
                     <span class="topbar-eyebrow">Sistem Informasi Akademik &middot; Selasa, 04 Agustus 2026</span>
-                    <h2>Pembayaran Pendidikan</h2>
+                    <h2>Pembayaran Uang Pangkal</h2>
                 </div>
 
                 <div class="academic-pill">
                     <i class="fa-solid fa-calendar-check"></i>
-                    T.A. 2026/2027 &middot; Semester Genap
+                    T.A. 2026/2027 &middot; Penerimaan Siswa Baru
                 </div>
 
                 <div class="topbar-icons">
@@ -47,55 +47,56 @@
                 </div>
             </header>
 
-            {{-- STATISTIK PEMBAYARAN PENDIDIKAN --}}
+            {{-- STATISTIK UANG PANGKAL --}}
             <div class="stats-grid pembayaran-stats">
                 <div class="stat-card">
-                    <div class="stat-icon icon-primary"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="stat-icon icon-primary"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                     <div>
-                        <h3>Rp {{number_format($total_target_pendidikan,0,",",".")}}</h3>
-                        <p>Target Biaya Pendidikan Bulan Ini</p>
+                        <h3>Rp {{number_format($total_target_pangkal,0,",",".")}}</h3>
+                        <p>Total Target Uang Pangkal</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon icon-success"><i class="fa-solid fa-circle-dollar-to-slot"></i></div>
+                    <div class="stat-icon icon-success"><i class="fa-solid fa-vault"></i></div>
                     <div>
-                        <h3>Rp {{number_format($total_lunas_pendidikan,0,",",".")}}</h3>
-                        <p>Total Biaya Pendidikan Terkumpul</p>
+                        <h3>Rp {{number_format($total_lunas_pangkal,0,",",".")}}</h3>
+                        <p>Total Terkumpul</p>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon icon-info"><i class="fa-solid fa-user-check"></i></div>
                     <div>
                         <h3>{{$total_siswa_lunas}}</h3>
-                        <p>Siswa Lunas Pendidikan</p>
+                        <p>Siswa Lunas</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon icon-danger"><i class="fa-solid fa-user-xmark"></i></div>
+                    <div class="stat-icon icon-warning"><i class="fa-solid fa-clock-rotate-left"></i></div>
                     <div>
                         <h3>{{$total_siswa_belum_lunas}}</h3>
-                        <p>Siswa Menunggak</p>
+                        <p>Siswa Belum Lunas</p>
                     </div>
                 </div>
             </div>
 
-            {{-- FILTER PEMBAYARAN PENDIDIKAN --}}
+            {{-- FILTER PEMBAYARAN UANG PANGKAL --}}
             <div class="filter-box pembayaran-filter">
-                <h4><i class="fa-solid fa-filter"></i> Filter Tagihan Pendidikan</h4>
+                <h4> Uang Pangkal</h4>
                 <div class="filter-group">
+                  
                     <div class="input-wrap">
-                        <label for="filter-status-spp">Status Biaya Pendidikan</label>
-                        <select id="filter-status-spp" name="status_spp">
+                        <label for="filter-status-pangkal">Status Pembayaran</label>
+                        <select id="filter-status-pangkal" name="status_pangkal">
                             <option value="">Semua Status</option>
                             <option value="lunas">Lunas</option>
-                            <option value="menunggak">Menunggak</option>
+                            <option value="Menunggak">Menunggak</option>
                         </select>
                     </div>
-
+                  
                     <div class="input-wrap">
-                        <label for="filter-kelas-spp">Kelas</label>
-                        <select id="filter-kelas-spp" name="kelas">
-                            <option value="">Semua Kelas</option>
+                        <label for="filter-kelas-pangkal">kelas</label>
+                        <select id="filter-kelas-pangkal" name="kelas">
+                            <option value="">Semua kelas</option>
                             @foreach ($data_kelas as $value)
                                 <option value="{{$value->nama_ruang}}">{{$value->nama_ruang}}</option>
                             @endforeach
@@ -104,10 +105,10 @@
                 </div>
             </div>
 
-            {{-- TABEL DAFTAR TAGIHAN SPP --}}
+            {{-- TABEL DAFTAR UANG PANGKAL --}}
             <div class="table-card">
                 <div class="table-header">
-                    <h4>Daftar Tagihan Pendidikan Siswa</h4>
+                    <h4>Daftar Tagihan Uang Pangkal Siswa Baru</h4>
                 </div>
                 <div class="table-responsive">
                     <table>
@@ -123,7 +124,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($data_slip_pendidikan as $value)
+                            @foreach ($data_slip_pangkal as $value)
                                 @php
                                     $data_siswa = App\Models\siswa::where("id", $value->siswa_id)->first();
                                     $data_kelas = App\Models\ruang_kelas::where("id",$data_siswa->kelas_id)->first();
@@ -141,7 +142,7 @@
                                             <button class="btn-action view" title="Konfirmasi & Bukti Pembayaran" onclick="openDetailModal('{{$data_siswa->nama}}', '{{$data_siswa->nis}}', '{{$value->nominal}}', '{{$value->jumlah_di_bayar}}', '{{$sisa_bayar}}', '{{$value->status}}')"><i class="fa-solid fa-eye"></i></button>
                                             <button class="btn-action edit" title="Bayar Angsuran" onclick="openBayarModal('{{$value->id}}','{{$data_siswa->nama}}', '{{$data_siswa->nis}}', '{{$value->nominal}}','{{$sisa_bayar}}','{{$value->status}}')"><i class="fa-solid fa-cash-register"></i></button>
                                             <button class="btn-action publish" title="Publish Tagihan" onclick="openPublishModal('{{$data_siswa->id}}', '{{$data_siswa->nama}}', '{{$data_siswa->nis}}')"><i class="fa-solid fa-paper-plane"></i></button>
-                                            <button class="btn-action delete" style="background-color: #ef4444; color: #fff;" title="Hapus Tagihan" onclick="openDeleteModal('{{$value->id}}', '{{$data_siswa->nama}}', '{{$data_siswa->nis}}')"><i class="fa-solid fa-trash"></i></button>
+                                            <button class="btn-action delete" title="Hapus Tagihan" onclick="openDeleteModal('{{$value->id}}', '{{$data_siswa->nama}}', '{{$data_siswa->nis}}')"><i class="fa-solid fa-trash"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -153,22 +154,22 @@
                 {{-- FOOTER CARD / PAGINATION --}}
                 <div class="card-footer pagination-wrap">
                     <div class="pagination-container">
-                        {{ $data_slip_pendidikan->links() }}
+                        {{ $data_slip_pangkal->links() }}
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    {{-- MODAL INPUT TRANSAKSI / ANGSURAN SPP --}}
-    <div id="modalBayarPendidikan" class="modal-overlay">
+    {{-- MODAL INPUT TRANSAKSI / ANGSURAN --}}
+    <div id="modalBayarPangkal" class="modal-overlay">
         <input type="hidden" value="" id="value_pembayaran">
         <div class="modal-card">
             <div class="modal-header">
-                <h3>Input Pembayaran Pendidikan</h3>
+                <h3>Input Pembayaran Uang Pangkal</h3>
                 <button type="button" class="btn-close-modal" onclick="closeBayarModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <form action="/sk/espp" method="POST" class="modal-body">
+            <form action="/sk/espk" method="POST" class="modal-body">
                 @csrf
                 <input type="hidden" name="id_siswa" id="id_siswa" value="">
                 <div class="modal-field">
@@ -190,7 +191,7 @@
                     <input type="number" id="bayar-nominal" name="bayar" placeholder="Masukkan jumlah yang dibayarkan">
                 </div>
                 <div class="modal-field">
-                    <label for="edit-status">Status Pembayaran Pendidikan</label>
+                    <label for="edit-status">Status Pembayaran IPP</label>
                     <input type="text" id="edit-status" name="status" readonly>
                 </div>
                 <div class="modal-footer">
@@ -201,18 +202,18 @@
         </div>
     </div>
 
-    {{-- MODAL POP-UP KONFIRMASI & BUKTI PEMBAYARAN --}}
-    <div id="modalDetailPendidikan" class="modal-overlay">
+    {{-- MODAL POP-UP KONFIRMASI & LOGO BUKTI PEMBAYARAN --}}
+    <div id="modalDetailPangkal" class="modal-overlay">
         <div class="modal-card modal-lg">
             <div class="modal-header">
-                <h3>Konfirmasi Pembayaran Pendidikan</h3>
+                <h3>Konfirmasi Pembayaran Uang Pangkal</h3>
                 <button type="button" class="btn-close-modal" onclick="closeDetailModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
                 <!-- Header Logo & Nama Sekolah -->
                 <div class="printable-header" style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 15px;">
                     <h3 style="margin: 0; font-family: 'Poppins', sans-serif;">SISTEM INFORMASI AKADEMIK (SIAKAD)</h3>
-                    <p style="margin: 0; font-size: 0.85rem; color: #666;">Bukti Konfirmasi Tagihan Pembayaran Pendidikan</p>
+                    <p style="margin: 0; font-size: 0.85rem; color: #666;">Bukti Konfirmasi Tagihan Pembayaran Uang Pangkal</p>
                 </div>
 
                 <div class="student-info-summary">
@@ -257,7 +258,7 @@
     </div>
 
     {{-- MODAL POP-UP KONFIRMASI PUBLISH TAGIHAN --}}
-    <div id="modalPublishPendidikan" class="modal-overlay">
+    <div id="modalPublishPangkal" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
                 <h3>Konfirmasi Publish Tagihan</h3>
@@ -265,12 +266,12 @@
             </div>
             <form action="/sk/pbsp" method="POST" class="modal-body">
                 @csrf
-                <input type="hidden" name="id_siswa" id="publish-id-pendidikan" value="">
-                <input type="hidden" name="pembayaran" value="pendidikan">
-
+                <input type="hidden" name="id_siswa" id="publish-id-pangkal" value="">
+                <input type="hidden" name="pembayaran" value="pangkal">
+                
                 <div style="text-align: center; padding: 10px 0;">
                     <i class="fa-solid fa-paper-plane" style="font-size: 3rem; color: #0284c7; margin-bottom: 15px;"></i>
-                    <p style="margin: 0; font-size: 1rem; color: #333;">Apakah Anda yakin ingin mempublikasikan tagihan pendidikan ini?</p>
+                    <p style="margin: 0; font-size: 1rem; color: #333;">Apakah Anda yakin ingin mempublikasikan tagihan uang pangkal ini?</p>
                     <strong id="publish-student-info" style="display: block; margin-top: 8px; font-size: 0.95rem; color: #555;">-</strong>
                 </div>
 
@@ -283,7 +284,7 @@
     </div>
 
     {{-- MODAL POP-UP KONFIRMASI HAPUS TAGIHAN --}}
-    <div id="modalDeletePendidikan" class="modal-overlay">
+    <div id="modalDeletePangkal" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
                 <h3>Konfirmasi Hapus Tagihan</h3>
@@ -291,18 +292,19 @@
             </div>
             <form action="/sk/hpsp" method="POST" class="modal-body">
                 @csrf
-                <input type="hidden" name="id" id="delete-id-pendidikan" value="">
-                <input type="hidden" name="pembayaran" id="delete_id" value="pendidikan">
-
+                <input type="hidden" name="id" id="delete-id-pangkal" value="">
+                <input type="hidden" name="pembayaran" id="delete_id" value="pangkal">
+                
                 <div style="text-align: center; padding: 10px 0;">
-                    <i class="fa-solid fa-trash-can" style="font-size: 3rem; color: #ef4444; margin-bottom: 15px;"></i>
-                    <p style="margin: 0; font-size: 1rem; color: #333;">Apakah Anda yakin ingin menghapus data tagihan ini?</p>
-                    <strong id="delete-student-info" style="display: block; margin-top: 8px; font-size: 0.95rem; color: #555;">-</strong>
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: #dc2626; margin-bottom: 15px;"></i>
+                    <p style="margin: 0; font-size: 1rem; color: #333;">Apakah Anda yakin ingin menghapus tagihan uang pangkal ini?</p>
+                    <strong id="delete-student-info" style="display: block; margin-top: 8px; font-size: 0.95rem; color: #dc2626;">-</strong>
+                    <small style="display: block; margin-top: 5px; color: #666;">Data yang dihapus tidak dapat dikembalikan.</small>
                 </div>
 
                 <div class="modal-footer" style="margin-top: 20px;">
                     <button type="button" class="btn-modal-cancel" onclick="closeDeleteModal()">Batal</button>
-                    <button type="submit" class="btn-modal-save" style="background-color: #ef4444;"><i class="fa-solid fa-trash"></i> Ya, Hapus Data</button>
+                    <button type="submit" class="btn-modal-save" style="background-color: #dc2626;"><i class="fa-solid fa-trash"></i> Ya, Hapus</button>
                 </div>
             </form>
         </div>
@@ -310,8 +312,8 @@
 
     {{-- SCRIPT JAVASCRIPT --}}
     <script>
-        var input_status = document.getElementById("filter-status-spp");
-        var input_kelas = document.getElementById("filter-kelas-spp");
+        var input_status = document.getElementById("filter-status-pangkal");
+        var input_kelas = document.getElementById("filter-kelas-pangkal");
 
         input_status.addEventListener("change", filterData);
         input_kelas.addEventListener("change", filterData);
@@ -344,7 +346,7 @@
             var row_tr = document.querySelectorAll("tbody tr");
             row_tr.forEach((data) => {
                 data.classList.remove("hide");
-            });
+            }); 
         }
 
         var memory_data = 0;
@@ -358,7 +360,7 @@
             if (parseInt(e.target.value ? e.target.value : 0) == parseInt(document.getElementById("value_pembayaran").value)){
                 document.getElementById("edit-status").value = "Lunas";
             } else {
-                document.getElementById("edit-status").value = "Menunggak";
+                document.getElementById("edit-status").value = "Menunggak";        
             }
         });
 
@@ -372,12 +374,12 @@
             document.getElementById('modal-bayar-total').value = parseInt(total);
             document.getElementById('modal-bayar-sisa').value = 'Rp ' + parseInt(sisa).toLocaleString('id-ID');
             document.getElementById('bayar-nominal').max = sisa;
-
-            document.getElementById('modalBayarPendidikan').classList.add('active');
+            
+            document.getElementById('modalBayarPangkal').classList.add('active');
         }
 
         function closeBayarModal() {
-            document.getElementById('modalBayarPendidikan').classList.remove('active');
+            document.getElementById('modalBayarPangkal').classList.remove('active');
         }
 
         function openDetailModal(nama, reg, total, terbayar, sisa, status) {
@@ -396,39 +398,39 @@
                 badge.innerText = 'Menunggak';
             }
 
-            document.getElementById('modalDetailPendidikan').classList.add('active');
+            document.getElementById('modalDetailPangkal').classList.add('active');
         }
 
         function closeDetailModal() {
-            document.getElementById('modalDetailPendidikan').classList.remove('active');
+            document.getElementById('modalDetailPangkal').classList.remove('active');
         }
 
         function openPublishModal(id, nama, reg) {
-            document.getElementById('publish-id-pendidikan').value = id;
+            document.getElementById('publish-id-pangkal').value = id;
             document.getElementById('publish-student-info').innerText = `${reg} - ${nama}`;
-            document.getElementById('modalPublishPendidikan').classList.add('active');
+            document.getElementById('modalPublishPangkal').classList.add('active');
         }
 
         function closePublishModal() {
-            document.getElementById('modalPublishPendidikan').classList.remove('active');
+            document.getElementById('modalPublishPangkal').classList.remove('active');
         }
 
         function openDeleteModal(id, nama, reg) {
-            document.getElementById('delete-id-pendidikan').value = id;
+            document.getElementById('delete-id-pangkal').value = id;
             document.getElementById('delete-student-info').innerText = `${reg} - ${nama}`;
-            document.getElementById('modalDeletePendidikan').classList.add('active');
+            document.getElementById('modalDeletePangkal').classList.add('active');
         }
 
         function closeDeleteModal() {
-            document.getElementById('modalDeletePendidikan').classList.remove('active');
+            document.getElementById('modalDeletePangkal').classList.remove('active');
         }
 
         window.onclick = function(event) {
-            const modalBayar = document.getElementById('modalBayarPendidikan');
-            const modalDetail = document.getElementById('modalDetailPendidikan');
-            const modalPublish = document.getElementById('modalPublishPendidikan');
-            const modalDelete = document.getElementById('modalDeletePendidikan');
-
+            const modalBayar = document.getElementById('modalBayarPangkal');
+            const modalDetail = document.getElementById('modalDetailPangkal');
+            const modalPublish = document.getElementById('modalPublishPangkal');
+            const modalDelete = document.getElementById('modalDeletePangkal');
+            
             if (event.target === modalBayar) closeBayarModal();
             if (event.target === modalDetail) closeDetailModal();
             if (event.target === modalPublish) closePublishModal();

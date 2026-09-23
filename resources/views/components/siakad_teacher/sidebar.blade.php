@@ -29,7 +29,7 @@
                 <span class="menu-label">MENU GURU</span>
                 <ul class="menu-list">
                     <li class="menu-item"><a href="#jadwal-mengajar"><i class="fa-solid fa-calendar-week"></i><span>Jadwal Mengajar</span></a></li>
-                    <li class="menu-item"><a href="/sk/ass"><i class="fa-solid fa-clipboard-user"></i><span>Absensi Siswa</span></a></li>
+                    <li class="menu-item {{ request()->is('sk/ass') ? 'active' : '' }}"><a href="/sk/ass"><i class="fa-solid fa-clipboard-user"></i><span>Absensi Siswa</span></a></li>
                     <li class="menu-item"><a href="/sk/pb"><i class="fa-solid fa-file-invoice-dollar"></i><span>Slip Pembayaran</span></a></li>
                     <li class="menu-item"><a href="/sk/pr"><i class="fa-solid fa-id-card"></i><span>Profil Saya</span></a></li>
                 </ul>
