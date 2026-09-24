@@ -187,21 +187,6 @@
                         <input type="date" id="tanggal_edit" name="tanggal" required>
                     </div>
                 </div>
-
-                <!-- SELECT CABANG SEKOLAH -->
-                <div class="input-group">
-                    <label for="cabang_id">Pilih Cabang Sekolah <span class="required">*</span></label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-school"></i>
-                        <select id="cabang_id_edit" name="cabang_id" required>
-                            <option value="" disabled selected>-- Pilih Cabang --</option>
-                            <option value="all">Semua Cabang</option>
-                            @foreach($cabang as $value)
-                                <option value="{{$value->id}}">{{$value->nama_cabang}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
             </div>
 
             <div class="modal-footer">
@@ -263,9 +248,6 @@
                 const hari = String(date.getDate()).padStart(2, "0");
                 inputNama.value = nama_hari.textContent;
                 inputTanggal.value = `${tahun}-${bulan}-${hari}`;
-                pilihan_cabang.forEach(item => {
-                    if (item.textContent == "Semua Cabang") item.style.display = "none";
-                });
 
                 formEdit.setAttribute('action',`/gr/edgm/${id_tanggal_merah.value}`)
 

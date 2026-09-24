@@ -52,7 +52,7 @@ body {
     min-height: 100vh;
 }
 
-/* MAIN CONTENT CONTAINER (Memenuhi sisa tinggi layar) */
+/* MAIN CONTENT CONTAINER */
 .main-content {
     margin-left: var(--sidebar-width);
     width: calc(100% - var(--sidebar-width));
@@ -144,7 +144,7 @@ body {
     border-color: var(--pay-primary);
 }
 
-/* FORM CARD CONTAINER (Dibuat Flex Grow & Width 100%) */
+/* FORM CARD CONTAINER */
 .form-card {
     background: var(--pay-bg-surface);
     border-radius: var(--pay-radius-xl);
@@ -171,7 +171,7 @@ body {
     flex-shrink: 0;
 }
 
-/* FORM ELEMENT INTERACTION WITH FLEX LAYOUT */
+/* FORM ELEMENT LAYOUT */
 .form-card > form {
     display: flex;
     flex-direction: column;
@@ -223,6 +223,13 @@ body {
     flex: 1;
 }
 
+/* STYLING UNTUK SELECT DI LUAR FORM */
+.external-select-wrapper {
+    padding: 24px 32px;
+    background: #f1f5f9;
+    border-top: 1px dashed var(--pay-border);
+}
+
 /* INPUT FORM FIELDS */
 .form-field {
     display: flex;
@@ -242,7 +249,7 @@ body {
     .form-row {
         grid-template-columns: 1fr;
     }
-    .form-body, .form-header, .form-footer {
+    .form-body, .form-header, .form-footer, .external-select-wrapper {
         padding-left: 20px;
         padding-right: 20px;
     }

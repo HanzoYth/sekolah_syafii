@@ -19,7 +19,7 @@
         <div class="container navbar-container">
             <a href="#" class="logo">
                 <img src="{{asset('img/logo.png')}}?v={{ time() }}" alt="Logo">
-                <span>Imam Syafi'i</span>
+                <span>Sekolah Qur'an Imam Syafi'i</span>
             </a>
             
             <!-- Mobile Menu Toggle -->

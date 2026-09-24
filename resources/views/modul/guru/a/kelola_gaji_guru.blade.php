@@ -16,7 +16,6 @@
     <!-- TEMPAT SIDEBAR -->
     <x-sidebar_guru />
 
-
     <!-- MAIN CONTENT -->
     <main class="main-wrapper">
         <!-- TOPBAR HEADER -->
@@ -60,8 +59,15 @@
         <!-- CARD TABEL DATA GAJI GURU -->
         <section class="card table-card">
             <div class="card-header">
-                <h3>Daftar Penggajian Guru</h3>
-                <span class="total-badge">Total: 1.000.000 Data</span>
+                <div class="header-left">
+                    <h3>Daftar Penggajian Guru</h3>
+                    <span class="total-badge">Total: {{ count($data_guru) }} Data</span>
+                </div>
+                <!-- TOMBOL RESET DATA GAJI -->
+                <button type="button" class="btn-reset-data" id="btnOpenResetDataModal">
+                    <i class="fa-solid fa-trash-arrow-up"></i>
+                    <span>Reset Data Gaji</span>
+                </button>
             </div>
 
             <div class="table-responsive">
@@ -78,9 +84,6 @@
                             <th class="text-center" width="180">Aksi</th>
                         </tr>
                     </thead>
-                    @php
-                        $index = 0;
-                    @endphp
                     <tbody id="guruTableBody">
                         @foreach ($data_guru as $value)
                             @php
@@ -88,8 +91,8 @@
                                 $data_gaji = App\Models\gaji::where("guru_id",$value->id)->first();
                                 $cek_tunjangan = App\Models\tunjangan::where("guru_id",$value->id)->exists();
                                 $total_tunjangan = 0;
-                                $total_potongan = $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus - $data_gaji->potongan_tidak_hadir - $data_gaji->potongan_keterlambatan - $data_gaji->kasbon;
-                                $total_gaji =  $total_potongan > 0 ? $data_gaji->gaji_pokok + $total_potongan : $data_gaji->gaji_pokok;
+                                $total_potongan = ($data_gaji->gaji_honor ?? 0) + ($data_gaji->gaji_tugas_tambahan ?? 0) + ($data_gaji->gaji_tambahan ?? 0) + ($data_gaji->bonus ?? 0) - ($data_gaji->potongan_tidak_hadir ?? 0) - ($data_gaji->potongan_keterlambatan ?? 0) - ($data_gaji->kasbon ?? 0);
+                                $total_gaji = $total_potongan > 0 ? ($data_gaji->gaji_pokok ?? 0) + $total_potongan : ($data_gaji->gaji_pokok ?? 0);
                                 if ($cek_tunjangan) {
                                     $hasil = App\Models\tunjangan::where("guru_id",$value->id)->sum("nominal");
                                     $total_tunjangan += $hasil;
@@ -126,7 +129,7 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="action-buttons">
-                                        @if (!$data_gaji->publish)
+                                        @if (!$data_gaji || !$data_gaji->publish)
                                             <!-- TOMBOL PUBLISH GAJI -->
                                             <button type="button" 
                                                     class="btn-action btn-publish {{ ($data_gaji && $data_gaji->publish) ? 'published' : '' }}" 
@@ -155,11 +158,13 @@
         </section>
     </main>
 </div>
+
 <x-warning />
-<!-- COMPONENT MODAL POP-UP -->
+
+<!-- MODAL POP-UP PUBLISH -->
 <div class="modal-overlay" id="publishModal">
     <div class="modal-box">
-        <div class="modal-icon-wrapper" id="modalIcon">
+        <div class="modal-icon-wrapper icon-publish" id="modalIcon">
             <i class="fa-solid fa-upload"></i>
         </div>
         <h4 id="modalTitle">Konfirmasi Publish</h4>
@@ -167,10 +172,27 @@
         
         <div class="modal-actions">
             <button type="button" class="modal-btn modal-btn-cancel" id="btnCancelModal">Batal</button>
-            <button type="button" class="modal-btn modal-btn-confirm" id="btnConfirmModal" >Ya, Lanjutkan</button>
+            <button type="button" class="modal-btn modal-btn-confirm" id="btnConfirmModal">Ya, Lanjutkan</button>
         </div>
     </div>
 </div>
+
+<!-- MODAL POP-UP RESET DATA GAJI -->
+<div class="modal-overlay" id="resetDataModal">
+    <div class="modal-box">
+        <div class="modal-icon-wrapper icon-unpublish">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h4>Reset Seluruh Data Gaji?</h4>
+        <p>Tindakan ini akan mengosongkan atau mengembalikan seluruh hitungan data gaji guru ke pengaturan awal. Apakah Anda yakin?</p>
+        
+        <div class="modal-actions">
+            <button type="button" class="modal-btn modal-btn-cancel" id="btnCancelResetModal">Batal</button>
+            <button type="button" class="modal-btn modal-btn-confirm btn-danger" id="btnConfirmResetModal">Ya, Reset Data</button>
+        </div>
+    </div>
+</div>
+
 <!-- JAVASCRIPT LOGIC -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -208,44 +230,61 @@
         // --- 3. LOGIC POP-UP MODAL PUBLISH SLIP GAJI ---
         const publishButtons = document.querySelectorAll('.btn-publish');
         const publishModal = document.getElementById('publishModal');
-        const modalIcon = document.getElementById('modalIcon');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalDescription = document.getElementById('modalDescription');
         const btnCancelModal = document.getElementById('btnCancelModal');
         const btnConfirmModal = document.getElementById('btnConfirmModal');
 
         let activeTargetButton = null;
 
-        // Buka Pop-up & Atur Konten
         publishButtons.forEach(btn => {
             btn.addEventListener('click', function() {
                 activeTargetButton = this;
-
                 publishModal.classList.add('active');
             });
         });
 
-        // Terapkan perubahan setelah klik Konfirmasi di Pop-up
         btnConfirmModal.addEventListener('click', function() {
             if (!activeTargetButton) return;
-
-            window.location.href = "/gr/pbgjgr/"+parseInt(activeTargetButton.dataset.id)
-            // Tutup Modal
-            closeModal();
+            window.location.href = "/gr/pbgjgr/" + parseInt(activeTargetButton.dataset.id);
+            closePublishModal();
         });
 
-        // Fungsi Tutup Modal
-        function closeModal() {
+        function closePublishModal() {
             publishModal.classList.remove('active');
             activeTargetButton = null;
         }
 
-        btnCancelModal.addEventListener('click', closeModal);
+        btnCancelModal.addEventListener('click', closePublishModal);
 
-        // Tutup jika overlay luar di-klik
         publishModal.addEventListener('click', function(e) {
             if (e.target === publishModal) {
-                closeModal();
+                closePublishModal();
+            }
+        });
+
+        // --- 4. LOGIC POP-UP MODAL RESET DATA GAJI ---
+        const btnOpenResetDataModal = document.getElementById('btnOpenResetDataModal');
+        const resetDataModal = document.getElementById('resetDataModal');
+        const btnCancelResetModal = document.getElementById('btnCancelResetModal');
+        const btnConfirmResetModal = document.getElementById('btnConfirmResetModal');
+
+        btnOpenResetDataModal.addEventListener('click', function() {
+            resetDataModal.classList.add('active');
+        });
+
+        btnConfirmResetModal.addEventListener('click', function() {
+            // Sesuaikan endpoint route Laravel untuk penanganan reset data di backend
+            window.location.href = "/gr/rstgj"; 
+        });
+
+        function closeResetModal() {
+            resetDataModal.classList.remove('active');
+        }
+
+        btnCancelResetModal.addEventListener('click', closeResetModal);
+
+        resetDataModal.addEventListener('click', function(e) {
+            if (e.target === resetDataModal) {
+                closeResetModal();
             }
         });
     }); 

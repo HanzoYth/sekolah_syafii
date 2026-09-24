@@ -64,7 +64,7 @@
                                 <span>Profile</span>
                             </a>
                         </li>
-                        @if (App\Models\guru::where("id",session("id"))->first()->ast_krk)
+                        @if (App\Models\guru::where("id",session("id"))->first()->ast_krk || App\Models\guru::where("id",session("id"))->first()->kepala_sekolah)
                             <li class="menu-item {{$route == '/gr/klgr' ? 'active' : ''}}">
                                 <a href="/gr/klgr">
                                     <i class="fa-solid fa-user"></i>

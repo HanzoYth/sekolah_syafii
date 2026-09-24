@@ -211,17 +211,13 @@
                             <!-- Select Pilihan Kelas -->
                             <div class="form-group">
                                 <label for="kelas_id">Pilih Kelas Binaan</label>
-                                <select id="kelas_id" name="kelas_id" class="form-control">
+                                <select id="kelas_id" name="kelas" class="form-control">
                                     <option value="">-- Pilih Kelas --</option>
-                                    @if(isset($data_kelas))
-                                        @foreach ($data_kelas as $value)
-                                            <option value="{{ $value->id }}" {{ $value->nama_ruang == ($nama_kelas ?? '') ? 'selected' : '' }}>{{ $value->nama_ruang }}</option>
+                                    @foreach ($data_ruang_kelas as $ruang)
+                                        @foreach ($ruang as $value)
+                                            <option value="{{ $value}}" {{ $value == ($nama_kelas ?? '') ? 'selected' : '' }}>{{ $value }}</option>
                                         @endforeach
-                                    @else
-                                        <option value="1" selected>Kelas 7-A</option>
-                                        <option value="2">Kelas 8-B</option>
-                                        <option value="3">Kelas 9-C</option>
-                                    @endif
+                                    @endforeach
                                 </select>
                             </div>
                         </div>

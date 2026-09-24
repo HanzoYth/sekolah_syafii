@@ -74,6 +74,7 @@ Route::get('/gr/klgjgr',[modulGuruController::class,"tampilan_kelolaGajiGuru"]);
 Route::get('/gr/edgjgr/{id}',[modulGuruController::class,"tampilan_editGajiGuru"]);        
 Route::post('/gr/spgjgr',[modulGuruController::class,"simpan_PerubahanGajiGuru"]);        
 Route::get('/gr/pbgjgr/{id}',[modulGuruController::class,"publish_GajiGuru"]);        
+Route::get('gr/rstgj',[modulGuruController::class,"reset_GajiGuru"]);
 
 //kelola absen guru admin
 Route::get('/gr/klab',[MasterAbsenController::class,"tampilan_kelolaAbsenGuru"]);

@@ -49,12 +49,12 @@
                 </div>
                 <div class="form-header-text">
                     <h3>Formulir Kelas Baru</h3>
-                    <p>Lengkapi detail jenjang, nomor, dan tipe kelas di bawah ini.</p>
+                    <p>Lengkapi detail jenjang, nomor, tipe, dan program kelas di bawah ini.</p>
                 </div>
             </div>
 
-            <!-- Form Input -->
-            <form action="/gr/tmbkls" method="POST">
+            <!-- FORM UTAMA (Diberi ID 'form-tambah-kelas') -->
+            <form action="/gr/tmbkls" method="POST" id="form-tambah-kelas">
                 @csrf
 
                 <div class="form-body">
@@ -131,6 +131,26 @@
                 </div>
 
             </form>
+
+            <!-- SELECT TAMBAHAN DI LUAR TAG <form> -->
+            <!-- Dihubungkan ke form menggunakan atribut form="form-tambah-kelas" -->
+            <div class="external-select-wrapper">
+                <div class="form-field">
+                    <label for="program_kelas">
+                        <i class="fa-solid fa-bookmark"></i> Kelas Yang Tersedia
+                    </label>
+                    <div class="input-icon-wrapper">
+                        <i class="fa-solid fa-award"></i>
+                        <select name="program_kelas" id="program_kelas" form="form-tambah-kelas">
+                            @foreach($data_ruang_kelas as $ruang)
+                                @foreach ($ruang as $value)
+                                    <option>{{$value}}</option>
+                                @endforeach
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
 
         </div>
 

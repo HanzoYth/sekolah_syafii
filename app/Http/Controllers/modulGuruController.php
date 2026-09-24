@@ -76,13 +76,26 @@ class modulGuruController extends Controller
 
             $awal_bulan = Carbon::now()->startOfMonth();
             $akhir_bulan = Carbon::now()->endOfMonth();
+            $jumlah_tidak_hadir = 0;
             $jumlah_hari_aktif = 0;
 
             for ($data  = $awal_bulan->copy() ; $data <= $akhir_bulan; $data->addDays()){
                 if (strtolower(Carbon::parse($data)->translatedFormat("l")) != "minggu"){
                     $jumlah_hari_aktif ++;
+                    if (Carbon::parse($data)->translatedFormat("d") < Carbon::now()->translatedFormat("d")){
+                        if (master_absen_guru::where("guru_id",session("id"))->whereMonth("tgl_masuk",Carbon::now()->translatedFormat("m"))->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->exists()){
+                            if(master_absen_guru::where("guru_id",session("id"))->whereMonth("tgl_masuk",Carbon::now()->translatedFormat("m"))->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->where("status_kehadiran","!=","h")->exists()){
+                                $jumlah_tidak_hadir ++;
+                            }
+                        }else{
+                            $jumlah_tidak_hadir ++;
+                        }
+                    }
                 }
             }
+
+            $keterlambatan_hari_ini = master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",session('id'))->exists() ? master_absen_guru::where("tgl_masuk",Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",session('id'))->first()->terlambat_menit ." menit" : "maaf anda belum absen";
+
 
             
             return view("modul/guru/g/dashboard",[
@@ -101,7 +114,9 @@ class modulGuruController extends Controller
                 "cek_sudah_keluar" => $cek_sudah_keluar,
                 "data_pengumuman" => $data_pengumuman,
                 "jumlah_hari_aktif" => $jumlah_hari_aktif,
-                "data_piket" => $data_piket  
+                "data_piket" => $data_piket,
+                "data_terlambat" => $keterlambatan_hari_ini,
+                "data_ketidakhadiran" => $jumlah_tidak_hadir
             ]);
         }
         return redirect("/reg");
@@ -303,18 +318,20 @@ class modulGuruController extends Controller
 
 
     function tambah_Gaji($id_guru){
-        gaji::create([
-            "gaji_pokok" => 0,
-            "gaji_honor" => 0,
-            "gaji_tugas_tambahan" => 0,
-            "potongan_tidak_hadir" => 0,
-            "potongan_keterlambatan" => 0,
-            "kasbon" => 0,
-            "gaji_tambahan" => 0,
-            "bonus" => 0,
-            "ketidakhadiran" => 0,
-            "guru_id" => $id_guru
-        ]);
+        if(!gaji::where("guru_id",$id_guru)->exists()){
+            gaji::create([
+                "gaji_pokok" => 0,
+                "gaji_honor" => 0,
+                "gaji_tugas_tambahan" => 0,
+                "potongan_tidak_hadir" => 0,
+                "potongan_keterlambatan" => 0,
+                "kasbon" => 0,
+                "gaji_tambahan" => 0,
+                "bonus" => 0,
+                "ketidakhadiran" => 0,
+                "guru_id" => $id_guru
+            ]);
+        }
     }
 
     //ini tampilan fitur2 sebagai admin
@@ -519,12 +536,6 @@ class modulGuruController extends Controller
                 }
             }
 
-            dd([
-                "tes" => $data_ruang_kelas
-            ]);
-
-
-
 
             $data_piket = jadwal_piket::where("id_guru",$id)->get();
     
@@ -544,7 +555,7 @@ class modulGuruController extends Controller
                 "data_sekolah" => $data_sekolah,
                 "data_jenis_sekolah" => $data_jenis_sekolah,
                 "data_akun" => $data_akun,
-                "data_kelas" => $data_kelas,
+                "data_ruang_kelas" => $data_ruang_kelas,
                 "cek_wallas" => $cek_wallas,
                 "nama_kelas" => $nama_kelas_terpilih,
                 "data_piket" => $data_piket
@@ -611,11 +622,12 @@ class modulGuruController extends Controller
                 }
             }
 
+            $data_kelas = ruang_kelas::where("nama_ruang",$request->kelas)->first();
 
             if ($request->is_wali_kelas && !wallas::where("guru_id",$request->id_guru)->exists()){
                 wallas::create([
                     "guru_id" => (int) $request->id_guru,
-                    "kelas_id" => (int) $request->kelas_id
+                    "kelas_id" => $data_kelas->id,
                 ]);
             }elseif(!$request->is_wali_kelas && wallas::where("guru_id",$request->id_guru)->exists()){
                 $data_wallas = wallas::where("guru_id",$request->id_guru)->first();
@@ -623,7 +635,7 @@ class modulGuruController extends Controller
             }else{
                 if ($request->is_wali_kelas){
                     $data_wallas = wallas::where("guru_id",$request->id_guru)->first();
-                    $data_wallas->kelas_id = $request->kelas_id;
+                    $data_wallas->kelas_id = $data_kelas->id;
 
                     $data_wallas->save();
                 }
@@ -974,32 +986,6 @@ class modulGuruController extends Controller
             //bikin order baru
             if (priode::count() == 0){
                 priode::create();
-            }else{
-                if (Carbon::parse(priode::all()->first()->created_at)->translatedFormat("m") != Carbon::now()->translatedFormat("m")){      
-                    priode::create();
-                }
-            }
-
-
-            //setting publish
-            $jumlah_belum_publish_gaji = gaji::where("publish",0)->count();
-            if ($jumlah_belum_publish_gaji == 0){
-                if (Carbon::parse(priode::all()->first()->created_at)->translatedFormat("m") != Carbon::now()->translatedFormat("m")){      
-                    gaji::query()->update([
-                        "gaji_pokok" => 0,
-                        "gaji_honor" => 0,
-                        "gaji_tugas_tambahan" => 0,
-                        "potongan_tidak_hadir" => 0,
-                        "potongan_keterlambatan" => 0,
-                        "kasbon" => 0,
-                        "gaji_tambahan" => 0,
-                        "publish" => 0,
-                        "bonus" => 0,
-                        "ketidakhadiran" => 0
-                    ]);
-                    tunjangan::all()->delete();
-                    priode::all()->first()->delete();
-                }
             }
 
             return view("modul/guru/a/kelola_gaji_guru",[
@@ -1007,6 +993,31 @@ class modulGuruController extends Controller
             ]);
         }
         return redirect("/reg");
+    }
+
+    function reset_GajiGuru(){
+        if (Carbon::parse(priode::all()->first()->created_at)->translatedFormat("m") != Carbon::now()->translatedFormat("m")){      
+            if (gaji::where("publish",0)->count() == 0){
+                priode::create();
+                gaji::query()->update([
+                    "gaji_pokok" => 0,
+                    "gaji_honor" => 0,
+                    "gaji_tugas_tambahan" => 0,
+                    "potongan_tidak_hadir" => 0,
+                    "potongan_keterlambatan" => 0,
+                    "kasbon" => 0,
+                    "gaji_tambahan" => 0,
+                    "publish" => 0,
+                    "bonus" => 0,
+                    "ketidakhadiran" => 0
+                ]);
+                tunjangan::query()->delete();
+                priode::all()->first()->delete();
+                return back()->with("success","berhasil reset data gaji guru");
+            }
+            return back()->with("eror","Maaf masih ada data gaji guru yang belum terpublish");
+        }
+        return back()->with("eror","maaf ini belum waktunya reset gaji tunggu bulan depan baru reset");
     }
 
     function tampilan_editGajiGuru($id){
@@ -1268,20 +1279,170 @@ class modulGuruController extends Controller
 
 
     function tampilan_tambahKelas(){
+        $data_kelas = ruang_kelas::all();
+
+        $data_ruang_kelas = [
+            [],
+            [],
+            [],
+            []
+        ];
+        // atur urutan kelas
+        foreach ($data_kelas as $kelas){
+            $type = explode(" ",$kelas->nama_ruang);
+            if ($type[0] == "TK"){
+                if (count($data_ruang_kelas[0]) == 0){
+                    array_push($data_ruang_kelas[0],$kelas->nama_ruang);
+                    continue;
+                }else{
+                    $idx = 0;
+                    foreach ($data_ruang_kelas[0] as $value){
+                        $var_type = explode(" ",$value);
+                        $huruf_ke_angka_table = ord($type[1]) - ord("A");
+                        $huruf_ke_angka_var = ord($var_type[1]) - ord("A");
+                        if ($huruf_ke_angka_var > $huruf_ke_angka_table){
+                            array_splice($data_ruang_kelas[0],$idx,0,$kelas->nama_ruang);
+                            break;
+                        }
+                        if ($idx == count($data_ruang_kelas[0])- 1){
+                            array_push($data_ruang_kelas[0],$kelas->nama_ruang);
+                            break;
+                        }
+                        $idx++;
+                    }
+                }
+            }else if ($type[0] == "SD"){
+                if (count($data_ruang_kelas[1]) == 0){
+                    array_push($data_ruang_kelas[1],$kelas->nama_ruang);
+                }else{
+                    $idx = 0;
+                    $cek = false;
+                    foreach ($data_ruang_kelas[1] as $value){
+                        $var_type = explode(" ",$value);
+                        $table_type = str_split($type[1]);
+                        $huruf_var = str_split($var_type[1]);
+                        
+                        $nomor_kelas_table = (int) $table_type[0];
+                        $nomor_kelas_var = (int) $huruf_var[0];
+                        $huruf_ke_angka_table = ord($table_type[1]) - ord("A");
+                        $huruf_ke_angka_var = ord($huruf_var[1]) - ord("A");
+                        if ($nomor_kelas_var > $nomor_kelas_table){
+                            array_splice($data_ruang_kelas[1],$idx,0,$kelas->nama_ruang);
+                            break;       
+                        }
+                        if ($nomor_kelas_var == $nomor_kelas_table){
+                            $cek = true;
+                            if ($huruf_ke_angka_var > $huruf_ke_angka_table){
+                                array_splice($data_ruang_kelas[1],$idx,0,$kelas->nama_ruang);
+                                break;
+                            }
+                        }else{
+                            if ($cek){
+                                array_splice($data_ruang_kelas[1],$idx,0,$kelas->nama_ruang);
+                                break;
+                            }
+                        }
+                        if ($idx == count($data_ruang_kelas[1])- 1){
+                            array_push($data_ruang_kelas[1],$kelas->nama_ruang);
+                            break;
+                        }
+                        $idx++;
+                    }
+                }
+            }else if ($type[0] == "SMP"){
+                if (count($data_ruang_kelas[2]) == 0){
+                    array_push($data_ruang_kelas[2],$kelas->nama_ruang);
+                }else{
+                    $idx = 0;
+                    $cek = false;
+                    foreach ($data_ruang_kelas[2] as $value){
+                        $var_type = explode(" ",$value);
+                        $table_type = str_split($type[1]);
+                        $huruf_var = str_split($var_type[1]);
+                        
+                        $nomor_kelas_table = (int) $table_type[0];
+                        $nomor_kelas_var = (int) $huruf_var[0];
+                        $huruf_ke_angka_table = ord($table_type[1]) - ord("A");
+                        $huruf_ke_angka_var = ord($huruf_var[1]) - ord("A");
+                        if ($nomor_kelas_var > $nomor_kelas_table){
+                            array_splice($data_ruang_kelas[2],$idx,0,$kelas->nama_ruang);
+                            break;       
+                        }
+                        if ($nomor_kelas_var == $nomor_kelas_table){
+                            $cek = true;
+                            if ($huruf_ke_angka_var > $huruf_ke_angka_table){
+                                array_splice($data_ruang_kelas[2],$idx,0,$kelas->nama_ruang);
+                                break;
+                            }
+                        }else{
+                            if ($cek){
+                                array_splice($data_ruang_kelas[2],$idx,0,$kelas->nama_ruang);
+                                break;
+                            }
+                        }
+                        if ($idx == count($data_ruang_kelas[2])- 1){
+                            array_push($data_ruang_kelas[2],$kelas->nama_ruang);
+                            break;
+                        }
+                        $idx++;
+                    }
+                }
+            }else{
+                if (count($data_ruang_kelas[3]) == 0){
+                    array_push($data_ruang_kelas[3],$kelas->nama_ruang);
+                }else{
+                    $idx = 0;
+                    $cek = false;
+                    foreach ($data_ruang_kelas[3] as $value){
+                        $var_type = explode(" ",$value);
+                        $table_type = str_split($type[1]);
+                        $huruf_var = str_split($var_type[1]);
+                        
+                        $nomor_kelas_table = (int) $table_type[0];
+                        $nomor_kelas_var = (int) $huruf_var[0];
+                        $huruf_ke_angka_table = ord($table_type[1]) - ord("A");
+                        $huruf_ke_angka_var = ord($huruf_var[1]) - ord("A");
+                        if ($nomor_kelas_var > $nomor_kelas_table){
+                            array_splice($data_ruang_kelas[3],$idx,0,$kelas->nama_ruang);
+                            break;       
+                        }
+                        if ($nomor_kelas_var == $nomor_kelas_table){
+                            $cek = true;
+                            if ($huruf_ke_angka_var > $huruf_ke_angka_table){
+                                array_splice($data_ruang_kelas[3],$idx,0,$kelas->nama_ruang);
+                                break;
+                            }
+                        }else{
+                            if ($cek){
+                                array_splice($data_ruang_kelas[3],$idx,0,$kelas->nama_ruang);
+                                break;
+                            }
+                        }
+                        if ($idx == count($data_ruang_kelas[3])- 1){
+                            array_push($data_ruang_kelas[3],$kelas->nama_ruang);
+                            break;
+                        }
+                        $idx++;
+                    }
+                }
+            }
+        }
         if (session("hasLogin")){
-            return view("modul/guru/a/tambah_kelas");
+            return view("modul/guru/a/tambah_kelas",compact("data_ruang_kelas"));
         }
         return redirect("/reg");
     }
 
     function tambah_kelas(Request $request){
         $nama_kelas = $request->tingkat_sekolah . " ". (isset($request->no_kelas) ? $request->no_kelas : "" ). $request->tipe_kelas;
-        ruang_kelas::create([
-            "nama_ruang" => $nama_kelas
-        ]);
-
-        return back()->with("success","berhasil tambah kelas");
-    }
+        if (!ruang_kelas::where("nama_ruang",$nama_kelas)->exists()){
+            ruang_kelas::create([
+                "nama_ruang" => $nama_kelas
+            ]);
+            return back()->with("success","berhasil tambah kelas");
+        }
+        return back()->with("eror","ruang kelas sudah tersedia");
+    }   
 
 
 

@@ -52,8 +52,8 @@
                             <i class="fa-solid fa-calendar-check text-primary"></i>
                         </div>
                         <div class="stat-data">
-                            <span class="label">Kehadiran Bulan Ini</span>
-                            <h3>{{$jumlah_kehadiran_bulanan}}<small>/ {{$jumlah_hari_aktif}} Hari</small></h3>
+                            <span class="label">Ketidakhadiran Bulan Ini</span>
+                            <h3>{{$data_ketidakhadiran}}</h3>
                         </div>
                     </div>
 
@@ -62,8 +62,8 @@
                             <i class="fa-solid fa-user-clock text-warning"></i>
                         </div>
                         <div class="stat-data">
-                            <span class="label">Total Terlambat(menit)</span>
-                            <small>belum di publish oleh admin</small>
+                            <span class="label">Terlambat(menit) hari ini</span>
+                            <small>{{$data_terlambat}}</small>
                             <!-- <h3>15 <small>menit</small></h3> -->
                         </div>
                     </div>
@@ -75,17 +75,6 @@
                         <div class="stat-data">
                             <span class="label">Jumlah Pengajuan</span>
                             <h3>0</h3>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon bg-success-light">
-                            <i class="fa-solid fa-wallet text-success"></i>
-                        </div>
-                        <div class="stat-data">
-                            <span class="label">Gaji Bulan Lalu</span>
-                            <small>belum di publish oleh admin</small>
-                            <!-- <h3>Rp 4.500.000</h3> -->
                         </div>
                     </div>
                 </div>
