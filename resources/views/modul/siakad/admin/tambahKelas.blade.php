@@ -21,6 +21,7 @@
 
     {{-- Main Container --}}
     <div class="main-content">
+        <x-siakad.topbar title="Tambah Ruang Kelas" description="Buat dan atur data kelas akademik." position="Administrator SIAKAD" initials="AD" />
         
         <!-- Topbar Section -->
         <div class="topbar">

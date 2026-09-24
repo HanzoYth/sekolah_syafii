@@ -3,195 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIAKAD - Profil</title>
-
-    <!-- Google Fonts & Font Awesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Profil Siswa - SIAKAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{asset('/css/modul/guru/das_ad_gr.css')}}">
-    <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
-    <link rel="stylesheet" href="{{asset('/css/modul/siakad/profilSiswa.css')}}">
+    <link rel="icon" type="image/png" href="{{ asset('img/logo_sklh.png') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/modul/siakad/profilSiswa.css') }}?v={{ time() }}">
 </head>
 <body>
-
-    <div class="app-layout">
-
-        <!-- INCLUDE SIDEBAR -->
+    <div class="dashboard-container student-profile-page">
         <x-sidebar_siakad />
-
-        <!-- MAIN CONTENT AREA -->
         <main class="main-content">
+            <x-siakad.topbar :name="$data_siswa->nama" position="Siswa" initials="SW" title="Profil Siswa" description="Tinjau informasi akademik dan data pribadi Anda." />
 
-            <header class="topbar">
-                <div class="page-title">
-                    <h2>Profil Saya</h2>
-                    <p>Data lengkap akun dan informasi siswa</p>
-                </div>
-                <!-- === TAMBAHAN: Tombol toggle mode edit === -->
-                <button type="button" class="edit-toggle-btn" id="btnToggleEdit" title="Edit Profil">
-                    <i class="fa-solid fa-pen" id="iconToggleEdit"></i>
-                </button>
-                <!-- === /TAMBAHAN === -->
-            </header>
+            @if(session('eror'))
+                <div class="profile-alert" id="errorToast"><i class="fa-solid fa-circle-exclamation"></i><span>{{ session('eror') }}</span><button type="button" onclick="closeToast()" aria-label="Tutup pesan">&times;</button></div>
+            @endif
 
-            <!-- CONTENT BODY -->
-            <div class="content-body">
+            <section class="profile-hero">
+                <img class="profile-photo" src="{{ route('file.show', $data_siswa->url_foto) }}" alt="Foto {{ $data_siswa->nama }}">
+                <div class="profile-hero-info"><p>PROFIL AKADEMIK SISWA</p><h2>{{ $data_siswa->nama }}</h2><span><i class="fa-solid fa-id-card"></i> NIS: {{ $data_siswa->nis }}</span><span><i class="fa-solid fa-school"></i> {{ $data_kelas->nama_ruang }}</span></div>
+                <span class="profile-active"><i class="fa-solid fa-circle-check"></i> Siswa aktif</span>
+            </section>
 
-                <!-- FLASH MESSAGES / ERROR TOAST -->
-                @if(session('eror'))
-                    <div class="alert alert-danger" id="errorToast">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                            <div>
-                                <p>
-                                    <i class="fas fa-exclamation-circle" style="color: #e63946;"></i>
-                                    {{ session('eror') }}
-                                </p>
-                            </div>
-                            <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>
-                        </div>
-                    </div>
-                @endif
+            <section class="profile-status-grid" aria-label="Status profil">
+                <article><span class="profile-status-icon emerald"><i class="fa-solid fa-school"></i></span><div><small>Kelas aktif</small><strong>{{ $data_kelas->nama_ruang }}</strong></div></article>
+                <article><span class="profile-status-icon gold"><i class="fa-solid fa-calendar-check"></i></span><div><small>Tahun ajaran</small><strong>2026/2027</strong></div></article>
+                <article><span class="profile-status-icon blue"><i class="fa-solid fa-user-check"></i></span><div><small>Status data</small><strong>Terverifikasi</strong></div></article>
+            </section>
 
-                <!-- HEADER PROFIL: foto + nama + tombol ganti foto -->
-                <div class="profile-header">
-                    <div class="avatar-wrap">
-                        <img class="avatar-xl" src="{{route('file.show',$data_siswa->url_foto)}}" alt="Foto Profil">
-                        <label for="input_foto" class="avatar-edit-btn" title="Ganti Foto">
-                            <i class="fa-solid fa-camera"></i>
-                        </label>
-                        <form action="/sk/pr/foto" method="POST" enctype="multipart/form-data" id="form_foto">
-                            @csrf
-                            <input type="file" name="foto" id="input_foto" accept="image/*" style="display:none" onchange="document.getElementById('form_foto').submit()">
-                        </form>
-                    </div>
-                    <div class="profile-header-info">
-                        <h2>{{$data_siswa->nama}}</h2>
-                        <p>{{$data_siswa->nis}} &middot; {{$data_kelas->nama_ruang}}</p>
-                        <span class="status-pill">
-                            <i class="fa-solid fa-circle" style="font-size:8px;"></i> Siswa Aktif
-                        </span>
-                    </div>
-                </div>
+            <section class="profile-grid">
+                <article class="profile-card personal-card">
+                    <div class="profile-card-heading"><span class="heading-icon emerald"><i class="fa-solid fa-id-card"></i></span><div><p>IDENTITAS</p><h3>Data pribadi</h3></div></div>
+                    <dl class="profile-details"><div><dt>NIS / NISN</dt><dd>{{ $data_siswa->nis }}</dd></div><div><dt>Jenis kelamin</dt><dd>{{ $data_siswa->jenis_kelamin ?? 'Belum tersedia' }}</dd></div><div><dt>Tempat, tanggal lahir</dt><dd>{{ ($data_siswa->tempat_lahir ?? 'Belum tersedia') }}{{ !empty($data_siswa->tanggal_lahir) ? ', ' . \Carbon\Carbon::parse($data_siswa->tanggal_lahir)->translatedFormat('d F Y') : '' }}</dd></div><div><dt>Agama</dt><dd>{{ $data_siswa->agama ?? 'Islam' }}</dd></div><div class="wide"><dt>Alamat</dt><dd>{{ $data_siswa->alamat ?? 'Belum tersedia' }}</dd></div></dl>
+                </article>
 
-                <!-- DATA PRIBADI -->
-                <h3 class="info-section-title"><i class="fa-solid fa-id-card"></i> Data Pribadi</h3>
-                <div class="info-card">
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="info-label">NISN</span>
-                            <span class="info-value">{{$data_siswa->nis}}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Jenis Kelamin</span>
-                            <span class="info-value">Laki - Laki</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Tempat, Tanggal Lahir</span>
-                            <span class="info-value">Palu, 15 Maret 2025</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Nomor HP</span>
-                            <span class="info-value">085655433321</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Email</span>
-                            <span class="info-value">Zuanax@gmail.com</span>
-                        </div>
-                        <div class="info-item full">
-                            <span class="info-label">Alamat</span>
-                            <span class="info-value">Jl.Dewi Satra</span>
-                        </div>
-                    </div>
-                </div>
+                <article class="profile-card academic-card">
+                    <div class="profile-card-heading"><span class="heading-icon gold"><i class="fa-solid fa-graduation-cap"></i></span><div><p>AKADEMIK</p><h3>Data sekolah</h3></div></div>
+                    <dl class="profile-details single"><div><dt>Kelas</dt><dd>{{ $data_kelas->nama_ruang }}</dd></div><div><dt>Tahun ajaran</dt><dd>2026/2027 · Semester Ganjil</dd></div><div><dt>Wali kelas</dt><dd>Ustadzah Fitri</dd></div><div><dt>Status siswa</dt><dd><span class="inline-active"><i class="fa-solid fa-circle"></i> Aktif</span></dd></div></dl>
+                </article>
+            </section>
 
-                <!-- DATA AKADEMIK -->
-                <h3 class="info-section-title"><i class="fa-solid fa-graduation-cap"></i> Data Akademik</h3>
-                <div class="info-card">
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="info-label">Tahun Masuk</span>
-                            <span class="info-value">2026</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Wali Kelas</span>
-                            <span class="info-value">Subaidah</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Kelas</span>
-                            <span class="info-value">{{$data_kelas->nama_ruang}}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Status Siswa</span>
-                            <span class="info-value">Aktif</span>
-                        </div>
-                    </div>
-                </div> 
-                
-                <!-- GANTI PASSWORD -->
-                <!-- === TAMBAHAN: class "password-card" agar bisa disembunyikan/ditampilkan lewat mode edit === -->
-                <h3 class="info-section-title"><i class="fa-solid fa-lock"></i> Keamanan Akun</h3>
-                <div class="info-card password-card">
-                    <form class="password-form" action="/sk/pr/password" method="POST">
-                        @csrf
-                        <div class="form-group">
-                            <label for="password_lama">Password Lama</label>
-                            <input type="password" name="password_lama" id="password_lama" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password_baru">Password Baru</label>
-                            <input type="password" name="password_baru" id="password_baru" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password_konfirmasi">Konfirmasi Password Baru</label>
-                            <input type="password" name="password_konfirmasi" id="password_konfirmasi" required>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
+            <section class="profile-card account-card">
+                <div class="profile-card-heading"><span class="heading-icon blue"><i class="fa-solid fa-shield-halved"></i></span><div><p>KEAMANAN AKUN</p><h3>Informasi akses</h3></div></div>
+                <div class="account-note"><i class="fa-solid fa-lock"></i><div><strong>Data akun Anda terlindungi</strong><p>Untuk memperbarui data pribadi, foto, atau kata sandi, silakan hubungi administrasi sekolah.</p></div></div>
+            </section>
         </main>
     </div>
-<x-chatbot />
-    <script>
-        function closeToast() {
-            const toast = document.getElementById('errorToast');
-            if (toast) {
-                toast.classList.add('fade-out');
-                setTimeout(() => {
-                    toast.remove();
-                }, 400);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const toast = document.getElementById('errorToast');
-            if (toast) {
-                setTimeout(() => {
-                    closeToast();
-                }, 5000);
-            }
-        });
-
-        // === TAMBAHAN: Toggle mode edit ===
-        // Menyalakan/mematikan contenteditable pada semua .info-value
-        // dan menampilkan/menyembunyikan card password. Tidak ada data yang diubah/dikirim.
-        const btnToggleEdit = document.getElementById('btnToggleEdit');
-        const iconToggleEdit = document.getElementById('iconToggleEdit');
-        const contentBody = document.querySelector('.content-body');
-        const editableValues = document.querySelectorAll('.info-value');
-
-        btnToggleEdit.addEventListener('click', () => {
-            const isEditing = contentBody.classList.toggle('edit-mode');
-            btnToggleEdit.classList.toggle('is-active', isEditing);
-
-            editableValues.forEach(el => {
-                el.setAttribute('contenteditable', isEditing ? 'true' : 'false');
-            });
-
-            iconToggleEdit.className = isEditing ? 'fa-solid fa-check' : 'fa-solid fa-pen';
-            btnToggleEdit.title = isEditing ? 'Selesai Edit' : 'Edit Profil';
-        });
-        // === /TAMBAHAN ===
-    </script>
+    <script>function closeToast(){document.getElementById('errorToast')?.remove();}window.setTimeout(closeToast,5000);</script>
 </body>
 </html>

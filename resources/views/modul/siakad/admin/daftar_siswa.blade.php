@@ -23,6 +23,7 @@
 
     <!-- ========================= KONTEN UTAMA ========================= -->
     <div class="main-content">
+        <x-siakad.topbar title="Daftar Siswa" description="Kelola data siswa terdaftar pada SIAKAD." position="Administrator SIAKAD" initials="AD" />
 
         <!-- Header / Topbar -->
         <header class="topbar">

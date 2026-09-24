@@ -18,12 +18,12 @@
     <div class="dashboard-container">
 
         {{-- WADAH TEMPLATE SIDEBAR --}}
-        <x-siakad_teacher.sidebar_siakad />
+        <x-siakad.sidebar />
 
         {{-- MAIN CONTENT --}}
         <main class="main-content">
 
-            <x-siakad_teacher.topbar
+            <x-siakad.topbar
                 name="Ustadzah Fitri"
                 position="Guru Mata Pelajaran"
                 initials="UF"

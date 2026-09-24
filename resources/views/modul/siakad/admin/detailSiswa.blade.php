@@ -27,6 +27,7 @@
         </header>
 
         <main class="page">
+            <x-siakad.topbar title="Detail Siswa" description="Tinjau informasi akademik dan profil siswa." position="Administrator SIAKAD" initials="AD" />
             <div class="detail-grid">
                 <!-- Profil Card -->
                 <div class="card profile-card">

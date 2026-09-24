@@ -25,6 +25,7 @@
 
         {{-- MAIN CONTENT --}}
         <main class="main-content">
+            <x-siakad.topbar title="Pembayaran Pemeliharaan" description="Kelola pembayaran pemeliharaan sekolah." position="Administrator SIAKAD" initials="AD" />
 
             {{-- TOPBAR / HEADER --}}
             <header class="topbar">

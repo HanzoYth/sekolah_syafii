@@ -43,6 +43,10 @@ class siakadController extends Controller
     function profilGuru(){
        return view("/modul/siakad/guru/profilGuru");
     }
+
+    function slipPembayaranGuru(){
+       return view("/modul/siakad/guru/slipPembayaran");
+    }
     function tampilanPembayaranPemeliharaan(){
        return view("/modul/siakad/admin/pemeliharaan");
        

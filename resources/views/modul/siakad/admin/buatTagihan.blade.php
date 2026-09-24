@@ -20,6 +20,7 @@
     <x-sidebar_siakad />
     {{-- Main Container --}}
     <div class="main-content">
+        <x-siakad.topbar title="Daftar Tagihan Siswa" description="Kelola tagihan pembayaran akademik siswa." position="Administrator SIAKAD" initials="AD" />
         
         <!-- Topbar Section -->
         <div class="topbar">
