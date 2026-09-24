@@ -13,10 +13,10 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <x-siakad_teacher.sidebar_siakad />
+        <x-siakad.sidebar />
 
         <main class="main-content teacher-profile-page">
-            <x-siakad_teacher.topbar
+            <x-siakad.topbar
                 :name="session('nama', 'Ustadzah Fitri')"
                 position="Guru Mata Pelajaran"
                 initials="UF"

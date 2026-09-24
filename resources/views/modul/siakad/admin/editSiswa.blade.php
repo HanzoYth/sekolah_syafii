@@ -29,6 +29,7 @@
         </header>
 
         <main class="page">
+            <x-siakad.topbar title="Edit Data Siswa" description="Perbarui informasi siswa pada SIAKAD." position="Administrator SIAKAD" initials="AD" />
             <div class="card form-card">
                 <form action="#" method="POST" enctype="multipart/form-data">
                     @csrf

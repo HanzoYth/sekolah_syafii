@@ -174,6 +174,7 @@ Route::get('/sk/tk',[siakadController::class,"tambah_kelas"]);
 Route::post('/sk/pbsp/',[siakadController::class,"publish_slipPembayaran"]);
 Route::post('/sk/hpsp/',[siakadController::class,"hapus_slipPembayaran"]);
 Route::get('/sk/dsg',[siakadController::class,"tampilanDashboardGuru"]);
+Route::get('/sk/gsp',[siakadController::class,"slipPembayaranGuru"]);
 
 
 //siswa

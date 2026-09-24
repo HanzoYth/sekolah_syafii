@@ -15,6 +15,7 @@
         <x-sidebar_siakad />
 
         <main class="main-content siakad-overview">
+            <x-siakad.topbar title="Dashboard Admin" description="Pantau aktivitas dan informasi akademik sekolah." position="Administrator SIAKAD" initials="AD" />
             <header class="overview-hero">
                 <div class="overview-pattern" aria-hidden="true"></div>
                 <div class="overview-hero-content">

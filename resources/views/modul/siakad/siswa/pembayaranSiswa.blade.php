@@ -3,593 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIAKAD - Slip Pembayaran</title>
-
-    <!-- Google Fonts & Font Awesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Slip Pembayaran - SIAKAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{asset('/css/modul/guru/das_ad_gr.css')}}">
-    <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
-    <link rel="stylesheet" href="{{asset('/css/modul/siakad/pembayaranSiswa.css')}}">
+    <link rel="icon" type="image/png" href="{{ asset('img/logo_sklh.png') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/modul/siakad/pembayaranSiswa.css') }}?v={{ time() }}">
 </head>
 <body>
+    @php
+        $riwayat = $riwayat_pembayaran ?? [
+            (object)['tanggal' => '12 Apr 2026', 'nama_tagihan' => 'IPP Bulan April 2026', 'jenis' => 'IPP Bulanan', 'keterangan' => 'Menunggu konfirmasi pembayaran', 'nominal' => 500000, 'status' => 'belum'],
+            (object)['tanggal' => '12 Mar 2026', 'nama_tagihan' => 'IPP Bulan Maret 2026', 'jenis' => 'IPP Bulanan', 'keterangan' => 'Pembayaran via Transfer Bank', 'nominal' => 500000, 'status' => 'lunas'],
+            (object)['tanggal' => '10 Jul 2026', 'nama_tagihan' => 'Uang Pangkal Tahun Ajaran 2026/2027', 'jenis' => 'Uang Pangkal', 'keterangan' => 'Pembayaran via Transfer Bank', 'nominal' => 1000000, 'status' => 'lunas'],
+            (object)['tanggal' => '05 Jan 2026', 'nama_tagihan' => 'Dana Pengembangan Pendidikan 2026', 'jenis' => 'Dana Pendidikan', 'keterangan' => 'Pembayaran via Transfer Bank', 'nominal' => 750000, 'status' => 'lunas'],
+            (object)['tanggal' => '15 Mei 2026', 'nama_tagihan' => 'Pemeliharaan Fasilitas Semester Genap 2026', 'jenis' => 'Pemeliharaan', 'keterangan' => 'Pembayaran via Transfer Bank', 'nominal' => 400000, 'status' => 'lunas'],
+        ];
+        $riwayat = is_array($riwayat) ? $riwayat : $riwayat->all();
+        $totalTagihan = array_sum(array_map(fn ($item) => $item->nominal, $riwayat));
+        $totalDibayar = array_sum(array_map(fn ($item) => $item->status === 'lunas' ? $item->nominal : 0, $riwayat));
+        $sisaTagihan = $totalTagihan - $totalDibayar;
+        $tagihanAktif = array_values(array_filter($riwayat, fn ($item) => $item->status !== 'lunas'));
+    @endphp
 
-    <div class="app-layout">
-
-        <!-- INCLUDE SIDEBAR -->
+    <div class="dashboard-container student-payment-page">
         <x-sidebar_siakad />
-
-        <!-- MAIN CONTENT AREA -->
         <main class="main-content">
+            <x-siakad.topbar :name="$data_siswa->nama" position="Siswa" initials="SW" title="Slip Pembayaran" description="Lihat status tagihan dan riwayat pembayaran Anda." />
 
-            <header class="topbar">
-                <div class="page-title">
-                    <h2>Slip Pembayaran</h2>
-                    <p>Riwayat & status pembayaran <strong>{{$data_siswa->nama}}</strong> &middot;{{$data_kelas->nama_ruang}}</p>
-                </div>
-            </header>
+            @if(session('eror'))
+                <div class="payment-alert" id="errorToast"><i class="fa-solid fa-circle-exclamation"></i><span>{{ session('eror') }}</span><button type="button" onclick="closeToast()" aria-label="Tutup pesan">&times;</button></div>
+            @endif
 
-            <!-- CONTENT BODY -->
-            <div class="content-body">
+            <section class="payment-intro">
+                <div><p>ADMINISTRASI SISWA</p><h2>Ringkasan pembayaran</h2><span>{{ $data_siswa->nama }} · {{ $data_kelas->nama_ruang }} · T.A. 2026/2027</span></div>
+                <span class="payment-period"><i class="fa-regular fa-calendar"></i> Periode 2026/2027</span>
+            </section>
 
-                <!-- FLASH MESSAGES / ERROR TOAST -->
-                @if(session('eror'))
-                    <div class="alert alert-danger" id="errorToast">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                            <div>
-                                <p>
-                                    <i class="fas fa-exclamation-circle" style="color: #e63946;"></i>
-                                    {{ session('eror') }}
-                                </p>
-                            </div>
-                            <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>
-                        </div>
-                    </div>
-                @endif
+            <section class="payment-summary-grid">
+                <article><span class="summary-icon total"><i class="fa-solid fa-file-invoice"></i></span><div><small>Total tagihan</small><strong>Rp {{ number_format($totalTagihan, 0, ',', '.') }}</strong><em>Seluruh periode</em></div></article>
+                <article><span class="summary-icon paid"><i class="fa-solid fa-circle-check"></i></span><div><small>Sudah dibayar</small><strong>Rp {{ number_format($totalDibayar, 0, ',', '.') }}</strong><em>{{ count($riwayat) - count($tagihanAktif) }} transaksi lunas</em></div></article>
+                <article><span class="summary-icon due"><i class="fa-solid fa-clock"></i></span><div><small>Sisa tagihan</small><strong>Rp {{ number_format($sisaTagihan, 0, ',', '.') }}</strong><em>{{ count($tagihanAktif) }} tagihan perlu ditinjau</em></div></article>
+            </section>
 
-                {{-- Data Dummy untuk Pengujian (3 contoh per kategori, termasuk yang sudah Lunas) --}}
-                @php
-                    $dummy_ipp = [
-                        (object)[
-                            'tanggal' => '12 Feb 2026',
-                            'nama_tagihan' => 'IPP Bulan Februari 2026',
-                            'jenis' => 'IPP Bulanan',
-                            'keterangan' => 'Pembayaran via Transfer Bank',
-                            'nominal' => 500000,
-                            'status' => 'lunas'
-                        ],
-                        (object)[
-                            'tanggal' => '12 Mar 2026',
-                            'nama_tagihan' => 'IPP Bulan Maret 2026',
-                            'jenis' => 'IPP Bulanan',
-                            'keterangan' => 'Pembayaran via Transfer Bank',
-                            'nominal' => 500000,
-                            'status' => 'lunas'
-                        ],
-                        (object)[
-                            'tanggal' => '12 Apr 2026',
-                            'nama_tagihan' => 'IPP Bulan April 2026',
-                            'jenis' => 'IPP Bulanan',
-                            'keterangan' => 'Menunggu konfirmasi pembayaran',
-                            'nominal' => 500000,
-                            'status' => 'belum'
-                        ],
-                    ];
+            <section class="payment-layout">
+                <article class="payment-card current-bills">
+                    <div class="payment-card-heading"><div><p>PERLU PERHATIAN</p><h3>Tagihan aktif</h3></div><span class="item-count">{{ count($tagihanAktif) }} tagihan</span></div>
+                    @forelse($tagihanAktif as $tagihan)
+                        <div class="current-bill-item"><span class="bill-icon"><i class="fa-solid fa-wallet"></i></span><div><strong>{{ $tagihan->nama_tagihan }}</strong><p>{{ $tagihan->keterangan }}</p><small><i class="fa-regular fa-calendar"></i> {{ $tagihan->tanggal }}</small></div><div class="bill-amount"><strong>Rp {{ number_format($tagihan->nominal, 0, ',', '.') }}</strong><span>Menunggu pembayaran</span></div></div>
+                    @empty
+                        <div class="payment-empty"><i class="fa-solid fa-circle-check"></i><strong>Tidak ada tagihan aktif</strong><p>Seluruh tagihan pada periode ini telah lunas.</p></div>
+                    @endforelse
+                </article>
 
-                    $dummy_pangkal = [
-                        (object)[
-                            'tanggal' => '10 Jul 2025',
-                            'nama_tagihan' => 'Uang Pangkal Tahun Ajaran 2025/2026',
-                            'jenis' => 'Uang Pangkal',
-                            'keterangan' => 'Pembayaran via Transfer Bank',
-                            'nominal' => 900000,
-                            'status' => 'lunas'
-                        ],
-                        (object)[
-                            'tanggal' => '10 Jul 2026',
-                            'nama_tagihan' => 'Uang Pangkal Tahun Ajaran 2026/2027',
-                            'jenis' => 'Uang Pangkal',
-                            'keterangan' => 'Pembayaran via Transfer Bank',
-                            'nominal' => 1000000,
-                            'status' => 'lunas'
-                        ],
-                        (object)[
-                            'tanggal' => '10 Jul 2027',
-                            'nama_tagihan' => 'Uang Pangkal Tahun Ajaran 2027/2028',
-                            'jenis' => 'Uang Pangkal',
-                            'keterangan' => 'Menunggu konfirmasi pembayaran',
-                            'nominal' => 1100000,
-                            'status' => 'belum'
-                        ],
-                    ];
+                <article class="payment-card payment-guide">
+                    <span class="guide-icon"><i class="fa-solid fa-circle-info"></i></span><h3>Butuh bantuan pembayaran?</h3><p>Hubungi bagian administrasi sekolah apabila terdapat perbedaan data atau kendala pembayaran.</p><div><i class="fa-solid fa-clock"></i><span>Senin–Jumat, 07.00–14.00 WITA</span></div><div><i class="fa-solid fa-building"></i><span>Loket administrasi sekolah</span></div>
+                </article>
+            </section>
 
-                    $dummy_pendidikan = [
-                        (object)[
-                            'tanggal' => '05 Jan 2026',
-                            'nama_tagihan' => 'Dana Pengembangan Pendidikan 2026',
-                            'jenis' => 'Dana Pendidikan',
-                            'keterangan' => 'Pembayaran via Transfer Bank',
-                            'nominal' => 750000,
-                            'status' => 'lunas'
-                        ],
-                        (object)[
-                            'tanggal' => '05 Jan 2027',
-                            'nama_tagihan' => 'Dana Pengembangan Pendidikan 2027',
-                            'jenis' => 'Dana Pendidikan',
-                            'keterangan' => 'Pembayaran via Transfer Bank',
-                            'nominal' => 800000,
-                            'status' => 'lunas'
-                        ],
-                        (object)[
-                            'tanggal' => '05 Jan 2028',
-                            'nama_tagihan' => 'Dana Pengembangan Pendidikan 2028',
-                            'jenis' => 'Dana Pendidikan',
-                            'keterangan' => 'Menunggu konfirmasi pembayaran',
-                            'nominal' => 850000,
-                            'status' => 'belum'
-                        ],
-                    ];
-
-                    // === TAMBAHAN: dummy kategori baru "Pemeliharaan" ===
-                    $dummy_pemeliharaan = [
-                        (object)[
-                            'tanggal' => '15 Mei 2026',
-                            'nama_tagihan' => 'Pemeliharaan Fasilitas Semester Genap 2026',
-                            'jenis' => 'Pemeliharaan Fasilitas',
-                            'keterangan' => 'Pembayaran via Transfer Bank',
-                            'nominal' => 400000,
-                            'status' => 'lunas'
-                        ],
-                        (object)[
-                            'tanggal' => '15 Nov 2026',
-                            'nama_tagihan' => 'Pemeliharaan Fasilitas Semester Ganjil 2026',
-                            'jenis' => 'Pemeliharaan Fasilitas',
-                            'keterangan' => 'Pembayaran via Transfer Bank',
-                            'nominal' => 400000,
-                            'status' => 'lunas'
-                        ],
-                        (object)[
-                            'tanggal' => '15 Mei 2027',
-                            'nama_tagihan' => 'Pemeliharaan Fasilitas Semester Genap 2027',
-                            'jenis' => 'Pemeliharaan Fasilitas',
-                            'keterangan' => 'Menunggu konfirmasi pembayaran',
-                            'nominal' => 450000,
-                            'status' => 'belum'
-                        ],
-                    ];
-
-                    // Gunakan $riwayat_pembayaran dari Controller jika ada, kelompokkan per kategori berdasarkan "jenis".
-                    // Kalau tidak ada / tidak ada yang cocok di suatu kategori, pakai data dummy kategori itu.
-                    $riwayat_pembayaran = $riwayat_pembayaran ?? [];
-
-                    $list_ipp = array_values(array_filter($riwayat_pembayaran, fn($item) => str_contains(strtolower($item->jenis), 'ipp')));
-                    $list_ipp = count($list_ipp) > 0 ? $list_ipp : $dummy_ipp;
-
-                    $list_pangkal = array_values(array_filter($riwayat_pembayaran, fn($item) => str_contains(strtolower($item->jenis), 'pangkal')));
-                    $list_pangkal = count($list_pangkal) > 0 ? $list_pangkal : $dummy_pangkal;
-
-                    $list_pendidikan = array_values(array_filter($riwayat_pembayaran, fn($item) => str_contains(strtolower($item->jenis), 'pendidikan')));
-                    $list_pendidikan = count($list_pendidikan) > 0 ? $list_pendidikan : $dummy_pendidikan;
-
-                    // === TAMBAHAN: kategori "Pemeliharaan" — pakai data dummy langsung dulu (belum ada sumber data asli) ===
-                    $list_pemeliharaan = $dummy_pemeliharaan;
-
-                    // === TAMBAHAN: total nominal per kategori, untuk kartu ringkasan
-                    $total_ipp = array_sum(array_column($list_ipp, 'nominal'));
-                    $total_pangkal = array_sum(array_column($list_pangkal, 'nominal'));
-                    $total_pendidikan = array_sum(array_column($list_pendidikan, 'nominal'));
-                    $total_pemeliharaan = array_sum(array_column($list_pemeliharaan, 'nominal'));
-
-                    // === TAMBAHAN: Total Tagihan, Sudah Dibayar, Sisa Tunggakan — dihitung dari gabungan 4 kategori ===
-                    $semua_transaksi = array_merge($list_ipp, $list_pangkal, $list_pendidikan, $list_pemeliharaan);
-                    $total_tagihan_keseluruhan = array_sum(array_column($semua_transaksi, 'nominal'));
-                    $sudah_dibayar = array_sum(array_map(fn($item) => $item->status === 'lunas' ? $item->nominal : 0, $semua_transaksi));
-                    $sisa_tunggakan = $total_tagihan_keseluruhan - $sudah_dibayar;
-                @endphp
-
-                <!-- RINGKASAN TAGIHAN -->
-                <h3 class="page-section-title">Ringkasan Tagihan</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-info-light">
-                            <i class="fa-solid fa-file-invoice text-info"></i>
-                        </div>
-                        <div class="stat-data">
-                            <span class="label">Total Tagihan</span>
-                            <h3>Rp {{ number_format($total_tagihan_keseluruhan, 0, ',', '.') }}</h3>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon bg-success-light">
-                            <i class="fa-solid fa-circle-check text-success"></i>
-                        </div>
-                        <div class="stat-data">
-                            <span class="label">Sudah Dibayar</span>
-                            <h3>Rp {{ number_format($sudah_dibayar, 0, ',', '.') }}</h3>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon bg-warning-light">
-                            <i class="fa-solid fa-circle-exclamation text-warning"></i>
-                        </div>
-                        <div class="stat-data">
-                            <span class="label">Sisa Tunggakan</span>
-                            <h3>Rp {{ number_format($sisa_tunggakan, 0, ',', '.') }}</h3>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- === TAMBAHAN: Rincian Total Tagihan per Kategori === -->
-                <h3 class="page-section-title">Rincian Tagihan per Kategori</h3>
-                <div class="stats-grid stats-grid-4col">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-info-light">
-                            <i class="fa-solid fa-file-invoice-dollar text-info"></i>
-                        </div>
-                        <div class="stat-data">
-                            <span class="label">Total Tagihan IPP</span>
-                            <h3>Rp {{ number_format($total_ipp, 0, ',', '.') }}</h3>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon bg-success-light">
-                            <i class="fa-solid fa-hand-holding-dollar text-success"></i>
-                        </div>
-                        <div class="stat-data">
-                            <span class="label">Total Tagihan Pangkal</span>
-                            <h3>Rp {{ number_format($total_pangkal, 0, ',', '.') }}</h3>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon bg-warning-light">
-                            <i class="fa-solid fa-book text-warning"></i>
-                        </div>
-                        <div class="stat-data">
-                            <span class="label">Total Tagihan Pendidikan</span>
-                            <h3>Rp {{ number_format($total_pendidikan, 0, ',', '.') }}</h3>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon bg-total-light">
-                            <i class="fa-solid fa-screwdriver-wrench text-total"></i>
-                        </div>
-                        <div class="stat-data">
-                            <span class="label">Total Tagihan Pemeliharaan</span>
-                            <h3>Rp {{ number_format($total_pemeliharaan, 0, ',', '.') }}</h3>
-                        </div>
-                    </div>
-                </div>
-                <!-- === /TAMBAHAN === -->
-
-                <!-- === TAMBAHAN: 4 Kartu Riwayat Transaksi (IPP / Pangkal / Pendidikan / Pemeliharaan), tersusun ke bawah === -->
-                <div class="payment-columns">
-
-                    <!-- KARTU 1: RIWAYAT IPP (dengan filter Bulan & Status) -->
-                    <div class="card card-table">
-                        <div class="card-header">
-                            <h4><i class="fa-solid fa-clock-rotate-left"></i> Riwayat IPP</h4>
-                        </div>
-
-                        <div class="table-filters">
-                            <select id="filterBulanIpp">
-                                <option value="">Semua Bulan</option>
-                                <option value="Jan">Januari</option>
-                                <option value="Feb">Februari</option>
-                                <option value="Mar">Maret</option>
-                                <option value="Apr">April</option>
-                                <option value="Mei">Mei</option>
-                                <option value="Jun">Juni</option>
-                                <option value="Jul">Juli</option>
-                                <option value="Agu">Agustus</option>
-                                <option value="Sep">September</option>
-                                <option value="Okt">Oktober</option>
-                                <option value="Nov">November</option>
-                                <option value="Des">Desember</option>
-                            </select>
-                            <select id="filterStatusIpp">
-                                <option value="">Semua Status</option>
-                                <option value="lunas">Lunas</option>
-                                <option value="belum">Belum Lunas</option>
-                            </select>
-                        </div>
-
-                        @if (count($list_ipp) > 0)
-                            <div class="table-wrap">
-                                <table class="payment-table" id="tableIpp">
-                                    <thead>
-                                        <tr>
-                                            <th>Tanggal</th>
-                                            <th>Nama Tagihan</th>
-                                            <th>Jenis Pembayaran</th>
-                                            <th class="text-right">Nominal</th>
-                                            <th>Status</th>
-                                            <th class="text-center">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($list_ipp as $item)
-                                            <tr data-bulan="{{ explode(' ', $item->tanggal)[1] ?? '' }}" data-status="{{ $item->status === 'lunas' ? 'lunas' : 'belum' }}">
-                                                <td>{{ $item->tanggal }}</td>
-                                                <td><strong>{{ $item->nama_tagihan }}</strong></td>
-                                                <td>
-                                                    <div class="cell-jenis">
-                                                        <span>{{ $item->jenis }}</span>
-                                                        @if(!empty($item->keterangan))
-                                                            <span class="sub">{{ $item->keterangan }}</span>
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                                <td class="text-right cell-nominal">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                                                <td>
-                                                    @if ($item->status === 'lunas')
-                                                        <span class="badge-status badge-lunas">
-                                                            <i class="fa-solid fa-circle"></i> Lunas
-                                                        </span>
-                                                    @else
-                                                        <span class="badge-status badge-belum">
-                                                            <i class="fa-solid fa-circle"></i> Belum Lunas
-                                                        </span>
-                                                    @endif
-                                                </td>
-                                                <td class="text-center">
-                                                    <a href="/sk/dsp" class="btn-action-download" title="Download File">
-                                                        <i class="fa-solid fa-download"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <div class="table-empty">
-                                <i class="fa-solid fa-receipt"></i>
-                                <p>Belum ada riwayat transaksi IPP.</p>
-                            </div>
-                        @endif
-                    </div>
-
-                    <!-- KARTU 2: RIWAYAT PANGKAL -->
-                    <div class="card card-table">
-                        <div class="card-header">
-                            <h4><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pangkal</h4>
-                        </div>
-
-                        @if (count($list_pangkal) > 0)
-                            <div class="table-wrap">
-                                <table class="payment-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Tanggal</th>
-                                            <th>Nama Tagihan</th>
-                                            <th>Jenis Pembayaran</th>
-                                            <th class="text-right">Nominal</th>
-                                            <th>Status</th>
-                                            <th class="text-center">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($list_pangkal as $item)
-                                            <tr>
-                                                <td>{{ $item->tanggal }}</td>
-                                                <td><strong>{{ $item->nama_tagihan }}</strong></td>
-                                                <td>
-                                                    <div class="cell-jenis">
-                                                        <span>{{ $item->jenis }}</span>
-                                                        @if(!empty($item->keterangan))
-                                                            <span class="sub">{{ $item->keterangan }}</span>
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                                <td class="text-right cell-nominal">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                                                <td>
-                                                    @if ($item->status === 'lunas')
-                                                        <span class="badge-status badge-lunas">
-                                                            <i class="fa-solid fa-circle"></i> Lunas
-                                                        </span>
-                                                    @else
-                                                        <span class="badge-status badge-belum">
-                                                            <i class="fa-solid fa-circle"></i> Belum Lunas
-                                                        </span>
-                                                    @endif
-                                                </td>
-                                                <td class="text-center">
-                                                    <a href="/sk/dsp" class="btn-action-download" title="Download File">
-                                                        <i class="fa-solid fa-download"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <div class="table-empty">
-                                <i class="fa-solid fa-receipt"></i>
-                                <p>Belum ada riwayat transaksi Pangkal.</p>
-                            </div>
-                        @endif
-                    </div>
-
-                    <!-- KARTU 3: RIWAYAT PENDIDIKAN -->
-                    <div class="card card-table">
-                        <div class="card-header">
-                            <h4><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pendidikan</h4>
-                        </div>
-
-                        @if (count($list_pendidikan) > 0)
-                            <div class="table-wrap">
-                                <table class="payment-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Tanggal</th>
-                                            <th>Nama Tagihan</th>
-                                            <th>Jenis Pembayaran</th>
-                                            <th class="text-right">Nominal</th>
-                                            <th>Status</th>
-                                            <th class="text-center">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($list_pendidikan as $item)
-                                            <tr>
-                                                <td>{{ $item->tanggal }}</td>
-                                                <td><strong>{{ $item->nama_tagihan }}</strong></td>
-                                                <td>
-                                                    <div class="cell-jenis">
-                                                        <span>{{ $item->jenis }}</span>
-                                                        @if(!empty($item->keterangan))
-                                                            <span class="sub">{{ $item->keterangan }}</span>
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                                <td class="text-right cell-nominal">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                                                <td>
-                                                    @if ($item->status === 'lunas')
-                                                        <span class="badge-status badge-lunas">
-                                                            <i class="fa-solid fa-circle"></i> Lunas
-                                                        </span>
-                                                    @else
-                                                        <span class="badge-status badge-belum">
-                                                            <i class="fa-solid fa-circle"></i> Belum Lunas
-                                                        </span>
-                                                    @endif
-                                                </td>
-                                                <td class="text-center">
-                                                    <a href="/sk/dsp" class="btn-action-download" title="Download File">
-                                                        <i class="fa-solid fa-download"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <div class="table-empty">
-                                <i class="fa-solid fa-receipt"></i>
-                                <p>Belum ada riwayat transaksi Pendidikan.</p>
-                            </div>
-                        @endif
-                    </div>
-
-                    <!-- === TAMBAHAN: KARTU 4: RIWAYAT PEMELIHARAAN === -->
-                    <div class="card card-table">
-                        <div class="card-header">
-                            <h4><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pemeliharaan</h4>
-                        </div>
-
-                        @if (count($list_pemeliharaan) > 0)
-                            <div class="table-wrap">
-                                <table class="payment-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Tanggal</th>
-                                            <th>Nama Tagihan</th>
-                                            <th>Jenis Pembayaran</th>
-                                            <th class="text-right">Nominal</th>
-                                            <th>Status</th>
-                                            <th class="text-center">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($list_pemeliharaan as $item)
-                                            <tr>
-                                                <td>{{ $item->tanggal }}</td>
-                                                <td><strong>{{ $item->nama_tagihan }}</strong></td>
-                                                <td>
-                                                    <div class="cell-jenis">
-                                                        <span>{{ $item->jenis }}</span>
-                                                        @if(!empty($item->keterangan))
-                                                            <span class="sub">{{ $item->keterangan }}</span>
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                                <td class="text-right cell-nominal">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                                                <td>
-                                                    @if ($item->status === 'lunas')
-                                                        <span class="badge-status badge-lunas">
-                                                            <i class="fa-solid fa-circle"></i> Lunas
-                                                        </span>
-                                                    @else
-                                                        <span class="badge-status badge-belum">
-                                                            <i class="fa-solid fa-circle"></i> Belum Lunas
-                                                        </span>
-                                                    @endif
-                                                </td>
-                                                <td class="text-center">
-                                                    <a href="/sk/dsp" class="btn-action-download" title="Download File">
-                                                        <i class="fa-solid fa-download"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <div class="table-empty">
-                                <i class="fa-solid fa-receipt"></i>
-                                <p>Belum ada riwayat transaksi Pemeliharaan.</p>
-                            </div>
-                        @endif
-                    </div>
-                    <!-- === /TAMBAHAN KARTU 4 === -->
-
-                </div>
-                <!-- === /TAMBAHAN === -->
-
-            </div>
+            <section class="payment-card history-card">
+                <div class="payment-card-heading"><div><p>ARSIP PEMBAYARAN</p><h3>Riwayat transaksi</h3></div><span class="item-count">{{ count($riwayat) }} transaksi</span></div>
+                <div class="payment-filter"><i class="fa-solid fa-magnifying-glass"></i><input type="search" id="paymentSearch" placeholder="Cari nama tagihan atau jenis pembayaran..."></div>
+                <div class="payment-table-wrap"><table class="payment-table"><thead><tr><th>Tanggal</th><th>Tagihan</th><th>Jenis</th><th>Nominal</th><th>Status</th><th>Slip</th></tr></thead><tbody id="paymentRows">
+                    @foreach($riwayat as $item)
+                        <tr><td>{{ $item->tanggal }}</td><td><strong>{{ $item->nama_tagihan }}</strong><span>{{ $item->keterangan }}</span></td><td>{{ $item->jenis }}</td><td class="amount">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td><td><span class="payment-badge {{ $item->status === 'lunas' ? 'paid' : 'pending' }}"><i class="fa-solid fa-circle"></i> {{ $item->status === 'lunas' ? 'Lunas' : 'Belum lunas' }}</span></td><td><a href="/sk/dsp" class="download-slip" aria-label="Lihat slip {{ $item->nama_tagihan }}"><i class="fa-solid fa-download"></i></a></td></tr>
+                    @endforeach
+                </tbody></table></div>
+            </section>
         </main>
     </div>
-<x-chatbot />
     <script>
-        function closeToast() {
-            const toast = document.getElementById('errorToast');
-            if (toast) {
-                toast.classList.add('fade-out');
-                setTimeout(() => {
-                    toast.remove();
-                }, 400);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const toast = document.getElementById('errorToast');
-            if (toast) {
-                setTimeout(() => {
-                    closeToast();
-                }, 5000);
-            }
-        });
-
-        // === TAMBAHAN: Filter Bulan & Status khusus tabel Riwayat IPP ===
-        const filterBulanIpp = document.getElementById('filterBulanIpp');
-        const filterStatusIpp = document.getElementById('filterStatusIpp');
-        const tableIpp = document.getElementById('tableIpp');
-
-        function terapkanFilterIpp() {
-            if (!tableIpp) return;
-            const bulan = filterBulanIpp.value;
-            const status = filterStatusIpp.value;
-
-            tableIpp.querySelectorAll('tbody tr').forEach(row => {
-                const cocokBulan = !bulan || row.dataset.bulan === bulan;
-                const cocokStatus = !status || row.dataset.status === status;
-                row.style.display = (cocokBulan && cocokStatus) ? '' : 'none';
-            });
-        }
-
-        if (filterBulanIpp && filterStatusIpp) {
-            filterBulanIpp.addEventListener('change', terapkanFilterIpp);
-            filterStatusIpp.addEventListener('change', terapkanFilterIpp);
-        }
-        // === /TAMBAHAN ===
+        function closeToast(){document.getElementById('errorToast')?.remove();}
+        window.setTimeout(closeToast,5000);
+        document.getElementById('paymentSearch')?.addEventListener('input', function(){const query=this.value.toLowerCase();document.querySelectorAll('#paymentRows tr').forEach(function(row){row.hidden=!row.textContent.toLowerCase().includes(query);});});
     </script>
 </body>
 </html>

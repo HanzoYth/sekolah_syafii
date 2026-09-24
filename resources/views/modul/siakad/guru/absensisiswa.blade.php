@@ -14,11 +14,11 @@
 
     <div class="dashboard-container">
 
-        <x-siakad_teacher.sidebar_siakad />
+        <x-siakad.sidebar />
 
         <main class="main-content teacher-attendance">
 
-            <x-siakad_teacher.topbar
+            <x-siakad.topbar
                 name="Ustadzah Fitri"
                 position="Guru Mata Pelajaran"
                 initials="UF"

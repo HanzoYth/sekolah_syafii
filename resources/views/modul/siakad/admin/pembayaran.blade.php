@@ -307,6 +307,7 @@
 
         {{-- MAIN CONTENT --}}
         <main class="main-content">
+            <x-siakad.topbar title="Pembayaran IPP" description="Kelola pembayaran iuran pendidikan siswa." position="Administrator SIAKAD" initials="AD" />
 
             {{-- TOPBAR / HEADER --}}
             <header class="topbar">

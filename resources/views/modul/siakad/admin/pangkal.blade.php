@@ -26,6 +26,7 @@
 
         {{-- MAIN CONTENT --}}
         <main class="main-content">
+            <x-siakad.topbar title="Pembayaran Uang Pangkal" description="Kelola transaksi uang pangkal siswa." position="Administrator SIAKAD" initials="AD" />
 
             {{-- TOPBAR / HEADER --}}
             <header class="topbar">

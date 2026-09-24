@@ -23,6 +23,7 @@
 
         {{-- MAIN CONTENT --}}
         <main class="main-content">
+            <x-siakad.topbar title="Detail Pembayaran" description="Tinjau informasi transaksi pembayaran siswa." position="Administrator SIAKAD" initials="AD" />
 
             {{-- TOPBAR --}}
             <header class="topbar">

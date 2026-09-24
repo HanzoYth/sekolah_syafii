@@ -25,7 +25,7 @@
             {{-- Dashboard: umum untuk semua role --}}
             <div class="menu-section" id="section-umum">
                 <ul class="menu-list">
-                    <li class="menu-item active">
+                    <li class="menu-item {{ request()->is('sk/das', 'sk/dsg', 'sk/dbs') ? 'active' : '' }}">
                         @if (session('role') == "a")
                             <a href="/sk/das">
                                 <i class="fa-solid fa-house"></i>
@@ -48,65 +48,41 @@
 
             {{-- ================= ROLE ADMIN ================= --}}
             @if (session('role') === 'a')
-                <div class="menu-section" id="section-admin">
-                    <span class="menu-label">ADMINISTRATOR</span>
+                <div class="menu-section" id="section-admin-akademik">
+                    <span class="menu-label">AKADEMIK</span>
                     <ul class="menu-list">
-                        {{-- Dropdown Submenu Pembayaran --}}
-                        <li class="menu-item">
-                            <details class="submenu-wrapper">
+                        <li class="menu-item {{ request()->is('sk/ds', 'sk/dls/*', 'sk/dts') ? 'active' : '' }}">
+                            <a href="/sk/ds">
+                                <i class="fa-solid fa-user-graduate"></i>
+                                <span>Data Siswa</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->is('sk/tk') ? 'active' : '' }}">
+                            <a href="/sk/tk">
+                                <i class="fa-solid fa-school"></i>
+                                <span>Kelola Kelas</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="menu-section" id="section-admin-pembayaran">
+                    <span class="menu-label">ADMINISTRASI PEMBAYARAN</span>
+                    <ul class="menu-list">
+                        <li class="menu-item {{ request()->is('sk/bt', 'sk/pb', 'sk/pp', 'sk/pd', 'sk/ppl') ? 'active' : '' }}">
+                            <details class="submenu-wrapper" {{ request()->is('sk/bt', 'sk/pb', 'sk/pp', 'sk/pd', 'sk/ppl') ? 'open' : '' }}>
                                 <summary class="menu-link">
-                                    <div class="menu-link-content">
-                                        <i class="fa-solid fa-file-invoice-dollar"></i>
-                                        <span>Pembayaran</span>
-                                    </div>
+                                    <div class="menu-link-content"><i class="fa-solid fa-file-invoice-dollar"></i><span>Pembayaran</span></div>
                                     <i class="fa-solid fa-chevron-down submenu-icon"></i>
                                 </summary>
                                 <ul class="submenu-list">
-                                    <li class="submenu-item">
-                                        <a href="/sk/bt">
-                                            <i class="fa-solid fa-file-circle-plus"></i>
-                                            <span>Buat Tagihan</span>
-                                        </a>
-                                    </li>
-                                    <li class="submenu-item">
-                                        <a href="/sk/pb">
-                                            <i class="fa-solid fa-wallet"></i>
-                                            <span>Pembayaran IPP</span>
-                                        </a>
-                                    </li>
-                                    <li class="submenu-item">
-                                        <a href="/sk/pp">
-                                            <i class="fa-solid fa-piggy-bank"></i>
-                                            <span>Pembayaran Pangkal</span>
-                                        </a>
-                                    </li>
-                                    <li class="submenu-item">
-                                        <a href="/sk/pd">
-                                            <i class="fa-solid fa-graduation-cap"></i>
-                                            <span>Pembayaran pendidikan</span>
-                                        </a>
-                                    </li>
-                                     <li class="submenu-item">
-                                         <a href="/sk/ppl">
-                                             <i class="fa-solid fa-wrench"></i>
-                                           <span>Pembayaran pemeliharaan</span>
-                                         </a>
-                                    </li>
+                                    <li class="submenu-item"><a href="/sk/bt"><i class="fa-solid fa-file-circle-plus"></i><span>Buat Tagihan</span></a></li>
+                                    <li class="submenu-item"><a href="/sk/pb"><i class="fa-solid fa-wallet"></i><span>Pembayaran IPP</span></a></li>
+                                    <li class="submenu-item"><a href="/sk/pp"><i class="fa-solid fa-money-check-dollar"></i><span>Uang Pangkal</span></a></li>
+                                    <li class="submenu-item"><a href="/sk/pd"><i class="fa-solid fa-graduation-cap"></i><span>Pendidikan</span></a></li>
+                                    <li class="submenu-item"><a href="/sk/ppl"><i class="fa-solid fa-screwdriver-wrench"></i><span>Pemeliharaan</span></a></li>
                                 </ul>
                             </details>
-                        </li>
-
-                        <li class="menu-item">
-                            <a href="/sk/ds">
-                                <i class="fa-solid fa-id-card"></i>
-                                <span>Daftar Siswa</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="/sk/tk">
-                                <i class="fa-solid fa-door-open"></i>
-                                <span>tambah kelas</span>
-                            </a>
                         </li>
                     </ul>
                 </div>
@@ -117,7 +93,7 @@
                     <span class="menu-label">MENU GURU</span>
                     <ul class="menu-list">
                         <li class="menu-item">
-                            <a href="/sk/pb">
+                            <a href="/sk/gsp">
                                 <i class="fa-solid fa-file-invoice-dollar"></i>
                                 <span>Slip Pembayaran</span>
                             </a>
@@ -131,7 +107,7 @@
                         <li class="menu-item">
                             <a href='/sk/ass'>
                                 <i class="fa-solid fa-id-card"></i>
-                                <span>absenSiswa</span>
+                                <span>Absensi</span>
                             </a>
                         </li>
                     </ul>
