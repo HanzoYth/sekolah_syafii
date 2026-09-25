@@ -38,15 +38,22 @@ const dataListWrapper = document.getElementById("data-list-wrapper");
 const dataListBody = document.getElementById("data-list-body");
 const emptyStateText = document.getElementById("empty-state-text");
 
+// Menyimpan role yang sedang aktif supaya bisa dipakai lagi
+// setelah proses hapus (untuk reload daftar).
+let currentActiveRole = null;
+
 roleTabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
         roleTabButtons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
+        currentActiveRole = btn.dataset.role;
         muatDaftarKode(btn.dataset.role);
     });
 });
 
 function muatDaftarKode(role){
+    currentActiveRole = role;
+
     fetch(`/ab/idnt/${role}`)
         .then(res => {
             if (!res.ok) throw new Error("Gagal mengambil data");
@@ -75,6 +82,11 @@ function muatDaftarKode(role){
                             ${sudahDipakai ? 'Sudah Dipakai' : 'Belum Dipakai'}
                         </span>
                     </td>
+                    <td>
+                        <button type="button" class="btn-hapus-kode" data-id="${item.id}">
+                            <i class="fa-solid fa-trash"></i> Hapus
+                        </button>
+                    </td>
                 `;
                 dataListBody.appendChild(tr);
             });
@@ -85,4 +97,22 @@ function muatDaftarKode(role){
             emptyStateText.textContent = "Terjadi kesalahan saat mengambil data.";
             emptyStateText.classList.remove("hide");
         });
+}
+
+/* ================= TAMBAHAN: HAPUS KODE ================= */
+
+// Event delegation: tombol hapus dibuat dinamis lewat innerHTML,
+// jadi listener dipasang di parent (dataListBody), bukan per tombol.
+dataListBody.addEventListener("click", (e) => {
+    const btn = e.target.closest(".btn-hapus-kode");
+    if (!btn) return;
+
+    const id = btn.dataset.id;
+    if (!confirm("Yakin ingin menghapus kode ini?")) return;
+
+    hapusKode(id);
+});
+
+function hapusKode(id){
+    window.location.href = `/hpidnt/${id}`;
 }

@@ -24,12 +24,19 @@ class identitasController extends Controller
             "aktif" => 0,
         ]);
 
-        return redirect("/idnt");
+        return back()->with("success","berhasil tambah kode");
     }
 
     function ambil_DataIdentitas($role){
         $data_identitas = identitas_rahasia::where("jenis_role",$role)->get();
 
         return response()->json($data_identitas);
+    }
+
+    function hapus_DataIdentitas($id){
+        $data_identitas = identitas_rahasia::where("id",$id)->first();
+        $data_identitas->delete();
+
+        return back()->with("success","berhasil hapus kode");
     }
 }

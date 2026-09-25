@@ -51,7 +51,6 @@
                     </div>
                 </div>
                 <div class="card-body grid-cols-3">
-                    <input type="hidden" id="jumlahPotonganKehadiran" value="{{$data_gaji->ketidakhadiran}}">
                     <div class="form-group">
                         <label>Nama Guru</label>
                         <input type="text" value="{{$data_guru->nama}}" class="form-control readonly" readonly>
@@ -75,7 +74,7 @@
                     <div class="form-group">
                         <label>Jumlah Tidak Hadir (Hari)</label>
                         <div class="input-unit">
-                            <input type="number" id="absenHari" name="ketidakhadiran" value="{{$data_gaji->ketidakhadiran}}" class="form-control" placeholder="0">
+                            <input type="number" id="absenHari" name="ketidakhadiran" value="{{$data_gaji->ketidakhadiran ?? $jumlah_tidak_hadir}}" class="form-control" placeholder="0">
                             <span class="unit-text">Hari</span>
                         </div>
                     </div>
@@ -344,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const totalPendapatan = honor + tugasTambahan + dynamicTunjanganTotal;
 
         // B. Total Potongan
-        const potAbsen = getVal('potonganAbsen') * parseInt(document.getElementById("jumlahPotonganKehadiran").value);
+        const potAbsen = getVal('potonganAbsen') * parseInt(document.getElementById("absenHari").value);
         const potTelat = getVal('potonganTelat') * parseInt(document.getElementById("telatMenit").value);
         const potKasbon = getVal('potonganKasbon');
         const totalPotongan = potAbsen + potTelat + potKasbon;
@@ -371,7 +370,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Event listener pada perubahan input
     document.getElementById("absenHari").addEventListener("input", function() {
         calculateAll();
-        console.log('e');
     });
     document.getElementById('formEditGaji').addEventListener('input', function(e) {
         if (e.target.tagName === 'INPUT') {

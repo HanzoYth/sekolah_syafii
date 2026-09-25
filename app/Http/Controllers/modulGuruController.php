@@ -1046,10 +1046,20 @@ class modulGuruController extends Controller
             $awal_bulan = Carbon::parse($data_priode->creted_at)->startOfMonth();
             $akhir_bulan = Carbon::parse($data_priode->creted_at)->endOfMonth();
             $jumlah_hari_aktif = 0;
+            $jumlah_tidak_hadir = 0;
 
             for ($data  = $awal_bulan->copy() ; $data <= $akhir_bulan; $data->addDays()){
                 if (strtolower(Carbon::parse($data)->translatedFormat("l")) != "minggu"){
                     $jumlah_hari_aktif ++;
+                    if (Carbon::parse($data)->translatedFormat("d") < Carbon::now()->translatedFormat("d")){
+                        if (master_absen_guru::where("guru_id",session("id"))->whereMonth("tgl_masuk",Carbon::now()->translatedFormat("m"))->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->exists()){
+                            if(master_absen_guru::where("guru_id",session("id"))->whereMonth("tgl_masuk",Carbon::now()->translatedFormat("m"))->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->where("status_kehadiran","!=","h")->exists()){
+                                $jumlah_tidak_hadir ++;
+                            }
+                        }else{
+                            $jumlah_tidak_hadir ++;
+                        }
+                    }
                 }
             }
             return view("modul/guru/a/edit_gaji_guru",[
@@ -1060,6 +1070,7 @@ class modulGuruController extends Controller
                 "jumlah_kehadiran" => $jumlah_kehadiran,
                 "tugas_tambahan" => $data_gaji->tugas_tambahan,
                 "data_gaji" => $data_gaji,
+                "jumlah_tidak_hadir" => $jumlah_tidak_hadir,
                 "data_tunjangan" => $data_tunjangan,
                 "jumlah_hari_aktif" => $jumlah_hari_aktif
             ]);

@@ -34,6 +34,7 @@ Route::get("/mod",[PageController::class,"tampilan_modul"]);
 Route::get("/idnt",[identitasController::class,"tampilan_identitas"]);
 Route::post("/add/idnt",[identitasController::class,"add_identitas"]);
 Route::get("/ab/idnt/{role}",[identitasController::class,"ambil_DataIdentitas"]);
+Route::get("/hpidnt/{id}",[identitasController::class,"hapus_DataIdentitas"]);
 
 // ini route untuk halaman registrasi
 Route::get('/reg',[akunController::class,"tampilan"]);

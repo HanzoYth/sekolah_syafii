@@ -119,6 +119,7 @@
                             <tr>
                                 <th>Kode</th>
                                 <th>Status</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="data-list-body">
@@ -133,6 +134,8 @@
 
         </div>
     </main>
+
+    <x-warning />
 
     <!-- JS untuk memanggil logika generate kamu -->
     <script src="{{asset('js/identitas.js')}}?v={{ time() }}"></script>
