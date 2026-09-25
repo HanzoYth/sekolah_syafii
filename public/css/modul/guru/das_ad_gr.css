@@ -208,9 +208,6 @@ body {
 }
 
 /* --- Stat Cards --- */
-/* auto-fit + minmax: jumlah kolom otomatis menyesuaikan lebar layar
-   DAN jumlah card yang ada, tanpa perlu dipatok angka kolom tetap
-   per breakpoint (mis. repeat(4,1fr) lalu repeat(2,1fr) lalu 1fr). */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -411,6 +408,136 @@ body {
   line-height: 1.5;
 }
 
+/* ==========================================================================
+   Widget Monitoring Absensi Guru (BARU — sebelumnya belum ada stylenya)
+   ========================================================================== */
+
+.admin-presensi-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Box ringkasan "Tepat Waktu" — full width di atas */
+.status-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--cream);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.status-box i {
+  font-size: 26px;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-box h5 {
+  margin: 0 0 3px;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--navy-900);
+}
+
+.status-box p {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-600);
+}
+
+.status-box.status-success {
+  background: var(--success-bg);
+  border-color: rgba(33, 90, 54, 0.25);
+}
+
+.status-box.status-success i {
+  color: var(--success);
+  background: rgba(33, 90, 54, 0.12);
+}
+
+/* Grid 3 kolom: Terlambat / Izin-Sakit / Belum Absen */
+.admin-presensi-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.presensi-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 18px 10px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  text-align: center;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.presensi-stat-item .stat-num {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.presensi-stat-item .stat-desc {
+  font-size: 12px;
+  color: var(--ink-600);
+  font-weight: 500;
+}
+
+/* Effect Hover Pada Card yang Bisa Diklik */
+.clickable-card {
+  cursor: pointer;
+}
+
+.clickable-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--gold-500);
+}
+
+/* --- Ringkasan Penggajian --- */
+.payroll-summary-box {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.payroll-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13.5px;
+  color: var(--ink-600);
+  padding-bottom: 14px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.payroll-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.payroll-row strong {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--navy-900);
+}
+
 /* --- Toast / Alert Error --- */
 .alert-danger {
   position: fixed;
@@ -475,12 +602,6 @@ body {
 @media (max-width: 768px) {
   .main-content { margin-left: 0; }
 
-  /* ===== TOPBAR MOBILE =====
-     - flex-wrap dimatikan (nowrap) supaya judul & foto profil
-       SELALU sebaris horizontal, tidak pecah jadi 2 baris.
-     - padding-right diberi ruang aman supaya teks judul tidak
-       ketutup tombol hamburger sidebar yang fixed di kanan atas.
-     - ukuran teks & avatar dikecilkan supaya muat sebaris. */
   .topbar {
     padding: 14px 16px;
     padding-right: var(--hamburger-safe-space);
@@ -534,13 +655,15 @@ body {
   .stat-data h3 { font-size: 19px; }
 
   .card-body { padding: 18px; }
+
+  .admin-presensi-stats { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .presensi-stat-item { padding: 14px 6px; }
+  .presensi-stat-item .stat-num { font-size: 22px; }
+  .status-box { padding: 14px 16px; gap: 12px; }
+  .status-box i { width: 38px; height: 38px; font-size: 20px; }
 }
 
 @media (max-width: 480px) {
-  /* Tetap dibuat grid 2 kolom (bukan 1fr penuh) supaya card tidak
-     memanjang jadi satu kolom raksasa — jumlah kolom akan otomatis
-     turun ke 1 sendiri hanya jika layar memang lebih sempit dari
-     2 x minmax. */
   .stats-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
 
   .stat-card {
@@ -559,4 +682,9 @@ body {
 
   .announcement-item { flex-direction: column; }
   .badge-date { width: 100%; height: auto; padding: 6px; flex-direction: row; gap: 4px; }
+
+  /* Di layar sangat kecil, 3 kolom kotak Terlambat/Izin-Sakit/Belum Absen
+     ditumpuk 1 kolom biar angka & label tidak sesak. */
+  .admin-presensi-stats { grid-template-columns: 1fr; }
+  .status-box { flex-direction: column; text-align: center; }
 }
