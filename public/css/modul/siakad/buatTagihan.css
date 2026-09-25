@@ -655,3 +655,92 @@ body {
     .modal-footer { flex-direction: column-reverse; gap: 10px; }
     .btn-modal-cancel, .btn-modal-save { width: 100%; justify-content: center; }
 }
+
+/* ------------------------------------------------------------
+   4. PENYELARASAN HALAMAN BUAT TAGIHAN ADMIN SIAKAD
+------------------------------------------------------------ */
+.billing-page {
+    min-height: 100vh;
+    padding: 0 32px 40px;
+    background: #f5f8f6;
+}
+
+.billing-page .filter-card,
+.billing-page .table-card {
+    border: 1px solid #dbe8e1;
+    border-radius: 16px;
+    box-shadow: 0 10px 26px rgba(24, 51, 44, .06);
+}
+
+.billing-page .filter-card {
+    margin-top: 28px;
+    padding: 22px 24px;
+}
+
+.filter-card-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.section-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #177455;
+    font-size: .71rem;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+}
+
+.filter-card-heading h1 {
+    margin: 6px 0 5px;
+    color: #18332c;
+    font-size: 1.45rem;
+    line-height: 1.2;
+}
+
+.filter-card-heading p,
+.table-header p {
+    margin: 0;
+    color: #6b7b75;
+    font-size: .8rem;
+}
+
+.result-counter {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #e5f4ed;
+    color: #286247;
+    font-size: .74rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.billing-page .filter-field label { color: #496258; font-size: .76rem; }
+.billing-page .filter-field input,
+.billing-page .filter-field select { border-color: #cfddd6; }
+.billing-page .filter-field input:focus,
+.billing-page .filter-field select:focus { border-color: #177455; box-shadow: 0 0 0 3px rgba(23, 116, 85, .12); }
+
+.billing-page .table-card { padding: 22px 24px; }
+.billing-page .table-header { margin-bottom: 16px; }
+.billing-page .table-card h4 { color: #18332c; }
+.billing-page th { background: #f3f8f5; color: #45675a; border-bottom-color: #dbe8e1; }
+.billing-page tbody tr:hover { background: #f8fcf9; }
+.empty-row td { padding: 38px 16px; color: #6b7b75; text-align: center; }
+.empty-row i { margin-right: 6px; color: #90a69b; }
+
+@media (max-width: 992px) {
+    .billing-page { width: 100%; margin-left: 0; padding: 0 20px 32px; }
+}
+
+@media (max-width: 576px) {
+    .billing-page { padding: 0 15px 26px; }
+    .billing-page .filter-card,
+    .billing-page .table-card { padding: 18px 16px; }
+    .filter-card-heading { flex-direction: column; }
+}

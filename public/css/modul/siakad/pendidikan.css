@@ -300,3 +300,69 @@
         justify-content: space-between;
     }
 }
+
+/* ------------------------------------------------------------
+   PENYELARASAN HALAMAN PENDIDIKAN ADMIN SIAKAD
+------------------------------------------------------------ */
+.education-page .main-content {
+    min-height: 100vh;
+    padding: 0 32px 40px;
+    background: #f5f8f6;
+}
+
+.education-page .pembayaran-stats {
+    margin-top: 28px;
+    margin-bottom: 20px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.education-page .pembayaran-stats .stat-card {
+    padding: 18px;
+    border-top: 0;
+    border-radius: 16px;
+    box-shadow: 0 5px 15px rgba(24, 51, 44, .05);
+}
+
+.education-page .pembayaran-stats .stat-card h3 { font-size: clamp(1rem, 1.4vw, 1.25rem); }
+.education-page .pembayaran-stats .stat-icon { width: 48px; height: 48px; font-size: 1rem; }
+.education-page .pembayaran-stats .icon-danger { background: #fbeaea; color: #b34d4d; }
+
+.education-page .pembayaran-filter,
+.education-page .table-card {
+    border-color: #dbe8e1;
+    border-radius: 16px;
+    box-shadow: 0 10px 26px rgba(24, 51, 44, .06);
+}
+
+.education-page .pembayaran-filter { margin-bottom: 20px; }
+.filter-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 17px; }
+.filter-heading h4 { margin: 0 0 4px; color: #18332c; }
+.filter-heading p, .table-subtitle { margin: 0; color: #6b7b75; font-size: .78rem; }
+.result-counter { padding: 6px 10px; border-radius: 999px; background: #e5f4ed; color: #286247; font-size: .74rem; font-weight: 700; white-space: nowrap; }
+
+.education-page .pembayaran-filter .filter-group { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.education-page .pembayaran-filter input[type="search"] { width: 100%; height: 42px; padding: 0 12px; border: 1px solid #cfddd6; border-radius: 9px; outline: none; font: 500 .8rem 'Poppins', sans-serif; }
+.education-page .pembayaran-filter input[type="search"]:focus { border-color: #177455; box-shadow: 0 0 0 3px rgba(23, 116, 85, .12); }
+
+.education-page .table-card { padding: 22px 24px; }
+.education-page .table-header { padding: 0 0 16px; margin-bottom: 0; background: transparent; }
+.education-page .table-header h4 { color: #18332c; }
+.education-page .main-content th { background: #f3f8f5; color: #45675a; border-bottom-color: #dbe8e1; }
+.education-page .main-content tbody tr:hover { background: #f8fcf9; }
+.student-nis { display: block; margin-top: 2px; color: #7b8b84; font-size: .7rem; font-weight: 500; }
+
+@media (max-width: 1100px) {
+    .education-page .pembayaran-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 992px) {
+    .education-page .main-content { width: 100%; margin-left: 0; padding: 0 20px 32px; }
+}
+
+@media (max-width: 640px) {
+    .education-page .main-content { padding: 0 15px 26px; }
+    .education-page .pembayaran-stats,
+    .education-page .pembayaran-filter .filter-group { grid-template-columns: 1fr; }
+    .education-page .table-card { padding: 18px 16px; }
+    .filter-heading { flex-direction: column; }
+}

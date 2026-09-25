@@ -18,7 +18,7 @@
 </head>
 <body>
 
-    <div class="dashboard-container">
+    <div class="dashboard-container maintenance-page">
 
         {{-- WADAH TEMPLATE SIDEBAR --}}
         <x-sidebar_siakad />
@@ -26,26 +26,6 @@
         {{-- MAIN CONTENT --}}
         <main class="main-content">
             <x-siakad.topbar title="Pembayaran Pemeliharaan" description="Kelola pembayaran pemeliharaan sekolah." position="Administrator SIAKAD" initials="AD" />
-
-            {{-- TOPBAR / HEADER --}}
-            <header class="topbar">
-                <div class="topbar-left">
-                    <span class="topbar-eyebrow">Sistem Informasi Akademik &middot; Selasa, 04 Agustus 2026</span>
-                    <h2>Pembayaran Biaya Pemeliharaan</h2>
-                </div>
-
-                <div class="academic-pill">
-                    <i class="fa-solid fa-calendar-check"></i>
-                    T.A. 2026/2027 &middot; Fasilitas & Infrastruktur
-                </div>
-
-                <div class="topbar-icons">
-                    <div class="icon-bell-wrap">
-                        <i class="fa-regular fa-bell"></i>
-                    </div>
-                    <i class="fa-regular fa-user"></i>
-                </div>
-            </header>
 
             {{-- STATISTIK UANG PEMELIHARAAN --}}
             <div class="stats-grid">
@@ -81,8 +61,15 @@
 
             {{-- FILTER PEMBAYARAN --}}
             <div class="filter-box">
-                <h4>Biaya Pemeliharaan</h4>
+                <div class="filter-heading">
+                    <div><h4>Filter Biaya Pemeliharaan</h4><p>Telusuri data berdasarkan siswa, status, atau kelas.</p></div>
+                    <span class="result-counter" id="resultCounter">0 data</span>
+                </div>
                 <div class="filter-group">
+                    <div class="input-wrap">
+                        <label for="filter-nama-pemeliharaan">Cari Siswa</label>
+                        <input type="search" id="filter-nama-pemeliharaan" placeholder="Nama atau NIS siswa" autocomplete="off">
+                    </div>
                     <div class="input-wrap">
                         <label for="filter-status-pemeliharaan">Status Pembayaran</label>
                         <select id="filter-status-pemeliharaan" name="status_pemeliharaan">
@@ -96,10 +83,6 @@
                         <label for="filter-kelas-pemeliharaan">Kelas</label>
                         <select id="filter-kelas-pemeliharaan" name="kelas">
                             <option value="">Semua Kelas</option>
-                            <option value="X IPA 1">X IPA 1</option>
-                            <option value="X IPA 2">X IPA 2</option>
-                            <option value="XI IPS 1">XI IPS 1</option>
-                            <option value="XII IPA 1">XII IPA 1</option>
                         </select>
                     </div>
                 </div>
@@ -108,7 +91,7 @@
             {{-- TABEL DAFTAR UANG PEMELIHARAAN --}}
             <div class="table-card">
                 <div class="table-header">
-                    <h4>Daftar Tagihan Uang Pemeliharaan Siswa</h4>
+                    <div><h4>Daftar Tagihan Pemeliharaan</h4><span class="table-subtitle">Data contoh transaksi pemeliharaan sekolah.</span></div>
                 </div>
                 <div class="table-responsive">
                     <table>
@@ -126,7 +109,7 @@
                         <tbody>
                             <!-- Dummy Data 1 -->
                             <tr>
-                                <td><span class="student-name">Ahmad Rizky</span></td>
+                                <td><span class="student-name">Ahmad Rizky</span><span class="student-nis">NIS: 2026001</span></td>
                                 <td><span class="class-pill">X IPA 1</span></td>
                                 <td class="amount">Rp 1.500.000</td>
                                 <td class="amount text-success">Rp 1.500.000</td>
@@ -148,7 +131,7 @@
 
                             <!-- Dummy Data 2 -->
                             <tr>
-                                <td><span class="student-name">Siti Nurhaliza</span></td>
+                                <td><span class="student-name">Siti Nurhaliza</span><span class="student-nis">NIS: 2026002</span></td>
                                 <td><span class="class-pill">X IPA 2</span></td>
                                 <td class="amount">Rp 1.500.000</td>
                                 <td class="amount text-success">Rp 1.000.000</td>
@@ -170,7 +153,7 @@
 
                             <!-- Dummy Data 3 -->
                             <tr>
-                                <td><span class="student-name">Budi Pratama</span></td>
+                                <td><span class="student-name">Budi Pratama</span><span class="student-nis">NIS: 2026003</span></td>
                                 <td><span class="class-pill">XI IPS 1</span></td>
                                 <td class="amount">Rp 1.500.000</td>
                                 <td class="amount text-success">Rp 0</td>
@@ -192,7 +175,7 @@
 
                             <!-- Dummy Data 4 -->
                             <tr>
-                                <td><span class="student-name">Dewi Lestari</span></td>
+                                <td><span class="student-name">Dewi Lestari</span><span class="student-nis">NIS: 2026004</span></td>
                                 <td><span class="class-pill">XII IPA 1</span></td>
                                 <td class="amount">Rp 1.500.000</td>
                                 <td class="amount text-success">Rp 1.500.000</td>
@@ -382,17 +365,27 @@
     <script>
         var input_status = document.getElementById("filter-status-pemeliharaan");
         var input_kelas = document.getElementById("filter-kelas-pemeliharaan");
+        var input_nama = document.getElementById("filter-nama-pemeliharaan");
+        var dataPemeliharaan = [...document.querySelectorAll(".table-responsive tbody tr")];
 
         input_status.addEventListener("change", filterData);
         input_kelas.addEventListener("change", filterData);
+        input_nama.addEventListener("input", filterData);
+
+        [...new Set(dataPemeliharaan.map((baris) => baris.querySelector(".class-pill")?.textContent.trim()).filter(Boolean))]
+            .sort()
+            .forEach((kelas) => input_kelas.add(new Option(kelas, kelas)));
 
         function filterData() {
             var value_status = input_status.value;
             var value_kelas = input_kelas.value;
-            var row_tr = document.querySelectorAll(".table-responsive tbody tr");
+            var value_nama = input_nama.value.toLowerCase().trim();
+            var row_tr = dataPemeliharaan;
+            var totalTampil = 0;
 
             reset();
             row_tr.forEach((data) => {
+                var row_nama = data.cells[0];
                 var row_kelas = data.querySelector(".class-pill");
                 var row_status = data.querySelector(".status");
 
@@ -407,7 +400,15 @@
                         data.classList.add("hide");
                     }
                 }
+
+                if (value_nama != "" && !row_nama.textContent.toLowerCase().includes(value_nama)) {
+                    data.classList.add("hide");
+                }
+
+                if (!data.classList.contains("hide")) totalTampil++;
             });
+
+            document.getElementById("resultCounter").textContent = `${totalTampil} data`;
         }
 
         function reset() {
@@ -416,6 +417,8 @@
                 data.classList.remove("hide");
             }); 
         }
+
+        filterData();
 
         var memory_data = 0;
         document.getElementById("bayar-nominal").addEventListener('input', (e) => {

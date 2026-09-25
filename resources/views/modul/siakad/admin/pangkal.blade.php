@@ -18,8 +18,13 @@
     <link rel="stylesheet" href="{{ asset('css/modul/siakad/pangkal.css') }}">
 </head>
 <body>
+    @php
+        $totalDataPangkal = method_exists($data_slip_pangkal, 'total')
+            ? $data_slip_pangkal->total()
+            : count($data_slip_pangkal);
+    @endphp
 
-    <div class="dashboard-container">
+    <div class="dashboard-container pangkal-page">
 
         {{-- WADAH TEMPLATE SIDEBAR --}}
         <x-sidebar_siakad />
@@ -27,26 +32,6 @@
         {{-- MAIN CONTENT --}}
         <main class="main-content">
             <x-siakad.topbar title="Pembayaran Uang Pangkal" description="Kelola transaksi uang pangkal siswa." position="Administrator SIAKAD" initials="AD" />
-
-            {{-- TOPBAR / HEADER --}}
-            <header class="topbar">
-                <div class="topbar-left">
-                    <span class="topbar-eyebrow">Sistem Informasi Akademik &middot; Selasa, 04 Agustus 2026</span>
-                    <h2>Pembayaran Uang Pangkal</h2>
-                </div>
-
-                <div class="academic-pill">
-                    <i class="fa-solid fa-calendar-check"></i>
-                    T.A. 2026/2027 &middot; Penerimaan Siswa Baru
-                </div>
-
-                <div class="topbar-icons">
-                    <div class="icon-bell-wrap">
-                        <i class="fa-regular fa-bell"></i>
-                    </div>
-                    <i class="fa-regular fa-user"></i>
-                </div>
-            </header>
 
             {{-- STATISTIK UANG PANGKAL --}}
             <div class="stats-grid pembayaran-stats">
@@ -82,8 +67,15 @@
 
             {{-- FILTER PEMBAYARAN UANG PANGKAL --}}
             <div class="filter-box pembayaran-filter">
-                <h4> Uang Pangkal</h4>
+                <div class="filter-heading">
+                    <div><h4>Filter Uang Pangkal</h4><p>Temukan tagihan berdasarkan siswa, status, atau kelas.</p></div>
+                    <span class="result-counter" id="resultCounter">{{ $totalDataPangkal }} data</span>
+                </div>
                 <div class="filter-group">
+                    <div class="input-wrap">
+                        <label for="filter-nama-pangkal">Cari Siswa</label>
+                        <input type="search" id="filter-nama-pangkal" placeholder="Nama atau NIS siswa" autocomplete="off">
+                    </div>
                   
                     <div class="input-wrap">
                         <label for="filter-status-pangkal">Status Pembayaran</label>
@@ -95,7 +87,7 @@
                     </div>
                   
                     <div class="input-wrap">
-                        <label for="filter-kelas-pangkal">kelas</label>
+                        <label for="filter-kelas-pangkal">Kelas</label>
                         <select id="filter-kelas-pangkal" name="kelas">
                             <option value="">Semua kelas</option>
                             @foreach ($data_kelas as $value)
@@ -109,7 +101,7 @@
             {{-- TABEL DAFTAR UANG PANGKAL --}}
             <div class="table-card">
                 <div class="table-header">
-                    <h4>Daftar Tagihan Uang Pangkal Siswa Baru</h4>
+                    <div><h4>Daftar Tagihan Uang Pangkal</h4><span class="table-subtitle">Penerimaan siswa baru dan pembayaran angsuran.</span></div>
                 </div>
                 <div class="table-responsive">
                     <table>
@@ -132,7 +124,7 @@
                                     $sisa_bayar = $value->nominal - $value->jumlah_di_bayar;
                                 @endphp
                                 <tr>
-                                    <td><span class="student-name">{{$data_siswa->nama}}</span></td>
+                                    <td><span class="student-name">{{$data_siswa->nama}}</span><span class="student-nis">NIS: {{$data_siswa->nis}}</span></td>
                                     <td><span class="class-pill">{{$data_kelas->nama_ruang}}</span></td>
                                     <td class="amount">Rp{{number_format($value->nominal,0,",",".")}}</td>
                                     <td class="amount text-success">Rp{{number_format($value->jumlah_di_bayar,0,",",".")}}</td>
@@ -315,17 +307,22 @@
     <script>
         var input_status = document.getElementById("filter-status-pangkal");
         var input_kelas = document.getElementById("filter-kelas-pangkal");
+        var input_nama = document.getElementById("filter-nama-pangkal");
 
         input_status.addEventListener("change", filterData);
         input_kelas.addEventListener("change", filterData);
+        input_nama.addEventListener("input", filterData);
 
         function filterData(){
             var value_status = input_status.value;
             var value_kelas = input_kelas.value;
+            var value_nama = input_nama.value.toLowerCase().trim();
             var row_tr = document.querySelectorAll(".table-responsive tbody tr");
+            var totalTampil = 0;
 
             reset();
             row_tr.forEach((data) => {
+                var row_nama = data.cells[0];
                 var row_kelas = data.querySelector(".class-pill");
                 var row_status = data.querySelector(".status");
 
@@ -340,7 +337,15 @@
                         data.classList.add("hide");
                     }
                 }
+
+                if (value_nama != "" && !row_nama.textContent.toLowerCase().includes(value_nama)) {
+                    data.classList.add("hide");
+                }
+
+                if (!data.classList.contains("hide")) totalTampil++;
             });
+
+            document.getElementById("resultCounter").textContent = `${totalTampil} data`;
         }
 
         function reset(){

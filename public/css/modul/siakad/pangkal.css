@@ -412,3 +412,68 @@
 .pagination-container nav > div:first-child {
     display: none !important;
 }
+
+/* ------------------------------------------------------------
+   7. PENYELARASAN HALAMAN UANG PANGKAL ADMIN SIAKAD
+------------------------------------------------------------ */
+.pangkal-page .main-content {
+    min-height: 100vh;
+    padding: 0 32px 40px;
+    background: #f5f8f6;
+}
+
+.pangkal-page .pembayaran-stats {
+    margin-top: 28px;
+    margin-bottom: 20px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.pangkal-page .pembayaran-stats .stat-card {
+    padding: 18px;
+    border-top: 0;
+    border-radius: 16px;
+    box-shadow: 0 5px 15px rgba(24, 51, 44, .05);
+}
+
+.pangkal-page .pembayaran-stats .stat-card h3 { font-size: clamp(1rem, 1.4vw, 1.25rem); }
+.pangkal-page .pembayaran-stats .stat-icon { width: 48px; height: 48px; font-size: 1rem; }
+
+.pangkal-page .pembayaran-filter,
+.pangkal-page .table-card {
+    border-color: #dbe8e1;
+    border-radius: 16px;
+    box-shadow: 0 10px 26px rgba(24, 51, 44, .06);
+}
+
+.pangkal-page .pembayaran-filter { margin-bottom: 20px; }
+.filter-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 17px; }
+.filter-heading h4 { margin: 0 0 4px; color: #18332c; }
+.filter-heading p, .table-subtitle { margin: 0; color: #6b7b75; font-size: .78rem; }
+.result-counter { padding: 6px 10px; border-radius: 999px; background: #e5f4ed; color: #286247; font-size: .74rem; font-weight: 700; white-space: nowrap; }
+
+.pangkal-page .pembayaran-filter .filter-group { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.pangkal-page .pembayaran-filter input[type="search"] { width: 100%; height: 42px; padding: 0 12px; border: 1px solid #cfddd6; border-radius: 9px; outline: none; font: 500 .8rem 'Poppins', sans-serif; }
+.pangkal-page .pembayaran-filter input[type="search"]:focus { border-color: #177455; box-shadow: 0 0 0 3px rgba(23, 116, 85, .12); }
+
+.pangkal-page .table-card { padding: 22px 24px; }
+.pangkal-page .table-header { padding: 0 0 16px; margin-bottom: 0; background: transparent; }
+.pangkal-page .table-header h4 { color: #18332c; }
+.pangkal-page .main-content th { background: #f3f8f5; color: #45675a; border-bottom-color: #dbe8e1; }
+.pangkal-page .main-content tbody tr:hover { background: #f8fcf9; }
+.student-nis { display: block; margin-top: 2px; color: #7b8b84; font-size: .7rem; font-weight: 500; }
+
+@media (max-width: 1100px) {
+    .pangkal-page .pembayaran-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 992px) {
+    .pangkal-page .main-content { width: 100%; margin-left: 0; padding: 0 20px 32px; }
+}
+
+@media (max-width: 640px) {
+    .pangkal-page .main-content { padding: 0 15px 26px; }
+    .pangkal-page .pembayaran-stats,
+    .pangkal-page .pembayaran-filter .filter-group { grid-template-columns: 1fr; }
+    .pangkal-page .table-card { padding: 18px 16px; }
+    .filter-heading { flex-direction: column; }
+}
