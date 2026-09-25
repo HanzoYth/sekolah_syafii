@@ -74,7 +74,7 @@
                     <div class="form-group">
                         <label>Jumlah Tidak Hadir (Hari)</label>
                         <div class="input-unit">
-                            <input type="number" id="absenHari" name="ketidakhadiran" value="{{$data_gaji->ketidakhadiran ?? $jumlah_tidak_hadir}}" class="form-control" placeholder="0">
+                            <input type="number" id="absenHari" name="ketidakhadiran" value="{{$data_gaji->ketidakhadiran == 0 ? $jumlah_tidak_hadir : $data_gaji->ketidakhadiran}}" class="form-control" placeholder="0">
                             <span class="unit-text">Hari</span>
                         </div>
                     </div>
