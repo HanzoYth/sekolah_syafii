@@ -16,6 +16,7 @@ use App\Http\Controllers\tanggalMerahController;
 use App\Http\Controllers\modulTahfidzController;
 use App\Http\Controllers\kelasHalaqahController;
 use App\Http\Controllers\file_surat;
+use App\Http\Controllers\kirimPesanController;
 use App\Http\Controllers\operatorController;
 use App\Http\Controllers\pembayaranController;
 use App\Http\Controllers\satpamController;
@@ -200,6 +201,9 @@ Route::get('/grafik-keuangan', [pembayaranController::class, 'data'])->name('gra
 
 // Route::get('/tes',[file_surat::class,"testingKirim"]);
 
+Route::get("/krim/{id}",[kirimPesanController::class,"kirim_pesanPengingat"]);
+
+
 
 Route::get('/file/{path}', function ($path) {
     if (!Storage::exists($path)) {
@@ -215,15 +219,7 @@ Route::get('/file_pdf/{path}', function ($path) {
     return Storage::response($path); // otomatis set header mime-type yang benar
 })->where('path', '.*')->name('pdf.show');
 
-Route::get('/file_pdf/{path}', function ($path) {
 
-    if (!Storage::exists($path)) {
-        abort(404);
-    }
-
-    return Storage::response($path);
-
-})->where('path', '.*')->name('pdf.show');
 
 
 
