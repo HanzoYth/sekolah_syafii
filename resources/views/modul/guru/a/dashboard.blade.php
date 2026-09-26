@@ -181,6 +181,7 @@
     <!-- ==================== STRUKTUR MODAL / POP UP ==================== -->
     @php
         Carbon\Carbon::setlocale("id");
+        
         $data_guru_tepat_waktu = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("status_kehadiran","h")->where("terlambat_menit",0)->get();
         $data_guru_izin_sakit = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("status_kehadiran","!=","h")->where("status_kehadiran","!=","a")->get();
         $data_guru_terlambat = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("status_kehadiran","h")->where("terlambat_menit","!=",0)->get();
