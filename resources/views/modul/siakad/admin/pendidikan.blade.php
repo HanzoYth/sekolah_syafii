@@ -18,8 +18,13 @@
     <link rel="stylesheet" href="{{ asset('css/modul/siakad/pendidikan.css') }}">
 </head>
 <body>
+    @php
+        $totalDataPendidikan = method_exists($data_slip_pendidikan, 'total')
+            ? $data_slip_pendidikan->total()
+            : count($data_slip_pendidikan);
+    @endphp
 
-    <div class="dashboard-container">
+    <div class="dashboard-container education-page">
 
         {{-- WADAH TEMPLATE SIDEBAR --}}
         <x-sidebar_siakad />
@@ -27,26 +32,6 @@
         {{-- MAIN CONTENT --}}
         <main class="main-content">
             <x-siakad.topbar title="Pembayaran Pendidikan" description="Kelola transaksi pendidikan siswa." position="Administrator SIAKAD" initials="AD" />
-
-            {{-- TOPBAR / HEADER --}}
-            <header class="topbar">
-                <div class="topbar-left">
-                    <span class="topbar-eyebrow">Sistem Informasi Akademik &middot; Selasa, 04 Agustus 2026</span>
-                    <h2>Pembayaran Pendidikan</h2>
-                </div>
-
-                <div class="academic-pill">
-                    <i class="fa-solid fa-calendar-check"></i>
-                    T.A. 2026/2027 &middot; Semester Genap
-                </div>
-
-                <div class="topbar-icons">
-                    <div class="icon-bell-wrap">
-                        <i class="fa-regular fa-bell"></i>
-                    </div>
-                    <i class="fa-regular fa-user"></i>
-                </div>
-            </header>
 
             {{-- STATISTIK PEMBAYARAN PENDIDIKAN --}}
             <div class="stats-grid pembayaran-stats">
@@ -82,8 +67,15 @@
 
             {{-- FILTER PEMBAYARAN PENDIDIKAN --}}
             <div class="filter-box pembayaran-filter">
-                <h4><i class="fa-solid fa-filter"></i> Filter Tagihan Pendidikan</h4>
+                <div class="filter-heading">
+                    <div><h4>Filter Tagihan Pendidikan</h4><p>Temukan tagihan berdasarkan siswa, status, atau kelas.</p></div>
+                    <span class="result-counter" id="resultCounter">{{ $totalDataPendidikan }} data</span>
+                </div>
                 <div class="filter-group">
+                    <div class="input-wrap">
+                        <label for="filter-nama-pendidikan">Cari Siswa</label>
+                        <input type="search" id="filter-nama-pendidikan" placeholder="Nama atau NIS siswa" autocomplete="off">
+                    </div>
                     <div class="input-wrap">
                         <label for="filter-status-spp">Status Biaya Pendidikan</label>
                         <select id="filter-status-spp" name="status_spp">
@@ -108,7 +100,7 @@
             {{-- TABEL DAFTAR TAGIHAN SPP --}}
             <div class="table-card">
                 <div class="table-header">
-                    <h4>Daftar Tagihan Pendidikan Siswa</h4>
+                    <div><h4>Daftar Tagihan Pendidikan</h4><span class="table-subtitle">Pantau tagihan dan pembayaran pendidikan siswa.</span></div>
                 </div>
                 <div class="table-responsive">
                     <table>
@@ -131,7 +123,7 @@
                                     $sisa_bayar = $value->nominal - $value->jumlah_di_bayar;
                                 @endphp
                                 <tr>
-                                    <td><span class="student-name">{{$data_siswa->nama}}</span></td>
+                                    <td><span class="student-name">{{$data_siswa->nama}}</span><span class="student-nis">NIS: {{$data_siswa->nis}}</span></td>
                                     <td><span class="class-pill">{{$data_kelas->nama_ruang}}</span></td>
                                     <td class="amount">Rp{{number_format($value->nominal,0,",",".")}}</td>
                                     <td class="amount text-success">Rp{{number_format($value->jumlah_di_bayar,0,",",".")}}</td>
@@ -313,17 +305,22 @@
     <script>
         var input_status = document.getElementById("filter-status-spp");
         var input_kelas = document.getElementById("filter-kelas-spp");
+        var input_nama = document.getElementById("filter-nama-pendidikan");
 
         input_status.addEventListener("change", filterData);
         input_kelas.addEventListener("change", filterData);
+        input_nama.addEventListener("input", filterData);
 
         function filterData(){
             var value_status = input_status.value;
             var value_kelas = input_kelas.value;
+            var value_nama = input_nama.value.toLowerCase().trim();
             var row_tr = document.querySelectorAll(".table-responsive tbody tr");
+            var totalTampil = 0;
 
             reset();
             row_tr.forEach((data) => {
+                var row_nama = data.cells[0];
                 var row_kelas = data.querySelector(".class-pill");
                 var row_status = data.querySelector(".status");
 
@@ -338,7 +335,15 @@
                         data.classList.add("hide");
                     }
                 }
+
+                if (value_nama != "" && !row_nama.textContent.toLowerCase().includes(value_nama)) {
+                    data.classList.add("hide");
+                }
+
+                if (!data.classList.contains("hide")) totalTampil++;
             });
+
+            document.getElementById("resultCounter").textContent = `${totalTampil} data`;
         }
 
         function reset(){

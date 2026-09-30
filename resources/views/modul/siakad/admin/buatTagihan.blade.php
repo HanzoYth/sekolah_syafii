@@ -19,43 +19,27 @@
 
     <x-sidebar_siakad />
     {{-- Main Container --}}
-    <div class="main-content">
+    <div class="main-content billing-page">
         <x-siakad.topbar title="Daftar Tagihan Siswa" description="Kelola tagihan pembayaran akademik siswa." position="Administrator SIAKAD" initials="AD" />
-        
-        <!-- Topbar Section -->
-        <div class="topbar">
-            <div class="topbar-left">
-                <span class="topbar-eyebrow">MODUL SIAKAD</span>
-                <h2>Daftar Tagihan Siswa</h2>
-            </div>
-            <div class="topbar-icons">
-                <div class="academic-pill">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                    <span>T.A. 2025/2026</span>
-                </div>
-                <div class="icon-bell-wrap">
-                    <i class="fa-regular fa-bell"></i>
-                </div>
-            </div>
-        </div>
 
         <!-- Filter Pencarian -->
         <div class="filter-card">
+            <div class="filter-card-heading">
+                <div>
+                    <span class="section-eyebrow"><i class="fa-solid fa-file-circle-plus"></i> Administrasi Pembayaran</span>
+                    <h1>Buat Tagihan Siswa</h1>
+                    <p>Pilih siswa, lalu buat tagihan sesuai jenis dan periode pembayaran.</p>
+                </div>
+                <span class="result-counter" id="resultCounter">{{ count($data_siswa) }} siswa</span>
+            </div>
             <div class="filter-row">
                 <div class="filter-field">
                     <label for="filterNama"><i class="fa-solid fa-magnifying-glass"></i> Cari Nama Siswa</label>
-                    <input type="text" id="filterNama" placeholder="Ketik nama siswa..." onkeyup="filterSiswa()">
+                    <input type="search" id="filterNama" placeholder="Ketik nama atau NIS siswa..." autocomplete="off">
                 </div>
                 <div class="filter-field">
                     <label for="filterKelas"><i class="fa-solid fa-filter"></i> Pilih Kelas</label>
-                    <select id="filterKelas" onchange="filterSiswa()">
-                        <option value="">-- Semua Kelas --</option>
-                        <option value="X-IPA 1">X-IPA 1</option>
-                        <option value="X-IPA 2">X-IPA 2</option>
-                        <option value="XI-IPA 3">XI-IPA 3</option>
-                        <option value="XI-IPS 1">XI-IPS 1</option>
-                        <option value="XII-IPS 2">XII-IPS 2</option>
-                    </select>
+                    <select id="filterKelas"><option value="">Semua kelas</option></select>
                 </div>
             </div>
         </div>
@@ -63,7 +47,7 @@
         <!-- Card Tabel Siswa -->
         <div class="table-card">
             <div class="table-header">
-                <h4>Data Siswa</h4>
+                <div><h4>Data Siswa</h4><p>Pilih <strong>Buat Tagihan</strong> pada siswa yang dituju.</p></div>
             </div>
             
             <div class="table-responsive">
@@ -78,27 +62,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php
-                            $index = 0;
-                        @endphp
-                        @foreach($data_siswa as $index => $siswa)
+                        @forelse($data_siswa as $index => $siswa)
                             @php
                                 $data_kelas = App\Models\ruang_kelas::where("id",$siswa->kelas_id)->first();
+                                $namaKelas = $data_kelas->nama_ruang ?? '-';
                             @endphp
-                            <tr>
+                            <tr data-student-row data-search="{{ strtolower($siswa->nama . ' ' . $siswa->nis . ' ' . $namaKelas) }}" data-kelas="{{ $namaKelas }}">
                                 <td>{{ $index + 1 }}</td>
                                 <td class="student-name">{{ $siswa->nama }}</td>
                                 <td>{{ $siswa->nis }}</td>
-                                <td><span class="class-pill">{{ $data_kelas->nama_ruang }}</span></td>
+                                <td><span class="class-pill">{{ $namaKelas }}</span></td>
                                 <td class="text-center">
-                                    <button type="button" 
-                                            class="btn-outline"
-                                            onclick="openModalTagihan('{{$siswa->id}}', '{{$siswa->nama}}', '{{$siswa->nis}}')">
+                                    <button type="button" class="btn-outline" onclick='openModalTagihan(@json($siswa->id), @json($siswa->nama), @json($siswa->nis))'>
                                         <i class="fa-solid fa-file-invoice-dollar"></i> Buat Tagihan
                                     </button>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr class="empty-row"><td colspan="5"><i class="fa-solid fa-users-slash"></i> Belum ada data siswa yang dapat ditampilkan.</td></tr>
+                        @endforelse
+                        <tr class="empty-row" id="filterEmpty" hidden><td colspan="5"><i class="fa-solid fa-magnifying-glass"></i> Siswa tidak ditemukan.</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -211,31 +194,33 @@
     <x-warning />
     <!-- JavaScript Handling Modal, Filter & Dummy Action -->
     <script>
+        const inputNama = document.getElementById('filterNama');
+        const selectKelas = document.getElementById('filterKelas');
+        const studentRows = [...document.querySelectorAll('[data-student-row]')];
+        const resultCounter = document.getElementById('resultCounter');
+        const filterEmpty = document.getElementById('filterEmpty');
+
+        [...new Set(studentRows.map((row) => row.dataset.kelas).filter((kelas) => kelas && kelas !== '-'))]
+            .sort()
+            .forEach((kelas) => selectKelas.add(new Option(kelas, kelas)));
+
         function filterSiswa() {
-            const inputNama = document.getElementById('filterNama').value.toLowerCase();
-            const selectKelas = document.getElementById('filterKelas').value.toLowerCase();
-            const table = document.getElementById('tableSiswa');
-            const tr = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            const keyword = inputNama.value.trim().toLowerCase();
+            const kelas = selectKelas.value;
+            let visible = 0;
 
-            for (let i = 0; i < tr.length; i++) {
-                const tdNama = tr[i].getElementsByTagName('td')[1];
-                const tdKelas = tr[i].getElementsByTagName('td')[3];
+            studentRows.forEach((row) => {
+                const tampil = row.dataset.search.includes(keyword) && (!kelas || row.dataset.kelas === kelas);
+                row.hidden = !tampil;
+                if (tampil) visible++;
+            });
 
-                if (tdNama && tdKelas) {
-                    const txtNama = tdNama.textContent || tdNama.innerText;
-                    const txtKelas = tdKelas.textContent || tdKelas.innerText;
-
-                    const matchesNama = txtNama.toLowerCase().indexOf(inputNama) > -1;
-                    const matchesKelas = selectKelas === "" || txtKelas.toLowerCase() === selectKelas;
-
-                    if (matchesNama && matchesKelas) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
+            resultCounter.textContent = `${visible} siswa`;
+            filterEmpty.hidden = visible !== 0 || studentRows.length === 0;
         }
+
+        inputNama.addEventListener('input', filterSiswa);
+        selectKelas.addEventListener('change', filterSiswa);
 
         function openModalTagihan(id, nama, nis) {
             document.getElementById('modal_siswa_id').value = id;

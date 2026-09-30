@@ -3,165 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Siswa - Islamic Smart School</title>
+    <title>Data Siswa - SIAKAD</title>
 
-    <!-- Font Inter & Arabic -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
-
-    <!-- CSS Custom -->    
-    <link rel="stylesheet" href="{{asset('css/modul/siakad/data_siswa.css')}}">
+    <link rel="icon" type="image/png" href="{{ asset('img/logo_sklh.png') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/modul/siakad/data_siswa.css') }}">
 </head>
 <body>
+    @php
+        $totalSiswa = count($data_siswa);
+        $siswaAktif = collect($data_siswa)->filter(fn ($siswa) => !isset($siswa->aktif) || (int) $siswa->aktif === 1)->count();
+        $jumlahKelas = collect($data_siswa)->pluck('kelas_id')->filter()->unique()->count();
+    @endphp
 
-<div class="app-shell">
+    <div class="dashboard-container admin-students-page">
+        <x-sidebar_siakad />
 
-    <!-- ============================= SIDEBAR ============================= -->
-    <x-sidebar_siakad />
+        <main class="main-content">
+            <x-siakad.topbar
+                title="Data Siswa"
+                description="Kelola dan pantau data siswa yang terdaftar pada SIAKAD."
+                position="Administrator SIAKAD"
+                initials="AD"
+            />
 
-    <!-- ========================= KONTEN UTAMA ========================= -->
-    <div class="main-content">
-        <x-siakad.topbar title="Daftar Siswa" description="Kelola data siswa terdaftar pada SIAKAD." position="Administrator SIAKAD" initials="AD" />
-
-        <!-- Header / Topbar -->
-        <header class="topbar">
-            <div class="topbar-inner">
-                <div class="topbar-title">
-                    <h1>Daftar Siswa</h1>
-                </div>
-            </div>
-        </header>
-
-        <!-- Page Content -->
-        <main class="page">
-
-            <!-- Card Tabel -->
-            <div class="card">
-
-                <!-- Toolbar & Filter -->
-                <div class="toolbar">
-                    <form action="#" method="GET" class="search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" name="search" placeholder="Cari NIS, Nama, atau Kelas...">
-                    </form>
-                    <div class="toolbar-meta">
-                        <i class="fa-solid fa-users"></i>
-                        <span>Total Siswa: <strong>{{ count($data_siswa) }}</strong> Santri/Siswa</span>
+            <div class="students-content">
+                <section class="students-heading" aria-labelledby="students-page-title">
+                    <div>
+                        <span class="section-eyebrow"><i class="fa-solid fa-users"></i> Manajemen Akademik</span>
+                        <h1 id="students-page-title">Daftar Siswa</h1>
+                        <p>Temukan informasi siswa berdasarkan nama, NIS, jenis kelamin, atau kelas.</p>
                     </div>
-                </div>
+                    <div class="heading-total">
+                        <i class="fa-solid fa-user-graduate"></i>
+                        <span><strong>{{ $totalSiswa }}</strong> siswa terdaftar</span>
+                    </div>
+                </section>
 
-                <!-- Tabel Data Siswa -->
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th class="col-center">No</th>
-                                <th class="col-center">Foto</th>
-                                <th>NIS</th>
-                                <th>Nama Lengkap</th>
-                                <th>Jenis Kelamin</th>
-                                <th>Kelas</th>
-                                <th class="col-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        @php
-                            $no = 0;
-                        @endphp
-                        <tbody>
-                            @foreach ($data_siswa as $value)
-                                @php            
-                                    $kelas = App\Models\ruang_kelas::find($value->kelas_id);
-                                    $no++;
-                                @endphp
+                <section class="student-metrics" aria-label="Ringkasan data siswa">
+                    <article class="metric-card metric-primary">
+                        <div class="metric-icon"><i class="fa-solid fa-user-graduate"></i></div>
+                        <div><span>Total Siswa</span><strong>{{ $totalSiswa }}</strong><small>Data siswa terdaftar</small></div>
+                    </article>
+                    <article class="metric-card metric-success">
+                        <div class="metric-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <div><span>Siswa Aktif</span><strong>{{ $siswaAktif }}</strong><small>Siap mengikuti kegiatan</small></div>
+                    </article>
+                    <article class="metric-card metric-info">
+                        <div class="metric-icon"><i class="fa-solid fa-school"></i></div>
+                        <div><span>Kelas Terisi</span><strong>{{ $jumlahKelas }}</strong><small>Kelas dengan data siswa</small></div>
+                    </article>
+                </section>
+
+                <section class="students-card" aria-labelledby="table-title">
+                    <div class="card-header">
+                        <div>
+                            <h2 id="table-title">Data Siswa Terdaftar</h2>
+                            <p>Gunakan pencarian atau filter untuk mempercepat penelusuran data.</p>
+                        </div>
+                        <span class="result-counter" id="resultCounter">{{ $totalSiswa }} data</span>
+                    </div>
+
+                    <div class="table-toolbar">
+                        <label class="search-field" for="studentSearch">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input id="studentSearch" type="search" placeholder="Cari nama, NIS, atau kelas..." autocomplete="off">
+                        </label>
+                        <label class="select-field" for="genderFilter">
+                            <span class="sr-only">Filter jenis kelamin</span>
+                            <i class="fa-solid fa-filter"></i>
+                            <select id="genderFilter">
+                                <option value="">Semua jenis kelamin</option>
+                                <option value="l">Laki-laki</option>
+                                <option value="p">Perempuan</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
                                 <tr>
-                                    <td class="col-center row-number">{{$no}}</td>
-                                    <td class="col-center">
-                                        <div class="avatar-container">
-                                            @if($value->url_foto)
-                                                <img src='{{route("file.show", $value->url_foto)}}' alt="{{$value->nama}}" class="avatar-img">
-                                            @else
-                                                <div class="avatar-placeholder">
-                                                    <i class="fa-solid fa-user"></i>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </td>
-                                    <td class="student-id">
-                                        <strong>{{$value->nis}}</strong>
-                                    </td>
-                                    <td class="student-name">{{$value->nama}}</td>
-                                    <td>
-                                        <span class="badge {{$value->gender == 'p' ? 'badge-perempuan' : 'badge-laki'}}">
-                                            <i class="fa-solid {{$value->gender == 'p' ? 'fa-venus' : 'fa-mars'}}"></i> 
-                                            {{$value->gender == 'p' ? 'Perempuan' : 'Laki-laki'}}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span class="badge-kelas">{{ $kelas->nama_ruang ?? '-' }}</span>
-                                    </td>
-                                    <td class="col-center">
-                                        <div class="actions">
-                                            <a href='/sk/dls/{{$value->id}}' class="btn-icon btn-icon-view" data-tooltip="Detail Siswa">
-                                                <i class="fa-solid fa-eye"></i>
-                                            </a>
-                                            <button type="button" class="btn-icon btn-icon-deactivate" data-tooltip="Nonaktifkan Siswa" onclick="openDeactivateModal('{{ $value->nama }}', '{{ $value->id}}')">
-                                                <i class="fa-solid fa-user-slash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
+                                    <th class="number-column">No.</th>
+                                    <th>Siswa</th>
+                                    <th>Jenis Kelamin</th>
+                                    <th>Kelas</th>
+                                    <th>Status</th>
+                                    <th class="action-column">Aksi</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Footer Card / Pagination -->
-                <!-- <div class="card-footer">
-                    <span class="card-footer-info">Menampilkan {{ count($data_siswa) }} data siswa aktif</span>
-                    <div class="pagination">
-                        <button disabled>Sebelumnya</button>
-                        <button class="active">1</button>
-                        <button disabled>Selanjutnya</button>
+                            </thead>
+                            <tbody id="studentRows">
+                                @forelse ($data_siswa as $index => $siswa)
+                                    @php
+                                        $kelas = App\Models\ruang_kelas::find($siswa->kelas_id);
+                                        $isPerempuan = ($siswa->gender ?? '') === 'p';
+                                        $isAktif = !isset($siswa->aktif) || (int) $siswa->aktif === 1;
+                                        $kelasNama = $kelas->nama_ruang ?? '-';
+                                    @endphp
+                                    <tr data-student-row data-gender="{{ $siswa->gender ?? '' }}" data-search="{{ strtolower($siswa->nis . ' ' . $siswa->nama . ' ' . $kelasNama) }}">
+                                        <td class="number-column">{{ $index + 1 }}</td>
+                                        <td>
+                                            <div class="student-cell">
+                                                @if ($siswa->url_foto)
+                                                    <img src="{{ route('file.show', $siswa->url_foto) }}" alt="Foto {{ $siswa->nama }}" class="student-avatar">
+                                                @else
+                                                    <span class="student-avatar avatar-fallback"><i class="fa-solid fa-user"></i></span>
+                                                @endif
+                                                <div>
+                                                    <strong>{{ $siswa->nama }}</strong>
+                                                    <span>NIS: {{ $siswa->nis }}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="gender-badge {{ $isPerempuan ? 'female' : 'male' }}">
+                                                <i class="fa-solid {{ $isPerempuan ? 'fa-venus' : 'fa-mars' }}"></i>
+                                                {{ $isPerempuan ? 'Perempuan' : 'Laki-laki' }}
+                                            </span>
+                                        </td>
+                                        <td><span class="class-badge">{{ $kelasNama }}</span></td>
+                                        <td>
+                                            <span class="status-badge {{ $isAktif ? 'active' : 'inactive' }}">
+                                                <i class="fa-solid {{ $isAktif ? 'fa-circle-check' : 'fa-circle-pause' }}"></i>
+                                                {{ $isAktif ? 'Aktif' : 'Nonaktif' }}
+                                            </span>
+                                        </td>
+                                        <td class="action-column">
+                                            <a href="/sk/dls/{{ $siswa->id }}" class="view-button" aria-label="Lihat detail {{ $siswa->nama }}">
+                                                <i class="fa-solid fa-eye"></i><span>Detail</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr class="empty-row"><td colspan="6"><i class="fa-solid fa-users-slash"></i> Belum ada data siswa yang dapat ditampilkan.</td></tr>
+                                @endforelse
+                                <tr class="empty-row" id="filterEmpty" hidden><td colspan="6"><i class="fa-solid fa-magnifying-glass"></i> Data siswa tidak ditemukan.</td></tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div> -->
-
+                </section>
             </div>
         </main>
     </div>
-</div>
 
-<!-- ================= POP-UP MODAL KONFIRMASI ================= -->
-<div class="modal-overlay" id="deactivateModal">
-    <div class="modal-card">
-        <div class="modal-icon">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-        </div>
-        <h3 class="modal-title">Konfirmasi Nonaktifkan</h3>
-        <p class="modal-desc">Apakah Anda yakin ingin menonaktifkan akun siswa <strong id="modalStudentName"></strong>? Akses siswa ke sistem akan dibatasi.</p>
-        <div class="modal-actions">
-            <button type="button" class="btn-cancel" onclick="closeDeactivateModal()">Batal</button>
-            <form id="deactivateForm" action="#" method="POST" style="display:inline;">
-                @csrf
-                <button type="submit" class="btn-confirm">Ya, Nonaktifkan</button>
-            </form>
-        </div>
-    </div>
-</div>
+    <script>
+        const searchInput = document.getElementById('studentSearch');
+        const genderFilter = document.getElementById('genderFilter');
+        const studentRows = [...document.querySelectorAll('[data-student-row]')];
+        const resultCounter = document.getElementById('resultCounter');
+        const filterEmpty = document.getElementById('filterEmpty');
 
-<script>
-    function openDeactivateModal(name, id) {
-        document.getElementById('modalStudentName').innerText = name;
-        // Jika ada route aksi nonaktifkan, Anda bisa set action form di sini secara dinamis:
-        // document.getElementById('deactivateForm').action = '/siswa/nonaktifkan/' + id;
-        document.getElementById('deactivateModal').classList.add('active');
-    }
+        function filterStudents() {
+            const keyword = searchInput.value.trim().toLowerCase();
+            const gender = genderFilter.value;
+            let visible = 0;
 
-    function closeDeactivateModal() {
-        document.getElementById('deactivateModal').classList.remove('active');
-    }
-</script>
+            studentRows.forEach((row) => {
+                const matchesKeyword = row.dataset.search.includes(keyword);
+                const matchesGender = !gender || row.dataset.gender === gender;
+                const show = matchesKeyword && matchesGender;
+                row.hidden = !show;
+                if (show) visible++;
+            });
 
+            resultCounter.textContent = `${visible} data`;
+            filterEmpty.hidden = visible !== 0 || studentRows.length === 0;
+        }
+
+        searchInput?.addEventListener('input', filterStudents);
+        genderFilter?.addEventListener('change', filterStudents);
+    </script>
 </body>
 </html>

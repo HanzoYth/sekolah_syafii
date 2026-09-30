@@ -296,11 +296,19 @@
 </head>
 <body>
 
-    @php 
+    @php
         Carbon\Carbon::setLocale("id");
+        $pembayaranSaatIni = method_exists($data_slip_ipp, 'getCollection')
+            ? $data_slip_ipp->getCollection()
+            : collect($data_slip_ipp);
+        $jumlahLunas = $pembayaranSaatIni->filter(fn ($pembayaran) => (bool) $pembayaran->status)->count();
+        $jumlahMenunggak = $pembayaranSaatIni->count() - $jumlahLunas;
+        $totalDataPembayaran = method_exists($data_slip_ipp, 'total')
+            ? $data_slip_ipp->total()
+            : $pembayaranSaatIni->count();
     @endphp
 
-    <div class="dashboard-container">
+    <div class="dashboard-container payment-page">
 
         {{-- WADAH TEMPLATE SIDEBAR --}}
         <x-sidebar_siakad />
@@ -308,26 +316,6 @@
         {{-- MAIN CONTENT --}}
         <main class="main-content">
             <x-siakad.topbar title="Pembayaran IPP" description="Kelola pembayaran iuran pendidikan siswa." position="Administrator SIAKAD" initials="AD" />
-
-            {{-- TOPBAR / HEADER --}}
-            <header class="topbar">
-                <div class="topbar-left">
-                    <span class="topbar-eyebrow">Sistem Informasi Akademik &middot; Selasa, 04 Agustus 2026</span>
-                    <h2>Pembayaran IPP</h2>
-                </div>
-
-                <div class="academic-pill">
-                    <i class="fa-solid fa-calendar-check"></i>
-                    T.A. 2025/2026 &middot; Semester Ganjil
-                </div>
-
-                <div class="topbar-icons">
-                    <div class="icon-bell-wrap">
-                        <i class="fa-regular fa-bell"></i>
-                    </div>
-                    <i class="fa-regular fa-user"></i>
-                </div>
-            </header>
 
             {{-- STATISTIK PEMBAYARAN --}}
             <div class="stats-grid pembayaran-stats">
@@ -341,15 +329,15 @@
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
                     <div>
-                        <h3>712</h3>
-                        <p>Sudah Lunas</p>
+                        <h3>{{ $jumlahLunas }}</h3>
+                        <p>Lunas pada halaman ini</p>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
                     <div>
-                        <h3>98</h3>
-                        <p>Belum Lunas</p>
+                        <h3>{{ $jumlahMenunggak }}</h3>
+                        <p>Menunggak pada halaman ini</p>
                     </div>
                 </div>
             </div>
@@ -385,7 +373,10 @@
             {{-- TABEL DAFTAR PEMBAYARAN --}}
             <div class="table-card">
                 <div class="table-header">
-                    <h4>Daftar Pembayaran SPP</h4>  
+                    <div>
+                        <h4>Daftar Pembayaran IPP</h4>
+                        <span class="table-count">{{ $totalDataPembayaran }} data pembayaran</span>
+                    </div>
                 </div>
                 <div class="table-responsive">
                     <table>

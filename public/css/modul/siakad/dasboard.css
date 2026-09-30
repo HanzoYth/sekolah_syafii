@@ -182,7 +182,7 @@ ul { list-style: none; }
     margin-left: var(--sidebar-width); /* Mendorong konten ke kanan sebesar lebar sidebar */
     width: calc(100% - var(--sidebar-width)); /* Menyesuaikan sisa lebar layar */
     min-width: 0;
-    padding: 2rem;
+    padding: 0 2rem 2rem 2rem;
     min-height: calc(100vh - var(--bismillah-bar-h));
     background-color: var(--bg-main);
 }

@@ -1110,3 +1110,88 @@
 .pagination-container nav > div:first-child {
     display: none !important;
 }
+
+/* ------------------------------------------------------------
+   7. PENYELARASAN HALAMAN ADMIN SIAKAD
+------------------------------------------------------------ */
+.payment-page .main-content {
+    min-height: 100vh;
+    padding: 0 32px 40px;
+    background: #f5f8f6;
+}
+
+.payment-page .pembayaran-stats {
+    margin-top: 28px;
+    margin-bottom: 20px;
+}
+
+.payment-page .pembayaran-stats .stat-card {
+    border-top: 0;
+    border-radius: 16px;
+    box-shadow: 0 5px 15px rgba(24, 51, 44, .05);
+}
+
+.payment-page .pembayaran-stats .stat-card:nth-child(2) .stat-icon {
+    color: #23824d;
+    background: #e5f6ea;
+}
+
+.payment-page .pembayaran-stats .stat-card:nth-child(3) .stat-icon {
+    color: #ae7112;
+    background: #fff4d9;
+}
+
+.payment-page .pembayaran-filter,
+.payment-page .table-card {
+    border-color: #dbe8e1;
+    border-radius: 16px;
+    box-shadow: 0 10px 26px rgba(24, 51, 44, .06);
+}
+
+.payment-page .pembayaran-filter {
+    margin-bottom: 20px;
+}
+
+.payment-page .table-header {
+    margin-bottom: 16px;
+}
+
+.payment-page .table-header h4 {
+    color: #18332c;
+}
+
+.payment-page .table-count {
+    display: inline-block;
+    margin-top: 4px;
+    color: #6b7b75;
+    font-size: .75rem;
+    font-weight: 500;
+}
+
+.payment-page .main-content th {
+    background: #f3f8f5;
+    color: #45675a;
+    border-bottom-color: #dbe8e1;
+}
+
+.payment-page .main-content tbody tr:hover {
+    background: #f8fcf9;
+}
+
+@media (max-width: 992px) {
+    .payment-page .main-content {
+        width: 100%;
+        margin-left: 0;
+        padding: 0 20px 32px;
+    }
+}
+
+@media (max-width: 640px) {
+    .payment-page .main-content {
+        padding: 0 15px 26px;
+    }
+
+    .payment-page .pembayaran-stats {
+        margin-top: 20px;
+    }
+}

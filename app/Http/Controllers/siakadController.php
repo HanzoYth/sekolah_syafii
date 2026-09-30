@@ -11,6 +11,7 @@ use App\Models\slip_pembayaran_pendidikan;
 use App\Services\FonteService;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class siakadController extends Controller
 {
@@ -26,7 +27,33 @@ class siakadController extends Controller
     }
 
     function dashboard_siakad(){
-      return view('/modul/siakad/admin/dasboard');
+        $jumlahSiswa = siswa::count();
+        $jumlahSiswaAktif = siswa::where(function ($query) {
+            $query->where('aktif', true)->orWhereNull('aktif');
+        })->count();
+        $jumlahKelas = ruang_kelas::count();
+        $jumlahTagihan = slip_pembayaran_ipp::count()
+            + slip_pembayaran_pangkal::count()
+            + slip_pembayaran_pendidikan::count();
+        $jumlahTunggakan = slip_pembayaran_ipp::where('status', false)->count()
+            + slip_pembayaran_pangkal::where('status', false)->count()
+            + slip_pembayaran_pendidikan::where('status', false)->count();
+        $kelasDenganSiswa = ruang_kelas::query()
+            ->leftJoin('siswa', 'siswa.kelas_id', '=', 'ruang_kelas.id')
+            ->select('ruang_kelas.id', 'ruang_kelas.nama_ruang', DB::raw('COUNT(siswa.id) as jumlah_siswa'))
+            ->groupBy('ruang_kelas.id', 'ruang_kelas.nama_ruang')
+            ->orderByDesc('jumlah_siswa')
+            ->limit(5)
+            ->get();
+
+        return view('/modul/siakad/admin/dasboard', compact(
+            'jumlahSiswa',
+            'jumlahSiswaAktif',
+            'jumlahKelas',
+            'jumlahTagihan',
+            'jumlahTunggakan',
+            'kelasDenganSiswa'
+        ));
     }
 
     function tampilanDashboardGuru(){

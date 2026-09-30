@@ -774,3 +774,67 @@ table td {
         display: block;
     }
 }
+
+/* ------------------------------------------------------------
+   9. PENYELARASAN HALAMAN PEMELIHARAAN ADMIN SIAKAD
+------------------------------------------------------------ */
+.maintenance-page .main-content {
+    min-height: 100vh;
+    padding: 0 32px 40px;
+    background: #f5f8f6;
+}
+
+.maintenance-page .stats-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 28px;
+    margin-bottom: 20px;
+}
+
+.maintenance-page .stat-card {
+    padding: 18px;
+    border-radius: 16px;
+    box-shadow: 0 5px 15px rgba(24, 51, 44, .05);
+}
+
+.maintenance-page .stat-card h3 { font-size: clamp(1rem, 1.4vw, 1.25rem); }
+.maintenance-page .stat-icon { width: 48px; height: 48px; font-size: 1rem; }
+
+.maintenance-page .filter-box,
+.maintenance-page .table-card {
+    border-color: #dbe8e1;
+    border-radius: 16px;
+    box-shadow: 0 10px 26px rgba(24, 51, 44, .06);
+}
+
+.maintenance-page .filter-box { margin-bottom: 20px; }
+.filter-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 17px; }
+.filter-heading h4 { margin: 0 0 4px; color: #18332c; }
+.filter-heading p, .table-subtitle { margin: 0; color: #6b7b75; font-size: .78rem; }
+.result-counter { padding: 6px 10px; border-radius: 999px; background: #e5f4ed; color: #286247; font-size: .74rem; font-weight: 700; white-space: nowrap; }
+
+.maintenance-page .filter-group { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.maintenance-page .input-wrap { min-width: 0; }
+.maintenance-page .input-wrap input[type="search"] { width: 100%; padding: 10px 14px; border: 1px solid #cfddd6; border-radius: 8px; background: #fff; color: var(--maint-text-primary); font: inherit; font-size: .875rem; outline: none; }
+.maintenance-page .input-wrap input[type="search"]:focus { border-color: var(--islamic-emerald); box-shadow: 0 0 0 3px rgba(6, 95, 70, .1); }
+
+.maintenance-page .table-header { padding: 0 0 16px; background: transparent; }
+.maintenance-page .table-header h4 { color: #18332c; }
+.maintenance-page table thead tr { background: #f3f8f5; }
+.maintenance-page table tbody tr:hover { background: #f8fcf9; }
+.student-nis { display: block; margin-top: 2px; color: #7b8b84; font-size: .7rem; font-weight: 500; }
+
+@media (max-width: 1100px) {
+    .maintenance-page .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 992px) {
+    .maintenance-page .main-content { width: 100%; margin-left: 0; padding: 0 20px 32px; }
+}
+
+@media (max-width: 640px) {
+    .maintenance-page .main-content { padding: 0 15px 26px; }
+    .maintenance-page .stats-grid,
+    .maintenance-page .filter-group { grid-template-columns: 1fr; }
+    .maintenance-page .table-card { padding: 18px 16px; }
+    .filter-heading { flex-direction: column; }
+}
