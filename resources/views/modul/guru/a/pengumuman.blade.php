@@ -27,7 +27,7 @@
             <!-- TOPBAR HEADER & TOMBOL TAMBAH -->
             <header class="topbar">
                 <div class="topbar-title">
-                    <h2>Daftar Pengumuman</h2>
+                    <h2>Daftar Pengumum</h2>
                     <p>Kelola seluruh informasi dan pengumuman untuk guru & staf</p>
                 </div>
                     <button class="btn btn-primary" onclick="openModal('modalTambah')">
