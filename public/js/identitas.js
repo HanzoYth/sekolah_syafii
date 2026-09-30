@@ -20,8 +20,10 @@ function generateKode(role){
         choice_simbol = "b";
     }else if (role == "o"){
         choice_simbol = "o";
+    }else if(role == "s"){
+        choice_simbol = "s";
     }else{
-        choice_simbol = "p";
+        choice_simbol = "s";
     }
 
     return choice_simbol + "-" + new_code;

@@ -615,7 +615,7 @@ class modulGuruController extends Controller
             $data_guru->sekolah_id = (int) $request->sekolah_id;
 
 
-            jadwal_piket::query()->delete();
+            jadwal_piket::where("id_guru",$data_guru->id)->delete();
             if ($request->piket_hari ?? false){
                 for ($i = 0 ; $i < count($request->piket_hari);$i++){
                     $this->tambah_piket($request->piket_hari[$i],Carbon::parse($request->piket_waktu[$i])->translatedFormat("H:i:s"),$request->id_guru,$request->piket_nama[$i]);
@@ -644,7 +644,7 @@ class modulGuruController extends Controller
             $data_guru->save();
             return redirect("/gr/klgr")->with("success","berhasil update data guru");
         }else{
-            jadwal_piket::query()->delete();
+            jadwal_piket::where("id_guru",$data_guru->id)->delete();
             if ($request->piket_hari ?? false){
                 for ($i = 0 ; $i < count($request->piket_hari);$i++){
                     $this->tambah_piket($request->piket_hari[$i],Carbon::parse($request->piket_waktu[$i])->translatedFormat("H:i:s"),$request->id_guru,$request->piket_nama[$i]);
@@ -1171,25 +1171,40 @@ class modulGuruController extends Controller
     }
 
     function tambah_pengumumanGuru(Request $request){
-        $id_sekolah = guru::where("id",session("id"))->first()->sekolah_id;
-
-        $data_guru = guru::where("sekolah_id",$id_sekolah)->where("id","!=",session("id"))->get();
-
         $Wa_Fonte = new FonteService();
-        foreach ($data_guru as $value){
-            $Wa_Fonte->sendMassage($value->getUser()->first()->noWa,$request->isi);
+        if (session('role') == "g"){
+            $id_sekolah = guru::where("id",session("id"))->first()->sekolah_id;
+            $data_guru = guru::where("sekolah_id",$id_sekolah)->where("id","!=",session("id"))->get();
+            foreach ($data_guru as $value){
+                $Wa_Fonte->sendMassage($value->getUser()->first()->noWa,$request->isi);
+            }
+            pengumuman::create([
+                "judul" => $request->judul,
+                "isi" => $request->isi,
+                "tanggal" => Carbon::parse($request->tanggal)->translatedFormat("Y-m-d"),
+                "sekolah_id" => $id_sekolah
+            ]);
+            return back()->with("success","pengumuman berhasil di tambahkan");
+        }else{
+            $data_guru = guru::all();
+            $data_kelas = jenis_sekolah::all();
+            foreach ($data_guru as $value){
+                $Wa_Fonte->sendMassage($value->getUser()->first()->noWa,$request->isi);
+            }
+            foreach ($data_kelas as $value){
+                pengumuman::create([
+                    "judul" => $request->judul,
+                    "isi" => $request->isi,
+                    "tanggal" => Carbon::parse($request->tanggal)->translatedFormat("Y-m-d"),
+                    "sekolah_id" => $value->id
+                ]);
+            }
+            return back()->with("success","pengumuman berhasil di tambahkan oleh admin");
         }
-        
-        pengumuman::create([
-            "judul" => $request->judul,
-            "isi" => $request->isi,
-            "tanggal" => Carbon::parse($request->tanggal)->translatedFormat("Y-m-d"),
-            "guru_id" => session("id"),
-            "sekolah_id" => $id_sekolah
-        ]);
 
-        return back()->with("success","pengumuman berhasil di tambahkan");
     }
+
+
 
     function Edit_pengumumanGuru(Request $request){
         $data_pengumuman = pengumuman::where("id",(int) $request->id_pengumuman)->first();

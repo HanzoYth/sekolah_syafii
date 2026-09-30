@@ -169,6 +169,12 @@
                                 <span>Profile</span>
                             </a>
                         </li>
+                        <li class="menu-item {{$route == '/gr/pggr' ? 'active' : ''}}">
+                            <a href="/gr/pggr">
+                                <i class="fa-solid fa-bullhorn"></i>
+                                <span>Pengumuman</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             @endif

@@ -72,7 +72,6 @@
                 @endif
             @endif
             @if (session("role") == "a" || session("role") == "g" || session("role") == "s")
-                <!-- KOTAK 2: MODUL TAHFIDZ -->
                 <a href='/tf/das' class="module-card tahfidz">
                     <div class="icon-wrapper">
                         <i class="fa-solid fa-quran"></i>
