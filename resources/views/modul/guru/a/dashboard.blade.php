@@ -209,7 +209,7 @@
                                     $data_guru = App\Models\guru::where("id",$data->guru_id)->first();
                                     $data_cabang = App\Models\cabang_guru::where("id",$data_guru->cabang_id)->first();
                                     $data_waktu = App\Models\master_waktu_absen_guru::where("cabang_id",$data_cabang->id)->where("hari",strtolower(Carbon\Carbon::now()->locale("id")->translatedFormat("l")))->first();
-                                    $tepat_waktu = Carbon\Carbon::parse($data->waktu_masuk)->greaterThan(Carbon\Carbon::parse($data_waktu->waktu_masuk));
+                                    $tepat_waktu = Carbon\Carbon::parse($data->waktu_masuk)->lessThan(Carbon\Carbon::parse($data_waktu->waktu_masuk));
                                 @endphp
                                 @if ($tepat_waktu)
                                     <tr>
