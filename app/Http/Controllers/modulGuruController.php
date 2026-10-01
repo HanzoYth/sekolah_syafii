@@ -1048,10 +1048,10 @@ class modulGuruController extends Controller
             $jumlah_hari_aktif = 0;
             $jumlah_tidak_hadir = 0;
 
-            for ($data  = $awal_bulan->copy() ; $data <= $akhir_bulan; $data->addDays()){
+            for ($data = $awal_bulan->copy() ; $data <= $akhir_bulan; $data->addDays()){
                 if (strtolower(Carbon::parse($data)->translatedFormat("l")) != "minggu"){
                     $jumlah_hari_aktif ++;
-                    if (Carbon::parse($data)->translatedFormat("d") <= (Carbon::now()->translatedFormat("m") != $bulan ? $akhir_bulan :Carbon::now()->translatedFormat("m") )){
+                    if (Carbon::parse($data)->translatedFormat("d") <= (Carbon::now()->translatedFormat("m") != $bulan ? $akhir_bulan->day :Carbon::now()->translatedFormat("m") )){
                         if (master_absen_guru::where("guru_id",session("id"))->whereMonth("tgl_masuk",$bulan)->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->exists()){
                             if(master_absen_guru::where("guru_id",session("id"))->whereMonth("tgl_masuk",$bulan)->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->where("status_kehadiran","!=","h")->exists()){
                                 $jumlah_tidak_hadir ++;
