@@ -1043,8 +1043,8 @@ class modulGuruController extends Controller
 
             $jumlah_kehadiran = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->count();
             $jumlah_terlambat = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->sum("terlambat_menit");
-            $awal_bulan = Carbon::parse($data_priode->creted_at)->startOfMonth();
-            $akhir_bulan = Carbon::parse($data_priode->creted_at)->endOfMonth();
+            $awal_bulan = Carbon::parse($data_priode->created_at)->startOfMonth();
+            $akhir_bulan = Carbon::parse($data_priode->created_at)->endOfMonth();
             $jumlah_hari_aktif = 0;
             $jumlah_tidak_hadir = 0;
 
