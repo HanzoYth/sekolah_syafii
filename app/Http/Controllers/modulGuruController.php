@@ -1028,7 +1028,7 @@ class modulGuruController extends Controller
             $cek_wallas = wallas::where("guru_id",$id)->exists();
             $info_jabatan_kepala_sekolah  = "guru ini tidak punya jabatan kepala";
             $info_jabatan_kepala_wallas  = "guru ini tidak punya jabatan wallas";
-            $bulan = Carbon::parse($data_priode->creted_at)->translatedFormat("m");
+            $bulan = Carbon::parse($data_priode->created_at)->translatedFormat("m");
             $data_gaji = gaji::where("guru_id",$id)->first();
             $data_tunjangan = tunjangan::where("guru_id",$id)->get();
             if ($cek_wallas){
@@ -1041,8 +1041,8 @@ class modulGuruController extends Controller
                 $info_jabatan_kepala_sekolah = "kepala sekolah $jenis_sekolah";
             }
 
-            $jumlah_kehadiran = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",9)->where("status_kehadiran","h")->count();
-            $jumlah_terlambat = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",9)->where("status_kehadiran","h")->sum("terlambat_menit");
+            $jumlah_kehadiran = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->count();
+            $jumlah_terlambat = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->sum("terlambat_menit");
             $awal_bulan = Carbon::parse($data_priode->creted_at)->startOfMonth();
             $akhir_bulan = Carbon::parse($data_priode->creted_at)->endOfMonth();
             $jumlah_hari_aktif = 0;
