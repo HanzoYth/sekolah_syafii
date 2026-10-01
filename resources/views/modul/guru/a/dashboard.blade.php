@@ -181,7 +181,7 @@
     <!-- ==================== STRUKTUR MODAL / POP UP ==================== -->
     @php
         Carbon\Carbon::setlocale("id");
-        $data_guru_tepat_waktu = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("status_kehadiran","h")->where("terlambat_menit",0)->get();
+        $data_guru_tepat_waktu = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("status_kehadiran","h")->get();
         $data_guru_izin_sakit = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("status_kehadiran","!=","h")->where("status_kehadiran","!=","a")->get();
         $data_guru_terlambat = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("status_kehadiran","h")->where("terlambat_menit","!=",0)->get();
     @endphp
@@ -207,13 +207,18 @@
                             @foreach ($data_guru_tepat_waktu as $data)
                                 @php
                                     $data_guru = App\Models\guru::where("id",$data->guru_id)->first();
+                                    $data_cabang = App\Models\cabang_guru::where("id",$data_guru->cabang_id)->first();
+                                    $data_waktu = App\Models\master_waktu_absen_guru::where("cabang_id",$data_cabang->id)->where("hari",strtolower(Carbon\Carbon::now()->locale("id")->translatedFormat("l")))->first();
+                                    $tepat_waktu = Carbon\Carbon::parse($data->waktu_masuk)->translatedFormat("H:i:s")->greaterThan(Carbon\Carbon::parse($data_waktu->waktu_masuk)->translatedFormat("H:i:s"));
                                 @endphp
-                                <tr>
-                                    <td><img src="{{route('file.show',$data_guru->url_foto)}}" class="avatar-img" alt="Foto"></td>
-                                    <td><strong>{{$data_guru->nama}}</strong></td>
-                                    <td><span class="time-badge">{{Carbon\Carbon::parse($data->waktu_masuk)->translatedFormat("H:i")}} WITA</span></td>
-                                    <td><span class="badge badge-success">Tepat Waktu</span></td>
-                                </tr>
+                                @if ($tepat_waktu)
+                                    <tr>
+                                        <td><img src="{{route('file.show',$data_guru->url_foto)}}" class="avatar-img" alt="Foto"></td>
+                                        <td><strong>{{$data_guru->nama}}</strong></td>
+                                        <td><span class="time-badge">{{Carbon\Carbon::parse($data->waktu_masuk)->translatedFormat("H:i")}} WITA</span></td>
+                                        <td><span class="badge badge-success">Tepat Waktu</span></td>
+                                    </tr>
+                                @endif
                             @endforeach
                         </tbody>
                     </table>
