@@ -61,18 +61,16 @@
                                                 onclick="openDetailModal('{{$value->judul}}', '{{$value->tanggal}}', '{{$value->isi}}')">
                                                 <i class="fa-solid fa-eye"></i>
                                             </button>
-                                            @if ($data_guru->kepala_sekolah)
-                                                <!-- Tombol Edit -->
-                                                <button class="btn btn-icon btn-edit" title="Edit Pengumuman" 
-                                                    onclick="openEditModal('{{$value->id}}', '{{$value->judul}}', '{{$value->tanggal}}', '{{$value->isi}}')">
-                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                </button>
-                                                <!-- Tombol Hapus -->
-                                                <button class="btn btn-icon btn-delete" title="Hapus Pengumuman" 
-                                                    onclick="openDeleteModal('{{$value->id}}', '{{$value->judul}}')">
-                                                    <i class="fa-solid fa-trash-can"></i>
-                                                </button>
-                                            @endif
+                                            <!-- Tombol Edit -->
+                                            <button class="btn btn-icon btn-edit" title="Edit Pengumuman" 
+                                                onclick="openEditModal('{{$value->id}}', '{{$value->judul}}', '{{$value->tanggal}}', '{{$value->isi}}')">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </button>
+                                            <!-- Tombol Hapus -->
+                                            <button class="btn btn-icon btn-delete" title="Hapus Pengumuman" 
+                                                onclick="openDeleteModal('{{$value->id}}', '{{$value->judul}}')">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
