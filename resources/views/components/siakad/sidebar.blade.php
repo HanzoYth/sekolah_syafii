@@ -51,6 +51,18 @@
                 <div class="menu-section" id="section-admin-akademik">
                     <span class="menu-label">AKADEMIK</span>
                     <ul class="menu-list">
+                        <li class="menu-item {{ request()->is('sk/kelola-mapel') ? 'active' : '' }}">
+                            <a href="/sk/kelola-mapel">
+                                <i class="fa-solid fa-book"></i>
+                                <span>Mata Pelajaran</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->is('sk/kelola-jadwal') ? 'active' : '' }}">
+                            <a href="/sk/kelola-jadwal">
+                                <i class="fa-solid fa-calendar-alt"></i>
+                                <span>Kelola Jadwal</span>
+                            </a>
+                        </li>
                         <li class="menu-item {{ request()->is('sk/ds', 'sk/dls/*', 'sk/dts') ? 'active' : '' }}">
                             <a href="/sk/ds">
                                 <i class="fa-solid fa-user-graduate"></i>
@@ -92,6 +104,24 @@
                 <div class="menu-section" id="section-guru">
                     <span class="menu-label">MENU GURU</span>
                     <ul class="menu-list">
+                        <li class="menu-item {{ request()->is('sk/jadwal-guru') ? 'active' : '' }}">
+                            <a href="/sk/jadwal-guru">
+                                <i class="fa-solid fa-calendar-week"></i>
+                                <span>Jadwal Mengajar</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->is('sk/nilai-guru') ? 'active' : '' }}">
+                            <a href="/sk/nilai-guru">
+                                <i class="fa-solid fa-star"></i>
+                                <span>Manajemen Nilai</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->is('sk/wali-kelas') ? 'active' : '' }}">
+                            <a href="/sk/wali-kelas">
+                                <i class="fa-solid fa-users-rectangle"></i>
+                                <span>Wali Kelas</span>
+                            </a>
+                        </li>
                         <li class="menu-item">
                             <a href="/sk/gsp">
                                 <i class="fa-solid fa-file-invoice-dollar"></i>

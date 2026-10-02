@@ -19,16 +19,12 @@ body {
 
 .dashboard-container { min-height: 100vh; }
 
-.admin-class-page .main-content {
-    min-height: 100vh;
-    width: calc(100% - 270px);
-    margin-left: 270px;
-}
+.admin-class-page .main-content { min-height: 100vh; width: calc(100% - 270px); margin-left: 270px; padding: 0 32px; }
 
 .class-content {
     width: min(1180px, 100%);
     margin: 0 auto;
-    padding: 28px 32px 46px;
+    padding: 28px 0 46px;
 }
 
 .class-heading {
@@ -162,8 +158,8 @@ body {
 .class-preview dd { margin: 0; color: #fff; font-size: .75rem; font-weight: 600; text-align: right; }
 
 @media (max-width: 992px) {
-    .admin-class-page .main-content { width: 100%; margin-left: 0; }
-    .class-content { padding: 22px 20px 35px; }
+    .admin-class-page .main-content { width: 100%; margin-left: 0; padding: 0 20px; }
+    .class-content { padding: 22px 0 35px; }
 }
 
 @media (max-width: 800px) {
@@ -178,3 +174,5 @@ body {
     .form-footer { justify-content: stretch; }
     .button { flex: 1; }
 }
+
+

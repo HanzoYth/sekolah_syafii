@@ -176,6 +176,25 @@ Route::post('/sk/pbsp/',[siakadController::class,"publish_slipPembayaran"]);
 Route::post('/sk/hpsp/',[siakadController::class,"hapus_slipPembayaran"]);
 Route::get('/sk/dsg',[siakadController::class,"tampilanDashboardGuru"]);
 Route::get('/sk/gsp',[siakadController::class,"slipPembayaranGuru"]);
+Route::post('/sk/simpan-kelas', [siakadController::class, 'simpan_kelas']);
+
+// Rute untuk Edit & Hapus Mata Pelajaran
+Route::get('/sk/edit-mapel/{id}', [siakadController::class, 'editMapel']);
+Route::post('/sk/update-mapel/{id}', [siakadController::class, 'updateMapel']);
+Route::get('/sk/hapus-mapel/{id}', [siakadController::class, 'hapusMapel']);
+
+// Rute untuk Edit & Hapus Jadwal Pelajaran
+Route::get('/sk/edit-jadwal/{id}', [siakadController::class, 'editJadwal']);
+Route::post('/sk/update-jadwal/{id}', [siakadController::class, 'updateJadwal']);
+Route::get('/sk/hapus-jadwal/{id}', [siakadController::class, 'hapusJadwal']);
+
+// Manajemen Mata Pelajaran (Admin|Siakad)
+Route::get('/sk/kelola-mapel', [siakadController::class, 'kelolaMapel']);
+Route::post('/sk/simpan-mapel', [siakadController::class, 'simpanMapel']);
+
+// Manajemen Jadwal Mengajar (Admin|Siakad)
+Route::get('/sk/kelola-jadwal', [siakadController::class, 'kelolaJadwalAdmin']);
+Route::post('/sk/simpan-jadwal', [siakadController::class, 'simpanJadwalAdmin']);
 
 
 //siswa
