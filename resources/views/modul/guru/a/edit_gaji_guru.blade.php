@@ -39,6 +39,7 @@
             @csrf
 
             <input type="hidden" value="{{$data_guru->id}}" name="id_guru">
+
             <!-- KELOMPOK 1: INFORMASI GURU & KEHADIRAN -->
             <section class="card col-12">
                 <div class="card-header">
@@ -74,14 +75,14 @@
                     <div class="form-group">
                         <label>Jumlah Tidak Hadir (Hari)</label>
                         <div class="input-unit">
-                            <input type="number" id="absenHari" name="ketidakhadiran" value="{{$data_gaji->ketidakhadiran == 0 ? $jumlah_tidak_hadir : $data_gaji->ketidakhadiran}}" class="form-control" placeholder="0">
+                            <input type="number" id="absenHari" name="ketidakhadiran" value="{{$data_gaji->ketidakhadiran == 0 ? $jumlah_tidak_hadir :$data_gaji->ketidakhadiran}}" class="form-control" placeholder="0">
                             <span class="unit-text">Hari</span>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Jumlah Telat (Menit/Frekuensi)</label>
                         <div class="input-unit">
-                            <input type="number" id="telatMenit" value="{{$jumlah_terlambat}}" class="form-control readonly" readonly placeholder="0">
+                            <input type="number" id="telatMenit" value="{{$jumlah_terlambat}}" class="form-control readonly" placeholder="0">
                             <span class="unit-text">Menit</span>
                         </div>
                     </div>
@@ -109,14 +110,14 @@
                             <label>Kafalah Pokok</label>
                             <div class="input-currency">
                                 <span>Rp</span>
-                                <input type="number" name="pokok" id="kafalahPokok" value="{{(int) $data_gaji->gaji_pokok == 0 ? '' : (int) $data_gaji->gaji_pokok}}" class="form-control calc-income" placeholder="0">
+                                <input type="number" name="pokok" id="kafalahPokok" value="{{(int) $data_gaji->gaji_pokok == 0 ? '' : (int)$data_gaji->gaji_pokok}}" class="form-control calc-income" placeholder="0">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Kafalah Honor</label>
                             <div class="input-currency">
                                 <span>Rp</span>
-                                <input type="number" name="honor" id="kafalahHonor" value="{{(int) $data_gaji->gaji_honor == 0 ? '' : (int) $data_gaji->gaji_honor}}" class="form-control calc-income" placeholder="0">
+                                <input type="number" name="honor" id="kafalahHonor" value="{{(int) $data_gaji->gaji_honor == 0 ? '' : (int)$data_gaji->gaji_honor}}" class="form-control calc-income" placeholder="0">
                             </div>
                         </div>
                         <div class="form-group">
@@ -142,7 +143,7 @@
                             @foreach ($data_tunjangan as $value)
                                 <div class="dynamic-row">
                                     <div class="form-group flex-2">
-                                        <input type="text" name="nama_tunjangan[]" value="{{$value->nama_tunjangan}}" class="form-control" placeholder="Nama Tunjangan Baru">
+                                        <input type="text" name="nama_tunjangan[]" value="{{$value->nama_tunjangan}}" class="form-control" placeholder="Nama Tunjangan">
                                     </div>
                                     <div class="form-group flex-2">
                                         <div class="input-currency">
@@ -159,7 +160,7 @@
                     <!-- TOTAL KAFALAH / PENDAPATAN -->
                     <div class="total-box total-income">
                         <span>Total Pendapatan (Kafalah)</span>
-                        <strong id="displayTotalPendapatan">Rp 5.700.000</strong>
+                        <strong id="displayTotalPendapatan">Rp 0</strong>
                     </div>
                 </div>
             </section>
@@ -172,8 +173,7 @@
                     </div>
                     <div>
                         <h3>3. Potongan</h3>
-                        <p class="subtitle">Penyesuaian keterlambatan & kasbon</p>
-                        <p class="subtitle">Anda Cukup Masukkan Nominal Potongannya Saja Terekecuali Untuk Kasbon</p>
+                        <p class="subtitle">Penyesuaian keterlambatan, kasbon, & potongan lainnya</p>
                     </div>
                 </div>
                 <div class="card-body">
@@ -199,15 +199,43 @@
                         </div>
                     </div>
 
+                    <!-- DYNAMIC POTONGAN SECTION -->
+                    <div class="dynamic-section">
+                        <div class="dynamic-header">
+                            <h4>Potongan Lainnya</h4>
+                            <button type="button" id="btnAddPotongan" class="btn-add btn-add-danger">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>Tambah Potongan</span>
+                            </button>
+                        </div>
+                        
+                        <div id="potonganContainer" class="dynamic-list">
+                            @foreach ($data_tunjangan_potongan as $value)
+                                <div class="dynamic-row">
+                                    <div class="form-group flex-2">
+                                        <input type="text" name="nama_potongan[]" value="{{$val->nama_potongan}}" class="form-control" placeholder="Nama Potongan">
+                                    </div>
+                                    <div class="form-group flex-2">
+                                        <div class="input-currency">
+                                            <span>Rp</span>
+                                            <input type="number" name="harga_potongan[]" value="{{(int) $val->nominal}}" class="form-control calc-deduct potongan-val" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-remove-row"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
                     <!-- TOTAL POTONGAN -->
                     <div class="total-box total-deduction">
                         <span>Jumlah Potongan</span>
-                        <strong id="displayTotalPotongan"></strong>
+                        <strong id="displayTotalPotongan">Rp 0</strong>
                     </div>
                 </div>
             </section>
 
-            <!-- KELOMPOK 4: KAFALAH TAMBAHAN & RINGKASAN SLIP -->
+            <!-- KELOMPOK 4: KAFALAH TAMBAHAN & REWARD -->
             <section class="card col-7">
                 <div class="card-header">
                     <div class="header-icon icon-bonus">
@@ -224,14 +252,14 @@
                             <label>Kafalah Tambahan</label>
                             <div class="input-currency">
                                 <span>Rp</span>
-                                <input type="number" name="tambahan" id="kafalahTambahan" value="{{(int) $data_gaji->gaji_tambahan == 0 ? '' : (int) $data_gaji->gaji_tambahan}}" class="form-control calc-bonus" placeholder="0">
+                                <input type="number" name="tambahan" id="kafalahTambahan" value="{{(int) $data_gaji->gaji_tambahan == 0 ? '' : (int)$data_gaji->gaji_tambahan}}" class="form-control calc-bonus" placeholder="0">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Reward / Bonus Kinerja</label>
                             <div class="input-currency">
                                 <span>Rp</span>
-                                <input type="number" name="bonus" id="rewardKafalah" value="{{(int) $data_gaji->bonus == 0 ? '' :(int) $data_gaji->bonus}}" class="form-control calc-bonus" placeholder="0">
+                                <input type="number" name="bonus" id="rewardKafalah" value="{{(int) $data_gaji->bonus == 0 ? '' :(int)$data_gaji->bonus}}" class="form-control calc-bonus" placeholder="0">
                             </div>
                         </div>
                     </div>
@@ -239,7 +267,18 @@
                     <!-- TOTAL TAMBAHAN -->
                     <div class="total-box total-bonus">
                         <span>Jumlah Kafalah Tambahan</span>
-                        <strong id="displayTotalTambahan"></strong>
+                        <strong id="displayTotalTambahan">Rp 0</strong>
+                    </div>
+
+                    <!-- INPUT EVALUASI / CATATAN -->
+                    <div class="evaluasi-section">
+                        <div class="form-group">
+                            <label for="evaluasiGuru">
+                                <i class="fa-solid fa-comment-dots"></i> Evaluasi / Catatan Kinerja Guru
+                            </label>
+                            <textarea name="evaluasi" id="evaluasiGuru" class="form-control textarea-evaluasi" rows="3" placeholder="Contoh: Mohon tingkatkan keaktifan presensi harian tepat waktu.">{{ $data_gaji->evaluasi ?? '' }}</textarea>
+                            <span class="field-help">Catatan ini akan ditampilkan pada slip gaji resmi guru.</span>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -259,21 +298,21 @@
                     <div class="summary-list">
                         <div class="summary-item">
                             <span>Total Pendapatan Utama</span>
-                            <strong id="sumPendapatan">Rp</strong>
+                            <strong id="sumPendapatan">Rp 0</strong>
                         </div>
                         <div class="summary-item text-success">
                             <span>Total Bonus & Reward (+)</span>
-                            <strong id="sumTambahan"></strong>
+                            <strong id="sumTambahan">Rp 0</strong>
                         </div>
                         <div class="summary-item text-danger">
                             <span>Total Potongan (-)</span>
-                            <strong id="sumPotongan"></strong>
+                            <strong id="sumPotongan">Rp 0</strong>
                         </div>
                         <hr class="summary-divider">
                         <div class="summary-grand-total">
                             <div>
                                 <small>Total Gaji Diterima</small>
-                                <h2 id="displayGrandTotal"></h2>
+                                <h2 id="displayGrandTotal">Rp 0</h2>
                             </div>
                         </div>
                     </div>
@@ -288,6 +327,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     const tunjanganContainer = document.getElementById('tunjanganContainer');
     const btnAddTunjangan = document.getElementById('btnAddTunjangan');
+    const potonganContainer = document.getElementById('potonganContainer');
+    const btnAddPotongan = document.getElementById('btnAddPotongan');
 
     // Format mata uang Rupiah
     function formatRupiah(number) {
@@ -320,15 +361,35 @@ document.addEventListener('DOMContentLoaded', function () {
         calculateAll();
     });
 
-    // 2. HAPUS BARIS TUNJANGAN
-    tunjanganContainer.addEventListener('click', function(e) {
+    // 2. TAMBAH POTONGAN DINAMIS
+    btnAddPotongan.addEventListener('click', function() {
+        const newRow = document.createElement('div');
+        newRow.classList.add('dynamic-row');
+        newRow.innerHTML = `
+            <div class="form-group flex-2">
+                <input type="text" name="nama_potongan[]" class="form-control" placeholder="Nama Potongan Baru">
+            </div>
+            <div class="form-group flex-2">
+                <div class="input-currency">
+                    <span>Rp</span>
+                    <input type="number" name="harga_potongan[]" value="0" class="form-control calc-deduct potongan-val" placeholder="0">
+                </div>
+            </div>
+            <button type="button" class="btn-remove-row"><i class="fa-solid fa-trash-can"></i></button>
+        `;
+        potonganContainer.appendChild(newRow);
+        calculateAll();
+    });
+
+    // 3. HAPUS BARIS DINAMIS (TUNJANGAN & POTONGAN)
+    document.addEventListener('click', function(e) {
         if (e.target.closest('.btn-remove-row')) {
             e.target.closest('.dynamic-row').remove();
             calculateAll();
         }
     });
 
-    // 3. KALKULASI REAL-TIME
+    // 4. KALKULASI REAL-TIME
     function calculateAll() {
         // A. Total Pendapatan
         const pokok = getVal('kafalahPokok');
@@ -343,10 +404,21 @@ document.addEventListener('DOMContentLoaded', function () {
         const totalPendapatan = honor + tugasTambahan + dynamicTunjanganTotal;
 
         // B. Total Potongan
-        const potAbsen = getVal('potonganAbsen') * parseInt(document.getElementById("absenHari").value);
-        const potTelat = getVal('potonganTelat') * parseInt(document.getElementById("telatMenit").value);
+        const absenHariEl = document.getElementById("absenHari");
+        const telatMenitEl = document.getElementById("telatMenit");
+        const countAbsen = absenHariEl ? parseInt(absenHariEl.value) || 0 : 0;
+        const countTelat = telatMenitEl ? parseInt(telatMenitEl.value) || 0 : 0;
+
+        const potAbsen = getVal('potonganAbsen') * countAbsen;
+        const potTelat = getVal('potonganTelat') * countTelat;
         const potKasbon = getVal('potonganKasbon');
-        const totalPotongan = potAbsen + potTelat + potKasbon;
+
+        let dynamicPotonganTotal = 0;
+        document.querySelectorAll('.potongan-val').forEach(input => {
+            dynamicPotonganTotal += parseFloat(input.value) || 0;
+        });
+
+        const totalPotongan = potAbsen + potTelat + potKasbon + dynamicPotonganTotal;
 
         // C. Total Tambahan / Reward
         const tambahan = getVal('kafalahTambahan');
@@ -354,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const totalTambahan = tambahan + reward;
 
         // D. Grand Total Gaji
-        const grandTotal = totalPendapatan + totalTambahan - totalPotongan;
+        const grandTotal = (pokok + totalPendapatan + totalTambahan) - totalPotongan;
 
         // Update DOM Display
         document.getElementById('displayTotalPendapatan').textContent = formatRupiah(totalPendapatan);
@@ -364,15 +436,12 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('sumPendapatan').textContent = formatRupiah(totalPendapatan);
         document.getElementById('sumTambahan').textContent = '+ ' + formatRupiah(totalTambahan);
         document.getElementById('sumPotongan').textContent = '- ' + formatRupiah(totalPotongan);
-        document.getElementById('displayGrandTotal').textContent = formatRupiah(grandTotal > 0 ? pokok + grandTotal : pokok );
+        document.getElementById('displayGrandTotal').textContent = formatRupiah(grandTotal < 0 ? 0 : grandTotal);
     }
 
-    // Event listener pada perubahan input
-    document.getElementById("absenHari").addEventListener("input", function() {
-        calculateAll();
-    });
+    // Event listener pada perubahan input form
     document.getElementById('formEditGaji').addEventListener('input', function(e) {
-        if (e.target.tagName === 'INPUT') {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
             calculateAll();
         }
     });

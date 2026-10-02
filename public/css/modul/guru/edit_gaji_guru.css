@@ -33,7 +33,7 @@ body {
     overflow-x: hidden;
 }
 
-/* CONTAINER & LAYOUT (TANPA SIDEBAR) */
+/* CONTAINER & LAYOUT */
 .dashboard-container {
     width: 100%;
     min-height: 100vh;
@@ -43,7 +43,7 @@ body {
 
 .main-wrapper {
     width: 100%;
-    max-width: 1400px; /* Maksimal lebar layar agar tetap terpusat dan rapi */
+    max-width: 1400px;
     margin: 0 auto;
     padding: 32px 24px;
     display: flex;
@@ -247,7 +247,7 @@ body {
     color: var(--text-muted);
 }
 
-/* DYNAMIC TUNJANGAN SECTION */
+/* DYNAMIC SECTION (TUNJANGAN & POTONGAN) */
 .dynamic-section {
     margin-top: 10px;
     border-top: 1px dashed var(--border-color);
@@ -286,6 +286,16 @@ body {
     color: #fff;
 }
 
+.btn-add-danger {
+    background-color: #fee2e2;
+    color: var(--danger-color);
+}
+
+.btn-add-danger:hover {
+    background-color: var(--danger-color);
+    color: #fff;
+}
+
 .dynamic-list {
     display: flex;
     flex-direction: column;
@@ -318,6 +328,25 @@ body {
 .btn-remove-row:hover {
     background-color: var(--danger-color);
     color: #fff;
+}
+
+/* AREA EVALUASI / CATATAN GURU */
+.evaluasi-section {
+    margin-top: 12px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.textarea-evaluasi {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+}
+
+.field-help {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 2px;
 }
 
 /* TOTAL BOXES */
@@ -380,14 +409,14 @@ body {
     margin-top: 4px;
 }
 
-/* RESPONSIVE DESIGN UNTUK BERBAGAI UKURAN LAYAR */
+/* RESPONSIVE DESIGN */
 @media (max-width: 1024px) {
     .col-8, .col-7, .col-5, .col-4 {
-        grid-column: span 12; /* Pada layar tablet/laptop sedang, jadikan 1 kolom penuh */
+        grid-column: span 12;
     }
 
     .grid-cols-3 {
-        grid-template-columns: repeat(2, 1fr); /* 2 Kolom untuk tablet */
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -411,7 +440,7 @@ body {
     }
 
     .grid-cols-3, .grid-cols-2 {
-        grid-template-columns: 1fr; /* 1 Kolom penuh pada layar mobile */
+        grid-template-columns: 1fr;
     }
 
     .dynamic-row {
@@ -420,7 +449,7 @@ body {
         background-color: #f8fafc;
         padding: 12px;
         border-radius: var(--radius-md);
-        border: 1px border-color;
+        border: 1px solid var(--border-color);
     }
 
     .btn-remove-row {

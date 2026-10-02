@@ -22,6 +22,7 @@ use App\Models\priode;
 use App\Models\riwayat_gaji;
 use App\Models\riwayat_tunjangan;
 use App\Models\tunjangan;
+use App\Models\tunjangan_potongan;
 use App\Services\FonteService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
@@ -1031,6 +1032,7 @@ class modulGuruController extends Controller
             $bulan = Carbon::parse($data_priode->created_at)->translatedFormat("m");
             $data_gaji = gaji::where("guru_id",$id)->first();
             $data_tunjangan = tunjangan::where("guru_id",$id)->get();
+            $data_tunjangan_potongan = tunjangan_potongan::where("guru_id",$id)->get();
             if ($cek_wallas){
                 $data_kelas = ruang_kelas::where("id",wallas::where("guru_id",$id)->first()->kelas_id)->first()->nama_ruang;
                 $info_jabatan_kepala_wallas = "guru wali kelas $data_kelas";
@@ -1072,6 +1074,7 @@ class modulGuruController extends Controller
                 "data_gaji" => $data_gaji,
                 "jumlah_tidak_hadir" => $jumlah_tidak_hadir,
                 "data_tunjangan" => $data_tunjangan,
+                "data_tunjangan_potongan" => $data_tunjangan_potongan,
                 "jumlah_hari_aktif" => $jumlah_hari_aktif
             ]);
         }
@@ -1086,6 +1089,7 @@ class modulGuruController extends Controller
             "guru_id" => $guru_id
         ]);
     }
+
 
     function simpan_PerubahanGajiGuru(Request $request){
         $data_priode = priode::all()->first();
