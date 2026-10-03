@@ -1066,7 +1066,7 @@ class modulGuruController extends Controller
                 if (strtolower(Carbon::parse($data)->translatedFormat("l")) != "minggu"){
                     $jumlah_hari_aktif ++;
                     if (strtolower(Carbon::parse($data)->translatedFormat("l")) != "minggu"){
-                        if ($data->day < (Carbon::now()->translatedFormat("m") != $bulan ? $akhir_bulan->day :Carbon::now()->day)){
+                        if ($data->day <= (Carbon::now()->translatedFormat("m") != $bulan ? $akhir_bulan->day :Carbon::now()->day)){
                             if (master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->exists()){
                                 if(master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->where("status_kehadiran","!=","h")->exists()){
                                     $jumlah_tidak_hadir ++;
