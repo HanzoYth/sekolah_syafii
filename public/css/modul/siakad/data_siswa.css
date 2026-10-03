@@ -20,7 +20,7 @@ body {
 
 .dashboard-container { min-height: 100vh; }
 
-.admin-students-page .main-content { min-height: 100vh; margin-left: 270px; width: calc(100% - 270px); padding: 0 32px; }
+.admin-students-page .main-content { min-height: 100vh; margin-left: 260px; width: calc(100% - 260px); padding: 0 32px; }
 
 .students-content {
     width: min(1440px, 100%);
@@ -162,7 +162,7 @@ tbody tr:hover { background: #f8fcf9; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 @media (max-width: 992px) {
-    .admin-students-page .main-content { min-height: 100vh; margin-left: 270px; width: calc(100% - 270px); padding: 32px; }
+    .admin-students-page .main-content { min-height: 100vh; margin-left: 260px; width: calc(100% - 260px); padding: 32px; }
     .students-content { padding: 22px 0 34px; }
 }
 

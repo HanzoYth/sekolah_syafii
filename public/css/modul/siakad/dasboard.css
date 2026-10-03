@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Amiri:wght@400;700&display=swap');
+
 
 /* =====================================================================
    MODERN EMERALD & GOLD DESIGN SYSTEM (V2 - ULTRA PREMIUM)
    ===================================================================== */
 :root {
     /* Dimensions & Layout Mechanics */
-    --sidebar-width: 270px;
+    --sidebar-width: 260px;
     --bismillah-bar-h: 46px;
 
     /* Primary Emerald Spectrum */
@@ -45,7 +45,7 @@
     --text-light: #94A3B8;
 
     /* Fonts */
-    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-sans: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-arabic: 'Amiri', serif;
 
     /* Elevated Shadows & Glassmorphism */
@@ -96,7 +96,7 @@ a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
 
 /* =====================================================================
-   BISMILLAH BAR — ELEGAN & TINGGI SEIMBANG
+   BISMILLAH BAR ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ELEGAN & TINGGI SEIMBANG
    ===================================================================== */
 .bismillah-bar {
     position: sticky;
@@ -159,22 +159,7 @@ ul { list-style: none; }
 }
 
 /* SIDEBAR FIX */
-.sidebar {
-    width: var(--sidebar-width);
-    min-width: var(--sidebar-width);
-    background: var(--sidebar-bg);
-    color: #ffffff;
-    padding: 28px 0;
-    display: flex;
-    flex-direction: column;
-    position: fixed; /* Menggunakan fixed agar konsisten menempel di samping */
-    top: var(--bismillah-bar-h);
-    left: 0;
-    height: calc(100vh - var(--bismillah-bar-h));
-    box-shadow: var(--shadow-lg);
-    z-index: 100;
-    border-right: 1px solid rgba(212, 175, 55, 0.15);
-}
+/* .sidebar removed to prevent conflict with sidebar_siakad.css */
 
 /* MAIN CONTENT FIX */
 .main-content {
@@ -190,23 +175,9 @@ ul { list-style: none; }
 /* =====================================================================
    SIDEBAR INTERNAL STYLES
    ===================================================================== */
-.sidebar .brand {
-    padding: 0 24px 24px 24px;
-    font-size: 1.25rem;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    letter-spacing: -0.3px;
-    color: #ffffff;
-}
+/* .sidebar .brand removed to prevent conflict */
 
-.sidebar .brand i { 
-    font-size: 1.5rem; 
-    color: var(--gold-accent);
-    filter: drop-shadow(0 2px 6px rgba(212, 175, 55, 0.4));
-}
+/* .sidebar .brand i removed to prevent conflict */
 
 .nav-list {
     margin-top: 20px;
@@ -942,12 +913,7 @@ tbody tr:last-child td, .styled-table tbody tr:last-child td { border-bottom: no
 }
 
 @media (max-width: 992px) {
-    .sidebar { 
-        position: relative; 
-        width: 100%; 
-        height: auto; 
-        top: 0; 
-    }
+    /* .sidebar removed to prevent conflict with sidebar_siakad.css */
     .main-content { 
         margin-left: 0; 
         width: 100%; 
