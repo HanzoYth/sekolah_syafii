@@ -17,6 +17,7 @@ class gaji extends Model
         "gaji_tambahan",
         "ketidakhadiran",
         "bonus",
-        "guru_id"
+        "guru_id",
+        "evaluasi"
     ];
 }

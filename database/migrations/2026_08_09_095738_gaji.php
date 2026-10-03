@@ -26,6 +26,7 @@ return new class extends Migration
             $table->boolean("publish")->default(0);
             $table->timestamps();
             $table->foreignId("guru_id")->constrained("guru")->cascadeOnDelete();
+            $table->text("evaluasi");
         });
     }
 

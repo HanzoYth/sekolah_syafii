@@ -330,6 +330,14 @@
                 <td>Rp{{ number_format($data_gaji->potongan_tidak_hadir, 0, ",", ".") }}</td>
                 <td></td>
             </tr>
+            @foreach($data_tunjangan_potongan as $value)
+                <tr>
+                    <td>{{ $value->nama_potongan }}</td>
+                    <td>:</td>
+                    <td>Rp{{ number_format($value->nominal, 0, ",", ".") }}</td>
+                    <td></td>
+                </tr>
+            @endforeach
             <tr>
                 <td>Potongan Keterlambatan</td>
                 <td>:</td>
@@ -369,8 +377,9 @@
             </div>
         </div>
 
+        <span>Evaluasi</span>
         <div class="footer-note">
-            Surat keterangan ini bersifat rahasia. Harap disimpan dengan baik sebagai bukti resmi. Jika terdapat ketidaksesuaian, segera hubungi bendahara sekolah.
+            {{$data_gaji->evaluasi}}
         </div>
     </div>
 

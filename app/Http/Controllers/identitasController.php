@@ -14,6 +14,7 @@ class identitasController extends Controller
             $data = explode("-",$identitas)[1];
             $to_data = ltrim($data,"0");
         }
+        
         return view("identitas",["jumlah" => (int) $to_data]);
     }
 

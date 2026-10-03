@@ -75,14 +75,14 @@
                     <div class="form-group">
                         <label>Jumlah Tidak Hadir (Hari)</label>
                         <div class="input-unit">
-                            <input type="number" id="absenHari" name="ketidakhadiran" value="{{$data_gaji->ketidakhadiran == 0 ? $jumlah_tidak_hadir :$data_gaji->ketidakhadiran}}" class="form-control" placeholder="0">
+                            <input type="number" id="absenHari" name="ketidakhadiran" value="{{$jumlah_tidak_hadir}}" class="form-control" placeholder="0">
                             <span class="unit-text">Hari</span>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Jumlah Telat (Menit/Frekuensi)</label>
                         <div class="input-unit">
-                            <input type="number" id="telatMenit" value="{{$jumlah_terlambat}}" class="form-control readonly" placeholder="0">
+                            <input type="number" id="telatMenit" name = "telat" value="{{$jumlah_terlambat}}" class="form-control" placeholder="0">
                             <span class="unit-text">Menit</span>
                         </div>
                     </div>
@@ -177,13 +177,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="form-group">
-                        <label>Nominal Potongan Tidak Hadir</label>
-                        <div class="input-currency">
-                            <span>Rp</span>
-                            <input type="number" name="tidak_hadir" id="potonganAbsen" value="40000" class="form-control calc-deduct" placeholder="0">
-                        </div>
-                    </div>
+                    <input type="hidden" name="tidak_hadir" id="potonganAbsen" value="0" class="form-control calc-deduct" placeholder="0">
                     <div class="form-group">
                         <label>Nominal Potongan Keterlambatan</label>
                         <div class="input-currency">
@@ -213,12 +207,12 @@
                             @foreach ($data_tunjangan_potongan as $value)
                                 <div class="dynamic-row">
                                     <div class="form-group flex-2">
-                                        <input type="text" name="nama_potongan[]" value="{{$val->nama_potongan}}" class="form-control" placeholder="Nama Potongan">
+                                        <input type="text" name="nama_potongan[]" value="{{$value->nama_potongan}}" class="form-control" placeholder="Nama Potongan">
                                     </div>
                                     <div class="form-group flex-2">
                                         <div class="input-currency">
                                             <span>Rp</span>
-                                            <input type="number" name="harga_potongan[]" value="{{(int) $val->nominal}}" class="form-control calc-deduct potongan-val" placeholder="0">
+                                            <input type="number" name="harga_potongan[]" value="{{(int) $value->nominal}}" class="form-control calc-deduct potongan-val" placeholder="0">
                                         </div>
                                     </div>
                                     <button type="button" class="btn-remove-row"><i class="fa-solid fa-trash-can"></i></button>
@@ -409,7 +403,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const countAbsen = absenHariEl ? parseInt(absenHariEl.value) || 0 : 0;
         const countTelat = telatMenitEl ? parseInt(telatMenitEl.value) || 0 : 0;
 
-        const potAbsen = getVal('potonganAbsen') * countAbsen;
         const potTelat = getVal('potonganTelat') * countTelat;
         const potKasbon = getVal('potonganKasbon');
 
@@ -417,8 +410,11 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.potongan-val').forEach(input => {
             dynamicPotonganTotal += parseFloat(input.value) || 0;
         });
+        
+        const absen = totalPendapatan / 25 * countAbsen;
+        document.getElementById("potonganAbsen").value = absen;
 
-        const totalPotongan = potAbsen + potTelat + potKasbon + dynamicPotonganTotal;
+        const totalPotongan = absen + potTelat + potKasbon + dynamicPotonganTotal;
 
         // C. Total Tambahan / Reward
         const tambahan = getVal('kafalahTambahan');

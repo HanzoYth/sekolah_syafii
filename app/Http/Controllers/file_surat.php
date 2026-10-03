@@ -10,6 +10,8 @@ use App\Models\tunjangan;
 use App\Models\master_absen_guru;
 use App\Models\riwayat_gaji;
 use App\Models\riwayat_tunjangan;
+use App\Models\riwayat_tunjangan_potongan;
+use App\Models\tunjangan_potongan;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;                                                               
 use Carbon\Carbon;
@@ -28,18 +30,23 @@ class file_surat extends Controller
     function tampilan_SuratSlipGaji($id){
         $guru = guru::where("id",session("id"))->first();
         $data_gaji = riwayat_gaji::where("id",$id)->first();
-        $data_tunjangan = riwayat_tunjangan::where("guru_id",session("id"))->where("created_at",$data_gaji->created_id)->get();
+        $data_tunjangan = riwayat_tunjangan::where("guru_id",session("id"))->where("created_at",$data_gaji->created_at)->get();
+        $data_tunjangan_potongan = riwayat_tunjangan_potongan::where("guru_id",session("id"))->where("created_at",$data_gaji->created_at)->get();
         
         $jumlah_gaji_kotor = $data_gaji->gaji_pokok + $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus;
         $jumlah_gaji_bisa_kepotong = $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus;
         foreach($data_tunjangan as $data) {$jumlah_gaji_kotor += $data->nominal;$jumlah_gaji_bisa_kepotong += $data->nominal;}
 
-        $jumlah_potongan = $jumlah_gaji_bisa_kepotong - ($data_gaji->potongan_tidak_hadir + $data_gaji->potongan_keterlambatan + $data_gaji->kasbon);
+        $data_potong = $data_gaji->potongan_tidak_hadir + $data_gaji->potongan_keterlambatan + $data_gaji->kasbon;
+        foreach($data_tunjangan_potongan as $data)  {$data_potong += $data->nominal;}
+        $jumlah_potongan = $jumlah_gaji_bisa_kepotong - $data_potong;
+        if ($jumlah_potongan < 0) {$jumlah_potongan = 0;}
         $jumlah_gaji_bersih = $jumlah_potongan > 0 ? $data_gaji->gaji_pokok + $jumlah_potongan : $data_gaji->gaji_pokok;
         return view("surat/surat_slip_gaji",[
             "data_guru" => $guru,
             "data_gaji" => $data_gaji,
             "data_tunjangan" => $data_tunjangan,
+            "data_tunjangan_potongan" => $data_tunjangan_potongan,
             "jumlah_gaji_kotor" => $jumlah_gaji_kotor,
             "jumlah_alpa" => $data_gaji->ketidakhadiran,
             "jumlah_terlambat" => $data_gaji->keterlambatan,
@@ -51,23 +58,25 @@ class file_surat extends Controller
         $guru = session("role") == "a" ? guru::where("id",$id)->first() : guru::where("id",session("id"))->first();
         $data_gaji = session("role") == "a" ? gaji::where("guru_id",$id)->first() : riwayat_gaji::where("id",$id)->first();
         $data_tunjangan = session("role") == "a" ? tunjangan::where("guru_id",$id)->get() : riwayat_tunjangan::where("guru_id",session("id"))->where("created_at",$data_gaji->created_at)->get();
-        $bulan = Carbon::now()->translatedFormat("m");
-        $jumlah_terlambat = master_absen_guru::where("guru_id",1)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->sum("terlambat_menit");
+        $data_tunjangan_potongan = session("role") == "a" ? tunjangan_potongan::where("guru_id",$id)->get() : riwayat_tunjangan_potongan::where("guru_id",session("id"))->where("created_at",$data_gaji->created_at)->get();
 
         $jumlah_gaji_kotor = $data_gaji->gaji_pokok + $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus;
         $jumlah_gaji_bisa_kepotong = $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus;
         foreach($data_tunjangan as $data) {$jumlah_gaji_kotor += $data->nominal;$jumlah_gaji_bisa_kepotong += $data->nominal;}
 
-        $jumlah_potongan = $jumlah_gaji_bisa_kepotong - ($data_gaji->potongan_tidak_hadir + $data_gaji->potongan_keterlambatan + $data_gaji->kasbon);
+        $data_potong = $data_gaji->potongan_tidak_hadir + $data_gaji->potongan_keterlambatan + $data_gaji->kasbon;
+        foreach($data_tunjangan_potongan as $data)  {$data_potong += $data->nominal;}
+        $jumlah_potongan = $jumlah_gaji_bisa_kepotong - $data_potong;
+        if ($jumlah_potongan < 0) {$jumlah_potongan = 0;}
         $jumlah_gaji_bersih = $jumlah_potongan > 0 ? $data_gaji->gaji_pokok + $jumlah_potongan : $data_gaji->gaji_pokok;
 
         $pdf = Pdf::loadView("surat/surat_slip_gaji",[
             "data_guru" => $guru,
             "data_gaji" => $data_gaji,
             "data_tunjangan" => $data_tunjangan,
+            "data_tunjangan_potongan" => $data_tunjangan_potongan,
             "jumlah_gaji_kotor" => $jumlah_gaji_kotor,
             "jumlah_alpa" => $data_gaji->ketidakhadiran,
-            "jumlah_terlambat" => $jumlah_terlambat,
             "jumlah_gaji_bersih" => $jumlah_gaji_bersih
         ]);    
 
@@ -80,14 +89,16 @@ class file_surat extends Controller
         $guru = guru::where("id",$id)->first();
         $data_gaji = gaji::where("guru_id",$id)->first();
         $data_tunjangan = tunjangan::where("guru_id",$id)->get();
-        $bulan = Carbon::now()->translatedFormat("m");
-        $jumlah_terlambat = master_absen_guru::where("guru_id",1)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->sum("terlambat_menit");
+        $data_tunjangan_potongan = tunjangan_potongan::where("guru_id",$id)->get();
         
         $jumlah_gaji_kotor = $data_gaji->gaji_pokok + $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus;
         $jumlah_gaji_bisa_kepotong = $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus;
         foreach($data_tunjangan as $data) {$jumlah_gaji_kotor += $data->nominal;$jumlah_gaji_bisa_kepotong += $data->nominal;}
 
-        $jumlah_potongan = $jumlah_gaji_bisa_kepotong - ($data_gaji->potongan_tidak_hadir + $data_gaji->potongan_keterlambatan + $data_gaji->kasbon);
+        $data_potong = $data_gaji->potongan_tidak_hadir + $data_gaji->potongan_keterlambatan + $data_gaji->kasbon;
+        foreach($data_tunjangan_potongan as $data)  {$data_potong += $data->nominal;}
+        $jumlah_potongan = $jumlah_gaji_bisa_kepotong - $data_potong;
+        if ($jumlah_potongan < 0) {$jumlah_potongan = 0;}
         $jumlah_gaji_bersih = $jumlah_potongan > 0 ? $data_gaji->gaji_pokok + $jumlah_potongan : $data_gaji->gaji_pokok;
 
         $pdf = Pdf::loadView("surat/surat_slip_gaji",[
@@ -95,8 +106,8 @@ class file_surat extends Controller
             "data_gaji" => $data_gaji,
             "data_tunjangan" => $data_tunjangan,
             "jumlah_gaji_kotor" => $jumlah_gaji_kotor,
+            "data_tunjangan_potongan" => $data_tunjangan_potongan,
             "jumlah_alpa" => $data_gaji->ketidakhadiran,
-            "jumlah_terlambat" => $jumlah_terlambat,
             "jumlah_gaji_bersih" => $jumlah_gaji_bersih
         ]);
 
