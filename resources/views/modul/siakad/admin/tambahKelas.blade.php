@@ -34,7 +34,7 @@
                     <a href="javascript:history.back()" class="back-link"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
                 </section>
 
-                <div class="class-layout">
+                                <div class="class-layout">
                     <section class="class-form-card" aria-labelledby="form-title">
                         <div class="form-card-heading">
                             <span class="heading-icon"><i class="fa-solid fa-door-open"></i></span>
@@ -53,10 +53,10 @@
                                         <i class="fa-solid fa-layer-group"></i>
                                         <select name="tingkat_sekolah" id="tingkat_sekolah" required>
                                             <option value="" disabled selected>Pilih jenjang sekolah</option>
-                                            <option value="TK">TK — Taman Kanak-Kanak</option>
-                                            <option value="SD">SD — Sekolah Dasar</option>
-                                            <option value="SMP">SMP — Sekolah Menengah Pertama</option>
-                                            <option value="SMA">SMA — Sekolah Menengah Atas</option>
+                                            <option value="TK">TK ?" Taman Kanak-Kanak</option>
+                                            <option value="SD">SD ?" Sekolah Dasar</option>
+                                            <option value="SMP">SMP ?" Sekolah Menengah Pertama</option>
+                                            <option value="SMA">SMA ?" Sekolah Menengah Atas</option>
                                         </select>
                                     </div>
                                     <small>Pilih tingkat pendidikan yang menaungi kelas ini.</small>
@@ -97,11 +97,6 @@
                                         <small>Pilih nama rombel atau jurusan.</small>
                                     </div>
                                 </div>
-
-                                <div class="form-note">
-                                    <i class="fa-solid fa-circle-info"></i>
-                                    <p>Pastikan kombinasi jenjang, tingkat, dan paralel belum pernah dibuat agar tidak terjadi data kelas ganda.</p>
-                                </div>
                             </div>
 
                             <div class="form-footer">
@@ -111,17 +106,50 @@
                         </form>
                     </section>
 
-                    <aside class="class-preview" aria-labelledby="preview-title">
-                        <span class="preview-label">PRATINJAU</span>
-                        <div class="preview-icon"><i class="fa-solid fa-chalkboard"></i></div>
-                        <h2 id="preview-title" data-class-preview>Kelas baru</h2>
-                        <p>Nama kelas akan terbentuk otomatis dari pilihan yang Anda buat.</p>
-                        <dl>
-                            <div><dt>Jenjang</dt><dd id="previewJenjang">Belum dipilih</dd></div>
-                            <div><dt>Tingkat</dt><dd id="previewTingkat">Belum dipilih</dd></div>
-                            <div><dt>Paralel</dt><dd id="previewParalel">Belum dipilih</dd></div>
-                        </dl>
-                    </aside>
+                    <section class="class-form-card">
+                        <div class="form-card-heading">
+                            <span class="heading-icon" style="background:#e0e7ff; color:#4f46e5;"><i class="fa-solid fa-list-check"></i></span>
+                            <div>
+                                <h2>Daftar Ruang Kelas</h2>
+                                <p>Daftar seluruh ruang kelas yang telah ditambahkan ke sistem.</p>
+                            </div>
+                        </div>
+                        <div style="padding: 25px;">
+                            <div class="class-table-container">
+                                <table class="class-table">
+                                    <thead>
+                                        <tr>
+
+                                            <th style="width: 80px; text-align: center;">No</th>
+                                            <th>Nama Kelas</th>
+                                        
+                                            <th style="width: 80px; text-align: center;">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($data_kelas as $k)
+                                        <tr>
+                                            <td style="text-align: center;">{{ $loop->iteration }}</td>
+                                            <td style="font-weight: 500;">{{ $k->nama_kelas }}</td>
+                                            <td style="text-align: center;">
+                                                <a href="/sk/edit-kelas/{{ $k->id }}" class="btn-action edit" style="color: #105a41; border: 1px solid #dbe8e1; background: #e7f4ec; padding: 6px 10px; border-radius: 6px; text-decoration: none; margin-right: 5px;" title="Edit">
+                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                </a>
+                                                <a href="/sk/hapus-kelas/{{ $k->id }}" class="btn-action view" style="color: #dc2626; border: 1px solid #fecaca; background: #fef2f2; padding: 6px 10px; border-radius: 6px; text-decoration: none;" onclick="return confirm('Apakah Anda yakin ingin menghapus kelas ini? Tindakan ini akan menghapus kelas secara permanen.')" title="Hapus">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            $13" style="text-align: center; color: #6b7b75; padding: 30px;">Belum ada ruang kelas yang dibuat.</td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
         </main>

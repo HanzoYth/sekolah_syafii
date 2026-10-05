@@ -413,7 +413,7 @@
                                     <td>
                                         <div class="action-buttons">
                                             <a href="/sk/dp" class="btn-action view" title="Detail"><i class="fa-solid fa-eye"></i></a>
-                                            <button type="button" class="btn-action edit" title="Edit" onclick="openEditModal('{{$value->id}}','{{$data_siswa->nama}}', '{{$data_kelas->nama_ruang}}', '{{$data_sekolah->jenis}}','{{$value->tanggal_awal}}','{{$value->nominal}}','{{$value->status}}','{{$sisa_bayar}}')"><i class="fa-solid fa-pen-to-square"></i></button>
+                                            <button type="button" class="btn-action edit" title="Edit" onclick="openEditModal('{{$value->id}}','{{$data_siswa->nama}}', '{{$data_kelas->nama_ruang}}', '{{$data_sekolah->jenis}}','{{ \Carbon\Carbon::parse($value->tanggal_awal)->format('Y-m-d') }}','{{$value->nominal}}','{{$value->status}}','{{$sisa_bayar}}')"><i class="fa-solid fa-pen-to-square"></i></button>
                                             
                                             {{-- TOMBOL PUBLISH --}}
                                             <button type="button" class="btn-action publish" title="Publish" onclick="openPublishModal('{{$data_siswa->id}}', '{{$data_siswa->nama}}')">
@@ -538,7 +538,7 @@
                 <form action="/sk/hpsp" method="POST" id="formDelete">
                     @csrf
                     <input type="hidden" name="id" id="delete_id">
-                    <input type="hidden" name="pembayaran" id="delete_id" value="ipp">
+                    <input type="hidden" name="pembayaran" value="ipp">
                     
                     <div style="display: flex; gap: 12px; justify-content: center;">
                         <button type="button" class="btn-modal-cancel" onclick="closeDeleteModal()" style="flex: 1; padding: 10px;">Batal</button>
@@ -687,5 +687,7 @@
         }
     </script>
 
+
+    <x-warning />
 </body>
 </html>

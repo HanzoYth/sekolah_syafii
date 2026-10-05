@@ -66,8 +66,7 @@ body {
 .back-link:hover { border-color: #9bc6b0; color: var(--class-primary); }
 
 .class-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1.65fr) minmax(255px, .8fr);
+    display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(300px, 1fr);
     gap: 22px;
     align-items: start;
 }
@@ -176,3 +175,34 @@ body {
 }
 
 
+
+/* Table Styles */
+.class-table-container {
+    overflow-x: auto;
+    border: 1px solid var(--class-border);
+    border-radius: 12px;
+    background: #fff;
+}
+.class-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    text-align: left;
+}
+.class-table th {
+    padding: 14px 18px;
+    background: #f8faf9;
+    color: #496258;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--class-border);
+}
+.class-table td {
+    padding: 14px 18px;
+    color: var(--class-ink);
+    border-bottom: 1px solid #edf2ef;
+}
+.class-table tbody tr:last-child td { border-bottom: none; }
+.class-table tbody tr:hover { background: #fafcfa; }

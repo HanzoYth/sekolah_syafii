@@ -61,7 +61,8 @@ class siakadController extends Controller
     }
    
     function tambah_kelas(){
-       return view("/modul/siakad/admin/tambahKelas");
+       $data_kelas = \App\Models\kelas::all();
+       return view("/modul/siakad/admin/tambahKelas", compact('data_kelas'));
     }
     function absenSiswa(){
        return view("/modul/siakad/guru/absensisiswa");
@@ -227,15 +228,53 @@ class siakadController extends Controller
 
         // Check for duplicates
         $exists = \App\Models\ruang_kelas::where('nama_ruang', $nama_ruang)->exists();
-        if ($exists) {
+        $exists2 = \App\Models\kelas::where('nama_kelas', $nama_ruang)->exists();
+        if ($exists || $exists2) {
             return back()->with('error', 'Kelas dengan nama tersebut sudah ada.');
         }
 
-        \App\Models\ruang_kelas::create([
-            'nama_ruang' => $nama_ruang
-        ]);
+        if (!$exists) {
+            \App\Models\ruang_kelas::create([
+                'nama_ruang' => $nama_ruang
+            ]);
+        }
+        if (!$exists2) {
+            \App\Models\kelas::create([
+                'nama_kelas' => $nama_ruang
+            ]);
+        }
 
         return back()->with('success', 'Ruang kelas berhasil ditambahkan.');
+    }
+
+        function editKelas($id) {
+        $kelas = \App\Models\kelas::findOrFail($id);
+        return view('/modul/siakad/admin/editKelas', compact('kelas'));
+    }
+
+    function updateKelas(Request $request, $id) {
+        $request->validate(['nama_kelas' => 'required']);
+        
+        $kelas = \App\Models\kelas::findOrFail($id);
+        $nama_lama = $kelas->nama_kelas;
+        $nama_baru = $request->nama_kelas;
+        
+        // Sinkronisasi pembaruan ke tabel ruang_kelas jika ada
+        \App\Models\ruang_kelas::where('nama_ruang', $nama_lama)->update(['nama_ruang' => $nama_baru]);
+        
+        $kelas->update(['nama_kelas' => $nama_baru]);
+        
+        return redirect('/sk/tk')->with('success', 'Nama kelas berhasil diperbarui.');
+    }
+
+    function hapusKelas($id) {
+        $kelas = \App\Models\kelas::findOrFail($id);
+        
+        // Also try to find and delete from ruang_kelas by matching name
+        \App\Models\ruang_kelas::where('nama_ruang', $kelas->nama_kelas)->delete();
+        
+        $kelas->delete();
+        return back()->with('success', 'Ruang kelas berhasil dihapus.');
     }
 
     function jadwalMengajarGuru(Request $request) {

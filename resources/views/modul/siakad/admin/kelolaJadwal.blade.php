@@ -64,7 +64,7 @@
                             <select name="guru_id" required>
                                 <option value="">-- Pilih Guru --</option>
                                 @foreach($data_guru as $g)
-                                    <option value="{{ $g->id }}">{{ $g->nama_lengkap }}</option>
+                                    <option value="{{ $g->id }}">{{ $g->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -102,7 +102,7 @@
 
             <div class="jadwal-container">
                 <div class="jadwal-header"><i class="fa-solid fa-list"></i> Daftar Jadwal Terdaftar</div>
-                <table class="jadwal-table">
+                <div style="overflow-x: auto; width: 100%;"><table class="jadwal-table">
                     <thead>
                         <tr>
                             <th>Hari</th>
@@ -120,16 +120,18 @@
                             <td>{{ $j->jam_pelajaran->nama_jam ?? '-' }}<br><small>{{ $j->jam_pelajaran->jam_mulai ?? '-' }} - {{ $j->jam_pelajaran->jam_selesai ?? '-' }}</small></td>
                             <td>{{ $j->kelas->nama_kelas ?? '-' }}</td>
                             <td>{{ $j->mata_pelajaran->nama_mapel ?? '-' }}</td>
-                            <td>{{ $j->guru->nama_lengkap ?? '-' }}</td>
+                            <td>{{ $j->guru->nama ?? '-' }}</td>
                             <td>{{ $j->tahun_ajaran->nama ?? '-' }}</td><td><a href="/sk/edit-jadwal/{{ $j->id }}" style="color:#0284c7; margin-right:8px;"><i class="fa-solid fa-pen"></i></a><a href="/sk/hapus-jadwal/{{ $j->id }}" onclick="return confirm('Yakin ingin menghapus jadwal ini?')" style="color:#e11d48;"><i class="fa-solid fa-trash"></i></a></td>
                         </tr>
                         @empty
                         <tr><td colspan="7" style="text-align: center; padding: 20px;">Belum ada data jadwal pelajaran.</td></tr>
                         @endforelse
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </main>
     </div>
+
+    <x-warning />
 </body>
 </html>

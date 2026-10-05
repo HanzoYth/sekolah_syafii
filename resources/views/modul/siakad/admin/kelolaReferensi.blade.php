@@ -394,5 +394,7 @@
             });
         });
     </script>
+
+    <x-warning />
 </body>
 </html>

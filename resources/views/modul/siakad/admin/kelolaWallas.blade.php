@@ -132,8 +132,8 @@
                                                     <i class="fa-solid fa-user-tie"></i>
                                                 </div>
                                                 <div>
-                                                    <strong>{{ $w->guru->nama_lengkap ?? 'Guru tidak ditemukan' }}</strong>
-                                                    <span>NIG: {{ $w->guru->nig ?? '-' }}</span>
+                                                    <strong>{{ $w->guru->nama ?? 'Guru tidak ditemukan' }}</strong>
+                                                    
                                                 </div>
                                             </div>
                                         </td>
@@ -145,7 +145,7 @@
                                                 <button class="btn-action-icon btn-action-edit" onclick="openEditModal({{ $w->id }}, {{ $w->guru_id }}, {{ $w->kelas_id }})" title="Edit Data">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
-                                                <button class="btn-action-icon btn-action-delete" onclick="openDeleteModal({{ $w->id }}, '{{ $w->guru->nama_lengkap ?? '' }}', '{{ $w->kelas->nama_kelas ?? '' }}')" title="Hapus Data">
+                                                <button class="btn-action-icon btn-action-delete" onclick="openDeleteModal({{ $w->id }}, '{{ $w->guru->nama ?? '' }}', '{{ $w->kelas->nama_kelas ?? '' }}')" title="Hapus Data">
                                                     <i class="fa-solid fa-trash-can"></i>
                                                 </button>
                                             </div>
@@ -175,7 +175,7 @@
                     <select name="guru_id" class="custom-select" required>
                         <option value="">-- Silakan Pilih Guru --</option>
                         @foreach($data_guru as $g)
-                            <option value="{{ $g->id }}">{{ $g->nama_lengkap }} ({{ $g->nig }})</option>
+                            <option value="{{ $g->id }}">{{ $g->nama }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -208,7 +208,7 @@
                     <label>Pilih Guru</label>
                     <select name="guru_id" id="editGuru" class="custom-select" required>
                         @foreach($data_guru as $g)
-                            <option value="{{ $g->id }}">{{ $g->nama_lengkap }}</option>
+                            <option value="{{ $g->id }}">{{ $g->nama }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -272,5 +272,7 @@
             m.addEventListener('click', function(e) { if(e.target === m) closeAllModals(); });
         });
     </script>
+
+    <x-warning />
 </body>
 </html>
