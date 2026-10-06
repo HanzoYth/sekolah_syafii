@@ -88,7 +88,10 @@
                 <div class="card">
                     <div class="card-header">
                         <h4><i class="fa-solid fa-clipboard-user"></i> Daftar Kehadiran Guru</h4>
-                        <span class="date-badge">Rabu, 29 Juli 2026</span>
+                        @php
+                            Carbon\Carbon::setlocale("id");
+                        @endphp
+                        <span class="date-badge">{{Carbon\Carbon::now()->translatedFormat("d M Y")}}</span>
                     </div>
                     <div class="card-body">
                         

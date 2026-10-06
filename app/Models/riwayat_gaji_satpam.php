@@ -18,6 +18,7 @@ class riwayat_gaji_satpam extends Model
         "bonus",
         "ketidakhadiran",
         "keterlambatan",
-        "satpam_id"
+        "satpam_id",
+        "evaluasi"
     ];
 }

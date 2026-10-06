@@ -53,7 +53,15 @@
             </form>
 
             <div class="otp-footer">
-                <a href="/gr/abs"><i class="fa-solid fa-arrow-left"></i> Kembali ke Halaman Absen</a>
+                @if (session('role') == 'g')
+                    <a href="/gr/abs"><i class="fa-solid fa-arrow-left"></i> Kembali ke Halaman Absen</a>
+                @elseif (session('role') == 'b')
+                    <a href="/bd/abs"><i class="fa-solidz fa-arrow-left"></i> Kembali ke Halaman Absen</a>
+                @elseif(session('role') == "o")
+                    <a href="/gr/abs"><i class="fa-solid fa-arrow-left"></i> Kembali ke Halaman Absen</a>
+                @else
+                    <a href="/gr/abs"><i class="fa-solid fa-arrow-left"></i> Kembali ke Halaman Absen</a>
+                @endif
             </div>
         </div>
     </div>

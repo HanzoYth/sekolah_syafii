@@ -18,6 +18,7 @@ class riwayat_gaji_operator extends Model
         "bonus",
         "ketidakhadiran",
         "keterlambatan",
-        "operator_id"
+        "operator_id",
+        "evaluasi"
     ];
 }

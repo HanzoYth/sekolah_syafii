@@ -93,7 +93,7 @@ Route::post("/gr/tcb",[cabangGuruController::class,"TambahCabang"]);
 Route::get("/gr/nkt/{id}",[cabangGuruController::class,"nonAktikanCabang"]);
 
 
-//ini pengajuan
+//ini pengajuan3
 Route::get("/gr/pgjgr",[modulGuruController::class,"tampilan_pengajuanGuru"]);
 Route::get("/gr/apgjgr",[modulGuruController::class,"tampilan_pengajuanGuruA"]);
 Route::post("/gr/tbpgjgr",[modulGuruController::class,"tambah_pengajuanGuru"]);
@@ -226,3 +226,10 @@ Route::get('/file_pdf/{path}', function ($path) {
 
 // tahfiz
 Route::get("/tf/pgm",[tahfizController::class,"tampilan_Tahfiz"]);
+
+
+
+//bendaharan
+Route::get("/bd/das",[bendaharaController::class,"tampilan_dashboardBendahara"]);
+Route::get("/bd/abs",[bendaharaController::class,"tampilan_presensiAbsenBendahara"]);
+Route::get("/bd/acabs",[bendaharaController::class,"absen_MasukBendahara"]);

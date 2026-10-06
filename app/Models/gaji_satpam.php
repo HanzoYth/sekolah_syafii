@@ -17,6 +17,7 @@ class gaji_satpam extends Model
         "gaji_tambahan",
         "ketidakhadiran",
         "bonus",
-        "satpam_id"
+        "satpam_id",
+        "evaluasi"
     ];
 }

@@ -113,7 +113,7 @@
             @endif
 
             @if (session("role") == "b")
-                <a href="{{session('role') == 'a' ? '/gr/dasa' : '/gr/das'}}" class="module-card guru">
+                <a href="/bd/das" class="module-card guru">
                     <div class="icon-wrapper">
                         <i class="fa-solid fa-chalkboard-user"></i>
                     </div>

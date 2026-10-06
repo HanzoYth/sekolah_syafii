@@ -18,6 +18,7 @@ class riwayat_gaji_bendahara extends Model
         "bonus",
         "ketidakhadiran",
         "keterlambatan",
-        "bendahara_id"
+        "bendahara_id",
+        "evaluasi"
     ];
 }

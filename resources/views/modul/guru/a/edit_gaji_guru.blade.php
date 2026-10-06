@@ -394,8 +394,12 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.tunjangan-val').forEach(input => {
             dynamicTunjanganTotal += parseFloat(input.value) || 0;
         });
+        const tambahan = getVal('kafalahTambahan');
+        const reward = getVal('rewardKafalah');
+        const totalTambahan = tambahan + reward;
 
-        const totalPendapatan = honor + tugasTambahan + dynamicTunjanganTotal;
+
+        const totalPendapatan = honor + tugasTambahan + dynamicTunjanganTotal + totalTambahan;
 
         // B. Total Potongan
         const absenHariEl = document.getElementById("absenHari");
@@ -416,13 +420,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const totalPotongan = absen + potTelat + potKasbon + dynamicPotonganTotal;
 
-        // C. Total Tambahan / Reward
-        const tambahan = getVal('kafalahTambahan');
-        const reward = getVal('rewardKafalah');
-        const totalTambahan = tambahan + reward;
-
         // D. Grand Total Gaji
-        const grandTotal = (pokok + totalPendapatan + totalTambahan) - totalPotongan;
+        const grandTotal = (pokok + totalPendapatan) - totalPotongan;
 
         // Update DOM Display
         document.getElementById('displayTotalPendapatan').textContent = formatRupiah(totalPendapatan);

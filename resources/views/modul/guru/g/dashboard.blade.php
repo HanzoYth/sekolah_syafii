@@ -173,7 +173,7 @@
                                     @endphp
                                     <div class="piket-item {{$cek_hari_ini ? 'piket-today' : '' }}">
                                         <div class="piket-date-box">
-                                            <span class="piket-day">{{ Carbon\Carbon::parse($piket->tanggal)->locale("id")->isoFormat("ddd") }}</span>
+                                            <span class="piket-day">{{ $piket->hari }}</span>
                                         </div>
                                         <div class="piket-info">
                                             <h5>{{$piket->nama}}</h5>

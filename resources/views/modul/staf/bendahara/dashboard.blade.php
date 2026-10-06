@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HRIS Guru - Dashboard</title>
+    <title>HRIS Bendahara - Dashboard</title>
     
     <!-- Google Fonts & Font Awesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -26,14 +26,14 @@
             <header class="topbar">
                 <div class="page-title">
                     <h2>Dashboard Utama</h2>
-                    <p>Selamat datang kembali, <strong>{{$data_guru->nama}}</strong></p>
+                    <p>Selamat datang kembali, <strong>{{$data_bendahara->nama}}</strong></p>
                 </div>
                 <div class="topbar-actions">
                     <div class="user-profile">
-                        <img src="{{ route('file.show',$data_guru->url_foto)}}" alt="Foto Profil">
+                        <img src="{{ route('file.show',$data_bendahara->url_foto)}}" alt="Foto Profil">
                         <div class="user-info">
-                            <span class="name">{{$data_guru->nama}}</span>
-                            <span class="role">{{$data_guru->guru_tetap ? "guru tetap" : "guru honor"}}</span>
+                            <span class="name">{{$data_bendahara->nama}}</span>
+                            <span class="role">Bendahara</span>
                         </div>
                     </div>
                 </div>
@@ -52,8 +52,8 @@
                             <i class="fa-solid fa-calendar-check text-primary"></i>
                         </div>
                         <div class="stat-data">
-                            <span class="label">Kehadiran Bulan Ini</span>
-                            <h3>{{$jumlah_kehadiran_bulanan}}<small>/ {{$jumlah_hari_aktif}} Hari</small></h3>
+                            <span class="label">Ketidak hadiran Bulan Ini</span>
+                            <h3>{{$jumlah_ketidakhadiran}}<small>/ {{$jumlah_hari_aktif}} Hari</small></h3>
                         </div>
                     </div>
 
@@ -63,8 +63,7 @@
                         </div>
                         <div class="stat-data">
                             <span class="label">Total Terlambat(menit)</span>
-                            <small>belum di publish oleh admin</small>
-                            <!-- <h3>15 <small>menit</small></h3> -->
+                            <small>{{$terlambat}}</small>
                         </div>
                     </div>
 

@@ -43,7 +43,8 @@ class satpamController extends Controller
             "gaji_tambahan" => 0,
             "bonus" => 0,
             "ketidakhadiran" => 0,
-            "satpam_id" => $id
+            "satpam_id" => $id,
+            "evaluasi"
         ]);
     }
 

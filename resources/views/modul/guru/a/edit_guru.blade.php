@@ -116,37 +116,36 @@
 
                         <div class="checkbox-grid">
                             <label class="checkbox-card">
-                                <input type="checkbox" name="guru_tetap" value="1" {{ ($data_guru->guru_tetap ?? true) ? 'checked' : '' }}>
+                                <input type="checkbox" name="guru_tetap" value="{{ $data_guru->guru_tetap ? 1 : 0 }}" {{ $data_guru->guru_tetap ? 'checked' : '' }}>
                                 <span>Guru Tetap</span>
-                            </label>
 
                             <label class="checkbox-card">
-                                <input type="checkbox" name="guru_honor" value="0" {{ ($data_guru->guru_honor ?? false) ? 'checked' : '' }}>
+                                <input type="checkbox" name="guru_honor" value="{{ $data_guru->guru_honor ? 1 : 0 }}" {{ $data_guru->guru_honor ? 'checked' : '' }}>
                                 <span>Guru Honor</span>
                             </label>
 
                             <label class="checkbox-card">
-                                <input type="checkbox" name="pengampu_tahfiz" value="1" {{ ($data_guru->pengampu_tahfiz ?? true) ? 'checked' : '' }}>
+                                <input type="checkbox" name="pengampu_tahfiz" value="{{ $data_guru->pengampu_tahfiz ? 1 : 0 }}" {{ $data_guru->pengampu_tahfiz ? 'checked' : '' }}>
                                 <span>Pengampu Tahfiz</span>
                             </label>
 
                             <label class="checkbox-card">
-                                <input type="checkbox" name="koordinator_tahfiz" value="0" {{ ($data_guru->koordinator_tahfiz ?? false) ? 'checked' : '' }}>
+                                <input type="checkbox" name="koordinator_tahfiz" value="{{ $data_guru->koordinator_tahfiz ? 1 : 0 }}" {{ $data_guru->koordinator_tahfiz ? 'checked' : '' }}>
                                 <span>Koordinator Tahfiz</span>
                             </label>
 
                             <label class="checkbox-card">
-                                <input type="checkbox" name="kepala_sekolah" value="0" {{ ($data_guru->kepala_sekolah ?? false) ? 'checked' : '' }}>
+                                <input type="checkbox" name="kepala_sekolah" value="{{ $data_guru->kepala_sekolah ? 1 : 0 }}" {{ $data_guru->kepala_sekolah ? 'checked' : '' }}>
                                 <span>Kepala Sekolah</span>
                             </label>
 
                             <label class="checkbox-card">
-                                <input type="checkbox" name="wakil_sekolah" value="0" {{ ($data_guru->wakil_sekolah ?? false) ? 'checked' : '' }}>
+                                <input type="checkbox" name="wakil_sekolah" value="{{ $data_guru->wakil_sekolah ? 1 : 0 }}" {{ $data_guru->wakil_sekolah ? 'checked' : '' }}>
                                 <span>Wakil Kepala Sekolah</span>
                             </label>
 
                             <label class="checkbox-card">
-                                <input type="checkbox" name="asisten" value="0" {{ ($data_guru->ast_krk ?? false) ? 'checked' : '' }}>
+                                <input type="checkbox" name="asisten" value="{{ $data_guru->ast_krk ? 1 : 0 }}" {{ $data_guru->ast_krk ? 'checked' : '' }}>
                                 <span>Asisten Kurikulum</span>
                             </label>
                         </div>

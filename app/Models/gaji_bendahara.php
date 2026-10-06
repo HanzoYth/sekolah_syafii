@@ -17,6 +17,7 @@ class gaji_bendahara extends Model
         "gaji_tambahan",
         "ketidakhadiran",
         "bonus",
-        "bendahara_id"
+        "bendahara_id",
+        "evaluasi"
     ];
 }

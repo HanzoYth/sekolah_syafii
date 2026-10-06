@@ -17,6 +17,7 @@ class gaji_operator extends Model
         "gaji_tambahan",
         "ketidakhadiran",
         "bonus",
-        "operator_id"
+        "operator_id",
+        "evaluasi"
     ];
 }

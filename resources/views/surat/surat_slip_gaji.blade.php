@@ -199,6 +199,7 @@
             font-style: italic;
             color: #444;
             text-align: justify;
+            white-space: pre-line; /* tampilkan enter/baris baru apa adanya */
         }
     </style>
 </head>
@@ -273,18 +274,22 @@
                 <col>
                 <col class="plus-minus">
             </colgroup>
-            <tr>
-                <td>Gaji Pokok</td>
-                <td>:</td>
-                <td>Rp{{ number_format($data_gaji->gaji_pokok, 0, ",", ".") }}</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Gaji Honor</td>
-                <td>:</td>
-                <td>Rp{{ number_format($data_gaji->gaji_honor, 0, ",", ".") }}</td>
-                <td></td>
-            </tr>
+            @if ($data_gaji->gaji_pokok > 0)
+                <tr>
+                    <td>Gaji Pokok</td>
+                    <td>:</td>
+                    <td>Rp{{ number_format($data_gaji->gaji_pokok, 0, ",", ".") }}</td>
+                    <td></td>
+                </tr>
+            @endif
+            @if ($data_gaji->gaji_honor > 0)
+                <tr>
+                    <td>Gaji Honor</td>
+                    <td>:</td>
+                    <td>Rp{{ number_format($data_gaji->gaji_honor, 0, ",", ".") }}</td>
+                    <td></td>
+                </tr>
+            @endif
             @foreach($data_tunjangan as $value)
                 <tr>
                     <td>{{ $value->nama_tunjangan }}</td>
@@ -293,24 +298,30 @@
                     <td></td>
                 </tr>
             @endforeach
-            <tr>
-                <td>Gaji Tugas Tambahan</td>
-                <td>:</td>
-                <td>Rp{{ number_format($data_gaji->gaji_tugas_tambahan, 0, ",", ".") }}</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Gaji Tambahan</td>
-                <td>:</td>
-                <td>Rp{{ number_format($data_gaji->gaji_tambahan, 0, ",", ".") }}</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Bonus Kinerja</td>
-                <td>:</td>
-                <td>Rp{{ number_format($data_gaji->bonus, 0, ",", ".") }}</td>
-                <td class="bold">+</td>
-            </tr>
+            @if ($data_gaji->gaji_tugas_tambahan > 0)
+                <tr>
+                    <td>Gaji Tugas Tambahan</td>
+                    <td>:</td>
+                    <td>Rp{{ number_format($data_gaji->gaji_tugas_tambahan, 0, ",", ".") }}</td>
+                    <td></td>
+                </tr>
+            @endif
+            @if ($data_gaji->gaji_tambahan > 0)
+                <tr>
+                    <td>Gaji Tambahan</td>
+                    <td>:</td>
+                    <td>Rp{{ number_format($data_gaji->gaji_tambahan, 0, ",", ".") }}</td>
+                    <td></td>
+                </tr>
+            @endif
+            @if ($data_gaji->bonus > 0)
+                <tr>
+                    <td>Bonus Kinerja</td>
+                    <td>:</td>
+                    <td>Rp{{ number_format($data_gaji->bonus, 0, ",", ".") }}</td>
+                    <td class="bold">+</td>
+                </tr>
+            @endif
         </table>
         <div class="single-line" style="margin-bottom: 4px;"></div>
         <div class="total-line">Total Pendapatan (Bruto): Rp{{ number_format($jumlah_gaji_kotor, 0, ",", ".") }}</div>
@@ -324,12 +335,14 @@
                 <col>
                 <col class="plus-minus">
             </colgroup>
-            <tr>
-                <td>Potongan Tidak Hadir</td>
-                <td>:</td>
-                <td>Rp{{ number_format($data_gaji->potongan_tidak_hadir, 0, ",", ".") }}</td>
-                <td></td>
-            </tr>
+            @if ($data_gaji->potongan_tidak_hadir > 0)
+                <tr>
+                    <td>Potongan Tidak Hadir ({{$data_ketidakhadiran}} hari)</td>
+                    <td>:</td>
+                    <td>Rp{{ number_format($data_gaji->potongan_tidak_hadir, 0, ",", ".") }}</td>
+                    <td></td>
+                </tr>
+            @endif
             @foreach($data_tunjangan_potongan as $value)
                 <tr>
                     <td>{{ $value->nama_potongan }}</td>
@@ -338,18 +351,22 @@
                     <td></td>
                 </tr>
             @endforeach
-            <tr>
-                <td>Potongan Keterlambatan</td>
-                <td>:</td>
-                <td>Rp{{ number_format($data_gaji->potongan_keterlambatan, 0, ",", ".") }}</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Kasbon / Pinjaman</td>
-                <td>:</td>
-                <td>Rp{{ number_format($data_gaji->kasbon, 0, ",", ".") }}</td>
-                <td class="bold">-</td>
-            </tr>
+            @if ($data_gaji->potongan_keterlambatan > 0)
+                <tr>
+                    <td>Potongan Keterlambatan ({{$data_keterlambatan}} menit)</td>
+                    <td>:</td>
+                    <td>Rp{{ number_format($data_gaji->potongan_keterlambatan, 0, ",", ".") }}</td>
+                    <td></td>
+                </tr>
+            @endif
+            @if ($data_gaji->kasbon > 0)
+                <tr>
+                    <td>Kasbon / Pinjaman</td>
+                    <td>:</td>
+                    <td>Rp{{ number_format($data_gaji->kasbon, 0, ",", ".") }}</td>
+                    <td class="bold">-</td>
+                </tr>
+            @endif
         </table>
         <div class="single-line" style="margin-bottom: 4px;"></div>
         @php
@@ -378,9 +395,7 @@
         </div>
 
         <span>Evaluasi</span>
-        <div class="footer-note">
-            {{$data_gaji->evaluasi}}
-        </div>
+        <div class="footer-note">{!! nl2br(e($data_gaji->evaluasi)) !!}</div>
     </div>
 
 </body>

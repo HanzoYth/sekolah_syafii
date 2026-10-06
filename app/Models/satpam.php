@@ -19,4 +19,8 @@ class satpam extends Model
         "cabang_id",
         "user_id"
     ];
+
+    public function getUser(){
+        return $this->belongsTo(akun::class,"user_id");
+    }
 }

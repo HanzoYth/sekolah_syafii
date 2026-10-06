@@ -26,6 +26,7 @@ return new class extends Migration
             $table->boolean("publish")->default(0);
             $table->timestamps();
             $table->foreignId("operator_id")->constrained("operator")->cascadeOnDelete();
+            $table->text("evaluasi");
         });
     }
 

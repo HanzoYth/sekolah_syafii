@@ -61,7 +61,8 @@ class operatorController extends Controller
             "gaji_tambahan" => 0,
             "bonus" => 0,
             "ketidakhadiran" => 0,
-            "operator_id" => $id
+            "operator_id" => $id,
+            "evaluasi" => null
         ]);
     }
 

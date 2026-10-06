@@ -24,7 +24,7 @@
         @endphp
         <div class="sidebar-menu-wrapper">
             <div class="menu-section" id="section-guru">
-                <span class="menu-label">MODUL GURU</span>
+                <span class="menu-label">MODUL Bendahara</span>
                 <ul class="menu-list">
                     <li class="menu-item {{$route == '/gr/das' ? 'active' : ''}}">
                         <a href="/gr/das">
@@ -33,7 +33,7 @@
                         </a>
                     </li>
                     <li class="menu-item {{$route == '/gr/abs' ? 'active' : ''}}">
-                        <a href="/gr/abs">
+                        <a href="/bd/abs">
                             <i class="fa-solid fa-user-check"></i>
                             <span>Absensi Presensi</span>
                         </a>

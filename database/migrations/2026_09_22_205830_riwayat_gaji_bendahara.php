@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string("tugas_tambahan")->default("tidak ada tugas tambahan yang di berikan");
             $table->timestamps();
             $table->foreignId("bendahara_id")->constrained("bendahara")->cascadeOnDelete();
+            $table->text("evaluasi");
         });
     }
 

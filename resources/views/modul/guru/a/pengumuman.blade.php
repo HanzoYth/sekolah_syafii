@@ -57,18 +57,28 @@
                                     <td>
                                         <div class="action-group" style="justify-content: center;">
                                             <!-- Tombol Detail (Mata) -->
-                                            <button class="btn btn-icon btn-view" title="Lihat Detail" 
-                                                onclick="openDetailModal('{{$value->judul}}', '{{$value->tanggal}}', '{{$value->isi}}')">
+                                            <button class="btn btn-icon btn-view" title="Lihat Detail"
+                                                data-judul="{{ $value->judul }}"
+                                                data-tanggal="{{ $value->tanggal }}"
+                                                data-isi="{{ $value->isi }}"
+                                                onclick="openDetailModal(this)">
                                                 <i class="fa-solid fa-eye"></i>
                                             </button>
+
                                             <!-- Tombol Edit -->
-                                            <button class="btn btn-icon btn-edit" title="Edit Pengumuman" 
-                                                onclick="openEditModal('{{$value->id}}', '{{$value->judul}}', '{{$value->tanggal}}', '{{$value->isi}}')">
+                                            <button class="btn btn-icon btn-edit" title="Edit Pengumuman"
+                                                data-id="{{ $value->id }}"
+                                                data-judul="{{ $value->judul }}"
+                                                data-tanggal="{{ $value->tanggal }}"
+                                                data-isi="{{ $value->isi }}"
+                                                onclick="openEditModal(this)">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </button>
                                             <!-- Tombol Hapus -->
-                                            <button class="btn btn-icon btn-delete" title="Hapus Pengumuman" 
-                                                onclick="openDeleteModal('{{$value->id}}', '{{$value->judul}}')">
+                                            <button class="btn btn-icon btn-delete" title="Hapus Pengumuman"
+                                                data-id="{{ $value->id }}"
+                                                data-judul="{{ $value->judul }}"
+                                                onclick="openDeleteModal(this)">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         </div>
@@ -221,31 +231,29 @@
     function closeModal(modalId) {
         document.getElementById(modalId).classList.remove('active');
     }
-
     // Fungsi mengisi modal Edit
-    function openEditModal(id, judul, tanggal, isi) {
-        document.getElementById("id_pengumuman").value = id;
-        document.getElementById('judul_edit').value = judul;
-        document.getElementById('tanggal_edit').value = tanggal;
-        document.getElementById('isi_edit').value = isi;
+    function openEditModal(btn) {
+        document.getElementById("id_pengumuman").value = btn.dataset.id;
+        document.getElementById('judul_edit').value = btn.dataset.judul;
+        document.getElementById('tanggal_edit').value = btn.dataset.tanggal;
+        document.getElementById('isi_edit').value = btn.dataset.isi;
         openModal('modalEdit');
-    }
+    }    
 
     // Fungsi mengisi modal Detail (Lihat)
-    function openDetailModal(judul, tanggal, isi) {
-        document.getElementById('detail_judul').innerText = judul;
-        document.getElementById('detail_tanggal').innerText = tanggal;
-        document.getElementById('detail_isi').innerText = isi;
+    function openDetailModal(btn) {
+        document.getElementById('detail_judul').innerText = btn.dataset.judul;
+        document.getElementById('detail_tanggal').innerText = btn.dataset.tanggal;
+        document.getElementById('detail_isi').innerText = btn.dataset.isi;
         openModal('modalDetail');
-    }
+    }  
 
     // Fungsi membuka Modal Hapus (Baru)
-    function openDeleteModal(id, judul) {
-        document.getElementById("formDelete").action = `/gr/hppggr/${id}`
-        document.getElementById('delete_judul_text').innerText = '"' + judul + '"';
+    function openDeleteModal(btn) {
+        document.getElementById("formDelete").action = `/gr/hppggr/${btn.dataset.id}`;
+        document.getElementById('delete_judul_text').innerText = '"' + btn.dataset.judul + '"';
         openModal('modalHapus');
     }
-
     window.onclick = function(event) {
         if (event.target.classList.contains('modal-overlay')) {
             event.target.classList.remove('active');

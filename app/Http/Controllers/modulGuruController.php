@@ -1024,6 +1024,7 @@ class modulGuruController extends Controller
                     "ketidakhadiran" => 0
                 ]);
                 tunjangan::query()->delete();
+                
                 priode::all()->first()->delete();
                 return back()->with("success","berhasil reset data gaji guru");
             }
@@ -1078,6 +1079,11 @@ class modulGuruController extends Controller
                     }
                 }
             }
+
+            if ($data_gaji->ketidakhadiran > 0){
+                $jumlah_tidak_hadir = $data_gaji->ketidakhadiran;
+            }
+
             return view("modul/guru/a/edit_gaji_guru",[
                 "data_guru" => $data_guru,
                 "info_jabatan_kepala_sekolah" => $info_jabatan_kepala_sekolah,
@@ -1116,6 +1122,21 @@ class modulGuruController extends Controller
         $data_priode = priode::all()->first();
         $data_gaji = gaji::where("guru_id",(int) $request->id_guru)->first();
         $bulan = Carbon::parse($data_priode->created_at)->translatedFormat("m");
+        if (master_absen_guru::where("guru_id",$request->id_guru)->whereMonth("tgl_masuk",$data_priode->created_at)->where("status_kehadiran","h")->exists()){
+            if (master_absen_guru::where("guru_id",$request->id_guru)->whereMonth("tgl_masuk",$data_priode->created_at)->where("status_kehadiran","h")->sum("terlambat_menit") != (int) $request->telat){
+                master_absen_guru::where("guru_id",$request->id_guru)->whereMonth("tgl_masuk",$data_priode->created_at)->where("status_kehadiran","h")->update([
+                    "terlambat_menit" => 0
+                ]);
+                $data = master_absen_guru::where("guru_id", $request->id_guru)
+                    ->whereMonth("tgl_masuk", $data_priode->created_at)
+                    ->where("status_kehadiran", "h")
+                    ->first();
+
+                $data->terlambat_menit = $request->telat;
+
+                $data->save();
+            }
+        }
         $data_absen = master_absen_guru::where("guru_id",$request->id_guru)->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->sum("terlambat_menit");
         
         $awal_bulan = Carbon::parse($data_priode->created_at)->startOfMonth();
@@ -1140,21 +1161,6 @@ class modulGuruController extends Controller
         $data_gaji->bonus = isset($request->bonus) ? $request->bonus : 0;
         $data_gaji->evaluasi = $request->evaluasi;
 
-        if (master_absen_guru::where("guru_id",$request->id_guru)->whereMonth("tgl_masuk",$data_priode->created_at)->where("status_kehadiran","h")->exists()){
-            if (master_absen_guru::where("guru_id",$request->id_guru)->whereMonth("tgl_masuk",$data_priode->created_at)->where("status_kehadiran","h")->sum("terlambat_menit") != (int) $request->telat){
-                master_absen_guru::where("guru_id",$request->id_guru)->whereMonth("tgl_masuk",$data_priode->created_at)->where("status_kehadiran","h")->update([
-                    "terlambat_menit" => 0
-                ]);
-                $data = master_absen_guru::where("guru_id", $request->id_guru)
-                    ->whereMonth("tgl_masuk", $data_priode->created_at)
-                    ->where("status_kehadiran", "h")
-                    ->first();
-
-                $data->terlambat_menit = $request->telat;
-
-                $data->save();
-            }
-        }
 
         
         if (isset($request->tgs_tambahan)){

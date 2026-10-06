@@ -42,9 +42,16 @@ class file_surat extends Controller
         $jumlah_potongan = $jumlah_gaji_bisa_kepotong - $data_potong;
         if ($jumlah_potongan < 0) {$jumlah_potongan = 0;}
         $jumlah_gaji_bersih = $jumlah_potongan > 0 ? $data_gaji->gaji_pokok + $jumlah_potongan : $data_gaji->gaji_pokok;
+
+
+        $data_ketidakhadiran = $data_gaji->ketidakhadiran;
+        $data_keterlambatan = $data_gaji->keterlambatan;
+
         return view("surat/surat_slip_gaji",[
             "data_guru" => $guru,
             "data_gaji" => $data_gaji,
+            "data_ketidakhadiran" => $data_ketidakhadiran,
+            "data_keterlambatan" => $data_keterlambatan,
             "data_tunjangan" => $data_tunjangan,
             "data_tunjangan_potongan" => $data_tunjangan_potongan,
             "jumlah_gaji_kotor" => $jumlah_gaji_kotor,
@@ -70,10 +77,16 @@ class file_surat extends Controller
         if ($jumlah_potongan < 0) {$jumlah_potongan = 0;}
         $jumlah_gaji_bersih = $jumlah_potongan > 0 ? $data_gaji->gaji_pokok + $jumlah_potongan : $data_gaji->gaji_pokok;
 
+        
+        $data_ketidakhadiran = $data_gaji->ketidakhadiran;
+        $data_keterlambatan = (int) $data_gaji->potongan_keterlambatan / 500;
+
         $pdf = Pdf::loadView("surat/surat_slip_gaji",[
             "data_guru" => $guru,
             "data_gaji" => $data_gaji,
             "data_tunjangan" => $data_tunjangan,
+            "data_ketidakhadiran" => $data_ketidakhadiran,
+            "data_keterlambatan" => $data_keterlambatan,
             "data_tunjangan_potongan" => $data_tunjangan_potongan,
             "jumlah_gaji_kotor" => $jumlah_gaji_kotor,
             "jumlah_alpa" => $data_gaji->ketidakhadiran,
@@ -100,12 +113,17 @@ class file_surat extends Controller
         $jumlah_potongan = $jumlah_gaji_bisa_kepotong - $data_potong;
         if ($jumlah_potongan < 0) {$jumlah_potongan = 0;}
         $jumlah_gaji_bersih = $jumlah_potongan > 0 ? $data_gaji->gaji_pokok + $jumlah_potongan : $data_gaji->gaji_pokok;
+    
+        $data_ketidakhadiran = $data_gaji->ketidakhadiran;
+        $data_keterlambatan = (int) $data_gaji->potongan_keterlambatan / 500;
 
         $pdf = Pdf::loadView("surat/surat_slip_gaji",[
             "data_guru" => $guru,
             "data_gaji" => $data_gaji,
             "data_tunjangan" => $data_tunjangan,
             "jumlah_gaji_kotor" => $jumlah_gaji_kotor,
+            "data_ketidakhadiran" => $data_ketidakhadiran,
+            "data_keterlambatan" => $data_keterlambatan,
             "data_tunjangan_potongan" => $data_tunjangan_potongan,
             "jumlah_alpa" => $data_gaji->ketidakhadiran,
             "jumlah_gaji_bersih" => $jumlah_gaji_bersih

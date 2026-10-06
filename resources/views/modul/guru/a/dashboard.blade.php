@@ -44,7 +44,8 @@
                 
                 <!-- 1. STATISTIK UTAMA GURU (ADMIN) -->
                 <div class="stats-grid">
-                    <div class="stat-card"> 
+                    <!-- Stat 1: Guru Aktif (Clickable) -->
+                    <div class="stat-card clickable-card" onclick="openModal('modalGuruAktif')"> 
                         <div class="stat-icon bg-primary-light">
                             <i class="fa-solid fa-user-tie text-primary"></i>
                         </div>
@@ -54,7 +55,8 @@
                         </div>
                     </div>
 
-                    <div class="stat-card"> 
+                    <!-- Stat 2: Kepala Sekolah (Clickable) -->
+                    <div class="stat-card clickable-card" onclick="openModal('modalKepalaSekolah')"> 
                         <div class="stat-icon bg-primary-light">
                             <i class="fa-solid fa-user-tie text-primary"></i>
                         </div>
@@ -64,7 +66,8 @@
                         </div>
                     </div>
 
-                    <div class="stat-card">
+                    <!-- Stat 3: Guru Tetap / Honorer (Clickable) -->
+                    <div class="stat-card clickable-card" onclick="openModal('modalGuruStatus')">
                         <div class="stat-icon bg-info-light">
                             <i class="fa-solid fa-id-badge text-info"></i>
                         </div>
@@ -73,6 +76,7 @@
                             <h3>{{$jumlah_guru_tetap}}<small>/ {{$jumlah_guru_honor}}</small></h3>
                         </div>
                     </div>
+
                     <div class="stat-card">
                         <div class="stat-icon bg-info-light">
                             <i class="fa-solid fa-id-badge text-info"></i>
@@ -116,7 +120,7 @@
                         <div class="card-body">
                             <div class="admin-presensi-summary">
                                 
-                                <!-- Trigger Modal 1: Tepat Waktu -->
+                                <!-- Trigger Modal Absen 1: Tepat Waktu -->
                                 <div class="status-box status-success clickable-card" onclick="openModal('modalTepatWaktu')">
                                     <i class="fa-solid fa-user-check"></i>
                                     <div>
@@ -126,19 +130,19 @@
                                 </div>
                                 
                                 <div class="admin-presensi-stats">
-                                    <!-- Trigger Modal 2: Terlambat (Anak Ke-1) -->
+                                    <!-- Trigger Modal Absen 2: Terlambat -->
                                     <div class="presensi-stat-item clickable-card" onclick="openModal('modalTerlambat')">
                                         <span class="stat-num text-warning">{{$jumlah_terlambat}}</span>
                                         <span class="stat-desc">Terlambat</span>
                                     </div>
                                     
-                                    <!-- Trigger Modal 3: Izin / Sakit (Anak Ke-2) -->
+                                    <!-- Trigger Modal Absen 3: Izin / Sakit -->
                                     <div class="presensi-stat-item clickable-card" onclick="openModal('modalIzinSakit')">
                                         <span class="stat-num text-info">{{$jumlah_izin}}/{{$jumlah_sakit}}</span>
                                         <span class="stat-desc">Izin / Sakit</span>
                                     </div>
                                     
-                                    <!-- Trigger Modal 4: Belum Absen (Anak Ke-3) -->
+                                    <!-- Trigger Modal Absen 4: Belum Absen -->
                                     <div class="presensi-stat-item clickable-card" onclick="openModal('modalBelumAbsen')">
                                         <span class="stat-num text-danger">{{$jumlah_belum_absen}}</span>
                                         <span class="stat-desc">Belum Absen</span>
@@ -184,7 +188,134 @@
         $data_guru_tepat_waktu = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("status_kehadiran","h")->get();
         $data_guru_izin_sakit = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("status_kehadiran","!=","h")->where("status_kehadiran","!=","a")->get();
         $data_guru_terlambat = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("status_kehadiran","h")->where("terlambat_menit","!=",0)->get();
+
+        // Data Query untuk Modal Baru
+        $list_guru_aktif = App\Models\guru::all();
+        $list_kepala_sekolah = App\Models\guru::where("kepala_sekolah", true)->get();
+        $list_guru_status = App\Models\guru::where("guru_tetap", true)->orWhere("guru_honor",true)->get();
     @endphp
+
+    <!-- Modal STAT 1: Daftar Guru Aktif -->
+    <div id="modalGuruAktif" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-check text-primary"></i> Daftar Guru Aktif</h3>
+                <button class="modal-close-btn" onclick="closeModal('modalGuruAktif')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="modal-table">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nama Guru</th>
+                                <th>NIG</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($list_guru_aktif as $guru)
+                                <tr>
+                                    <td><img src="{{route('file.show',$guru->url_foto)}}" class="avatar-img" alt="Foto"></td>
+                                    <td><strong>{{$guru->nama}}</strong></td>
+                                    <td>{{$guru->nig ?? '-'}}</td>
+                                    <td><span class="badge badge-success">Aktif</span></td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center">Tidak ada data guru aktif.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal STAT 2: Daftar Kepala Sekolah -->
+    <div id="modalKepalaSekolah" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-tie text-primary"></i> Daftar Kepala Sekolah</h3>
+                <button class="modal-close-btn" onclick="closeModal('modalKepalaSekolah')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="modal-table">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nama Kepala Sekolah</th>
+                                <th>Unit/Cabang</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($list_kepala_sekolah as $ks)
+                                @php
+                                    $cabang = App\Models\cabang_guru::find($ks->cabang_id);
+                                @endphp
+                                <tr>
+                                    <td><img src="{{route('file.show',$ks->url_foto)}}" class="avatar-img" alt="Foto"></td>
+                                    <td><strong>{{$ks->nama}}</strong></td>
+                                    <td>{{$cabang->nama_cabang ?? '-'}}</td>
+                                    <td><span class="badge badge-primary">Kepala Sekolah</span></td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center">Tidak ada data kepala sekolah.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal STAT 3: Daftar Guru Tetap & Honorer -->
+    <div id="modalGuruStatus" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-id-badge text-info"></i> Daftar Guru Tetap & Honorer</h3>
+                <button class="modal-close-btn" onclick="closeModal('modalGuruStatus')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="modal-table">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nama Guru</th>
+                                <th>Status Kepegawaian</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($list_guru_status as $guru_st)
+                                <tr>
+                                    <td><img src="{{route('file.show',$guru_st->url_foto)}}" class="avatar-img" alt="Foto"></td>
+                                    <td><strong>{{$guru_st->nama}}</strong></td>
+                                    <td>
+                                        @if($guru_st->guru_tetap)
+                                            <span class="badge badge-success">Guru Tetap</span>
+                                        @else
+                                            <span class="badge badge-warning">Guru Honorer</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center">Tidak ada data guru tetap/honorer.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal 1: Guru Tepat Waktu -->
     <div id="modalTepatWaktu" class="modal-overlay">
         <div class="modal-card">
@@ -397,13 +528,19 @@
                     openModal('modalBelumAbsen');
                 });
             }
+
+            // Memberikan style cursor pointer pada stat-card yang clickable
+            document.querySelectorAll('.stat-card.clickable-card').forEach(card => {
+                card.style.cursor = 'pointer';
+            });
         });
 
         document.querySelectorAll(".btn-action-send").forEach((value) => {
             value.addEventListener("click",(e) => {
                 window.location.href = `/krim/${e.target.dataset.id}`;
             }); 
-        })
+        });
+
         // Tutup modal jika area luar (overlay) diklik
         window.addEventListener('click', function(e) {
             if (e.target.classList.contains('modal-overlay')) {
