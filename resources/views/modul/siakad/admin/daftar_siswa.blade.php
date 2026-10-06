@@ -76,7 +76,7 @@
                             <span class="sr-only">Filter jenis kelamin</span>
                             <i class="fa-solid fa-filter"></i>
                             <select id="genderFilter">
-                                <option value="">Semua jenis kelamin</option>
+                                <option value="">Semua</option>
                                 <option value="l">Laki-laki</option>
                                 <option value="p">Perempuan</option>
                             </select>

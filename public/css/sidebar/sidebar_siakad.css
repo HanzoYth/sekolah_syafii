@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SIDEBAR — SIAKAD
+   SIDEBAR â€” SIAKAD
    Nuansa islami modern-klasik: hijau zamrud + emas, motif geometris
    delapan-penjuru yang samar sebagai tekstur latar, garis emas sebagai
    pembatas ala mushaf/manuskrip.
@@ -531,7 +531,7 @@ body.sidebar-is-open .mobile-hamburger-btn {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .mobile-hamburger-btn {
     display: flex;
   }

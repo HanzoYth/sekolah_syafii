@@ -12,4 +12,11 @@ class wallas extends Model
         "guru_id",
         "kelas_id"
     ];
+    public function guru() {
+        return $this->belongsTo(guru::class, 'guru_id');
+    }
+
+    public function kelas() {
+        return $this->belongsTo(kelas::class, 'kelas_id');
+    }
 }

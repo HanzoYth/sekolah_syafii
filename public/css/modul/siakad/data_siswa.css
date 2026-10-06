@@ -20,16 +20,12 @@ body {
 
 .dashboard-container { min-height: 100vh; }
 
-.admin-students-page .main-content {
-    min-height: 100vh;
-    margin-left: 270px;
-    width: calc(100% - 270px);
-}
+.admin-students-page .main-content { min-height: 100vh; margin-left: 260px; width: calc(100% - 260px); padding: 0 32px; }
 
 .students-content {
     width: min(1440px, 100%);
     margin: 0 auto;
-    padding: 28px 32px 44px;
+    padding: 28px 0 44px;
 }
 
 .students-heading {
@@ -165,9 +161,8 @@ tbody tr:hover { background: #f8fcf9; }
 .empty-row i { margin-right: 7px; color: #90a69b; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
-@media (max-width: 992px) {
-    .admin-students-page .main-content { min-height: 100vh; margin-left: 270px; width: calc(100% - 270px); padding: 32px; }
-    .students-content { padding: 22px 20px 34px; }
+@media (max-width: 992px) { .admin-students-page .main-content { min-height: 100vh; margin-left: 0; width: 100%; padding: 15px; }
+    .students-content { padding: 22px 0 34px; }
 }
 
 @media (max-width: 680px) {
@@ -180,3 +175,5 @@ tbody tr:hover { background: #f8fcf9; }
     th, td { padding-left: 13px; padding-right: 13px; }
     .view-button span { display: none; }
 }
+
+

@@ -61,7 +61,8 @@ class siakadController extends Controller
     }
    
     function tambah_kelas(){
-       return view("/modul/siakad/admin/tambahKelas");
+       $data_kelas = \App\Models\kelas::all();
+       return view("/modul/siakad/admin/tambahKelas", compact('data_kelas'));
     }
     function absenSiswa(){
        return view("/modul/siakad/guru/absensisiswa");
@@ -216,4 +217,315 @@ class siakadController extends Controller
         $data_kelas = ruang_kelas::where("id",$data_siswa->kelas_id)->first();
         return view ('/modul/siakad/admin/detailSiswa',compact("data_siswa","data_kelas"));
     }
+    function simpan_kelas(Request $request){
+        $request->validate([
+            'tingkat_sekolah' => 'required',
+            'no_kelas' => 'required',
+            'tipe_kelas' => 'required'
+        ]);
+
+        $nama_ruang = $request->tingkat_sekolah . ' Kelas ' . $request->no_kelas . ' ' . $request->tipe_kelas;
+
+        // Check for duplicates
+        $exists = \App\Models\ruang_kelas::where('nama_ruang', $nama_ruang)->exists();
+        $exists2 = \App\Models\kelas::where('nama_kelas', $nama_ruang)->exists();
+        if ($exists || $exists2) {
+            return back()->with('error', 'Kelas dengan nama tersebut sudah ada.');
+        }
+
+        if (!$exists) {
+            \App\Models\ruang_kelas::create([
+                'nama_ruang' => $nama_ruang
+            ]);
+        }
+        if (!$exists2) {
+            \App\Models\kelas::create([
+                'nama_kelas' => $nama_ruang
+            ]);
+        }
+
+        return back()->with('success', 'Ruang kelas berhasil ditambahkan.');
+    }
+
+        function editKelas($id) {
+        $kelas = \App\Models\kelas::findOrFail($id);
+        return view('/modul/siakad/admin/editKelas', compact('kelas'));
+    }
+
+    function updateKelas(Request $request, $id) {
+        $request->validate(['nama_kelas' => 'required']);
+        
+        $kelas = \App\Models\kelas::findOrFail($id);
+        $nama_lama = $kelas->nama_kelas;
+        $nama_baru = $request->nama_kelas;
+        
+        // Sinkronisasi pembaruan ke tabel ruang_kelas jika ada
+        \App\Models\ruang_kelas::where('nama_ruang', $nama_lama)->update(['nama_ruang' => $nama_baru]);
+        
+        $kelas->update(['nama_kelas' => $nama_baru]);
+        
+        return redirect('/sk/tk')->with('success', 'Nama kelas berhasil diperbarui.');
+    }
+
+    function hapusKelas($id) {
+        $kelas = \App\Models\kelas::findOrFail($id);
+        
+        // Also try to find and delete from ruang_kelas by matching name
+        \App\Models\ruang_kelas::where('nama_ruang', $kelas->nama_kelas)->delete();
+        
+        $kelas->delete();
+        return back()->with('success', 'Ruang kelas berhasil dihapus.');
+    }
+
+    function jadwalMengajarGuru(Request $request) {
+        $guru_id = session('id'); 
+        $jadwal = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran'])
+            ->where('guru_id', $guru_id)
+            ->orderBy('hari')
+            ->get();
+        return view('/modul/siakad/guru/jadwalMengajar', compact('jadwal'));
+    }
+
+    function inputNilaiGuru(Request $request) {
+        $guru_id = session('id');
+        $mapel_guru = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran'])
+            ->where('guru_id', $guru_id)
+            ->get();
+        return view('/modul/siakad/guru/inputNilai', compact('mapel_guru'));
+    }
+
+    function dataWaliKelas(Request $request) {
+        $guru_id = session('id');
+        $wallas = \App\Models\wallas::with('kelas')->where('guru_id', $guru_id)->first();
+        $siswa = collect();
+        if ($wallas && $wallas->kelas) {
+            $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas->id)->get();
+        }
+        return view('/modul/siakad/guru/dataWaliKelas', compact('wallas', 'siswa'));
+    }
+
+    function kelolaJadwalAdmin(Request $request) {
+        $data_kelas = \App\Models\kelas::all();
+        $data_guru = \App\Models\guru::all();
+        $data_mapel = \App\Models\mata_pelajaran::all();
+        $data_jam = \App\Models\jam_pelajaran::orderBy('jam_mulai')->get();
+        $data_tahun = \App\Models\tahun_ajaran::all();
+        $data_jadwal = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'guru', 'jam_pelajaran', 'tahun_ajaran'])
+            ->orderBy('hari')
+            ->get();
+        return view('/modul/siakad/admin/kelolaJadwal', compact('data_kelas', 'data_guru', 'data_mapel', 'data_jam', 'data_tahun', 'data_jadwal'));
+    }
+
+    function simpanJadwalAdmin(Request $request) {
+        $request->validate([
+            'kelas_id' => 'required',
+            'guru_id' => 'required',
+            'mapel_id' => 'required',
+            'hari' => 'required',
+            'jam_pelajaran_id' => 'required',
+            'tahun_ajaran_id' => 'required',
+        ]);
+        \App\Models\jadwal_pelajaran::create([
+            'kelas_id' => $request->kelas_id,
+            'guru_id' => $request->guru_id,
+            'mapel_id' => $request->mapel_id,
+            'hari' => $request->hari,
+            'jam_pelajaran_id' => $request->jam_pelajaran_id,
+            'tahun_ajaran_id' => $request->tahun_ajaran_id
+        ]);
+        return back()->with('success', 'Jadwal pelajaran berhasil ditambahkan.');
+    }
+
+    function kelolaMapel(Request $request) {
+        $data_mapel = \App\Models\mata_pelajaran::all();
+        return view('/modul/siakad/admin/kelolaMapel', compact('data_mapel'));
+    }
+
+    function simpanMapel(Request $request) {
+        $request->validate(['nama_mapel' => 'required']);
+        \App\Models\mata_pelajaran::create(['nama_mapel' => $request->nama_mapel]);
+        return back()->with('success', 'Mata Pelajaran berhasil ditambahkan.');
+    }
+
+    function hapusMapel($id) {
+        \App\Models\mata_pelajaran::findOrFail($id)->delete();
+        return back()->with('success', 'Mata Pelajaran berhasil dihapus.');
+    }
+
+    function editMapel($id) {
+        $mapel = \App\Models\mata_pelajaran::findOrFail($id);
+        return view('/modul/siakad/admin/editMapel', compact('mapel'));
+    }
+
+    function updateMapel(Request $request, $id) {
+        $request->validate(['nama_mapel' => 'required']);
+        \App\Models\mata_pelajaran::findOrFail($id)->update(['nama_mapel' => $request->nama_mapel]);
+        return redirect('/sk/kelola-mapel')->with('success', 'Mata Pelajaran berhasil diperbarui.');
+    }
+
+    function hapusJadwal($id) {
+        \App\Models\jadwal_pelajaran::findOrFail($id)->delete();
+        return back()->with('success', 'Jadwal berhasil dihapus.');
+    }
+
+    function editJadwal($id) {
+        $jadwal = \App\Models\jadwal_pelajaran::findOrFail($id);
+        $data_kelas = \App\Models\kelas::all();
+        $data_guru = \App\Models\guru::all();
+        $data_mapel = \App\Models\mata_pelajaran::all();
+        $data_jam = \App\Models\jam_pelajaran::orderBy('jam_mulai')->get();
+        $data_tahun = \App\Models\tahun_ajaran::all();
+        return view('/modul/siakad/admin/editJadwal', compact('jadwal', 'data_kelas', 'data_guru', 'data_mapel', 'data_jam', 'data_tahun'));
+    }
+
+    function updateJadwal(Request $request, $id) {
+        $request->validate([
+            'kelas_id' => 'required',
+            'guru_id' => 'required',
+            'mapel_id' => 'required',
+            'hari' => 'required',
+            'jam_pelajaran_id' => 'required',
+            'tahun_ajaran_id' => 'required',
+        ]);
+        \App\Models\jadwal_pelajaran::findOrFail($id)->update([
+            'kelas_id' => $request->kelas_id,
+            'guru_id' => $request->guru_id,
+            'mapel_id' => $request->mapel_id,
+            'hari' => $request->hari,
+            'jam_pelajaran_id' => $request->jam_pelajaran_id,
+            'tahun_ajaran_id' => $request->tahun_ajaran_id
+        ]);
+        return redirect('/sk/kelola-jadwal')->with('success', 'Jadwal pelajaran berhasil diperbarui.');
+    }
+
+    // ==========================================
+    // KELOLA REFERENSI AKADEMIK (Tahun & Jam)
+    // ==========================================
+    public function kelolaReferensi() {
+        $data_tahun = \App\Models\tahun_ajaran::orderBy('id', 'desc')->get();
+        $data_jam = \App\Models\jam_pelajaran::orderBy('jam_mulai', 'asc')->get();
+        return view('modul.siakad.admin.kelolaReferensi', compact('data_tahun', 'data_jam'));
+    }
+
+    public function simpanTahunAjaran(Request $request) {
+        $request->validate([
+            'nama' => 'required',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date'
+        ]);
+        \App\Models\tahun_ajaran::create([
+            'nama' => $request->nama,
+            'tanggal_mulai' => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->tanggal_selesai,
+            'aktif' => $request->has('aktif') ? 1 : 0
+        ]);
+        return redirect()->back()->with('success_tahun', 'Tahun Ajaran baru berhasil ditambahkan.');
+    }
+
+    public function updateTahunAjaran(Request $request, $id) {
+        $request->validate([
+            'nama' => 'required',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date'
+        ]);
+        \App\Models\tahun_ajaran::findOrFail($id)->update([
+            'nama' => $request->nama,
+            'tanggal_mulai' => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->tanggal_selesai,
+            'aktif' => $request->has('aktif') ? 1 : 0
+        ]);
+        return redirect()->back()->with('success_tahun', 'Tahun Ajaran berhasil diperbarui.');
+    }
+
+    public function hapusTahunAjaran($id) {
+        \App\Models\tahun_ajaran::findOrFail($id)->delete();
+        return redirect()->back()->with('success_tahun', 'Tahun Ajaran berhasil dihapus.');
+    }
+
+    public function simpanJamPelajaran(Request $request) {
+        $request->validate([
+            'nama_jam' => 'required',
+            'jam_mulai' => 'required',
+            'jam_selesai' => 'required'
+        ]);
+        \App\Models\jam_pelajaran::create([
+            'nama_jam' => $request->nama_jam,
+            'jam_mulai' => $request->jam_mulai,
+            'jam_selesai' => $request->jam_selesai
+        ]);
+        return redirect()->back()->with('success_jam', 'Jam Pelajaran baru berhasil ditambahkan.');
+    }
+
+    public function updateJamPelajaran(Request $request, $id) {
+        $request->validate([
+            'nama_jam' => 'required',
+            'jam_mulai' => 'required',
+            'jam_selesai' => 'required'
+        ]);
+        \App\Models\jam_pelajaran::findOrFail($id)->update([
+            'nama_jam' => $request->nama_jam,
+            'jam_mulai' => $request->jam_mulai,
+            'jam_selesai' => $request->jam_selesai
+        ]);
+        return redirect()->back()->with('success_jam', 'Jam Pelajaran berhasil diperbarui.');
+    }
+
+    public function hapusJamPelajaran($id) {
+        \App\Models\jam_pelajaran::findOrFail($id)->delete();
+        return redirect()->back()->with('success_jam', 'Jam Pelajaran berhasil dihapus.');
+    }
+
+    // ==========================================
+    // KELOLA WALI KELAS (ADMIN)
+    // ==========================================
+    public function kelolaWaliKelas() {
+        $data_wallas = \App\Models\wallas::with(['guru', 'kelas'])->get();
+        $data_guru = \App\Models\guru::all();
+        $data_kelas = \App\Models\kelas::all();
+        return view('modul.siakad.admin.kelolaWallas', compact('data_wallas', 'data_guru', 'data_kelas'));
+    }
+
+    public function simpanWaliKelas(Request $request) {
+        $request->validate([
+            'guru_id' => 'required',
+            'kelas_id' => 'required'
+        ]);
+
+        // Cek apakah kelas sudah memiliki wali kelas
+        if (\App\Models\wallas::where('kelas_id', $request->kelas_id)->exists()) {
+            return redirect()->back()->with('error', 'Kelas tersebut sudah memiliki wali kelas.');
+        }
+
+        \App\Models\wallas::create([
+            'guru_id' => $request->guru_id,
+            'kelas_id' => $request->kelas_id
+        ]);
+        return redirect()->back()->with('success', 'Penugasan Wali Kelas berhasil ditambahkan.');
+    }
+
+    public function updateWaliKelas(Request $request, $id) {
+        $request->validate([
+            'guru_id' => 'required',
+            'kelas_id' => 'required'
+        ]);
+
+        // Cek duplikasi jika kelas_id diubah ke kelas lain yang sudah ada wali kelasnya
+        $cek = \App\Models\wallas::where('kelas_id', $request->kelas_id)->where('id', '!=', $id)->exists();
+        if ($cek) {
+            return redirect()->back()->with('error', 'Kelas tersebut sudah memiliki wali kelas.');
+        }
+
+        \App\Models\wallas::findOrFail($id)->update([
+            'guru_id' => $request->guru_id,
+            'kelas_id' => $request->kelas_id
+        ]);
+        return redirect()->back()->with('success', 'Data Wali Kelas berhasil diperbarui.');
+    }
+
+    public function hapusWaliKelas($id) {
+        \App\Models\wallas::findOrFail($id)->delete();
+        return redirect()->back()->with('success', 'Penugasan Wali Kelas berhasil dihapus.');
+    }
 }
+
+

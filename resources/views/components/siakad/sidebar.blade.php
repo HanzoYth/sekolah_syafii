@@ -51,6 +51,24 @@
                 <div class="menu-section" id="section-admin-akademik">
                     <span class="menu-label">AKADEMIK</span>
                     <ul class="menu-list">
+                        <li class="menu-item {{ request()->is('sk/kelola-mapel') ? 'active' : '' }}">
+                            <a href="/sk/kelola-mapel">
+                                <i class="fa-solid fa-book"></i>
+                                <span>Mata Pelajaran</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->is('sk/kelola-jadwal') ? 'active' : '' }}">
+                            <a href="/sk/kelola-jadwal">
+                                <i class="fa-solid fa-calendar-alt"></i>
+                                <span>Kelola Jadwal</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->is('sk/referensi') ? 'active' : '' }}">
+                            <a href="/sk/referensi">
+                                <i class="fa-solid fa-database"></i>
+                                <span>Data Referensi</span>
+                            </a>
+                        </li>
                         <li class="menu-item {{ request()->is('sk/ds', 'sk/dls/*', 'sk/dts') ? 'active' : '' }}">
                             <a href="/sk/ds">
                                 <i class="fa-solid fa-user-graduate"></i>
@@ -61,6 +79,12 @@
                             <a href="/sk/tk">
                                 <i class="fa-solid fa-school"></i>
                                 <span>Kelola Kelas</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->is('sk/kelola-wali-kelas') ? 'active' : '' }}">
+                            <a href="/sk/kelola-wali-kelas">
+                                <i class="fa-solid fa-users-rectangle"></i>
+                                <span>Wali Kelas</span>
                             </a>
                         </li>
                     </ul>
@@ -76,11 +100,11 @@
                                     <i class="fa-solid fa-chevron-down submenu-icon"></i>
                                 </summary>
                                 <ul class="submenu-list">
-                                    <li class="submenu-item"><a href="/sk/bt"><i class="fa-solid fa-file-circle-plus"></i><span>Buat Tagihan</span></a></li>
-                                    <li class="submenu-item"><a href="/sk/pb"><i class="fa-solid fa-wallet"></i><span>Pembayaran IPP</span></a></li>
-                                    <li class="submenu-item"><a href="/sk/pp"><i class="fa-solid fa-money-check-dollar"></i><span>Uang Pangkal</span></a></li>
-                                    <li class="submenu-item"><a href="/sk/pd"><i class="fa-solid fa-graduation-cap"></i><span>Pendidikan</span></a></li>
-                                    <li class="submenu-item"><a href="/sk/ppl"><i class="fa-solid fa-screwdriver-wrench"></i><span>Pemeliharaan</span></a></li>
+                                    <li class="submenu-item {{ request()->is('sk/bt') ? 'active' : '' }}"><a href="/sk/bt"><i class="fa-solid fa-file-circle-plus"></i><span>Buat Tagihan</span></a></li>
+                                    <li class="submenu-item {{ request()->is('sk/pb') ? 'active' : '' }}"><a href="/sk/pb"><i class="fa-solid fa-wallet"></i><span>Pembayaran IPP</span></a></li>
+                                    <li class="submenu-item {{ request()->is('sk/pp') ? 'active' : '' }}"><a href="/sk/pp"><i class="fa-solid fa-money-check-dollar"></i><span>Uang Pangkal</span></a></li>
+                                    <li class="submenu-item {{ request()->is('sk/pd') ? 'active' : '' }}"><a href="/sk/pd"><i class="fa-solid fa-graduation-cap"></i><span>Pendidikan</span></a></li>
+                                    <li class="submenu-item {{ request()->is('sk/ppl') ? 'active' : '' }}"><a href="/sk/ppl"><i class="fa-solid fa-screwdriver-wrench"></i><span>Pemeliharaan</span></a></li>
                                 </ul>
                             </details>
                         </li>
@@ -92,6 +116,24 @@
                 <div class="menu-section" id="section-guru">
                     <span class="menu-label">MENU GURU</span>
                     <ul class="menu-list">
+                        <li class="menu-item {{ request()->is('sk/jadwal-guru') ? 'active' : '' }}">
+                            <a href="/sk/jadwal-guru">
+                                <i class="fa-solid fa-calendar-week"></i>
+                                <span>Jadwal Mengajar</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->is('sk/nilai-guru') ? 'active' : '' }}">
+                            <a href="/sk/nilai-guru">
+                                <i class="fa-solid fa-star"></i>
+                                <span>Manajemen Nilai</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->is('sk/wali-kelas') ? 'active' : '' }}">
+                            <a href="/sk/wali-kelas">
+                                <i class="fa-solid fa-users-rectangle"></i>
+                                <span>Wali Kelas</span>
+                            </a>
+                        </li>
                         <li class="menu-item">
                             <a href="/sk/gsp">
                                 <i class="fa-solid fa-file-invoice-dollar"></i>

@@ -19,16 +19,12 @@ body {
 
 .dashboard-container { min-height: 100vh; }
 
-.admin-class-page .main-content {
-    min-height: 100vh;
-    width: calc(100% - 270px);
-    margin-left: 270px;
-}
+.admin-class-page .main-content { min-height: 100vh; width: calc(100% - 270px); margin-left: 270px; padding: 0 32px; }
 
 .class-content {
     width: min(1180px, 100%);
     margin: 0 auto;
-    padding: 28px 32px 46px;
+    padding: 28px 0 46px;
 }
 
 .class-heading {
@@ -70,8 +66,7 @@ body {
 .back-link:hover { border-color: #9bc6b0; color: var(--class-primary); }
 
 .class-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1.65fr) minmax(255px, .8fr);
+    display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(300px, 1fr);
     gap: 22px;
     align-items: start;
 }
@@ -162,8 +157,8 @@ body {
 .class-preview dd { margin: 0; color: #fff; font-size: .75rem; font-weight: 600; text-align: right; }
 
 @media (max-width: 992px) {
-    .admin-class-page .main-content { width: 100%; margin-left: 0; }
-    .class-content { padding: 22px 20px 35px; }
+    .admin-class-page .main-content { width: 100%; margin-left: 0; padding: 0 20px; }
+    .class-content { padding: 22px 0 35px; }
 }
 
 @media (max-width: 800px) {
@@ -178,3 +173,36 @@ body {
     .form-footer { justify-content: stretch; }
     .button { flex: 1; }
 }
+
+
+
+/* Table Styles */
+.class-table-container {
+    overflow-x: auto;
+    border: 1px solid var(--class-border);
+    border-radius: 12px;
+    background: #fff;
+}
+.class-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    text-align: left;
+}
+.class-table th {
+    padding: 14px 18px;
+    background: #f8faf9;
+    color: #496258;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--class-border);
+}
+.class-table td {
+    padding: 14px 18px;
+    color: var(--class-ink);
+    border-bottom: 1px solid #edf2ef;
+}
+.class-table tbody tr:last-child td { border-bottom: none; }
+.class-table tbody tr:hover { background: #fafcfa; }
