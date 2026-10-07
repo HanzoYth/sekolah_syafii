@@ -23,11 +23,7 @@
         {{-- MAIN CONTENT --}}
         <main class="main-content">
 
-            <x-siakad.topbar
-                name="Ustadzah Fitri"
-                position="Guru Mata Pelajaran"
-                initials="UF"
-            />
+            <x-siakad.topbar />
 
             {{-- Header lama disimpan sementara sebagai referensi desain. --}}
             @if (false)

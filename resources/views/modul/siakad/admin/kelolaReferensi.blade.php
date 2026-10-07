@@ -137,7 +137,7 @@
                                             @endif
                                         </td>
                                         <td class="action-column">
-                                            <div class="action-btns">
+                                            <div class="action-btns" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
                                                 <button class="btn-action-icon btn-action-edit" onclick="openEditTahun({{ $t->id }}, '{{ $t->nama }}', '{{ $t->tanggal_mulai }}', '{{ $t->tanggal_selesai }}', {{ $t->aktif ? 'true' : 'false' }})">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
@@ -184,7 +184,7 @@
                                         <td><i class="fa-regular fa-clock" style="color:var(--student-muted)"></i> {{ $j->jam_mulai }}</td>
                                         <td><i class="fa-regular fa-clock" style="color:var(--student-muted)"></i> {{ $j->jam_selesai }}</td>
                                         <td class="action-column">
-                                            <div class="action-btns">
+                                            <div class="action-btns" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
                                                 <button class="btn-action-icon btn-action-edit" onclick="openEditJam({{ $j->id }}, '{{ $j->nama_jam }}', '{{ $j->jam_mulai }}', '{{ $j->jam_selesai }}')">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>

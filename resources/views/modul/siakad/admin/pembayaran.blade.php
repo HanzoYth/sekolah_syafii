@@ -411,7 +411,7 @@
                                     <td>Rp{{number_format($sisa_bayar,0,",",".")}}</td>
                                     <td class="status"><span class="badge {{$value->status ? 'success' : 'danger'}}"><i class="fa-solid fa-triangle-exclamation"></i> {{$value->status ? 'lunas':'menunggak'}}</span></td>
                                     <td>
-                                        <div class="action-buttons">
+                                        <div class="action-buttons" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
                                             <a href="/sk/dp" class="btn-action view" title="Detail"><i class="fa-solid fa-eye"></i></a>
                                             <button type="button" class="btn-action edit" title="Edit" onclick="openEditModal('{{$value->id}}','{{$data_siswa->nama}}', '{{$data_kelas->nama_ruang}}', '{{$data_sekolah->jenis}}','{{ \Carbon\Carbon::parse($value->tanggal_awal)->format('Y-m-d') }}','{{$value->nominal}}','{{$value->status}}','{{$sisa_bayar}}')"><i class="fa-solid fa-pen-to-square"></i></button>
                                             

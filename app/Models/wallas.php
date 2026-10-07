@@ -19,4 +19,9 @@ class wallas extends Model
     public function kelas() {
         return $this->belongsTo(kelas::class, 'kelas_id');
     }
+
+    // wallas.kelas_id adalah foreign key ke tabel ruang_kelas (bukan tabel kelas).
+    public function ruangKelas() {
+        return $this->belongsTo(ruang_kelas::class, 'kelas_id');
+    }
 }

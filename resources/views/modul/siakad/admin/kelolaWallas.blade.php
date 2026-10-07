@@ -128,9 +128,7 @@
                                         <td class="number-column">{{ $index + 1 }}</td>
                                         <td>
                                             <div class="student-cell">
-                                                <div class="student-avatar avatar-fallback">
-                                                    <i class="fa-solid fa-user-tie"></i>
-                                                </div>
+                                                @if(!empty($w->guru->url_foto))<img src="{{ route('file.show', $w->guru->url_foto) }}" alt="Foto {{ $w->guru->nama }}" class="student-avatar" style="object-fit: cover;">@else<div class="student-avatar avatar-fallback"><i class="fa-solid fa-user-tie"></i></div>@endif
                                                 <div>
                                                     <strong>{{ $w->guru->nama ?? 'Guru tidak ditemukan' }}</strong>
                                                     
@@ -138,14 +136,14 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="class-badge" style="font-size:0.8rem; padding: 6px 12px;"><i class="fa-solid fa-school"></i> {{ $w->kelas->nama_kelas ?? 'Kelas tidak ditemukan' }}</span>
+                                            <span class="class-badge" style="font-size:0.8rem; padding: 6px 12px;"><i class="fa-solid fa-school"></i> {{ $w->ruangKelas->nama_ruang ?? 'Kelas tidak ditemukan' }}</span>
                                         </td>
                                         <td class="action-column">
-                                            <div class="action-btns">
+                                            <div class="action-btns" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
                                                 <button class="btn-action-icon btn-action-edit" onclick="openEditModal({{ $w->id }}, {{ $w->guru_id }}, {{ $w->kelas_id }})" title="Edit Data">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
-                                                <button class="btn-action-icon btn-action-delete" onclick="openDeleteModal({{ $w->id }}, '{{ $w->guru->nama ?? '' }}', '{{ $w->kelas->nama_kelas ?? '' }}')" title="Hapus Data">
+                                                <button class="btn-action-icon btn-action-delete" onclick="openDeleteModal({{ $w->id }}, '{{ $w->guru->nama ?? '' }}', '{{ $w->ruangKelas->nama_ruang ?? '' }}')" title="Hapus Data">
                                                     <i class="fa-solid fa-trash-can"></i>
                                                 </button>
                                             </div>
@@ -184,7 +182,7 @@
                     <select name="kelas_id" class="custom-select" required>
                         <option value="">-- Silakan Pilih Kelas --</option>
                         @foreach($data_kelas as $k)
-                            <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
+                            <option value="{{ $k->id }}">{{ $k->nama_ruang }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -216,7 +214,7 @@
                     <label>Tugaskan ke Kelas</label>
                     <select name="kelas_id" id="editKelas" class="custom-select" required>
                         @foreach($data_kelas as $k)
-                            <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
+                            <option value="{{ $k->id }}">{{ $k->nama_ruang }}</option>
                         @endforeach
                     </select>
                 </div>

@@ -131,11 +131,11 @@
                                     <td class="amount">Rp{{number_format($sisa_bayar,0,",",".")}}</td>
                                     <td class="status"><span class="badge {{$value->status ? 'success' : 'danger'}}"><i class="fa-solid fa-triangle-exclamation"></i> {{$value->status ? 'lunas':'menunggak'}}</span></td>
                                     <td>
-                                        <div class="action-buttons">
+                                        <div class="action-buttons" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
                                             <button class="btn-action view" title="Konfirmasi & Bukti Pembayaran" onclick="openDetailModal('{{$data_siswa->nama}}', '{{$data_siswa->nis}}', '{{$value->nominal}}', '{{$value->jumlah_di_bayar}}', '{{$sisa_bayar}}', '{{$value->status}}')"><i class="fa-solid fa-eye"></i></button>
                                             <button class="btn-action edit" title="Bayar Angsuran" onclick="openBayarModal('{{$value->id}}','{{$data_siswa->nama}}', '{{$data_siswa->nis}}', '{{$value->nominal}}','{{$sisa_bayar}}','{{$value->status}}')"><i class="fa-solid fa-cash-register"></i></button>
                                             <button class="btn-action publish" title="Publish Tagihan" onclick="openPublishModal('{{$data_siswa->id}}', '{{$data_siswa->nama}}', '{{$data_siswa->nis}}')"><i class="fa-solid fa-paper-plane"></i></button>
-                                            <button class="btn-action delete" title="Hapus Tagihan" onclick="openDeleteModal('{{$value->id}}', '{{$data_siswa->nama}}', '{{$data_siswa->nis}}')"><i class="fa-solid fa-trash"></i></button>
+                                            <button class="btn-action delete" title="Hapus Tagihan" onclick="openDeleteModal('{{$value->id}}', '{{$data_siswa->nama}}', '{{$data_siswa->nis}}')"><i class="fa-solid fa-trash-can"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -297,7 +297,7 @@
 
                 <div class="modal-footer" style="margin-top: 20px;">
                     <button type="button" class="btn-modal-cancel" onclick="closeDeleteModal()">Batal</button>
-                    <button type="submit" class="btn-modal-save" style="background-color: #dc2626;"><i class="fa-solid fa-trash"></i> Ya, Hapus</button>
+                    <button type="submit" class="btn-modal-save" style="background-color: #dc2626;"><i class="fa-solid fa-trash-can"></i> Ya, Hapus</button>
                 </div>
             </form>
         </div>

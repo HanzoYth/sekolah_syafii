@@ -1,11 +1,3 @@
-@props([
-    'name' => null,
-    'position' => 'Pengguna SIAKAD',
-    'initials' => 'SK',
-    'title' => 'SIAKAD',
-    'description' => 'Kelola informasi akademik sekolah dalam satu tempat.',
-])
-
 <link rel="stylesheet" href="{{ asset('css/modul/siakad/shared/components.css') }}?v={{ time() }}">
 
 <header class="siakad-topbar">
@@ -23,9 +15,13 @@
         <div class="siakad-topbar-actions">
             <div class="siakad-date" aria-label="Tanggal hari ini"><i class="fa-regular fa-calendar-days"></i><span>{{ now()->translatedFormat('l, d F Y') }}</span></div>
             <button class="siakad-notification" type="button" aria-label="Notifikasi"><i class="fa-regular fa-bell"></i><span></span></button>
-            <div class="siakad-profile" aria-label="Profil {{ $name ?? session('nama', 'Pengguna SIAKAD') }}">
-                <span class="siakad-profile-avatar">{{ $initials }}</span>
-                <span class="siakad-profile-detail"><strong>{{ $name ?? session('nama', 'Pengguna SIAKAD') }}</strong><small>{{ $position }}</small></span>
+            <div class="siakad-profile" aria-label="Profil {{ $currentName }}">
+                @if($currentPhoto)
+                    <img src="{{ $currentPhoto }}" alt="Foto {{ $currentName }}" class="siakad-profile-avatar" style="object-fit: cover; padding: 0;">
+                @else
+                    <span class="siakad-profile-avatar">{{ $currentInitials }}</span>
+                @endif
+                <span class="siakad-profile-detail"><strong>{{ $currentName }}</strong><small>{{ $currentPosition }}</small></span>
                 <i class="fa-solid fa-chevron-down siakad-profile-chevron" aria-hidden="true"></i>
             </div>
         </div>

@@ -25,7 +25,7 @@
         <main class="main-content">
             <x-siakad.topbar title="Edit Jadwal Pelajaran" description="Perbarui informasi jadwal mengajar." position="Admin SIAKAD" initials="AD" />
             <div class="jadwal-container">
-                <div class="jadwal-header"><i class="fa-solid fa-pen"></i> Edit Jadwal</div>
+                <div class="jadwal-header"><i class="fa-solid fa-pen-to-square"></i> Edit Jadwal</div>
                 <form action="/sk/update-jadwal/{{ $jadwal->id }}" method="POST">
                     @csrf
                     <div class="form-grid">

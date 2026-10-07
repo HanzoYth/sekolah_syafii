@@ -257,7 +257,7 @@
                                             </div>
                                         </td>
                                         <td class="action-column">
-                                            <div class="action-btns">
+                                            <div class="action-btns" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
                                                 <button class="btn-action-icon btn-action-edit" onclick="openEditModal({{ $m->id }}, '{{ $m->nama_mapel }}')" title="Edit Data">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
