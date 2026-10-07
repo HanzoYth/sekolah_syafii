@@ -1,0 +1,124 @@
+/* ================================================================
+   ANNOUNCEMENT / PENGUMUMAN SECTION
+   ================================================================ */
+.announcement-card {
+    background-color: var(--white);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-color);
+    border-left: 5px solid var(--gold); /* Akses garis vertikal emas */
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.announcement-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+/* Ornamen Islami transparan di sudut kanan kartu */
+.announcement-card::before {
+    content: '۞';
+    position: absolute;
+    right: 15px;
+    top: 5px;
+    font-size: 4rem;
+    color: var(--primary-color);
+    opacity: 0.05;
+    font-family: var(--font-heading);
+    pointer-events: none;
+}
+
+.announcement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.announcement-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.announcement-title i {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: var(--primary-light);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.announcement-title h4 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.announcement-date {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.announcement-body {
+    color: var(--text-dark);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.announcement-body p {
+    margin-bottom: 10px;
+}
+
+.announcement-body p:last-child {
+    margin-bottom: 0;
+}
+
+/* Badge/Tag Tipe Pengumuman (Opsional) */
+.announcement-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.announcement-badge.important {
+    background-color: var(--red-bg);
+    color: var(--red-text);
+}
+
+.announcement-badge.info {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+}
+
+/* Responsif HP */
+@media (max-width: 600px) {
+    .announcement-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .announcement-date {
+        align-self: flex-end;
+    }
+}

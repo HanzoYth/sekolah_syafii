@@ -36,6 +36,9 @@ return new class extends Migration
             $table->foreignId("cabang_id")->constrained("cabang_guru")->cascadeOnDelete();
             $table->foreignId("sekolah_id")->constrained("jenis_sekolah")->cascadeOnDelete();
             $table->foreignId("user_id")->constrained("akun")->cascadeOnDelete();
+            $table->boolean("bendahara")->default(0);
+            $table->boolean("operator")->default(0);
+            $table->boolean("satpam")->default(0);
         });
     }
 

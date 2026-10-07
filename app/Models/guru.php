@@ -34,6 +34,9 @@ class guru extends Model
         "cabang_id",
         "sekolah_id",
         "user_id",
+        "bendahara",
+        "operator",
+        "satpam"
     ];
 
     public function getUser(){

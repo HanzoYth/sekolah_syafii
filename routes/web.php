@@ -155,6 +155,12 @@ Route::get("/sk/ssp",[file_surat::class,"suratSlipPembayaran"]);
 //ini route untuk dasboard tahfiz
 Route::get('/tf/das',[modulTahfidzController::class,"dashboard_tahfidz"]);
 Route::get('/tf/kls',[kelasHalaqahController::class,"kelas_halaqah"]);
+Route::get('/tf/ss',[tahfizController::class,"siswa_tahfiz"]);
+Route::get('/tf/rm',[tahfizController::class,"rekap_mgg"]);
+Route::get('/tf/rb',[tahfizController::class,"rekap_bln"]);
+Route::get('/tf/lh',[tahfizController::class,"laporan_harian"]);
+Route::get('/tf/pg',[tahfizController::class,"pengampu"]);
+Route::get('/tf/pgm',[tahfizController::class,"pengumuman"]);
 
 
 //ini dasboard siakad
@@ -260,7 +266,6 @@ Route::get('/file_pdf/{path}', function ($path) {
 
 
 // tahfiz
-Route::get("/tf/pgm",[tahfizController::class,"tampilan_Tahfiz"]);
 
 
 

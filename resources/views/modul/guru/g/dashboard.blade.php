@@ -33,7 +33,15 @@
                         <img src="{{ route('file.show',$data_guru->url_foto)}}" alt="Foto Profil">
                         <div class="user-info">
                             <span class="name">{{$data_guru->nama}}</span>
-                            <span class="role">{{$data_guru->guru_tetap ? "guru tetap" : "guru honor"}}</span>
+                            @if ($data_guru->bendahara)
+                                <span class="role">bendahara</span>
+                            @elseif ($data_guru->operator)
+                                <span class="role">operator</span>
+                            @elseif ($data_guru->satpam)
+                                <span class="role">satpam</span>
+                            @else
+                                <span class="role">{{$data_guru->guru_tetap ? "guru tetap" : "guru honor"}}</span>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -158,35 +166,37 @@
                         </div>
                     </div>
 
-                    <!-- CARD BARU: Widget Jadwal Piket Guru -->
-                    <div class="card widget-piket">
-                        <div class="card-header">
-                            <h4><i class="fa-solid fa-user-shield"></i> Jadwal Piket Minggu Ini</h4>
-                            <span class="badge-status-piket">Aktif</span>
-                        </div>
-                        <div class="card-body">
-                            <div class="piket-list">
-                                @foreach($data_piket as $piket)
-                                    @php
-                                        Carbon\Carbon::setlocale("id");
-                                        $cek_hari_ini = Carbon\Carbon::now()->translatedFormat("l") == $piket->hari
-                                    @endphp
-                                    <div class="piket-item {{$cek_hari_ini ? 'piket-today' : '' }}">
-                                        <div class="piket-date-box">
-                                            <span class="piket-day">{{ $piket->hari }}</span>
+                    @if (!$data_guru->bendahara && !$data_guru->operator && !$data_guru->satpam)
+                        <!-- CARD BARU: Widget Jadwal Piket Guru -->
+                        <div class="card widget-piket">
+                            <div class="card-header">
+                                <h4><i class="fa-solid fa-user-shield"></i> Jadwal Piket Minggu Ini</h4>
+                                <span class="badge-status-piket">Aktif</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="piket-list">
+                                    @foreach($data_piket as $piket)
+                                        @php
+                                            Carbon\Carbon::setlocale("id");
+                                            $cek_hari_ini = Carbon\Carbon::now()->translatedFormat("l") == $piket->hari;
+                                        @endphp
+                                        <div class="piket-item {{$cek_hari_ini ? 'piket-today' : '' }}">
+                                            <div class="piket-date-box">
+                                                <span class="piket-day">{{ $piket->hari }}</span>
+                                            </div>
+                                            <div class="piket-info">
+                                                <h5>{{$piket->nama}}</h5>
+                                                <p><i class="fa-regular fa-clock"></i> {{ Carbon\Carbon::parse($piket->jam)->translatedFormat('H:i') }} WITA</p>
+                                            </div>
+                                            @if($cek_hari_ini)
+                                                <span class="badge-today">Hari Ini</span>
+                                            @endif
                                         </div>
-                                        <div class="piket-info">
-                                            <h5>{{$piket->nama}}</h5>
-                                            <p><i class="fa-regular fa-clock"></i> {{ Carbon\Carbon::parse($piket->jam)->translatedFormat('H:i') }} WITA</p>
-                                        </div>
-                                        @if($cek_hari_ini)
-                                            <span class="badge-today">Hari Ini</span>
-                                        @endif
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
 
                     <!-- Pengumuman Terbaru -->
                     <div class="card widget-pengumuman">

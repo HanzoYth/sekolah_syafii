@@ -25,6 +25,9 @@
         <div class="sidebar-menu-wrapper">
             <!-- ================= MENU GURU ================= -->
             @if(session('role') == "g")
+                @php 
+                    $user = App\Models\guru::find(session("id"));
+                @endphp
                 <div class="menu-section" id="section-guru">
                     <span class="menu-label">MODUL GURU</span>
                     <ul class="menu-list">
@@ -58,19 +61,21 @@
                                 <span>Pengumuman</span>
                             </a>
                         </li>
-                        <li class="menu-item {{$route == '/gr/edprgr' ? 'active' : ''}}">
-                            <a href="/gr/edprgr">
-                                <i class="fa-solid fa-user"></i>
-                                <span>Profile</span>
-                            </a>
-                        </li>
-                        @if (App\Models\guru::where("id",session("id"))->first()->ast_krk || App\Models\guru::where("id",session("id"))->first()->kepala_sekolah)
-                            <li class="menu-item {{$route == '/gr/klgr' ? 'active' : ''}}">
-                                <a href="/gr/klgr">
+                        @if (!$user->bendahara && !$user->satpam && !$user->operator )
+                            <li class="menu-item {{$route == '/gr/edprgr' ? 'active' : ''}}">
+                                <a href="/gr/edprgr">
                                     <i class="fa-solid fa-user"></i>
-                                    <span>Jadwal Piket</span>
+                                    <span>Profile</span>
                                 </a>
                             </li>
+                            @if ($user->ast_krk || $user->kepala_sekolah)
+                                <li class="menu-item {{$route == '/gr/klgr' ? 'active' : ''}}">
+                                    <a href="/gr/klgr">
+                                        <i class="fa-solid fa-user"></i>
+                                        <span>Jadwal Piket</span>
+                                    </a>
+                                </li>
+                            @endif
                         @endif
                     </ul>
                 </div>
@@ -193,7 +198,7 @@
     </aside>
 </div>
 
-<script>                                                                                                                                                                                                  
+<script>
 (function () {
     var sidebar     = document.getElementById('sidebar');
     var hamburger   = document.getElementById('mobile-hamburger-btn');

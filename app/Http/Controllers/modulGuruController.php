@@ -259,33 +259,55 @@ class modulGuruController extends Controller
     }
 
     function tambahGuru(Request $request){
-        $validator = Validator::make($request->all(),
-            [
-                "foto" => 'required|file|mimes:jpg,jpeg,png|max:2048',
-                "file_ktp" => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-                "file_kk" => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-                "file_ijazah" => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048'
-            ],
-            [
-                "foto.mimes" => "file harus berupa jpg, jpeg, atau png",
-                "foto.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
-                "file_ktp.mimes" => "file harus berupa pdf",
-                "file_ktp.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
-                "file_kk.mimes" => "file harus berupa pdf",
-                "file_kk.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
-                "file_ijazah.mimes" => "file harus berupa pdf",
-                "file_ijazah.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
-            ]
-        );
-        
-        if ($validator->fails()){
-            return back()->withErrors($validator)->withInput();
-        }
+        $path_foto = "";
+        $path_ktp = "";
+        $path_kk = "";
+        $path_ijazah = "";
+        if ($request->jabatan != "bendahara" && $request->jabatan != "operator" &&   $request->jabatan != "satpam"){
+            $validator = Validator::make($request->all(),
+                [
+                    "foto" => 'required|file|mimes:jpg,jpeg,png|max:2048',
+                    "file_ktp" => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    "file_kk" => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    "file_ijazah" => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048'
+                ],
+                [
+                    "foto.mimes" => "file harus berupa jpg, jpeg, atau png",
+                    "foto.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+                    "file_ktp.mimes" => "file harus berupa pdf",
+                    "file_ktp.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+                    "file_kk.mimes" => "file harus berupa pdf",
+                    "file_kk.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+                    "file_ijazah.mimes" => "file harus berupa pdf",
+                    "file_ijazah.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+                ]
+            );
+            
+            if ($validator->fails()){
+                return back()->withErrors($validator)->withInput();
+            }
 
-        $path_foto = $request->file("foto")->store('uploads');
-        $path_ktp = $request->file("file_ktp")->store('file-kirim');
-        $path_kk = $request->file("file_kk")->store('file-kirim');
-        $path_ijazah = $request->file("file_ijazah")->store('file-kirim');
+            $path_foto = $request->file("foto")->store('uploads');
+            $path_ktp = $request->file("file_ktp")->store('file-kirim');
+            $path_kk = $request->file("file_kk")->store('file-kirim');
+            $path_ijazah = $request->file("file_ijazah")->store('file-kirim');
+        }else{
+            $validator = Validator::make($request->all(),
+                [
+                    "foto" => 'required|file|mimes:jpg,jpeg,png|max:2048',
+                ],
+                [
+                    "foto.mimes" => "file harus berupa jpg, jpeg, atau png",
+                    "foto.max" => "ukuran file harus lebih kecil dari 2 mb atau 2 mb",
+                ]
+            );
+            
+            if ($validator->fails()){
+                return back()->withErrors($validator)->withInput();
+            }
+
+            $path_foto = $request->file("foto")->store('uploads');
+        }
 
         guru::create([
             "nama" => $request->nama,
@@ -307,8 +329,11 @@ class modulGuruController extends Controller
             "wakil_sekolah" => 0,
             "ast_krk" => 0,
             "cabang_id" => $request->cabang_id,
-            "sekolah_id" => $request->sekolah_id,
+            "sekolah_id" => $request->sekolah_id ?? 1,
             "user_id" => (int) session("id_akun"),
+            "bendahara" => $request->jabatan ==  "bendahara" ? 1 : 0,
+            "operator" => $request->jabatan ==  "operator" ? 1 : 0,
+            "satpam" => $request->jabatan ==  "satpam" ? 1 : 0
         ]);
         $data_guru = guru::where("nig", $request->nig)->first();
         $this->tambah_Gaji($data_guru->id);

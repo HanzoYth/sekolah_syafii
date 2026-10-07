@@ -13,15 +13,9 @@ function generateKode(role){
     if (role == "a"){
         choice_simbol = "a";
     }else if (role == "g"){
-        choice_simbol = "g";
+        choice_simbol = "t";
     }else if (role == "y"){
         choice_simbol = "y";
-    }else if (role == "b"){
-        choice_simbol = "b";
-    }else if (role == "o"){
-        choice_simbol = "o";
-    }else if(role == "s"){
-        choice_simbol = "s";
     }else{
         choice_simbol = "s";
     }

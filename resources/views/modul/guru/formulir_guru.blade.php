@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Data Guru - Sekolah Al-Qur'an Imam Syafi'i</title>
+    <title>Tambah Data Staf - Sekolah Al-Qur'an Imam Syafi'i</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">  
     <!-- Font Awesome -->
@@ -21,7 +21,7 @@
         <!-- HEADER / TOPBAR -->
         <header class="topbar">
             <div class="topbar-title">
-                <h2>Tambah Data Guru</h2>
+                <h2>Tambah Data Staf</h2>
                 <p>Input data pribadi dan status penugasan pengampu</p>
             </div>
             <a href="/reg" class="btn-back">
@@ -33,7 +33,7 @@
         <section class="content-body">
             <div class="card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-user-plus"></i> Formulir Bio Data Guru</h3>
+                    <h3><i class="fa-solid fa-user-plus"></i> Formulir Bio Data Staf</h3>
                 </div>
 
                 <form id="formGuru" action="/gr/tbgr" method="POST" enctype="multipart/form-data">
@@ -50,7 +50,7 @@
 
                         <!-- 2. NOMOR NIG -->
                         <div class="form-group">
-                            <label for="nomorNig">Nomor Induk Guru (NIG) <span class="required">*</span></label>
+                            <label for="nomorNig">Nomor Induk Tergantung Anda Punya <span class="required">*</span></label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-id-card"></i>
                                 <input type="text" id="nomorNig" name="nig" placeholder="Contoh: 19920812202401" required autocomplete="off">
@@ -75,10 +75,11 @@
                             </div>
                         </div>
 
+                        <!-- AGAMA -->
                         <div class="form-group">
-                            <label for="tanggalLahir">Agama<span class="required">*</span></label>
+                            <label for="agama">Agama <span class="required">*</span></label>
                             <div class="input-wrapper">
-                                <i class="fa-solid fa-calendar-days"></i>
+                                <i class="fa-solid fa-star-and-crescent"></i>
                                 <input type="text" id="agama" name="agama" class="form-control" required placeholder="Agama">
                             </div>
                         </div>
@@ -126,8 +127,22 @@
                             </div>
                         </div>
 
-                        <!-- JENIS SEKOLAH -->
-                        <div class="form-group">
+                        <!-- ===== JABATAN / POSISI (default: Guru) ===== -->
+                        <div class="form-group" id="groupJabatan">
+                            <label for="jabatan">Jabatan / Posisi <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-user-tie"></i>
+                                <select id="jabatan" name="jabatan" required>
+                                    <option value="guru" selected>Guru</option>
+                                    <option value="bendahara">Bendahara</option>
+                                    <option value="operator">Operator</option>
+                                    <option value="satpam">Satpam</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- JENIS SEKOLAH (hanya untuk Guru) -->
+                        <div class="form-group guru-only">
                             <label for="jenisSekolah">Jenis Sekolah <span class="required">*</span></label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-building-columns"></i>
@@ -140,9 +155,9 @@
                             </div>
                         </div>
 
-                        <!-- 6. UPLOAD FOTO & PREVIEW -->
+                        <!-- 6. UPLOAD FOTO & PREVIEW (selalu tampil) -->
                         <div class="form-group full-width">
-                            <label for="inputFoto">Foto Profil Guru</label>
+                            <label for="inputFoto">Foto Profil Staf</label>
                             <div class="photo-preview-container">
                                 <div class="input-wrapper file-input-wrapper">
                                     <i class="fa-solid fa-image"></i>
@@ -154,15 +169,15 @@
                             </div>
                         </div>
 
-                        <!-- SECTION BERKAS DOKUMEN ENKRIPSI/LAMPIRAN -->
-                        <div class="form-group full-width">
+                        <!-- SECTION BERKAS DOKUMEN ENKRIPSI/LAMPIRAN (hanya untuk Guru) -->
+                        <div class="form-group full-width guru-only">
                             <div class="document-section-title">
                                 <i class="fa-solid fa-folder-open"></i> Lampiran Dokumen Berkas
                             </div>
                         </div>
 
-                        <!-- 7. UPLOAD KTP -->
-                        <div class="form-group">
+                        <!-- 7. UPLOAD KTP (hanya untuk Guru) -->
+                        <div class="form-group guru-only">
                             <label for="inputKtp">File KTP <span class="required">*</span></label>
                             <div class="input-wrapper file-input-wrapper">
                                 <i class="fa-solid fa-address-card"></i>
@@ -171,8 +186,8 @@
                             <small class="file-name-preview" id="previewKtp">Belum ada file dipilih</small>
                         </div>
 
-                        <!-- 8. UPLOAD KK -->
-                        <div class="form-group">
+                        <!-- 8. UPLOAD KK (hanya untuk Guru) -->
+                        <div class="form-group guru-only">
                             <label for="inputKk">File Kartu Keluarga (KK) <span class="required">*</span></label>
                             <div class="input-wrapper file-input-wrapper">
                                 <i class="fa-solid fa-users"></i>
@@ -181,8 +196,8 @@
                             <small class="file-name-preview" id="previewKk">Belum ada file dipilih</small>
                         </div>
 
-                        <!-- 9. UPLOAD IJAZAH TERAKHIR -->
-                        <div class="form-group full-width">
+                        <!-- 9. UPLOAD IJAZAH TERAKHIR (hanya untuk Guru) -->
+                        <div class="form-group full-width guru-only">
                             <label for="inputIjazah">File Ijazah Terakhir <span class="required">*</span></label>
                             <div class="input-wrapper file-input-wrapper">
                                 <i class="fa-solid fa-file-certificate"></i>
@@ -200,8 +215,8 @@
                             </div>
                         </div>
 
-                        <!-- 11. CHECKBOX KELOMPOK 1 (STATUS KEPEGAWAIAN) -->
-                        <div class="form-group full-width">
+                        <!-- 11. CHECKBOX KELOMPOK 1 (STATUS KEPEGAWAIAN) (hanya untuk Guru) -->
+                        <div class="form-group full-width guru-only">
                             <div class="checkbox-section">
                                 <div class="checkbox-section-title">
                                     <i class="fa-solid fa-briefcase"></i> Status Kepegawaian Guru
@@ -219,8 +234,8 @@
                             </div>
                         </div>
 
-                        <!-- 12. CHECKBOX KELOMPOK 2 (PERAN TAHFIZ) -->
-                        <div class="form-group full-width">
+                        <!-- 12. CHECKBOX KELOMPOK 2 (PERAN TAHFIZ) (hanya untuk Guru) -->
+                        <div class="form-group full-width guru-only">
                             <div class="checkbox-section">
                                 <div class="checkbox-section-title">
                                     <i class="fa-solid fa-book-quran"></i> Peran Penugasan Tahfiz
@@ -243,7 +258,7 @@
                     <div class="form-actions">
                         <button type="reset" class="btn-reset" id="btnReset">Reset</button>
                         <button type="submit" class="btn-save">
-                            <i class="fa-solid fa-floppy-disk"></i> Simpan Data Guru
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Data Staf
                         </button>
                     </div>
                 </form>
@@ -310,13 +325,57 @@
         bindFilePreview('inputKk', 'previewKk');
         bindFilePreview('inputIjazah', 'previewIjazah');
 
-        // Reset Handler
-        document.getElementById('btnReset').addEventListener('click', () => {
-            avatarPreview.innerHTML = `<i class="fa-solid fa-user"></i>`;
+        // ===== Logic Tampil/Sembunyi berdasarkan Jabatan =====
+        const selectJabatan = document.getElementById('jabatan');
+        const groupJabatan = document.getElementById('groupJabatan');
+        const guruOnlyBlocks = document.querySelectorAll('.guru-only');
+
+        function resetFilePreviews() {
             document.querySelectorAll('.file-name-preview').forEach(el => {
                 el.textContent = 'Belum ada file dipilih';
                 el.classList.remove('active');
             });
+        }
+
+        function applyJabatan() {
+            const isGuru = selectJabatan.value === 'guru';
+
+            guruOnlyBlocks.forEach(block => {
+                block.style.display = isGuru ? '' : 'none';
+
+                // Field yang disembunyikan di-disable: tidak divalidasi (required)
+                // dan tidak ikut terkirim ke server.
+                block.querySelectorAll('input, select, textarea').forEach(field => {
+                    field.disabled = !isGuru;
+
+                    if (!isGuru) {
+                        if (field.type === 'checkbox') {
+                            field.checked = false;
+                            field.value = 0;
+                        } else if (field.type === 'file') {
+                            field.value = '';
+                        } else if (field.tagName === 'SELECT') {
+                            field.selectedIndex = 1;
+                        }
+                    }
+                });
+            });
+
+            if (!isGuru) resetFilePreviews();
+
+            // Kalau Jenis Sekolah hilang, Jabatan dibuat selebar penuh agar rapi
+            groupJabatan.classList.toggle('full-width', !isGuru);
+        }
+
+        selectJabatan.addEventListener('change', applyJabatan);
+        applyJabatan(); // jalankan saat halaman pertama dimuat
+
+        // Reset Handler
+        document.getElementById('btnReset').addEventListener('click', () => {
+            avatarPreview.innerHTML = `<i class="fa-solid fa-user"></i>`;
+            resetFilePreviews();
+            // Tunggu form selesai reset (Jabatan kembali ke Guru), lalu terapkan tampilannya
+            setTimeout(applyJabatan, 0);
         });
     </script>
 </body>

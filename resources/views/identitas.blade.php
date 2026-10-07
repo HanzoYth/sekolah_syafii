@@ -53,11 +53,8 @@
                                 <option value="" disabled selected>-- Pilih Role Pengguna --</option>
                                 <option value="y">Yayasan</option>
                                 <option value="a">Admin</option>
-                                <option value="g">Guru</option>
+                                <option value="g">Staf</option>
                                 <option value="s">Siswa</option>
-                                <option value="b">Bendahara</option>
-                                <option value="o">Operator</option>
-                                <option value="p">Satpam</option>
                             </select>
                         </div>
 
@@ -97,19 +94,10 @@
                         <i class="fa-solid fa-user-shield"></i> Admin
                     </button>
                     <button type="button" class="role-tab-btn" data-role="g">
-                        <i class="fa-solid fa-chalkboard-user"></i> Guru
+                        <i class="fa-solid fa-chalkboard-user"></i> Staf
                     </button>
                     <button type="button" class="role-tab-btn" data-role="s">
                         <i class="fa-solid fa-user-graduate"></i> Siswa
-                    </button>
-                    <button type="button" class="role-tab-btn" data-role="b">
-                        <i class="fa-solid fa-user-graduate"></i> Bendahara
-                    </button>
-                    <button type="button" class="role-tab-btn" data-role="o">
-                        <i class="fa-solid fa-user-graduate"></i> Operator
-                    </button>
-                    <button type="button" class="role-tab-btn" data-role="p">
-                        <i class="fa-solid fa-user-graduate"></i> Satpam
                     </button>
                 </div>
 
