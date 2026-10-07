@@ -47,6 +47,28 @@
             </header>
         @endif
 
+        <!-- CARD KATEGORI (BARU) -->
+        <section class="card category-card">
+            <div class="category-tabs" id="categoryTabs">
+                <button type="button" class="category-tab active" data-kategori="guru">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span>Guru</span>
+                </button>
+                <button type="button" class="category-tab" data-kategori="bendahara">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>Bendahara</span>
+                </button>
+                <button type="button" class="category-tab" data-kategori="satpam">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Satpam</span>
+                </button>
+                <button type="button" class="category-tab" data-kategori="operator">
+                    <i class="fa-solid fa-computer"></i>
+                    <span>Operator</span>
+                </button>
+            </div>
+        </section>
+
         <!-- CARD FILTER -->
         <section class="card filter-card">
             <form action="#" method="GET" class="filter-form" id="filterForm">
@@ -189,6 +211,18 @@
         const today = new Date();
         const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
         dateElement.textContent = today.toLocaleDateString('id-ID', options);
+
+        // --- 1B. LOGIC TAB KATEGORI (BARU, tampilan saja) ---
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        let activeCategory = 'guru';
+
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', function () {
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                activeCategory = this.dataset.kategori;
+            });
+        });
 
         // --- 2. LOGIC FILTER DATA GURU ---
         const filterForm = document.getElementById('filterForm');

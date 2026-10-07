@@ -228,6 +228,50 @@ body {
     padding: 24px;
 }
 
+/* CATEGORY TABS (BARU) */
+.category-card {
+    padding: 16px 24px;
+}
+
+.category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.category-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.category-tab i {
+    font-size: 0.9rem;
+}
+
+.category-tab:hover {
+    background-color: var(--primary-light);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.category-tab.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(6, 78, 59, 0.25);
+}
+
 /* FILTER FORM */
 .filter-card {
     padding: 20px 24px;
@@ -700,5 +744,10 @@ body {
 
     .modal-footer {
         flex-direction: column;
+    }
+
+    /* Tab kategori jadi 2 kolom di HP (BARU) */
+    .category-tab {
+        flex: 1 1 calc(50% - 10px);
     }
 }
