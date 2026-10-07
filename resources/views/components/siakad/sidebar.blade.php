@@ -80,6 +80,13 @@
                                 <i class="fa-solid fa-school"></i>
                                 <span>Kelola Kelas</span>
                             </a>
+                            
+                        </li>
+                        <li class="menu-item {{ request()->is('sk/pembagian-kelas') ? 'active' : '' }}">
+                            <a href="/sk/pembagian-kelas">
+                                <i class="fa-solid fa-users-viewfinder"></i>
+                                <span>Pembagian Kelas</span>
+                            </a>
                         </li>
                         <li class="menu-item {{ request()->is('sk/kelola-wali-kelas') ? 'active' : '' }}">
                             <a href="/sk/kelola-wali-kelas">
@@ -113,10 +120,15 @@
 
             {{-- ================= ROLE GURU ================= --}}
             @elseif (session('role') === 'g')
-                <div class="menu-section" id="section-guru">
-                    <span class="menu-label">MENU GURU</span>
+                @php
+                    // Cek apakah guru ini adalah wali kelas
+                    $isWallas = \App\Models\wallas::where('guru_id', session('id'))->exists();
+                @endphp
+
+                <div class="menu-section" id="section-guru-pengajar">
+                    <span class="menu-label">MENU PENGAJAR</span>
                     <ul class="menu-list">
-                        <li class="menu-item {{ request()->is('sk/jadwal-guru') ? 'active' : '' }}">
+                        <li class="menu-item {{ request()->is('sk/jadwal-guru', 'sk/input-nilai-detail/*') ? 'active' : '' }}">
                             <a href="/sk/jadwal-guru">
                                 <i class="fa-solid fa-calendar-week"></i>
                                 <span>Jadwal Mengajar</span>
@@ -128,12 +140,38 @@
                                 <span>Manajemen Nilai</span>
                             </a>
                         </li>
+                    </ul>
+                </div>
+
+                @if($isWallas)
+                <div class="menu-section" id="section-guru-walas" style="margin-top: 15px;">
+                    <span class="menu-label">MENU WALI KELAS</span>
+                    <ul class="menu-list">
                         <li class="menu-item {{ request()->is('sk/wali-kelas') ? 'active' : '' }}">
                             <a href="/sk/wali-kelas">
                                 <i class="fa-solid fa-users-rectangle"></i>
-                                <span>Wali Kelas</span>
+                                <span>Data Siswa (Wali Kelas)</span>
                             </a>
                         </li>
+                        <li class="menu-item {{ request()->is('sk/absensi-walas') ? 'active' : '' }}">
+                            <a href="/sk/absensi-walas">
+                                <i class="fa-solid fa-clipboard-user"></i>
+                                <span>Absensi Kelas</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->is('sk/rapor-walas') ? 'active' : '' }}">
+                            <a href="/sk/rapor-walas">
+                                <i class="fa-solid fa-file-contract"></i>
+                                <span>Cetak Rapor</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                @endif
+
+                <div class="menu-section" id="section-guru-umum" style="margin-top: 15px;">
+                    <span class="menu-label">UMUM</span>
+                    <ul class="menu-list">
                         <li class="menu-item">
                             <a href="/sk/gsp">
                                 <i class="fa-solid fa-file-invoice-dollar"></i>
@@ -144,12 +182,6 @@
                             <a href="/sk/pr">
                                 <i class="fa-solid fa-id-card"></i>
                                 <span>Profil</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href='/sk/ass'>
-                                <i class="fa-solid fa-id-card"></i>
-                                <span>Absensi</span>
                             </a>
                         </li>
                     </ul>

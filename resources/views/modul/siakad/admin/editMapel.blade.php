@@ -22,7 +22,7 @@
         <main class="main-content">
             <x-siakad.topbar title="Mata Pelajaran" description="Edit mata pelajaran." position="Admin SIAKAD" initials="AD" />
             <div class="mapel-container">
-                <div class="mapel-header"><i class="fa-solid fa-pen"></i> Edit Mata Pelajaran</div>
+                <div class="mapel-header"><i class="fa-solid fa-pen-to-square"></i> Edit Mata Pelajaran</div>
                 <form action="/sk/update-mapel/{{ $mapel->id }}" method="POST">
                     @csrf
                     <div class="form-group">

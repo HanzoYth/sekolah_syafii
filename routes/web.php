@@ -204,6 +204,28 @@ Route::post('/sk/simpan-wali-kelas', [siakadController::class, 'simpanWaliKelas'
 Route::post('/sk/update-wali-kelas/{id}', [siakadController::class, 'updateWaliKelas']);
 Route::get('/sk/hapus-wali-kelas/{id}', [siakadController::class, 'hapusWaliKelas']);
 
+// Rute untuk Edit & Hapus Ruang Kelas (Admin|Siakad)
+Route::get('/sk/edit-kelas/{id}', [App\Http\Controllers\siakadController::class, 'editKelas']);
+Route::post('/sk/update-kelas/{id}', [App\Http\Controllers\siakadController::class, 'updateKelas']);
+Route::get('/sk/hapus-kelas/{id}', [App\Http\Controllers\siakadController::class, 'hapusKelas']);
+
+Route::get('/sk/pembagian-kelas', [App\Http\Controllers\siakadController::class, 'pembagianKelas']);
+Route::post('/sk/simpan-pembagian-kelas', [App\Http\Controllers\siakadController::class, 'simpanPembagianKelas']);
+Route::get('/sk/hapus-anggota-kelas/{id}', [App\Http\Controllers\siakadController::class, 'keluarkanSiswaDariKelas']);
+
+//(Guru|Siakad)
+Route::get('/sk/jadwal-guru', [App\Http\Controllers\siakadController::class, 'jadwalMengajarGuru']);
+Route::get('/sk/nilai-guru', [App\Http\Controllers\siakadController::class, 'inputNilaiGuru']);
+Route::get('/sk/wali-kelas', [App\Http\Controllers\siakadController::class, 'dataWaliKelas']);
+
+Route::get('/sk/input-nilai-detail/{jadwal_id}', [App\Http\Controllers\siakadController::class, 'inputNilaiDetail']);
+Route::post('/sk/simpan-nilai-siswa/{jadwal_id}', [App\Http\Controllers\siakadController::class, 'simpanNilaiSiswa']);
+
+Route::get('/sk/absensi-walas', [App\Http\Controllers\siakadController::class, 'absensiWalas']);
+Route::get('/sk/rapor-walas', [App\Http\Controllers\siakadController::class, 'raporWalas']);
+
+Route::post('/sk/simpan-absensi-walas', [App\Http\Controllers\siakadController::class, 'simpanAbsensiWalas']);
+
 // Manajemen Mata Pelajaran (Admin|Siakad)
 Route::get('/sk/kelola-mapel', [siakadController::class, 'kelolaMapel']);
 Route::post('/sk/simpan-mapel', [siakadController::class, 'simpanMapel']);

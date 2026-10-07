@@ -120,11 +120,11 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="action-buttons">
+                                    <div class="action-buttons" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
                                         <button class="btn-action view" title="Konfirmasi & Bukti Pembayaran" onclick="openDetailModal('Ahmad Rizky', '2026001', '1500000', '1500000', '0', '1')"><i class="fa-solid fa-eye"></i></button>
                                         <button class="btn-action edit" title="Bayar Angsuran" onclick="openBayarModal('1','Ahmad Rizky', '2026001', '1500000','0','1')"><i class="fa-solid fa-cash-register"></i></button>
                                         <button class="btn-action publish" title="Publish Tagihan" onclick="openPublishModal('101', 'Ahmad Rizky', '2026001')"><i class="fa-solid fa-paper-plane"></i></button>
-                                        <button class="btn-action delete" title="Hapus Tagihan" onclick="openDeleteModal('1', 'Ahmad Rizky', '2026001')"><i class="fa-solid fa-trash"></i></button>
+                                        <button class="btn-action delete" title="Hapus Tagihan" onclick="openDeleteModal('1', 'Ahmad Rizky', '2026001')"><i class="fa-solid fa-trash-can"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -142,11 +142,11 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="action-buttons">
+                                    <div class="action-buttons" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
                                         <button class="btn-action view" title="Konfirmasi & Bukti Pembayaran" onclick="openDetailModal('Siti Nurhaliza', '2026002', '1500000', '1000000', '500000', '0')"><i class="fa-solid fa-eye"></i></button>
                                         <button class="btn-action edit" title="Bayar Angsuran" onclick="openBayarModal('2','Siti Nurhaliza', '2026002', '1500000','500000','0')"><i class="fa-solid fa-cash-register"></i></button>
                                         <button class="btn-action publish" title="Publish Tagihan" onclick="openPublishModal('102', 'Siti Nurhaliza', '2026002')"><i class="fa-solid fa-paper-plane"></i></button>
-                                        <button class="btn-action delete" title="Hapus Tagihan" onclick="openDeleteModal('2', 'Siti Nurhaliza', '2026002')"><i class="fa-solid fa-trash"></i></button>
+                                        <button class="btn-action delete" title="Hapus Tagihan" onclick="openDeleteModal('2', 'Siti Nurhaliza', '2026002')"><i class="fa-solid fa-trash-can"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -164,11 +164,11 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="action-buttons">
+                                    <div class="action-buttons" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
                                         <button class="btn-action view" title="Konfirmasi & Bukti Pembayaran" onclick="openDetailModal('Budi Pratama', '2026003', '1500000', '0', '1500000', '0')"><i class="fa-solid fa-eye"></i></button>
                                         <button class="btn-action edit" title="Bayar Angsuran" onclick="openBayarModal('3','Budi Pratama', '2026003', '1500000','1500000','0')"><i class="fa-solid fa-cash-register"></i></button>
                                         <button class="btn-action publish" title="Publish Tagihan" onclick="openPublishModal('103', 'Budi Pratama', '2026003')"><i class="fa-solid fa-paper-plane"></i></button>
-                                        <button class="btn-action delete" title="Hapus Tagihan" onclick="openDeleteModal('3', 'Budi Pratama', '2026003')"><i class="fa-solid fa-trash"></i></button>
+                                        <button class="btn-action delete" title="Hapus Tagihan" onclick="openDeleteModal('3', 'Budi Pratama', '2026003')"><i class="fa-solid fa-trash-can"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -186,11 +186,11 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="action-buttons">
+                                    <div class="action-buttons" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
                                         <button class="btn-action view" title="Konfirmasi & Bukti Pembayaran" onclick="openDetailModal('Dewi Lestari', '2026004', '1500000', '1500000', '0', '1')"><i class="fa-solid fa-eye"></i></button>
                                         <button class="btn-action edit" title="Bayar Angsuran" onclick="openBayarModal('4','Dewi Lestari', '2026004', '1500000','0','1')"><i class="fa-solid fa-cash-register"></i></button>
                                         <button class="btn-action publish" title="Publish Tagihan" onclick="openPublishModal('104', 'Dewi Lestari', '2026004')"><i class="fa-solid fa-paper-plane"></i></button>
-                                        <button class="btn-action delete" title="Hapus Tagihan" onclick="openDeleteModal('4', 'Dewi Lestari', '2026004')"><i class="fa-solid fa-trash"></i></button>
+                                        <button class="btn-action delete" title="Hapus Tagihan" onclick="openDeleteModal('4', 'Dewi Lestari', '2026004')"><i class="fa-solid fa-trash-can"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -355,7 +355,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn-modal-cancel" onclick="closeDeleteModal()">Batal</button>
-                    <button type="submit" class="btn-modal-save btn-delete-confirm"><i class="fa-solid fa-trash"></i> Ya, Hapus</button>
+                    <button type="submit" class="btn-modal-save btn-delete-confirm"><i class="fa-solid fa-trash-can"></i> Ya, Hapus</button>
                 </div>
             </form>
         </div>

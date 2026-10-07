@@ -15,6 +15,128 @@ use Illuminate\Support\Facades\DB;
 
 class siakadController extends Controller
 {
+    // ==========================================
+    // MANAJEMEN NILAI (GURU PENGAJAR)
+    // ==========================================
+    public function inputNilaiDetail($jadwal_id) {
+        $guru_id = session('id');
+        $jadwal = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran'])->where('id', $jadwal_id)->where('guru_id', $guru_id)->first();
+        
+        if (!$jadwal) {
+            return redirect()->back()->with('error', 'Jadwal tidak ditemukan atau Anda tidak memiliki akses.');
+        }
+
+        // Sinkronisasi kelas_id (karena tabel kelas dan ruang_kelas terpisah namun namanya sama)
+        $nama_kelas = $jadwal->kelas->nama_kelas ?? '';
+        $ruang_kelas = \App\Models\ruang_kelas::where('nama_ruang', $nama_kelas)->first();
+        
+        $siswa = collect();
+        if ($ruang_kelas) {
+            $siswa = \App\Models\siswa::where('kelas_id', $ruang_kelas->id)->orderBy('nama')->get();
+        }
+        $jenis_penilaian = \App\Models\jenis_penilaian::all();
+        if ($jenis_penilaian->isEmpty()) {
+            \App\Models\jenis_penilaian::insert([
+                ['nama_jenis' => 'Tugas', 'bobot' => 20],
+                ['nama_jenis' => 'Ulangan Harian', 'bobot' => 30],
+                ['nama_jenis' => 'UTS', 'bobot' => 20],
+                ['nama_jenis' => 'UAS', 'bobot' => 30]
+            ]);
+            $jenis_penilaian = \App\Models\jenis_penilaian::all();
+        }
+        
+        // Ambil nilai yang sudah ada
+        $nilai_db = \App\Models\nilai::where('mapel_id', $jadwal->mapel_id)
+                        ->where('guru_id', $guru_id)
+                        ->whereIn('siswa_id', $siswa->pluck('id'))
+                        ->get();
+                        
+        // Kelompokkan nilai agar mudah diakses di blade: $nilai[siswa_id][jenis_penilaian_id] = nilai
+        $nilai = [];
+        foreach ($nilai_db as $n) {
+            $nilai[$n->siswa_id][$n->jenis_penilaian_id] = $n->nilai;
+        }
+
+        return view('modul.siakad.guru.inputNilaiDetail', compact('jadwal', 'siswa', 'jenis_penilaian', 'nilai'));
+    }
+
+    public function simpanNilaiSiswa(Request $request, $jadwal_id) {
+        $guru_id = session('id');
+        $jadwal = \App\Models\jadwal_pelajaran::find($jadwal_id);
+        
+        if (!$jadwal) {
+            return redirect()->back()->with('error', 'Jadwal tidak ditemukan.');
+        }
+
+        $input_nilai = $request->input('nilai'); // format: nilai[siswa_id][jenis_penilaian_id] = angka
+
+        if ($input_nilai) {
+            foreach ($input_nilai as $siswa_id => $penilaian) {
+                foreach ($penilaian as $jenis_id => $angka) {
+                    if ($angka !== null && $angka !== '') {
+                        \App\Models\nilai::updateOrCreate(
+                            [
+                                'siswa_id' => $siswa_id,
+                                'mapel_id' => $jadwal->mapel_id,
+                                'guru_id' => $guru_id,
+                                'jenis_penilaian_id' => $jenis_id,
+                                'semester' => 'ganjil', // Default ganjil sementara
+                                'tahun_ajaran_id' => $jadwal->tahun_ajaran_id
+                            ],
+                            [
+                                'nilai' => $angka
+                            ]
+                        );
+                    }
+                }
+            }
+        }
+
+        return redirect()->back()->with('success', 'Nilai berhasil disimpan!');
+    }
+    // ==========================================
+    // MANAJEMEN PEMBAGIAN KELAS (ROMBEL)
+    // ==========================================
+    public function pembagianKelas(Request $request) {
+        $kelas_id = $request->query('kelas_id');
+        $data_kelas = \App\Models\ruang_kelas::orderBy('nama_ruang')->get();
+        
+        // Siswa yang belum punya kelas
+        $siswa_belum_ada_kelas = \App\Models\siswa::whereNull('kelas_id')->orderBy('nama')->get();
+        
+        $kelas_terpilih = null;
+        $siswa_kelas_ini = collect();
+        
+        if ($kelas_id) {
+            $kelas_terpilih = \App\Models\ruang_kelas::find($kelas_id);
+            if ($kelas_terpilih) {
+                $siswa_kelas_ini = \App\Models\siswa::where('kelas_id', $kelas_id)->orderBy('nama')->get();
+            }
+        }
+        
+        return view('modul.siakad.admin.pembagianKelas', compact('data_kelas', 'siswa_belum_ada_kelas', 'kelas_terpilih', 'siswa_kelas_ini', 'kelas_id'));
+    }
+
+    public function simpanPembagianKelas(Request $request) {
+        $request->validate([
+            'kelas_id' => 'required|exists:ruang_kelas,id',
+            'siswa_ids' => 'required|array'
+        ]);
+
+        \App\Models\siswa::whereIn('id', $request->siswa_ids)
+            ->update(['kelas_id' => $request->kelas_id]);
+
+        return redirect()->back()->with('success', count($request->siswa_ids) . ' siswa berhasil ditambahkan ke kelas.');
+    }
+
+    public function keluarkanSiswaDariKelas($id) {
+        $siswa = \App\Models\siswa::find($id);
+        if ($siswa) {
+            $siswa->update(['kelas_id' => null]);
+            return redirect()->back()->with('success', 'Siswa berhasil dikeluarkan dari kelas.');
+        }
+        return redirect()->back()->with('error', 'Siswa tidak ditemukan.');
+    }
     function tampilanBuatTagihan_Siswa(){
         $data_siswa = siswa::all();
         return view("/modul/siakad/buatTagihan",[
@@ -296,12 +418,76 @@ class siakadController extends Controller
 
     function dataWaliKelas(Request $request) {
         $guru_id = session('id');
-        $wallas = \App\Models\wallas::with('kelas')->where('guru_id', $guru_id)->first();
+        $wallas = \App\Models\wallas::with(['guru', 'ruangKelas'])->where('guru_id', $guru_id)->first();
         $siswa = collect();
-        if ($wallas && $wallas->kelas) {
-            $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas->id)->get();
+        if ($wallas && $wallas->ruangKelas) {
+            $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->get();
         }
         return view('/modul/siakad/guru/dataWaliKelas', compact('wallas', 'siswa'));
+    }
+
+    public function absensiWalas(Request $request) {
+        $guru_id = session('id');
+        $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
+        if (!$wallas) {
+            return redirect()->back()->with('error', 'Anda bukan Wali Kelas.');
+        }
+
+        $tanggal = $request->input('tanggal', date('Y-m-d'));
+        $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->orderBy('nama')->get();
+        
+        $absensi_db = \App\Models\absensi_siswa::where('kelas_id', $wallas->kelas_id)
+                        ->whereDate('tanggal', $tanggal)
+                        ->get()->keyBy('siswa_id');
+
+        $rekap = [
+            'total' => $siswa->count(),
+            'hadir' => $absensi_db->where('status', 'h')->count(),
+            'sakit' => $absensi_db->where('status', 's')->count(),
+            'izin'  => $absensi_db->where('status', 'i')->count(),
+            'alpa'  => $absensi_db->where('status', 'a')->count(),
+        ];
+
+        return view('modul.siakad.guru.absensisiswa', compact('wallas', 'siswa', 'tanggal', 'absensi_db', 'rekap'));
+    }
+
+    public function simpanAbsensiWalas(Request $request) {
+        $guru_id = session('id');
+        $wallas = \App\Models\wallas::where('guru_id', $guru_id)->first();
+        if (!$wallas) return redirect()->back();
+
+        $tanggal = $request->input('tanggal');
+        $status_absen = $request->input('status', []); // array siswa_id => status
+        $keterangan = $request->input('keterangan', []); // array siswa_id => keterangan
+
+        foreach ($status_absen as $siswa_id => $status) {
+            \App\Models\absensi_siswa::updateOrCreate(
+                [
+                    'tanggal' => $tanggal,
+                    'siswa_id' => $siswa_id,
+                    'kelas_id' => $wallas->kelas_id
+                ],
+                [
+                    'status' => $status,
+                    'keterangan' => $keterangan[$siswa_id] ?? null,
+                    'guru_id' => $guru_id
+                ]
+            );
+        }
+
+        return redirect()->back()->with('success', 'Absensi berhasil disimpan!');
+    }
+
+    public function raporWalas(Request $request) {
+        $guru_id = session('id');
+        $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
+        if (!$wallas) {
+            return redirect()->back()->with('error', 'Anda bukan Wali Kelas.');
+        }
+
+        $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->orderBy('nama')->get();
+
+        return view('modul.siakad.guru.raporWalas', compact('wallas', 'siswa'));
     }
 
     function kelolaJadwalAdmin(Request $request) {
@@ -479,9 +665,9 @@ class siakadController extends Controller
     // KELOLA WALI KELAS (ADMIN)
     // ==========================================
     public function kelolaWaliKelas() {
-        $data_wallas = \App\Models\wallas::with(['guru', 'kelas'])->get();
+        $data_wallas = \App\Models\wallas::with(['guru', 'ruangKelas'])->get();
         $data_guru = \App\Models\guru::all();
-        $data_kelas = \App\Models\kelas::all();
+        $data_kelas = \App\Models\ruang_kelas::orderBy('nama_ruang')->get();
         return view('modul.siakad.admin.kelolaWallas', compact('data_wallas', 'data_guru', 'data_kelas'));
     }
 

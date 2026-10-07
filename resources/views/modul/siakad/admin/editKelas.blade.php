@@ -22,7 +22,7 @@
         <main class="main-content">
             <x-siakad.topbar title="Ruang Kelas" description="Edit nama ruang kelas terdaftar." position="Admin SIAKAD" initials="AD" />
             <div class="mapel-container">
-                <div class="mapel-header"><i class="fa-solid fa-pen"></i> Edit Ruang Kelas</div>
+                <div class="mapel-header"><i class="fa-solid fa-pen-to-square"></i> Edit Ruang Kelas</div>
                 <form action="/sk/update-kelas/{{ $kelas->id }}" method="POST">
                     @csrf
                     <div class="form-group">

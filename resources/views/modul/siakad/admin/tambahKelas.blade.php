@@ -25,7 +25,7 @@
             />
 
             <div class="class-content">
-                <section class="class-heading" aria-labelledby="page-title">
+                                <section class="class-heading" aria-labelledby="page-title">
                     <div>
                         <span class="section-eyebrow"><i class="fa-solid fa-school"></i> Manajemen Akademik</span>
                         <h1 id="page-title">Tambah Ruang Kelas</h1>
@@ -33,6 +33,19 @@
                     </div>
                     <a href="javascript:history.back()" class="back-link"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
                 </section>
+
+                @if(session('success'))
+                <div class="alert-toast">
+                    <i class="fa-solid fa-circle-check" style="font-size: 1.2rem;"></i>
+                    {{ session('success') }}
+                </div>
+                @endif
+                @if(session('error'))
+                <div class="alert-toast error">
+                    <i class="fa-solid fa-circle-exclamation" style="font-size: 1.2rem;"></i>
+                    {{ session('error') }}
+                </div>
+                @endif
 
                                 <div class="class-layout">
                     <section class="class-form-card" aria-labelledby="form-title">
@@ -131,18 +144,11 @@
                                         <tr>
                                             <td style="text-align: center;">{{ $loop->iteration }}</td>
                                             <td style="font-weight: 500;">{{ $k->nama_kelas }}</td>
-                                            <td style="text-align: center;">
-                                                <a href="/sk/edit-kelas/{{ $k->id }}" class="btn-action edit" style="color: #105a41; border: 1px solid #dbe8e1; background: #e7f4ec; padding: 6px 10px; border-radius: 6px; text-decoration: none; margin-right: 5px;" title="Edit">
-                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                </a>
-                                                <a href="/sk/hapus-kelas/{{ $k->id }}" class="btn-action view" style="color: #dc2626; border: 1px solid #fecaca; background: #fef2f2; padding: 6px 10px; border-radius: 6px; text-decoration: none;" onclick="return confirm('Apakah Anda yakin ingin menghapus kelas ini? Tindakan ini akan menghapus kelas secara permanen.')" title="Hapus">
-                                                    <i class="fa-solid fa-trash-can"></i>
-                                                </a>
-                                            </td>
+                                            <td style="text-align: center;"><div style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; align-items: center; gap: 5px; white-space: nowrap;"><button type="button" class="btn-action edit" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; border: none; text-decoration: none; background: #e9f2ff; color: #3875c5; cursor: pointer;" title="Edit" onclick="openEditModal({{ $k->id }}, '{{ $k->nama_kelas }}')"><i class="fa-solid fa-pen-to-square"></i></button><button type="button" class="btn-action delete" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; border: none; text-decoration: none; background: #f8e9e9; color: #b34d4d; cursor: pointer;" title="Hapus" onclick="openDeleteModal({{ $k->id }}, '{{ $k->nama_kelas }}')"><i class="fa-solid fa-trash-can"></i></button></div></td>
                                         </tr>
                                         @empty
                                         <tr>
-                                            $13" style="text-align: center; color: #6b7b75; padding: 30px;">Belum ada ruang kelas yang dibuat.</td>
+                                            <td colspan="3" style="text-align: center; color: #6b7b75; padding: 30px;">Belum ada ruang kelas yang dibuat.</td>
                                         </tr>
                                         @endforelse
                                     </tbody>
@@ -157,7 +163,88 @@
 
     <x-warning />
 
+    
+    <!-- MODAL EDIT -->
+    <div class="custom-modal-overlay" id="editModal">
+        <div class="custom-modal-card">
+            <div class="modal-header-icon icon-edit">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </div>
+            <h3>Edit Ruang Kelas</h3>
+            <form id="editForm" method="POST">
+                @csrf
+                <input type="text" name="nama_kelas" id="editInput" class="custom-input" required autocomplete="off">
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal btn-cancel" onclick="closeAllModals()">Batal</button>
+                    <button type="submit" class="btn-modal btn-confirm-edit">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL HAPUS -->
+    <div class="custom-modal-overlay" id="deleteModal">
+        <div class="custom-modal-card" style="text-align: center;">
+            <div class="modal-header-icon icon-delete" style="margin: 0 auto 20px;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3>Konfirmasi Hapus</h3>
+            <p>Anda yakin ingin menghapus kelas <strong><span id="deleteClassName"></span></strong>? Data yang dihapus tidak dapat dipulihkan.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal btn-cancel" onclick="closeAllModals()">Batal</button>
+                <button type="button" class="btn-modal btn-confirm-delete" id="btnConfirmDelete">Ya, Hapus Data</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        const overlayEdit = document.getElementById('editModal');
+        const overlayDelete = document.getElementById('deleteModal');
+        
+        const editForm = document.getElementById('editForm');
+        const editInput = document.getElementById('editInput');
+        const btnConfirmDelete = document.getElementById('btnConfirmDelete');
+        const deleteClassName = document.getElementById('deleteClassName');
+        let deleteIdTarget = null;
+
+        function closeAllModals() {
+            if(overlayEdit) overlayEdit.classList.remove('active');
+            if(overlayDelete) overlayDelete.classList.remove('active');
+        }
+
+        function openEditModal(id, nama) {
+            closeAllModals();
+            editForm.action = "/sk/update-kelas/" + id;
+            editInput.value = nama;
+            overlayEdit.classList.add('active');
+        }
+
+        function openDeleteModal(id, nama) {
+            closeAllModals();
+            deleteIdTarget = id;
+            deleteClassName.textContent = nama;
+            overlayDelete.classList.add('active');
+        }
+
+        if(btnConfirmDelete) {
+            btnConfirmDelete.addEventListener('click', function() {
+                if (deleteIdTarget) {
+                    window.location.href = "/sk/hapus-kelas/" + deleteIdTarget;
+                }
+            });
+        }
+
+        // Close on overlay click
+        [overlayEdit, overlayDelete].forEach(modal => {
+            if(modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) closeAllModals();
+                });
+            }
+        });
+    </script>
+
+<script>
         const jenjang = document.getElementById('tingkat_sekolah');
         const tingkat = document.getElementById('no_kelas');
         const paralel = document.getElementById('tipe_kelas');

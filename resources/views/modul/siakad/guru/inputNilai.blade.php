@@ -24,7 +24,7 @@
                             <h3 style="margin: 0; color: #1e293b;">{{ $mapel->mata_pelajaran->nama_mapel ?? '-' }}</h3>
                             <p style="margin: 5px 0 0; color: #64748b; font-size: 13px;"><i class="fa-solid fa-users"></i> {{ $mapel->kelas->nama_kelas ?? '-' }}</p>
                         </div>
-                        <button style="background: #0d5c3a; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Input Nilai</button>
+                        <a href="/sk/input-nilai-detail/{{ $mapel->id }}" style="background: #0d5c3a; color: white; text-decoration: none; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; display: inline-block;">Input Nilai</a>
                     </div>
                 @empty
                     <div style="text-align: center; padding: 30px; color: #94a3b8;">Belum ada jadwal mengajar / mata pelajaran yang ditugaskan.</div>

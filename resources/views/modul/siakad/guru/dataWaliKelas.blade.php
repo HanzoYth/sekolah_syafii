@@ -17,12 +17,18 @@
     <div class="dashboard-container">
         <x-sidebar_siakad />
         <main class="main-content">
+            <div style="background: yellow; padding: 10px; margin-bottom: 10px; border: 1px solid black; border-radius: 5px;">
+                <strong>DEBUG SESSION:</strong>
+                role = {{ session('role') ?? 'NULL' }},
+                id_akun = {{ session('id_akun') ?? 'NULL' }},
+                id = {{ session('id') ?? 'NULL' }}
+            </div>
             <x-siakad.topbar title="Data Siswa Wali Kelas" description="Daftar siswa yang berada di bawah perwalian Anda." position="Guru SIAKAD" initials="GR" />
 
             <div style="padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px;">
                 @if($wallas)
                     <div style="font-size: 18px; font-weight: bold; margin-bottom: 20px; color: #0d5c3a; border-bottom: 2px solid #ecfdf5; padding-bottom: 10px;">
-                        <i class="fa-solid fa-users-rectangle"></i> Rombongan Belajar: {{ $wallas->kelas->nama_ruang ?? '-' }}
+                        <i class="fa-solid fa-users-rectangle"></i> Rombongan Belajar: {{ $wallas->ruangKelas->nama_ruang ?? '-' }}
                     </div>
                     
                     <table class="table-siswa">
@@ -40,8 +46,8 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $s->nis }}</td>
-                                <td><strong>{{ $s->nama_lengkap }}</strong></td>
-                                <td>{{ $s->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
+                                <td><strong>{{ $s->nama }}</strong></td>
+                                <td>{{ $s->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
                                 <td><span style="background:#dcfce7; color:#15803d; padding:4px 8px; border-radius:4px; font-size:12px;">Aktif</span></td>
                             </tr>
                             @empty

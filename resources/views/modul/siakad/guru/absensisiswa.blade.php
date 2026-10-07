@@ -3,373 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Absensi Siswa - SIAKAD</title>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
-    <link rel="stylesheet" href="{{ asset('css/modul/siakad/teacher/dashboard.css') }}?v={{ time() }}">
-    <link rel="stylesheet" href="{{ asset('css/modul/siakad/teacher/attendance.css') }}?v={{ time() }}">
+    <title>Absensi Kelas - SIAKAD</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/modul/siakad/dasboard.css') }}">
+    <style>
+        .page-container { padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px; margin-bottom: 20px; }
+        .page-header h2 { font-size: 18px; color: #0d5c3a; margin: 0; display: flex; align-items: center; gap: 8px; }
+        .recap-box { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .recap-item { background: #f8fafc; padding: 12px 20px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px; min-width: 140px; }
+        .recap-item.hadir { border-color: #86efac; background: #f0fdf4; }
+        .recap-item.sakit { border-color: #fde047; background: #fefce8; }
+        .recap-item.izin { border-color: #93c5fd; background: #eff6ff; }
+        .recap-item.alpa { border-color: #fca5a5; background: #fef2f2; }
+        .recap-item i { font-size: 20px; color: #64748b; }
+        .recap-item.hadir i { color: #16a34a; }
+        .recap-item.sakit i { color: #eab308; }
+        .recap-item.izin i { color: #3b82f6; }
+        .recap-item.alpa i { color: #ef4444; }
+        .recap-item div strong { display: block; font-size: 18px; color: #1e293b; }
+        .recap-item div span { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .table-absensi { width: 100%; border-collapse: collapse; text-align: left; }
+        .table-absensi th { background: #f0fdf4; padding: 12px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7; }
+        .table-absensi td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #475569; vertical-align: middle; }
+        .table-absensi tr:hover { background: #f8fafc; }
+        
+        .radio-group { display: flex; gap: 10px; }
+        .radio-label { display: flex; align-items: center; gap: 5px; cursor: pointer; padding: 4px 8px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 14px; transition: all 0.2s; }
+        .radio-label:hover { background: #f1f5f9; }
+        .radio-label input[type="radio"] { cursor: pointer; }
+        
+        /* Custom styles when selected */
+        .radio-label:has(input[value="h"]:checked) { background: #dcfce7; border-color: #16a34a; color: #166534; }
+        .radio-label:has(input[value="s"]:checked) { background: #fef9c3; border-color: #eab308; color: #854d0e; }
+        .radio-label:has(input[value="i"]:checked) { background: #dbeafe; border-color: #3b82f6; color: #1e40af; }
+        .radio-label:has(input[value="a"]:checked) { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+
+        .input-ket { width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-family: inherit; font-size: 14px; }
+        .input-ket:focus { border-color: #0d5c3a; outline: none; }
+        
+        .btn-save { background: #0d5c3a; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 20px; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-save:hover { background: #064e3b; }
+        .filter-form { display: flex; gap: 10px; align-items: center; }
+        .filter-form input[type="date"] { padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; }
+        .filter-form button { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 8px 15px; border-radius: 6px; cursor: pointer; }
+        .filter-form button:hover { background: #e2e8f0; }
+        .alert-toast { padding: 16px 20px; background: #ecfdf5; color: #065f46; border-radius: 12px; border: 1px solid #a7f3d0; margin-bottom: 20px; font-weight: 500; font-size: 0.95rem; }
+    </style>
 </head>
 <body>
-
     <div class="dashboard-container">
+        <x-sidebar_siakad />
+        <main class="main-content">
+            <x-siakad.topbar title="Absensi Kelas" description="Kelola kehadiran siswa di kelas Anda." position="Wali Kelas" initials="WK" />
 
-        <x-siakad.sidebar />
-
-        <main class="main-content teacher-attendance">
-
-            <x-siakad.topbar
-                name="Ustadzah Fitri"
-                position="Guru Mata Pelajaran"
-                initials="UF"
-                title="Absensi Siswa"
-                description="Catat kehadiran siswa dan pantau rekap kelas hari ini."
-            />
-
-            <!-- 1. PAGE HEADER -->
-            <div class="page-header">
-                <div class="page-header-left">
-                    <p class="breadcrumb">SIAKAD Guru / <span>Absensi</span></p>
-                    <h1>Pencatatan Kehadiran</h1>
+            <div class="page-container">
+                @if(session('success'))
+                <div class="alert-toast">
+                    <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
                 </div>
-                <div class="page-header-right">
-                    <button class="btn-outline"><i class="fa-solid fa-file-export"></i> Export Data</button>
-                    <button class="btn-primary-gold" id="btnSimpanAbsensi">
-                        <i class="fa-solid fa-floppy-disk"></i> Simpan Absensi
-                    </button>
+                @endif
+                
+                <div class="page-header">
+                    <h2><i class="fa-solid fa-clipboard-user"></i> Absensi: {{ $wallas->ruangKelas->nama_ruang ?? 'Kelas' }}</h2>
+                    <form class="filter-form" method="GET" action="/sk/absensi-walas">
+                        <label for="tanggal">Tanggal:</label>
+                        <input type="date" name="tanggal" id="tanggal" value="{{ $tanggal }}">
+                        <button type="submit">Tampilkan</button>
+                    </form>
                 </div>
-            </div>
-
-            <!-- 2. RINGKASAN SINGKAT -->
-            <div class="quick-stats">
-                <div class="stat-pill">
-                    <i class="fa-solid fa-users"></i>
-                    <div>
-                        <h4>300</h4>
-                        <p>Total Siswa</p>
+                
+                <div class="recap-box">
+                    <div class="recap-item">
+                        <i class="fa-solid fa-users"></i>
+                        <div><strong>{{ $rekap['total'] }}</strong><span>Total Siswa</span></div>
                     </div>
-                </div>
-                <div class="stat-pill hadir">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <div>
-                        <h4>274</h4>
-                        <p>Hadir</p>
+                    <div class="recap-item hadir">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <div><strong>{{ $rekap['hadir'] }}</strong><span>Hadir</span></div>
                     </div>
-                </div>
-                <div class="stat-pill sakit">
-                    <i class="fa-solid fa-notes-medical"></i>
-                    <div>
-                        <h4>9</h4>
-                        <p>Sakit</p>
+                    <div class="recap-item sakit">
+                        <i class="fa-solid fa-notes-medical"></i>
+                        <div><strong>{{ $rekap['sakit'] }}</strong><span>Sakit</span></div>
                     </div>
-                </div>
-                <div class="stat-pill izin">
-                    <i class="fa-solid fa-envelope-open-text"></i>
-                    <div>
-                        <h4>11</h4>
-                        <p>Izin</p>
+                    <div class="recap-item izin">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                        <div><strong>{{ $rekap['izin'] }}</strong><span>Izin</span></div>
                     </div>
-                </div>
-                <div class="stat-pill alpa">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <div>
-                        <h4>6</h4>
-                        <p>Alpa</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. FILTER & PENCARIAN -->
-            <div class="toolbar-box">
-                <div class="search-field">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Cari nama siswa atau NIS...">
-                </div>
-                <div class="toolbar-filters">
-                    <div class="date-field">
-                        <i class="fa-solid fa-calendar-days"></i>
-                        <input type="date" value="{{ date('Y-m-d') }}">
-                    </div>
-                    <select>
-                        <option>Semua Kelas</option>
-                        <option>Kelas 1A</option>
-                        <option>Kelas 2B</option>
-                        <option>Kelas 3A</option>
-                    </select>
-                    <select>
-                        <option>Semua Halaqah</option>
-                        <option>Halaqah 1</option>
-                        <option>Halaqah 2</option>
-                    </select>
-                    <select>
-                        <option>Semua Status</option>
-                        <option>Hadir</option>
-                        <option>Sakit</option>
-                        <option>Izin</option>
-                        <option>Alpa</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- 4. TABEL ABSENSI -->
-            <div class="table-card">
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Siswa</th>
-                                <th>NIS</th>
-                                <th>Kelas</th>
-                                <th>Halaqah</th>
-                                <th class="col-status">Status Kehadiran</th>
-                                <th>Keterangan</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="student-cell">
-                                        <div class="avatar-sm"><i class="fa-solid fa-user"></i></div>
-                                        <span class="cell-strong">Ali</span>
-                                    </div>
-                                </td>
-                                <td>2024001</td>
-                                <td>Kelas 1A</td>
-                                <td>Halaqah 1</td>
-                                <td>
-                                    <div class="attendance-status-group">
-                                        <label class="status-radio hadir">
-                                            <input type="radio" name="status_2024001" value="hadir" checked>
-                                            <span>Hadir</span>
-                                        </label>
-                                        <label class="status-radio sakit">
-                                            <input type="radio" name="status_2024001" value="sakit">
-                                            <span>Sakit</span>
-                                        </label>
-                                        <label class="status-radio izin">
-                                            <input type="radio" name="status_2024001" value="izin">
-                                            <span>Izin</span>
-                                        </label>
-                                        <label class="status-radio alpa">
-                                            <input type="radio" name="status_2024001" value="alpa">
-                                            <span>Alpa</span>
-                                        </label>
-                                    </div>
-                                </td>
-                                <td><input type="text" class="input-keterangan" placeholder="Opsional"></td>
-                                <td>
-                                    <div class="action-icons">
-                                        <button title="Lihat Riwayat" onclick="document.getElementById('modalRiwayatAbsensi').classList.add('show')"><i class="fa-solid fa-clock-rotate-left"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="student-cell">
-                                        <div class="avatar-sm"><i class="fa-solid fa-user"></i></div>
-                                        <span class="cell-strong">Budi</span>
-                                    </div>
-                                </td>
-                                <td>2024002</td>
-                                <td>Kelas 1A</td>
-                                <td>Halaqah 1</td>
-                                <td>
-                                    <div class="attendance-status-group">
-                                        <label class="status-radio hadir">
-                                            <input type="radio" name="status_2024002" value="hadir">
-                                            <span>Hadir</span>
-                                        </label>
-                                        <label class="status-radio sakit">
-                                            <input type="radio" name="status_2024002" value="sakit" checked>
-                                            <span>Sakit</span>
-                                        </label>
-                                        <label class="status-radio izin">
-                                            <input type="radio" name="status_2024002" value="izin">
-                                            <span>Izin</span>
-                                        </label>
-                                        <label class="status-radio alpa">
-                                            <input type="radio" name="status_2024002" value="alpa">
-                                            <span>Alpa</span>
-                                        </label>
-                                    </div>
-                                </td>
-                                <td><input type="text" class="input-keterangan" value="Demam, surat dari orang tua"></td>
-                                <td>
-                                    <div class="action-icons">
-                                        <button title="Lihat Riwayat" onclick="document.getElementById('modalRiwayatAbsensi').classList.add('show')"><i class="fa-solid fa-clock-rotate-left"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="student-cell">
-                                        <div class="avatar-sm"><i class="fa-solid fa-user"></i></div>
-                                        <span class="cell-strong">Citra</span>
-                                    </div>
-                                </td>
-                                <td>2024003</td>
-                                <td>Kelas 1A</td>
-                                <td>Halaqah 2</td>
-                                <td>
-                                    <div class="attendance-status-group">
-                                        <label class="status-radio hadir">
-                                            <input type="radio" name="status_2024003" value="hadir">
-                                            <span>Hadir</span>
-                                        </label>
-                                        <label class="status-radio sakit">
-                                            <input type="radio" name="status_2024003" value="sakit">
-                                            <span>Sakit</span>
-                                        </label>
-                                        <label class="status-radio izin">
-                                            <input type="radio" name="status_2024003" value="izin" checked>
-                                            <span>Izin</span>
-                                        </label>
-                                        <label class="status-radio alpa">
-                                            <input type="radio" name="status_2024003" value="alpa">
-                                            <span>Alpa</span>
-                                        </label>
-                                    </div>
-                                </td>
-                                <td><input type="text" class="input-keterangan" value="Acara keluarga"></td>
-                                <td>
-                                    <div class="action-icons">
-                                        <button title="Lihat Riwayat" onclick="document.getElementById('modalRiwayatAbsensi').classList.add('show')"><i class="fa-solid fa-clock-rotate-left"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="student-cell">
-                                        <div class="avatar-sm"><i class="fa-solid fa-user"></i></div>
-                                        <span class="cell-strong">Dafa</span>
-                                    </div>
-                                </td>
-                                <td>2024004</td>
-                                <td>Kelas 2B</td>
-                                <td>Halaqah 1</td>
-                                <td>
-                                    <div class="attendance-status-group">
-                                        <label class="status-radio hadir">
-                                            <input type="radio" name="status_2024004" value="hadir">
-                                            <span>Hadir</span>
-                                        </label>
-                                        <label class="status-radio sakit">
-                                            <input type="radio" name="status_2024004" value="sakit">
-                                            <span>Sakit</span>
-                                        </label>
-                                        <label class="status-radio izin">
-                                            <input type="radio" name="status_2024004" value="izin">
-                                            <span>Izin</span>
-                                        </label>
-                                        <label class="status-radio alpa">
-                                            <input type="radio" name="status_2024004" value="alpa" checked>
-                                            <span>Alpa</span>
-                                        </label>
-                                    </div>
-                                </td>
-                                <td><input type="text" class="input-keterangan" placeholder="Opsional"></td>
-                                <td>
-                                    <div class="action-icons">
-                                        <button title="Lihat Riwayat" onclick="document.getElementById('modalRiwayatAbsensi').classList.add('show')"><i class="fa-solid fa-clock-rotate-left"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- EMPTY STATE (tampil kalau data kosong — sembunyikan/hapus saat sudah ada data) -->
-                {{--
-                <div class="empty-state">
-                    <i class="fa-solid fa-clipboard-user"></i>
-                    <h4>Belum ada data absensi</h4>
-                    <p>Pilih tanggal dan kelas untuk mulai mencatat kehadiran siswa.</p>
-                </div>
-                --}}
-            </div>
-
-        </main>
-    </div>
-
-    <!-- 5. MODAL RIWAYAT ABSENSI SISWA -->
-    <div class="modal-overlay" id="modalRiwayatAbsensi">
-        <div class="modal-box modal-box-lg">
-            <div class="modal-header">
-                <h3>Riwayat Absensi</h3>
-                <button class="modal-close" onclick="document.getElementById('modalRiwayatAbsensi').classList.remove('show')"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="student-profile">
-                    <div class="avatar"><i class="fa-solid fa-user"></i></div>
-                    <div class="student-info">
-                        <h4>Ali</h4>
-                        <p>NIS: 2024001</p>
-                        <p>Kelas 1A · Halaqah 1</p>
+                    <div class="recap-item alpa">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <div><strong>{{ $rekap['alpa'] }}</strong><span>Alpa</span></div>
                     </div>
                 </div>
 
-                <div class="recap-stats">
-                    <div class="recap-pill hadir">
-                        <h5>22</h5>
-                        <p>Hadir</p>
-                    </div>
-                    <div class="recap-pill sakit">
-                        <h5>1</h5>
-                        <p>Sakit</p>
-                    </div>
-                    <div class="recap-pill izin">
-                        <h5>1</h5>
-                        <p>Izin</p>
-                    </div>
-                    <div class="recap-pill alpa">
-                        <h5>0</h5>
-                        <p>Alpa</p>
-                    </div>
-                </div>
-
-                <div class="history-section">
-                    <h5>Riwayat 30 Hari Terakhir</h5>
-                    <div class="table-responsive">
-                        <table class="table-compact">
+                <form action="/sk/simpan-absensi-walas" method="POST">
+                    @csrf
+                    <input type="hidden" name="tanggal" value="{{ $tanggal }}">
+                    
+                    <div style="overflow-x: auto;">
+                        <table class="table-absensi">
                             <thead>
                                 <tr>
-                                    <th>Tgl</th>
-                                    <th>Status</th>
+                                    <th style="width: 50px;">No</th>
+                                    <th>Nama Siswa</th>
+                                    <th>NIS</th>
+                                    <th style="width: 320px;">Status Kehadiran</th>
                                     <th>Keterangan</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @forelse($siswa as $index => $s)
+                                    @php
+                                        $absen = $absensi_db[$s->id] ?? null;
+                                        $status = $absen ? $absen->status : 'h'; // Default hadir (h)
+                                        $keterangan = $absen ? $absen->keterangan : '';
+                                    @endphp
                                 <tr>
-                                    <td>23/06</td>
-                                    <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Hadir</span></td>
-                                    <td>-</td>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td><strong>{{ $s->nama }}</strong></td>
+                                    <td>{{ $s->nis }}</td>
+                                    <td>
+                                        <div class="radio-group">
+                                            <label class="radio-label">
+                                                <input type="radio" name="status[{{ $s->id }}]" value="h" {{ $status == 'h' ? 'checked' : '' }}> Hadir
+                                            </label>
+                                            <label class="radio-label">
+                                                <input type="radio" name="status[{{ $s->id }}]" value="s" {{ $status == 's' ? 'checked' : '' }}> Sakit
+                                            </label>
+                                            <label class="radio-label">
+                                                <input type="radio" name="status[{{ $s->id }}]" value="i" {{ $status == 'i' ? 'checked' : '' }}> Izin
+                                            </label>
+                                            <label class="radio-label">
+                                                <input type="radio" name="status[{{ $s->id }}]" value="a" {{ $status == 'a' ? 'checked' : '' }}> Alpa
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="text" name="keterangan[{{ $s->id }}]" value="{{ $keterangan }}" class="input-ket" placeholder="Opsional">
+                                    </td>
                                 </tr>
+                                @empty
                                 <tr>
-                                    <td>22/06</td>
-                                    <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Hadir</span></td>
-                                    <td>-</td>
+                                    <td colspan="5" style="text-align: center; padding: 30px;">Belum ada data siswa.</td>
                                 </tr>
-                                <tr>
-                                    <td>21/06</td>
-                                    <td><span class="badge warning"><i class="fa-solid fa-notes-medical"></i> Sakit</span></td>
-                                    <td>Demam</td>
-                                </tr>
-                                <tr>
-                                    <td>20/06</td>
-                                    <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Hadir</span></td>
-                                    <td>-</td>
-                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
-                </div>
+                    
+                    @if(count($siswa) > 0)
+                    <div style="text-align: right;">
+                        <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> Simpan Absensi</button>
+                    </div>
+                    @endif
+                </form>
             </div>
-            <div class="modal-footer">
-                <button class="btn-back" onclick="document.getElementById('modalRiwayatAbsensi').classList.remove('show')">Tutup</button>
-            </div>
-        </div>
+        </main>
     </div>
-
 </body>
 </html>
