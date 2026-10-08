@@ -36,6 +36,8 @@ Route::post("/add/idnt",[identitasController::class,"add_identitas"]);
 Route::get("/ab/idnt/{role}",[identitasController::class,"ambil_DataIdentitas"]);
 Route::get("/hpidnt/{id}",[identitasController::class,"hapus_DataIdentitas"]);
 
+Route::get("/gr/ambgr/{kategori}",[modulGuruController::class,"ambilDataStaf"]);
+
 // ini route untuk halaman registrasi
 Route::get('/reg',[akunController::class,"tampilan"]);
 Route::post('/reg/sign',[akunController::class,"sign_in"]);
@@ -58,14 +60,9 @@ Route::get('/gr/cb',[cabangGuruController::class,"tampilanCabangGuru"]);
 Route::post('/gr/tbgr',[modulGuruController::class,"tambahGuru"]);
 
 
-Route::get('/bd/frbd',[bendaharaController ::class,"tampilan_FormulirBendahara"]);
-Route::get('/op/frop',[operatorController::class,"tampilan_FormulirOperator"]);
-Route::get('/sp/frsp',[satpamController::class,"tampilan_FormulirSatpam"]);
 Route::get('/ys/frys',[yayasanController::class,"tampilan_FormulirYayasan"]);
 
-Route::post('/bd/tbbd',[bendaharaController::class,"tambah_Bendahara"]);
-Route::post('/op/tbop',[operatorController::class,"tambah_Operator"]);
-Route::post('/sp/tbsp',[satpamController::class,"tambah_satpam"]);
+
 Route::post('/ys/tbys',[yayasanController::class,"tambah_Yayasan"]);
 
 
@@ -161,6 +158,8 @@ Route::get('/tf/rb',[tahfizController::class,"rekap_bln"]);
 Route::get('/tf/lh',[tahfizController::class,"laporan_harian"]);
 Route::get('/tf/pg',[tahfizController::class,"pengampu"]);
 Route::get('/tf/pgm',[tahfizController::class,"pengumuman"]);
+Route::get('/tf/sw/dass',[tahfizController::class,"dashboard_siswa"]);
+Route::get('/tf/sw/pgh',[tahfizController::class,"progres_hafalan"]);
 
 
 //ini dasboard siakad
@@ -290,8 +289,3 @@ Route::get('/file_pdf/{path}', function ($path) {
 // tahfiz
 
 
-
-//bendaharan
-Route::get("/bd/das",[bendaharaController::class,"tampilan_dashboardBendahara"]);
-Route::get("/bd/abs",[bendaharaController::class,"tampilan_presensiAbsenBendahara"]);
-Route::get("/bd/acabs",[bendaharaController::class,"absen_MasukBendahara"]);

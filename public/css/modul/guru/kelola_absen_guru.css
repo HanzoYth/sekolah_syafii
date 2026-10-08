@@ -88,6 +88,30 @@ body {
     margin: 0;
 }
 
+.title-with-date {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.date-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: rgba(99, 102, 241, 0.1);
+    color: #4f46e5;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.date-badge i {
+    font-size: 0.8rem;
+}
+
 /* Tombol Tandai Semua Hadir */
 .btn-bulk-present {
     background: linear-gradient(135deg, var(--cg-primary) 0%, var(--cg-primary-light) 100%);
@@ -109,6 +133,61 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 8px 22px rgba(15, 56, 34, 0.38);
     background: linear-gradient(135deg, var(--cg-primary-light) 0%, #1c623b 100%);
+}
+
+/* ======== ROLE TABS / NODE SWITCHER ======== */
+.role-tabs-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--cg-card-bg);
+    padding: 10px;
+    border-radius: var(--cg-radius);
+    box-shadow: var(--cg-shadow);
+    overflow-x: auto;
+}
+
+.role-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid var(--cg-border-color);
+    background-color: #f8faf9;
+    color: var(--cg-text-main);
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--cg-transition);
+    white-space: nowrap;
+}
+
+.role-tab i {
+    font-size: 1rem;
+    color: var(--cg-text-muted);
+    transition: var(--cg-transition);
+}
+
+.role-tab:hover {
+    background-color: #ffffff;
+    border-color: var(--cg-primary-light);
+    color: var(--cg-primary);
+}
+
+.role-tab:hover i {
+    color: var(--cg-primary);
+}
+
+.role-tab.active {
+    background: var(--cg-primary);
+    color: #ffffff;
+    border-color: var(--cg-primary);
+    box-shadow: 0 4px 12px rgba(15, 56, 34, 0.2);
+}
+
+.role-tab.active i {
+    color: var(--cg-accent);
 }
 
 /* ======== CARD & DATA TABLE ======== */
@@ -282,25 +361,29 @@ body {
 }
 
 /* Dynamic Status Styling */
-.select-presence.status-hadir {
+.select-presence.status-hadir,
+.select-presence.status-h {
     background-color: var(--status-hadir-bg);
     color: var(--status-hadir-text);
     border: 1px solid var(--status-hadir-border);
 }
 
-.select-presence.status-izin {
+.select-presence.status-izin,
+.select-presence.status-i {
     background-color: var(--status-izin-bg);
     color: var(--status-izin-text);
     border: 1px solid var(--status-izin-border);
 }
 
-.select-presence.status-sakit {
+.select-presence.status-sakit,
+.select-presence.status-s {
     background-color: var(--status-sakit-bg);
     color: var(--status-sakit-text);
     border: 1px solid var(--status-sakit-border);
 }
 
-.select-presence.status-alpa {
+.select-presence.status-alpa,
+.select-presence.status-a {
     background-color: var(--status-alpa-bg);
     color: var(--status-alpa-text);
     border: 1px solid var(--status-alpa-border);
@@ -337,30 +420,6 @@ body {
     box-shadow: 0 6px 18px rgba(15, 56, 34, 0.25);
 }
 
-.title-with-date {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.date-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background-color: rgba(99, 102, 241, 0.1);
-    color: #4f46e5;
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 4px 12px;
-    border-radius: 20px;
-    border: 1px solid rgba(99, 102, 241, 0.2);
-}
-
-.date-badge i {
-    font-size: 0.8rem;
-}
-
 /* ======== RESPONSIVE BREAKPOINTS ======== */
 @media (max-width: 992px) {
     .absen-wrapper { margin-left: 0; padding: 20px; }
@@ -373,4 +432,5 @@ body {
     .search-form { width: 100%; }
     .search-input-wrapper { flex: 1; }
     .search-input-wrapper input { width: 100%; }
+    .role-tabs-container { width: 100%; justify-content: flex-start; }
 }

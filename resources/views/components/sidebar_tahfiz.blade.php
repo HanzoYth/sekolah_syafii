@@ -161,14 +161,14 @@
                 <div class="menu-section" id="section-siswa">
                     <span class="menu-label">MODUL SISWA</span>
                     <ul class="menu-list">
-                        <li class="menu-item {{ $route == '/tf/sw/das' ? 'active' : '' }}">
-                            <a href="/tf/sw/das">
+                        <li class="menu-item {{ $route == '/tf/sw/dass' ? 'active' : '' }}">
+                            <a href="/tf/sw/dass">
                                 <i class="fa-solid fa-gauge"></i>
                                 <span>Dashboard</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ $route == '/tf/sw/hf' ? 'active' : '' }}">
-                            <a href="/tf/sw/hf">
+                        <li class="menu-item {{ $route == '/tf/sw/hgh' ? 'active' : '' }}">
+                            <a href="/tf/sw/pgh">
                                 <i class="fa-solid fa-book-quran"></i>
                                 <span>Progres Hafalan</span>
                             </a>

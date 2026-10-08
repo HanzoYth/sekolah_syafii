@@ -42,4 +42,8 @@ class guru extends Model
     public function getUser(){
         return $this->belongsTo(akun::class,"user_id");
     }
+
+    public function getSekolah(){
+        return $this->belongsTo(jenis_sekolah::class,"sekolah_id");
+    }
 }

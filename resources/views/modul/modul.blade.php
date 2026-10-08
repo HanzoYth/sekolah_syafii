@@ -117,19 +117,6 @@
                 </a>
             @endif
 
-            @if (session("role") == "a")
-                <a href="{{session('role') == 'a' ? '/gr/dasa' : '/gr/das'}}" class="module-card guru">
-                    <div class="icon-wrapper">
-                        <i class="fa-solid fa-chalkboard-user"></i>
-                    </div>
-                    <h3>Modul Staf</h3>
-                    <p>Sistem Untuk Gaji Untuk Para Staf 'bendahara,operator,satpam'</p>
-                    <div class="card-action">
-                        <span>Akses Modul Staf</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </div>
-                </a>
-            @endif
 
 
             @if (session("role") == "y")

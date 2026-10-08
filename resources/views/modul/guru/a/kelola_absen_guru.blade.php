@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Absensi Guru - EduHRIS</title>
+    <title>Kelola Absensi Pegawai - EduHRIS</title>
     <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
@@ -21,14 +21,13 @@
         <header class="topbar">
             <div class="topbar-title">
                 <div class="title-with-date">
-                    <h2>Kelola Absensi Guru</h2>
-                    <!-- BADGE TANGGAL DITAMBAHKAN DI SINI -->
+                    <h2>Kelola Absensi Pegawai</h2>
                     <span class="date-badge" id="currentDateBadge">
                         <i class="fa-regular fa-calendar-days"></i>
                         <span id="currentDateText">Loading tanggal...</span>
                     </span>
                 </div>
-                <p>Catat dan kelola kehadiran harian seluruh tenaga pengajar</p>
+                <p>Catat dan kelola kehadiran harian seluruh staf dan tenaga pengajar</p>
             </div>
             <!-- TOMBOL AKSI MASSAL -->
             <button type="button" class="btn-bulk-present" id="btnAllPresent">
@@ -37,12 +36,32 @@
             </button>
         </header>
 
+        <!-- NODE / TAB ROLE SELECTION -->
+        <div class="role-tabs-container">
+            <button type="button" class="role-tab active">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                <span>Guru</span>
+            </button>
+            <button type="button" class="role-tab">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span>Bendahara</span>
+            </button>
+            <button type="button" class="role-tab">
+                <i class="fa-solid fa-headset"></i>
+                <span>Operator</span>
+            </button>
+            <button type="button" class="role-tab">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>Satpam</span>
+            </button>
+        </div>
+
         <!-- SEARCH & DATA CARD -->
         <section class="card">
             <div class="card-header">
                 <h3>Daftar Absensi Guru</h3>
                 
-                <!-- INPUT CARI NAMA GURU (Bukan form lagi, cukup div biasa) -->
+                <!-- INPUT CARI NAMA GURU -->
                 <div class="search-form">
                     <div class="search-input-wrapper">
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
@@ -76,17 +95,14 @@
                             @foreach ($data_guru as $value)
                                 @php
                                     $cek = App\Models\master_absen_guru::where("guru_id",$value->id)->where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->exists();
-                                    $data_absen_guru = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",$value->id)->first();
-                                    $cabang = App\Models\cabang_guru::where("id",$value->cabang_id)->first();
-                                    $bulan = Carbon\Carbon::now()->translatedFormat("m");
+                                    $data_absen_guru = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",$value->id)->first();$cabang = App\Models\cabang_guru::where("id",$value->cabang_id)->first();$bulan = Carbon\Carbon::now()->translatedFormat("m");
                                     $jumlah_kehadiran = App\Models\master_absen_guru::where("guru_id",$value->id)->where("status_kehadiran","h")->whereMonth("tgl_masuk",$bulan)->count();
-                                    $jumlah_izin = App\Models\master_absen_guru::where("guru_id",$value->id)->where("status_kehadiran","i")->whereMonth("tgl_masuk",$bulan)->count();
-                                    $jumlah_sakit = App\Models\master_absen_guru::where("guru_id",$value->id)->where("status_kehadiran","s")->whereMonth("tgl_masuk",$bulan)->count();
+                                    $jumlah_izin = App\Models\master_absen_guru::where("guru_id",$value->id)->where("status_kehadiran","i")->whereMonth("tgl_masuk",$bulan)->count();$jumlah_sakit = App\Models\master_absen_guru::where("guru_id",$value->id)->where("status_kehadiran","s")->whereMonth("tgl_masuk",$bulan)->count();
                                 @endphp
                                 <tr>
                                     <input type="hidden" value="{{$value->id}}" name="id_guru_{{$value->id}}">
                                     <td>{{ $loop->iteration }}</td>
-                                    <td class="teacher-name">
+                                    <td class="teacher-name">                                                                                                                                                                             
                                         <strong>{{$value->nama}}</strong>
                                     </td>
                                     <td><span class="nig-badge">{{$jumlah_kehadiran}}</span></td>
@@ -143,12 +159,12 @@
                                                 <a href="/gr/edklabs/{{$value->id}}">
                                                     <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
                                                 </a>
-                                                    <select class="select-presence status-hadir" name="status_{{$value->id}}">
-                                                        <option value="n" selected>--tidak ada pilihan--</option>
-                                                        <option value="h">Hadir</option>
-                                                        <option value="i">Izin</option>
-                                                        <option value="s">Sakit</option>
-                                                    </select>
+                                                <select class="select-presence status-hadir" name="status_{{$value->id}}">
+                                                    <option value="n" selected>--tidak ada pilihan--</option>
+                                                    <option value="h">Hadir</option>
+                                                    <option value="i">Izin</option>
+                                                    <option value="s">Sakit</option>
+                                                </select>
                                             </div>
                                         </td>
                                     @endif
@@ -168,7 +184,9 @@
         </section>
     </main>
 </div>
+
 <x-warning />
+
 <!-- JAVASCRIPT UTILS -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -176,6 +194,7 @@
         const selectElements = document.querySelectorAll('.select-presence');
         const searchInput = document.getElementById('searchGuru');
         const tableRows = document.querySelectorAll('#absenTableBody tr');
+        const roleTabs = document.querySelectorAll('.role-tab');
 
         // --- FUNGSI FORMAT & TAMPILKAN TANGGAL OTOMATIS ---
         function renderCurrentDate() {
@@ -194,6 +213,14 @@
         }
 
         renderCurrentDate();
+
+        // Switcher state sederhana untuk visual tab role (tanpa PHP)
+        roleTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                roleTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
 
         // Fungsi mengubah warna berdasarkan opsi yang dipilih
         function updateSelectStyle(select) {
@@ -223,7 +250,8 @@
 
             tableRows.forEach(row => {
                 const nameText = row.querySelector('.teacher-name').innerText.toLowerCase();
-                const nigText = row.querySelector('.nig-badge').innerText.toLowerCase();
+                const nigBadge = row.querySelector('.nig-badge');
+                const nigText = nigBadge ? nigBadge.innerText.toLowerCase() : '';
 
                 if (nameText.includes(query) || nigText.includes(query)) {
                     row.style.display = '';

@@ -19,7 +19,7 @@
     <!-- MAIN CONTENT -->
     <main class="main-wrapper">
         <!-- TOPBAR HEADER -->
-        @if (session("role" == "a"))
+        @if (session("role") == "a")
             <header class="topbar">
                 <div class="topbar-title">
                     <div class="title-with-date">
@@ -97,7 +97,7 @@
         <section class="card table-card">
             <div class="card-header">
                 <h3>Daftar Tenaga Pengajar</h3>
-                <span class="total-badge">Total: 4 Guru</span>
+                <span class="total-badge" id="totalBadge">Total: 4 Guru</span>
             </div>
 
             <div class="table-responsive">
@@ -115,69 +115,8 @@
                             <th class="text-center" width="160">Aksi</th>
                         </tr>
                     </thead>
-                    @php
-                        $no = 0;
-                    @endphp
                     <tbody id="guruTableBody">
                         <!-- BARIS 1 -->
-                         @foreach ($data_guru as $value)
-                         @php
-                            $no++;
-                            $data_akun = App\Models\akun::find((int) $value->user_id);
-                            $data_identitas = App\Models\identitas_rahasia::where("id",$data_akun->identity_id)->first();
-                            $jenis_sekolah = App\Models\jenis_sekolah::find((int) $value->sekolah_id);
-                         @endphp
-                            <tr data-id="{{$value->id}}" data-nama="{{$value->nama}}">
-                                <td>{{$no}}</td>
-                                <td>
-                                    <div class="teacher-profile">
-                                        <div class="avatar-circle">
-                                            <img src="{{route('file.show', $value->url_foto)}}" alt="">
-                                        </div>
-                                        <div class="teacher-detail">
-                                            <strong>{{$value->nama}}</strong>
-                                            @if (session("role") == "a")
-                                                <small>{{$data_akun->email}}</small>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </td>
-                                @if (session("role") == "a")
-                                    <td><span class="nig-badge">{{$value->nig}}</span></td>
-                                    <td><span class="nig-badge">{{$data_identitas->identitas}}</span></td>
-                                    <td><span class="school-tag sma">{{$jenis_sekolah->jenis}}</span></td>
-                                @endif
-                                <td class="text-center">
-                                    @if ($data_akun->aktif)
-                                    <span class="status-badge status-active">
-                                        <i class="fa-solid fa-circle-check"></i> Aktif
-                                    </span>
-                                    @else
-                                        <span class="status-ba  dge status-inactive">
-                                            <i class="fa-solid fa-circle-check"></i> Non Aktif
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    <div class="action-buttons">
-                                        @if ($data_akun->aktif)
-                                            <a href="/gr/edgr/{{$value->id}}" class="btn-action btn-edit" title="Edit Data">
-                                                <i class="fa-solid fa-pen-to-square"></i>
-                                            </a>
-                                            @if (session("role") == "a")
-                                                <button class="btn-action btn-deactivate btn-trigger-modal" title="Nonaktifkan Guru" data-akun-guru = "{{$data_akun->id}}">
-                                                    <i class="fa-solid fa-user-xmark"></i>
-                                                </button>
-                                            @endif
-                                        @else
-                                            <button class="btn-action btn-deactivate btn-trigger-modal" title="Nonaktifkan Guru" disabled>
-                                                <i class="fa-solid fa-user-xmark"></i>
-                                            </button>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -220,9 +159,96 @@
             tab.addEventListener('click', function () {
                 categoryTabs.forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
-                activeCategory = this.dataset.kategori;
+                tampilkanData(this.dataset.kategori);
             });
         });
+
+        function tampilkanData(kategori){
+            let tempat = document.getElementById("guruTableBody");
+            const totalBadge = document.getElementById("totalBadge");
+            const label = kategori.charAt(0).toUpperCase() + kategori.slice(1);
+
+            tempat.innerHTML = ''; // kosongkan dulu supaya tidak menumpuk
+
+            fetch(`/gr/ambgr/${kategori}`)
+            .then(res => {
+                if (!res.ok) throw new Error("Gagal Ambil Data");
+                return res.json();
+            })
+            .then(data => {
+                if (!data || data.length == 0){
+                    tempat.innerHTML = `<tr><td colspan="7" class="text-center">Belum ada data</td></tr>`;
+                    totalBadge.textContent = `Total: 0 ${label}`;
+                    return;
+                }
+
+                totalBadge.textContent = `Total: ${data.length} ${label}`;
+                let no = 0;
+
+                data.forEach(item => {
+                    const fotoUrl = "{{ route('file.show', ['path' => '__PATH__']) }}"
+                        .replace('__PATH__', item.url_foto);
+                    no++;
+
+                    let newData = `
+                        <tr data-id="${item.id}" data-nama="${item.nama}">
+                            <td>${no}</td>
+                            <td>
+                                <div class="teacher-profile">
+                                    <div class="avatar-circle">
+                                        <img src="${fotoUrl}" alt="">
+                                    </div>
+                                    <div class="teacher-detail">
+                                        <strong>${item.nama}</strong>
+                                        @if (session("role") == "a")
+                                            <small>${item.get_user.email}</small>
+                                        @endif
+                                    </div>
+                                </div>
+                            </td>
+                            @if (session("role") == "a")
+                                <td><span class="nig-badge">${item.nig}</span></td>
+                                <td><span class="nig-badge">${item.get_user.identitas.identitas}</span></td>
+                                <td><span class="school-tag sma">${item.get_sekolah.jenis}</span></td>
+                            @endif
+                            <td class="text-center">
+                                ${item.get_user.aktif
+                                    ? `<span class="status-badge status-active">
+                                        <i class="fa-solid fa-circle-check"></i> Aktif
+                                    </span>`
+                                    : `<span class="status-badge status-inactive">
+                                        <i class="fa-solid fa-circle-xmark"></i> Non Aktif
+                                    </span>`
+                                }
+                            </td>
+                            <td class="text-center">
+                                <div class="action-buttons">
+                                    ${item.get_user.aktif
+                                        ? `<a href="/gr/edgr/${item.id}" class="btn-action btn-edit" title="Edit Data">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </a>
+                                        @if (session("role") == "a")
+                                            <button class="btn-action btn-deactivate btn-trigger-modal" title="Nonaktifkan Guru" data-akun-guru="${item.get_user.id}">
+                                                <i class="fa-solid fa-user-xmark"></i>
+                                            </button>
+                                        @endif`
+                                        : `<button class="btn-action btn-deactivate" title="Guru Sudah Non-Aktif" disabled>
+                                            <i class="fa-solid fa-user-xmark"></i>
+                                        </button>`
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    tempat.insertAdjacentHTML('beforeend', newData);
+                });
+            })
+            .catch(err => {
+                console.error(err);
+            });
+        }
+
+        tampilkanData(activeCategory);
 
         // --- 2. LOGIC FILTER DATA GURU ---
         const filterForm = document.getElementById('filterForm');

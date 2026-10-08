@@ -385,13 +385,25 @@ class modulGuruController extends Controller
 
     function tampilan_kelolaGuru(){
         if (session("hasLogin")){
-            $data = guru::all();
-            return view("modul/guru/a/kelola_data_guru",[
-                "data_guru" => $data
-            ]);
+            return view("modul/guru/a/kelola_data_guru");
         }
         return redirect("/reg");
     }   
+
+    function ambilDataStaf($kategori){
+        if ($kategori == "guru"){
+            $data = guru::with(["getUser.identitas","getSekolah"])->get();
+        }elseif ($kategori == "bendahara"){
+            $data = guru::with(["getUser.identitas","getSekolah"])->where("bendahara",true)->get();
+        }elseif ($kategori == "operator"){
+            $data = guru::with(["getUser.identitas","getSekolah"])->where("operator",true)->get();
+        }else{
+            $data = guru::with(["getUser.identitas","getSekolah"])->where("satpam",true)->get();
+        }
+
+
+        return response()->json($data);
+    }
 
     function tampilan_editGuru($id){
         if (session("hasLogin")){
