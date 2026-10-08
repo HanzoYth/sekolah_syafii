@@ -94,6 +94,12 @@
                                 <span>Wali Kelas</span>
                             </a>
                         </li>
+                        <li class="menu-item {{ request()->is('sk/kenaikan-kelas') ? 'active' : '' }}">
+                            <a href="/sk/kenaikan-kelas">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                <span>Kenaikan & Kelulusan</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
@@ -187,27 +193,45 @@
                     </ul>
                 </div>
 
-            {{-- ================= ROLE SISWA ================= --}}
+            {{-- ================= ROLE SISWA (ORANG TUA) ================= --}}
             @elseif (session('role') === 's')
                 <div class="menu-section" id="section-siswa">
-                    <span class="menu-label">MENU SISWA</span>
+                    <span class="menu-label">AKADEMIK & MONITORING</span>
                     <ul class="menu-list">
-                        <li class="menu-item">
+                        <li class="menu-item {{ request()->is('sk/jadwal-siswa') ? 'active' : '' }}">
+                            <a href="/sk/jadwal-siswa">
+                                <i class="fa-solid fa-calendar-check"></i>
+                                <span>Jadwal & Absensi</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->is('sk/rapor-siswa') ? 'active' : '' }}">
+                            <a href="/sk/rapor-siswa">
+                                <i class="fa-solid fa-star"></i>
+                                <span>Nilai & Rapor</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="menu-section" id="section-siswa-administrasi" style="margin-top: 15px;">
+                    <span class="menu-label">ADMINISTRASI</span>
+                    <ul class="menu-list">
+                        <li class="menu-item {{ request()->is('sk/pbs') ? 'active' : '' }}">
                             <a href="/sk/pbs">
                                 <i class="fa-solid fa-file-invoice-dollar"></i>
-                                <span>Slip Pembayaran</span>
+                                <span>Riwayat Pembayaran</span>
                             </a>
                         </li>
-                        <li class="menu-item">
-                            <a href="/sk/pfs">
-                                <i class="fa-solid fa-id-card"></i>
-                                <span>Profil</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
+                        <li class="menu-item {{ request()->is('sk/ps') ? 'active' : '' }}">
                             <a href="/sk/ps">
                                 <i class="fa-solid fa-bullhorn"></i>
                                 <span>Pengumuman</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->is('sk/pfs') ? 'active' : '' }}">
+                            <a href="/sk/pfs">
+                                <i class="fa-solid fa-id-card"></i>
+                                <span>Profil Anak</span>
                             </a>
                         </li>
                     </ul>

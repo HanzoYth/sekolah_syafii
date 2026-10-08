@@ -223,8 +223,12 @@ Route::post('/sk/simpan-nilai-siswa/{jadwal_id}', [App\Http\Controllers\siakadCo
 
 Route::get('/sk/absensi-walas', [App\Http\Controllers\siakadController::class, 'absensiWalas']);
 Route::get('/sk/rapor-walas', [App\Http\Controllers\siakadController::class, 'raporWalas']);
-
 Route::post('/sk/simpan-absensi-walas', [App\Http\Controllers\siakadController::class, 'simpanAbsensiWalas']);
+Route::get('/sk/detail-rapor-walas/{siswa_id}', [App\Http\Controllers\siakadController::class, 'detailRaporWalas']);
+
+// Rute untuk Monitoring Siswa (Portal Orang Tua) di SIAKAD
+Route::get('/sk/jadwal-siswa', [App\Http\Controllers\siakadController::class, 'jadwalSiswa']);
+Route::get('/sk/rapor-siswa', [App\Http\Controllers\siakadController::class, 'raporSiswa']);
 
 // Manajemen Mata Pelajaran (Admin|Siakad)
 Route::get('/sk/kelola-mapel', [siakadController::class, 'kelolaMapel']);

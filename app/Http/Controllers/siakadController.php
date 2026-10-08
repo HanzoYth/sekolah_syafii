@@ -95,6 +95,43 @@ class siakadController extends Controller
         return redirect()->back()->with('success', 'Nilai berhasil disimpan!');
     }
     // ==========================================
+    // MANAJEMEN KENAIKAN KELAS & KELULUSAN (ADMIN)
+    // ==========================================
+    public function kenaikanKelasAdmin(Request $request) {
+        $kelas_id = $request->input('kelas_id');
+        $data_kelas = \App\Models\ruang_kelas::orderBy('nama_ruang')->get();
+        
+        $siswa = collect();
+        if ($kelas_id) {
+            $siswa = \App\Models\siswa::where('kelas_id', $kelas_id)->where('aktif', 1)->orderBy('nama')->get();
+        }
+
+        return view('modul.siakad.admin.kenaikanKelas', compact('data_kelas', 'siswa', 'kelas_id'));
+    }
+
+    public function prosesKenaikanKelas(Request $request) {
+        $request->validate([
+            'siswa_id' => 'required|array',
+            'aksi' => 'required|in:naik,lulus',
+            'kelas_tujuan' => 'required_if:aksi,naik'
+        ]);
+
+        $siswa_ids = $request->input('siswa_id');
+        $aksi = $request->input('aksi');
+
+        if ($aksi === 'naik') {
+            $kelas_tujuan = $request->input('kelas_tujuan');
+            \App\Models\siswa::whereIn('id', $siswa_ids)->update(['kelas_id' => $kelas_tujuan]);
+            return redirect()->back()->with('success', count($siswa_ids) . ' siswa berhasil dipindahkan ke kelas baru.');
+        } else if ($aksi === 'lulus') {
+            \App\Models\siswa::whereIn('id', $siswa_ids)->update(['aktif' => 0]);
+            return redirect()->back()->with('success', count($siswa_ids) . ' siswa berhasil diluluskan (dinonaktifkan dari akademik aktif).');
+        }
+        
+        return redirect()->back();
+    }
+
+    // ==========================================
     // MANAJEMEN PEMBAGIAN KELAS (ROMBEL)
     // ==========================================
     public function pembagianKelas(Request $request) {
@@ -490,6 +527,49 @@ class siakadController extends Controller
         return view('modul.siakad.guru.raporWalas', compact('wallas', 'siswa'));
     }
 
+    public function detailRaporWalas(Request $request, $siswa_id) {
+        $guru_id = session('id');
+        $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
+        if (!$wallas) {
+            return redirect()->back()->with('error', 'Akses ditolak.');
+        }
+
+        $siswa = \App\Models\siswa::where('id', $siswa_id)->where('kelas_id', $wallas->kelas_id)->firstOrFail();
+        
+        // Ambil Data Nilai
+        $nilai_db = \App\Models\nilai::with(['mata_pelajaran', 'jenis_penilaian'])
+                        ->where('siswa_id', $siswa_id)
+                        ->get();
+
+        // Rekap Nilai per Mata Pelajaran
+        $rekap_nilai = [];
+        foreach ($nilai_db as $n) {
+            $mapel = $n->mata_pelajaran->nama_mapel;
+            if (!isset($rekap_nilai[$mapel])) {
+                $rekap_nilai[$mapel] = [
+                    'rincian' => [],
+                    'nilai_akhir' => 0
+                ];
+            }
+            $rekap_nilai[$mapel]['rincian'][$n->jenis_penilaian->nama_jenis] = $n->nilai;
+            // Hitung nilai akhir berdasarkan bobot
+            $bobot = $n->jenis_penilaian->bobot / 100;
+            $rekap_nilai[$mapel]['nilai_akhir'] += ($n->nilai * $bobot);
+        }
+
+        // Ambil Rekap Absensi
+        $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa_id)->get();
+        $rekap_absensi = [
+            'hadir' => $absensi->where('status', 'h')->count(),
+            'sakit' => $absensi->where('status', 's')->count(),
+            'izin'  => $absensi->where('status', 'i')->count(),
+            'alpa'  => $absensi->where('status', 'a')->count(),
+        ];
+
+        return view('modul.siakad.guru.detailRaporWalas', compact('siswa', 'wallas', 'rekap_nilai', 'rekap_absensi'));
+    }
+
+
     function kelolaJadwalAdmin(Request $request) {
         $data_kelas = \App\Models\kelas::all();
         $data_guru = \App\Models\guru::all();
@@ -711,6 +791,76 @@ class siakadController extends Controller
     public function hapusWaliKelas($id) {
         \App\Models\wallas::findOrFail($id)->delete();
         return redirect()->back()->with('success', 'Penugasan Wali Kelas berhasil dihapus.');
+    }
+
+    // ==========================================
+    // MENU SISWA (PORTAL ORANG TUA)
+    // ==========================================
+    public function jadwalSiswa(Request $request) {
+        $siswa_id = session('id');
+        $siswa = \App\Models\siswa::with('kelas')->find($siswa_id);
+        
+        if (!$siswa || !$siswa->kelas_id) {
+            return redirect()->back()->with('error', 'Data kelas siswa tidak ditemukan.');
+        }
+
+        // Ambil jadwal pelajaran berdasarkan kelas siswa
+        $jadwal = \App\Models\jadwal_pelajaran::with(['mata_pelajaran', 'guru', 'jam_pelajaran'])
+            ->where('kelas_id', $siswa->kelas_id)
+            ->orderBy('hari')
+            ->get();
+
+        // Rekap Absensi Siswa
+        $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa_id)->get();
+        $rekap_absen = [
+            'h' => $absensi->where('status', 'h')->count(),
+            'i' => $absensi->where('status', 'i')->count(),
+            's' => $absensi->where('status', 's')->count(),
+            'a' => $absensi->where('status', 'a')->count(),
+        ];
+
+        return view('modul.siakad.siswa.jadwalSiswa', compact('siswa', 'jadwal', 'rekap_absen'));
+    }
+
+    public function raporSiswa(Request $request) {
+        $siswa_id = session('id');
+        $siswa = \App\Models\siswa::with('kelas')->findOrFail($siswa_id);
+
+        $nilai = \App\Models\nilai::with(['mata_pelajaran', 'jenis_penilaian'])
+            ->where('siswa_id', $siswa_id)
+            ->get();
+
+        $jenis_penilaian = \App\Models\jenis_penilaian::all();
+        $rekap_nilai = [];
+
+        foreach ($nilai as $n) {
+            $mapel_id = $n->mapel_id;
+            if (!isset($rekap_nilai[$mapel_id])) {
+                $rekap_nilai[$mapel_id] = [
+                    'mata_pelajaran' => $n->mata_pelajaran,
+                    'nilai_detail' => [],
+                    'nilai_akhir' => 0
+                ];
+            }
+            $rekap_nilai[$mapel_id]['nilai_detail'][$n->jenis_penilaian_id] = $n->nilai;
+            
+            // Kalkulasi nilai akhir dengan bobot
+            if ($n->jenis_penilaian) {
+                $bobot = $n->jenis_penilaian->bobot / 100;
+                $rekap_nilai[$mapel_id]['nilai_akhir'] += ($n->nilai * $bobot);
+            }
+        }
+
+        // Ambil rekap absen untuk ditampilkan di rapor
+        $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa_id)->get();
+        $rekap_absen = [
+            'h' => $absensi->where('status', 'h')->count(),
+            'i' => $absensi->where('status', 'i')->count(),
+            's' => $absensi->where('status', 's')->count(),
+            'a' => $absensi->where('status', 'a')->count(),
+        ];
+
+        return view('modul.siakad.siswa.raporSiswa', compact('siswa', 'rekap_nilai', 'jenis_penilaian', 'rekap_absen'));
     }
 }
 
