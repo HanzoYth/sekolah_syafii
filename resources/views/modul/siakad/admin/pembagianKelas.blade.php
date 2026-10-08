@@ -1,152 +1,118 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pembagian Kelas - SIAKAD Islamic Smart School</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/modul/siakad/pembagianKelas.css') }}?v={{ time() }}">
-    <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}">
-</head>
-<body>
+<x-siakad-layout 
+    title="Pembagian Kelas Siswa" 
+    description="Atur penempatan siswa ke dalam ruang kelas masing-masing." 
+    position="Administrator" 
+    initials="AD">
 
-<div class="app-shell">
-    <x-sidebar_siakad />
+    @if(session('success'))
+        <x-siakad.ui.alert type="success" message="{{ session('success') }}" />
+    @endif
+    @if(session('error'))
+        <x-siakad.ui.alert type="error" message="{{ session('error') }}" />
+    @endif
 
-    <main class="main-content">
-        <div class="pembagian-content">
-            <header class="page-header">
-                <div>
-                    <span class="page-eyebrow"><i class="fa-solid fa-users-viewfinder"></i> Rombongan Belajar</span>
-                    <h1 class="page-title">Pembagian Ruang Kelas</h1>
-                    <p class="page-desc">Kelola dan tempatkan siswa ke dalam ruang kelas (Rombel) yang sesuai.</p>
-                </div>
-            </header>
-
-            @if(session('success'))
-            <div class="alert-toast">
-                <i class="fa-solid fa-circle-check"></i>
-                {{ session('success') }}
+    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-bottom: 24px;">
+        <form method="GET" action="/sk/pembagian-kelas" style="display: flex; gap: 15px; align-items: flex-end;">
+            <div style="flex: 1;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Pilih Ruang Kelas</label>
+                <select name="kelas_id" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
+                    <option value="">-- Pilih Kelas --</option>
+                    @foreach($data_kelas as $k)
+                        <option value="{{ $k->id }}" {{ $kelas_id == $k->id ? 'selected' : '' }}>{{ $k->nama_ruang }}</option>
+                    @endforeach
+                </select>
             </div>
-            @endif
-            @if(session('error'))
-            <div class="alert-toast error">
-                <i class="fa-solid fa-circle-exclamation"></i>
-                {{ session('error') }}
-            </div>
-            @endif
+            <button type="submit" style="padding: 10px 20px; border: none; background: #0284c7; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-filter"></i> Tampilkan
+            </button>
+        </form>
+    </div>
 
-            <!-- FILTER KELAS -->
-            <div class="filter-card">
-                <form action="/sk/pembagian-kelas" method="GET" style="display: flex; width: 100%; gap: 16px; align-items: flex-end;">
-                    <div class="form-group" style="flex: 1;">
-                        <label for="kelas_id">Pilih Ruang Kelas</label>
-                        <select name="kelas_id" id="kelas_id" class="custom-select" required>
-                            <option value="">-- Pilih Kelas --</option>
-                            @foreach($data_kelas as $k)
-                                <option value="{{ $k->id }}" {{ $kelas_id == $k->id ? 'selected' : '' }}>
-                                    {{ $k->nama_ruang }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <button type="submit" class="btn-primary">
-                        <i class="fa-solid fa-magnifying-glass"></i> Tampilkan
-                    </button>
-                </form>
+    @if($kelas_id)
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        
+        <!-- KOLOM KIRI: SISWA BELUM ADA KELAS -->
+        <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+            <div style="font-size: 16px; font-weight: bold; color: #b45309; margin-bottom: 15px; border-bottom: 2px solid #fef3c7; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <span><i class="fa-solid fa-users-slash"></i> Belum Memiliki Kelas</span>
+                <span style="background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 12px; font-size: 12px;">{{ count($siswa_belum_ada_kelas) }} Siswa</span>
             </div>
 
-            @if($kelas_id && $kelas_terpilih)
-            <div class="split-layout">
-                <!-- PANEL KIRI: SISWA BELUM ADA KELAS -->
-                <div class="panel-card">
-                    <div class="panel-header">
-                        <h3>Siswa Belum Masuk Kelas</h3>
-                        <span class="badge-count">{{ $siswa_belum_ada_kelas->count() }}</span>
-                    </div>
-                    
-                    <form action="/sk/simpan-pembagian-kelas" method="POST" id="formTambah">
-                        @csrf
-                        <input type="hidden" name="kelas_id" value="{{ $kelas_terpilih->id }}">
-                        <div class="panel-body">
-                            @if($siswa_belum_ada_kelas->count() > 0)
-                                <ul class="student-list">
-                                    @foreach($siswa_belum_ada_kelas as $s)
-                                    <li class="student-item">
-                                        <div class="student-info">
-                                            <input type="checkbox" name="siswa_ids[]" value="{{ $s->id }}" id="s_{{ $s->id }}" class="student-checkbox">
-                                            <label for="s_{{ $s->id }}" class="student-info" style="cursor: pointer; margin:0;">
-                                                <div class="student-avatar">{{ substr($s->nama, 0, 1) }}</div>
-                                                <div>
-                                                    <p class="student-name">{{ $s->nama }}</p>
-                                                    <p class="student-nis">NIS: {{ $s->nis ?? '-' }}</p>
-                                                </div>
-                                            </label>
-                                        </div>
-                                    </li>
-                                    @endforeach
-                                </ul>
-                            @else
-                                <div class="empty-state">
-                                    <i class="fa-solid fa-check-double"></i>
-                                    <p>Semua siswa sudah masuk ke kelas.</p>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="panel-footer">
-                            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;" {{ $siswa_belum_ada_kelas->count() == 0 ? 'disabled' : '' }}>
-                                <i class="fa-solid fa-arrow-right-to-bracket"></i> Masukkan ke Kelas Terpilih
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- PANEL KANAN: SISWA DALAM KELAS INI -->
-                <div class="panel-card">
-                    <div class="panel-header" style="background: #f0f9ff; border-bottom-color: #bae6fd;">
-                        <h3 style="color: #0369a1;">Siswa {{ $kelas_terpilih->nama_ruang }}</h3>
-                        <span class="badge-count" style="background: #e0f2fe; color: #0284c7;">{{ $siswa_kelas_ini->count() }}</span>
-                    </div>
-                    <div class="panel-body">
-                        @if($siswa_kelas_ini->count() > 0)
-                            <ul class="student-list">
-                                @foreach($siswa_kelas_ini as $s)
-                                <li class="student-item">
-                                    <div class="student-info">
-                                        <div class="student-avatar" style="background: #dbeafe; color: #1e3a8a;">{{ substr($s->nama, 0, 1) }}</div>
-                                        <div>
-                                            <p class="student-name">{{ $s->nama }}</p>
-                                            <p class="student-nis">NIS: {{ $s->nis ?? '-' }}</p>
-                                        </div>
-                                    </div>
-                                    <a href="/sk/hapus-anggota-kelas/{{ $s->id }}" class="btn-remove" title="Keluarkan dari kelas ini" onclick="return confirm('Keluarkan {{ $s->nama }} dari kelas ini?')">
-                                        <i class="fa-solid fa-user-minus"></i>
-                                    </a>
-                                </li>
-                                @endforeach
-                            </ul>
-                        @else
-                            <div class="empty-state">
-                                <i class="fa-solid fa-box-open"></i>
-                                <p>Belum ada siswa di kelas ini.</p>
+            <form action="/sk/simpan-pembagian-kelas" method="POST">
+                @csrf
+                <input type="hidden" name="kelas_id" value="{{ $kelas_id }}">
+                
+                <div style="max-height: 400px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                    @forelse($siswa_belum_ada_kelas as $s)
+                        <label style="display: flex; align-items: center; gap: 12px; padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                            <input type="checkbox" name="siswa_ids[]" value="{{ $s->id }}" style="width: 18px; height: 18px; accent-color: #166534;">
+                            <div>
+                                <strong style="display: block; color: #1e293b;">{{ $s->nama }}</strong>
+                                <span style="font-size: 12px; color: #64748b;">NIS: {{ $s->nis }}</span>
                             </div>
-                        @endif
-                    </div>
+                        </label>
+                    @empty
+                        <div style="padding: 30px; text-align: center; color: #94a3b8;">
+                            <i class="fa-solid fa-check-circle" style="font-size: 24px; margin-bottom: 10px; color: #cbd5e1; display: block;"></i>
+                            Semua siswa sudah masuk kelas.
+                        </div>
+                    @endforelse
                 </div>
-            </div>
-            @else
-            <div class="panel-card" style="min-height: 300px; justify-content: center; align-items: center;">
-                <div class="empty-state">
-                    <i class="fa-solid fa-arrow-pointer"></i>
-                    <p>Silakan pilih ruang kelas terlebih dahulu pada filter di atas.</p>
-                </div>
-            </div>
-            @endif
 
+                @if(count($siswa_belum_ada_kelas) > 0)
+                    <button type="submit" style="width: 100%; padding: 12px; border: none; background: #166534; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i> Masukkan ke Kelas Ini
+                    </button>
+                @endif
+            </form>
         </div>
-    </main>
-</div>
 
-</body>
-</html>
+        <!-- KOLOM KANAN: SISWA DI DALAM KELAS -->
+        <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+            <div style="font-size: 16px; font-weight: bold; color: #166534; margin-bottom: 15px; border-bottom: 2px solid #dcfce7; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <span><i class="fa-solid fa-users"></i> Anggota Kelas Saat Ini</span>
+                <span style="background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 12px; font-size: 12px;">{{ count($siswa_di_kelas) }} Siswa</span>
+            </div>
 
+            <div style="max-height: 400px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <x-siakad.ui.table>
+                    <x-slot name="thead">
+                        <tr>
+                            <th style="width: 40px; text-align: center;">No</th>
+                            <th>Siswa</th>
+                            <th style="width: 60px; text-align: center;">Aksi</th>
+                        </tr>
+                    </x-slot>
+                    
+                    @forelse($siswa_di_kelas as $index => $s)
+                        <tr>
+                            <td style="text-align: center;">{{ $index + 1 }}</td>
+                            <td>
+                                <strong style="display: block; color: #1e293b;">{{ $s->nama }}</strong>
+                                <span style="font-size: 12px; color: #64748b;">NIS: {{ $s->nis }}</span>
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="/sk/hapus-anggota-kelas/{{ $s->id }}" style="display: inline-flex; background: #fee2e2; color: #dc2626; border: none; width: 32px; height: 32px; border-radius: 6px; text-decoration: none; align-items: center; justify-content: center; transition: all 0.2s;" title="Keluarkan dari kelas">
+                                    <i class="fa-solid fa-user-xmark"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" style="text-align: center; padding: 30px; color: #94a3b8;">
+                                <i class="fa-solid fa-users-slash" style="font-size: 24px; margin-bottom: 10px; color: #cbd5e1; display: block;"></i>
+                                Kelas ini masih kosong.
+                            </td>
+                        </tr>
+                    @endforelse
+                </x-siakad.ui.table>
+            </div>
+        </div>
+    </div>
+    @else
+        <div style="background: white; border-radius: 12px; padding: 40px; text-align: center; color: #64748b; border: 2px dashed #cbd5e1;">
+            <i class="fa-solid fa-arrow-pointer" style="font-size: 32px; margin-bottom: 15px; color: #94a3b8; display: block;"></i>
+            Silakan pilih kelas terlebih dahulu untuk mengatur anggota kelas.
+        </div>
+    @endif
+</x-siakad-layout>
