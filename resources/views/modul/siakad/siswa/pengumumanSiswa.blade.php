@@ -1,65 +1,74 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengumuman Akademik - SIAKAD</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/png" href="{{ asset('img/logo_sklh.png') }}?v={{ time() }}">
-    <link rel="stylesheet" href="{{ asset('css/modul/siakad/pengumumanSiswa.css') }}?v={{ time() }}">
-</head>
-<body>
-    @php
-        $pengumuman = (isset($list_pengumuman) && count($list_pengumuman)) ? $list_pengumuman : [
-            (object)['tanggal'=>'28 Agu 2026','judul'=>'Libur Nasional Hari Kemerdekaan','ringkasan'=>'Kegiatan belajar mengajar diliburkan sesuai kalender pendidikan yang berlaku.','ditujukan'=>'Seluruh Siswa','isi'=>'Sehubungan dengan peringatan Hari Kemerdekaan Republik Indonesia, seluruh kegiatan belajar mengajar diliburkan. Kegiatan belajar akan kembali berjalan normal pada hari kerja berikutnya.'],
-            (object)['tanggal'=>'20 Agu 2026','judul'=>'Jadwal Ujian Tengah Semester','ringkasan'=>'Jadwal UTS semester ganjil dapat dilihat melalui wali kelas masing-masing.','ditujukan'=>'Kelas 1A - 6B','isi'=>'Ujian Tengah Semester ganjil akan dilaksanakan mulai tanggal 1 September 2026 sampai dengan 5 September 2026. Siswa diharapkan hadir tepat waktu dan membawa perlengkapan ujian masing-masing.'],
-            (object)['tanggal'=>'12 Agu 2026','judul'=>'Pembagian Rapor Semester Genap','ringkasan'=>'Rapor dapat diambil oleh wali murid di ruang tata usaha.','ditujukan'=>'Wali Murid','isi'=>'Pembagian rapor semester genap dilaksanakan pada tanggal 15 Agustus 2026 pukul 08.00 - 12.00 WITA. Rapor diambil langsung oleh wali murid dengan menunjukkan kartu identitas.'],
-        ];
-    @endphp
-    <div class="dashboard-container student-announcement-page">
-        <x-sidebar_siakad />
-        <main class="main-content">
-            <x-siakad.topbar :name="$data_siswa->nama" position="Siswa" initials="SW" title="Pengumuman Akademik" description="Informasi terbaru untuk kegiatan belajar dan sekolah." />
-
-            @if(session('eror'))
-                <div class="announcement-alert" id="errorToast"><i class="fa-solid fa-circle-exclamation"></i><span>{{ session('eror') }}</span><button type="button" onclick="closeToast()" aria-label="Tutup pesan">&times;</button></div>
-            @endif
-
-            <section class="announcement-intro"><div><p>INFORMASI SEKOLAH</p><h2>Pengumuman terbaru</h2><span>Informasi untuk {{ $data_siswa->nama }} · {{ $data_kelas->nama_ruang }}</span></div><span class="announcement-counter"><i class="fa-solid fa-bullhorn"></i> {{ count($pengumuman) }} pengumuman</span></section>
-
-            <section class="priority-announcement">
-                <span class="priority-icon"><i class="fa-solid fa-thumbtack"></i></span><div><small>PENGUMUMAN PRIORITAS</small><h3>Jadwal Ujian Tengah Semester</h3><p>Persiapkan diri dan perhatikan informasi jadwal dari wali kelas.</p></div><button type="button" class="priority-view" data-index="1">Baca informasi <i class="fa-solid fa-arrow-right"></i></button>
-            </section>
-
-            <section class="announcement-toolbar"><div class="announcement-search"><i class="fa-solid fa-magnifying-glass"></i><input type="search" id="announcementSearch" placeholder="Cari judul atau isi pengumuman..."></div><span><i class="fa-regular fa-clock"></i> Diurutkan terbaru</span></section>
-
-            <section class="announcement-list" id="announcementList">
-                @forelse($pengumuman as $index => $item)
-                    <article class="announcement-card" data-search="{{ strtolower($item->judul . ' ' . $item->ringkasan . ' ' . $item->ditujukan) }}">
-                        <span class="announcement-card-icon {{ $index === 0 ? 'gold' : ($index === 1 ? 'emerald' : 'blue') }}"><i class="fa-solid {{ $index === 0 ? 'fa-flag' : ($index === 1 ? 'fa-file-pen' : 'fa-graduation-cap') }}"></i></span>
-                        <div class="announcement-card-body"><div class="announcement-meta"><span>{{ $item->ditujukan }}</span><time><i class="fa-regular fa-calendar"></i> {{ $item->tanggal }}</time></div><h3>{{ $item->judul }}</h3><p>{{ $item->ringkasan }}</p></div>
-                        <button type="button" class="announcement-read" data-index="{{ $index }}">Baca <i class="fa-solid fa-chevron-right"></i></button>
-                        <template class="announcement-data"><span class="data-title">{{ $item->judul }}</span><span class="data-date">{{ $item->tanggal }}</span><span class="data-target">{{ $item->ditujukan }}</span><span class="data-content">{{ $item->isi ?? $item->ringkasan }}</span></template>
-                    </article>
-                @empty
-                    <div class="announcement-empty"><i class="fa-solid fa-bullhorn"></i><strong>Belum ada pengumuman</strong><p>Informasi terbaru dari sekolah akan muncul di halaman ini.</p></div>
-                @endforelse
-            </section>
-        </main>
+﻿@php
+    $pengumuman = (isset($list_pengumuman) && count($list_pengumuman)) ? $list_pengumuman : [
+        (object)['tanggal'=>'28 Agu 2026','judul'=>'Libur Nasional Hari Kemerdekaan','ringkasan'=>'Kegiatan belajar mengajar diliburkan sesuai kalender pendidikan yang berlaku.','ditujukan'=>'Seluruh Siswa','isi'=>'Sehubungan dengan peringatan Hari Kemerdekaan Republik Indonesia, seluruh kegiatan belajar mengajar diliburkan. Kegiatan belajar akan kembali berjalan normal pada hari kerja berikutnya.'],
+        (object)['tanggal'=>'20 Agu 2026','judul'=>'Jadwal Ujian Tengah Semester','ringkasan'=>'Jadwal UTS semester ganjil dapat dilihat melalui wali kelas masing-masing.','ditujukan'=>'Kelas 1A - 6B','isi'=>'Ujian Tengah Semester ganjil akan dilaksanakan mulai tanggal 1 September 2026 sampai dengan 5 September 2026. Siswa diharapkan hadir tepat waktu dan membawa perlengkapan ujian masing-masing.'],
+        (object)['tanggal'=>'12 Agu 2026','judul'=>'Pembagian Rapor Semester Genap','ringkasan'=>'Rapor dapat diambil oleh wali murid di ruang tata usaha.','ditujukan'=>'Wali Murid','isi'=>'Pembagian rapor semester genap dilaksanakan pada tanggal 15 Agustus 2026 pukul 08.00 - 12.00 WITA. Rapor diambil langsung oleh wali murid dengan menunjukkan kartu identitas.'],
+    ];
+@endphp
+<x-siakad-layout title="Pengumuman Akademik" description="Informasi dan pengumuman terbaru dari pihak sekolah." position="Orang Tua / Siswa" initials="OT">
+    
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px;">
+        <div style="flex: 1;">
+            <div style="font-size: 14px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                <i class="fa-solid fa-bullhorn"></i> Administrasi Siswa
+            </div>
+            <div style="font-size: 18px; font-weight: bold; color: #1e293b;">
+                Pengumuman Akademik
+            </div>
+            <div style="color: #64748b; font-size: 14px; margin-top: 4px;">
+                Tetap *up-to-date* dengan informasi terbaru seputar kegiatan sekolah.
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 10px 16px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; font-weight: 600; color: #334155;">
+            <i class="fa-solid fa-bell" style="color: #3875c5;"></i>
+            <span>{{ count($pengumuman) }} pengumuman baru</span>
+        </div>
     </div>
 
-    <div class="announcement-modal" id="announcementModal" aria-hidden="true"><div class="announcement-modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-top"><span><i class="fa-solid fa-bullhorn"></i></span><button type="button" onclick="closeAnnouncement()" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-content"><h3 id="modalTitle"></h3><div><span id="modalDate"></span><span id="modalTarget"></span></div><p id="modalText"></p></div><div class="modal-footer"><button type="button" onclick="closeAnnouncement()">Tutup</button></div></div></div>
-    <script>
-        function closeToast(){document.getElementById('errorToast')?.remove();}
-        window.setTimeout(closeToast,5000);
-        const modal=document.getElementById('announcementModal');
-        function openAnnouncement(index){const card=document.querySelectorAll('.announcement-card')[index];if(!card)return;const data=card.querySelector('.announcement-data');document.getElementById('modalTitle').textContent=data.querySelector('.data-title').textContent;document.getElementById('modalDate').textContent=data.querySelector('.data-date').textContent;document.getElementById('modalTarget').textContent=data.querySelector('.data-target').textContent;document.getElementById('modalText').textContent=data.querySelector('.data-content').textContent;modal.classList.add('active');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';}
-        function closeAnnouncement(){modal.classList.remove('active');modal.setAttribute('aria-hidden','true');document.body.style.overflow='';}
-        document.querySelectorAll('.announcement-read,.priority-view').forEach(button=>button.addEventListener('click',()=>openAnnouncement(button.dataset.index)));
-        document.getElementById('announcementSearch')?.addEventListener('input',function(){const query=this.value.toLowerCase();document.querySelectorAll('.announcement-card').forEach(card=>card.hidden=!card.dataset.search.includes(query));});
-        modal.addEventListener('click',event=>{if(event.target===modal)closeAnnouncement();});document.addEventListener('keydown',event=>{if(event.key==='Escape')closeAnnouncement();});
-    </script>
-</body>
-</html>
+    <div style="display: grid; gap: 20px;">
+        @forelse($pengumuman as $index => $item)
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); overflow: hidden;">
+                <div style="padding: 24px; display: flex; gap: 24px; align-items: flex-start;">
+                    <div style="width: 64px; height: 64px; border-radius: 12px; background: #e9f2ff; color: #3875c5; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0;">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                            <h3 style="margin: 0; font-size: 18px; color: #1e293b;">{{ $item->judul }}</h3>
+                            <span style="font-size: 13px; font-weight: 600; color: #64748b; display: flex; align-items: center; gap: 6px;">
+                                <i class="fa-regular fa-calendar"></i> {{ $item->tanggal }}
+                            </span>
+                        </div>
+                        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                            <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: #f1f5f9; color: #475569; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                                <i class="fa-solid fa-users"></i> Ditujukan: {{ $item->ditujukan }}
+                            </span>
+                        </div>
+                        <p style="margin: 0 0 16px; font-size: 14px; color: #475569; line-height: 1.6;">{{ $item->ringkasan }}</p>
+                        
+                        <details style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <summary style="padding: 12px 16px; font-size: 13px; font-weight: 600; color: #3875c5; cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-chevron-down"></i> Baca selengkapnya
+                            </summary>
+                            <div style="padding: 0 16px 16px; font-size: 14px; color: #1e293b; line-height: 1.6; border-top: 1px solid #e2e8f0; margin-top: 8px; padding-top: 16px;">
+                                {{ $item->isi }}
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div style="text-align: center; padding: 60px 20px; color: #64748b; background: white; border: 1px dashed #cbd5e1; border-radius: 12px;">
+                <i class="fa-solid fa-folder-open" style="font-size: 48px; color: #cbd5e1; margin-bottom: 16px; display: block;"></i>
+                <h3 style="margin: 0 0 8px; font-size: 18px; color: #1e293b;">Belum ada pengumuman</h3>
+                <p style="margin: 0; font-size: 14px;">Saat ini tidak ada informasi atau pengumuman baru dari sekolah.</p>
+            </div>
+        @endforelse
+    </div>
+
+    <style>
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] summary i { transform: rotate(180deg); transition: transform 0.2s; }
+        details summary i { transition: transform 0.2s; }
+    </style>
+</x-siakad-layout>

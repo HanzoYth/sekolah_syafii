@@ -216,15 +216,132 @@ class siakadController extends Controller
     }
 
     function tampilanDashboardGuru(){
-        return view("/modul/siakad/guru/dashboard_guru");
+        $guru_id = session('id');
+        $guru = \App\Models\guru::find($guru_id);
+        
+        $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
+        
+        $hari_ini = date('l');
+        $hari_indo = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu'
+        ];
+        $nama_hari = $hari_indo[$hari_ini];
+        
+        $jadwal_hari_ini = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran'])
+                            ->where('guru_id', $guru_id)
+                            ->where('hari', $nama_hari)
+                            ->get()
+                            ->sortBy(function($j) {
+                                return $j->jam_pelajaran->jam_mulai;
+                            });
+                            
+        $kelas_mapel_ids = \App\Models\jadwal_pelajaran::where('guru_id', $guru_id)->pluck('kelas_id')->unique();
+        $kelas_diampu = \App\Models\kelas::whereIn('id', $kelas_mapel_ids)->get();
+
+        return view("/modul/siakad/guru/dashboard_guru", compact('guru', 'wallas', 'jadwal_hari_ini', 'kelas_diampu', 'nama_hari'));
     }
    
     function tambah_kelas(){
        $data_kelas = \App\Models\kelas::all();
        return view("/modul/siakad/admin/tambahKelas", compact('data_kelas'));
     }
-    function absenSiswa(){
-       return view("/modul/siakad/guru/absensisiswa");
+    public function laporanAbsensiGuru(Request $request) {
+        $tanggal = $request->input('tanggal', date('Y-m-d'));
+        
+        $absensi_guru = \App\Models\absensi_mengajar_guru::with(['guru', 'jadwal.mapel', 'jadwal.jam_pelajaran', 'jadwal.kelas'])
+            ->where('tanggal', $tanggal)
+            ->get();
+            
+        return view('/modul/siakad/admin/laporanAbsensiGuru', compact('absensi_guru', 'tanggal'));
+    }
+
+    function absenSiswa(Request $request){
+        $guru_id = session('id');
+        $hari_ini = strtolower(now()->locale('id')->isoFormat('dddd'));
+        $tanggal = $request->input('tanggal', date('Y-m-d'));
+        
+        // Ambil jadwal guru hari ini
+        $jadwal_hari_ini = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran'])
+            ->where('guru_id', $guru_id)
+            ->where('hari', $hari_ini)
+            ->get();
+            
+        $jadwal_id = $request->input('jadwal_id');
+        $siswa = collect();
+        $absensi_db = collect();
+        $jadwal_terpilih = null;
+        
+        if ($jadwal_id) {
+            $jadwal_terpilih = \App\Models\jadwal_pelajaran::find($jadwal_id);
+            if ($jadwal_terpilih && $jadwal_terpilih->guru_id == $guru_id) {
+                $siswa = \App\Models\siswa::where('kelas_id', $jadwal_terpilih->kelas_id)->orderBy('nama')->get();
+                $absensi_db = \App\Models\absensi_siswa::where('jadwal_pelajaran_id', $jadwal_id)
+                    ->where('tanggal', $tanggal)
+                    ->get()
+                    ->keyBy('siswa_id');
+            }
+        }
+        
+        return view("/modul/siakad/guru/absensiMapel", compact('jadwal_hari_ini', 'siswa', 'absensi_db', 'tanggal', 'jadwal_id', 'jadwal_terpilih'));
+    }
+
+    public function simpanAbsensiMapel(Request $request) {
+        $guru_id = session('id');
+        $jadwal_id = $request->input('jadwal_id');
+        $tanggal = $request->input('tanggal', date('Y-m-d'));
+        $absensi = $request->input('absensi', []);
+        
+        $jadwal = \App\Models\jadwal_pelajaran::with('jam_pelajaran')->find($jadwal_id);
+        if (!$jadwal || $jadwal->guru_id != $guru_id) {
+            return redirect()->back()->with('error', 'Jadwal tidak valid.');
+        }
+
+        // Simpan Absensi Siswa
+        foreach ($absensi as $siswa_id => $data) {
+            \App\Models\absensi_siswa::updateOrCreate(
+                [
+                    'jadwal_pelajaran_id' => $jadwal_id,
+                    'siswa_id' => $siswa_id,
+                    'tanggal' => $tanggal
+                ],
+                [
+                    'kelas_id' => $jadwal->kelas_id,
+                    'guru_id' => $guru_id,
+                    'status' => $data['status'],
+                    'keterangan' => $data['keterangan'] ?? null
+                ]
+            );
+        }
+
+        // Cek Kehadiran Guru
+        // Menggunakan jam_pelajaran->jam_mulai + toleransi 5 menit
+        $absen_guru = \App\Models\absensi_mengajar_guru::where('jadwal_pelajaran_id', $jadwal_id)
+            ->where('tanggal', $tanggal)
+            ->first();
+
+        if (!$absen_guru) {
+            $jam_mulai = \Carbon\Carbon::parse($jadwal->jam_pelajaran->jam_mulai);
+            $jam_batas = $jam_mulai->copy()->addMinutes(5);
+            $sekarang = now();
+
+            $status_guru = $sekarang->format('H:i:s') <= $jam_batas->format('H:i:s') ? 'tepat_waktu' : 'terlambat';
+
+            \App\Models\absensi_mengajar_guru::create([
+                'jadwal_pelajaran_id' => $jadwal_id,
+                'guru_id' => $guru_id,
+                'tanggal' => $tanggal,
+                'jam_masuk' => $sekarang->format('H:i:s'),
+                'status' => $status_guru
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Data absensi siswa dan guru berhasil disimpan.');
     }
 
     function profilGuru(){
@@ -456,11 +573,24 @@ class siakadController extends Controller
     function dataWaliKelas(Request $request) {
         $guru_id = session('id');
         $wallas = \App\Models\wallas::with(['guru', 'ruangKelas'])->where('guru_id', $guru_id)->first();
+        
+        if (!$wallas) {
+            return redirect('/sk/dsg')->with('eror', 'Anda bukan wali kelas.');
+        }
         $siswa = collect();
+        $jadwal_mingguan = collect();
+        
         if ($wallas && $wallas->ruangKelas) {
             $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->get();
+            $jadwal_mingguan = \App\Models\jadwal_pelajaran::with(['guru', 'mata_pelajaran', 'jam_pelajaran'])
+                ->where('kelas_id', $wallas->kelas_id)
+                ->get()
+                ->sortBy(function($j) {
+                    return $j->jam_pelajaran->jam_mulai;
+                })
+                ->groupBy('hari');
         }
-        return view('/modul/siakad/guru/dataWaliKelas', compact('wallas', 'siswa'));
+        return view('/modul/siakad/guru/dataWaliKelas', compact('wallas', 'siswa', 'jadwal_mingguan'));
     }
 
     public function absensiWalas(Request $request) {

@@ -244,6 +244,12 @@ Route::post('/sk/simpan-mapel', [siakadController::class, 'simpanMapel']);
 Route::get('/sk/kelola-jadwal', [siakadController::class, 'kelolaJadwalAdmin']);
 Route::post('/sk/simpan-jadwal', [siakadController::class, 'simpanJadwalAdmin']);
 
+// KENAIKAN & KELULUSAN
+Route::get('/sk/kenaikan-kelas', [siakadController::class, 'kenaikanKelasAdmin']);
+Route::post('/sk/proses-kenaikan-kelas', [siakadController::class, 'prosesKenaikanKelas']);
+
+Route::post('/sk/simpan-absensi-mapel', [App\Http\Controllers\siakadController::class, 'simpanAbsensiMapel']);
+Route::get('/sk/laporan-absensi-guru', [App\Http\Controllers\siakadController::class, 'laporanAbsensiGuru']);
 
 //siswa
 Route::get("/sk/frss",[siswaController::class,"tampilan_formulirSiswa"]);

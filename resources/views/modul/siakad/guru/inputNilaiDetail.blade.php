@@ -9,7 +9,7 @@
             <x-siakad.ui.alert type="success" message="{{ session('success') }}" />
         @endif
         
-        <div style="font-size: 18px; font-weight: bold; margin-bottom: 20px; color: #166534; border-bottom: 2px solid #ecfdf5; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 18px; font-weight: bold; margin-bottom: 20px; color: #1e293b; border-bottom: 2px solid #ecfdf5; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <i class="fa-solid fa-file-pen"></i> Form Nilai: {{ $jadwal->kelas->nama_ruang ?? ($jadwal->kelas->nama_kelas ?? '-') }} - {{ $jadwal->mata_pelajaran->nama_mapel ?? '-' }}
             </div>
@@ -33,32 +33,34 @@
                         </tr>
                     </x-slot>
                     
-                    @forelse($siswa as $index => $s)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td><strong>{{ $s->nama }}</strong></td>
-                        <td>{{ $s->nis }}</td>
-                        @foreach($jenis_penilaian as $jp)
-                            <td style="text-align: center;">
-                                <input type="number" 
-                                       name="nilai[{{ $s->id }}][{{ $jp->id }}]" 
-                                       value="{{ $nilai[$s->id][$jp->id] ?? '' }}" 
-                                       style="width: 70px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; font-family: inherit; transition: all 0.2s;" 
-                                       onfocus="this.style.borderColor='#166534'; this.style.boxShadow='0 0 0 2px rgba(22, 101, 52, 0.2)';"
-                                       onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none';"
-                                       min="0" max="100" step="0.1" 
-                                       placeholder="-">
-                            </td>
+                    @if(count($siswa) > 0)
+                        @foreach($siswa as $index => $s)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td><strong>{{ $s->nama }}</strong></td>
+                            <td>{{ $s->nis }}</td>
+                            @foreach($jenis_penilaian as $jp)
+                                <td style="text-align: center;">
+                                    <input type="number" 
+                                           name="nilai[{{ $s->id }}][{{ $jp->id }}]" 
+                                           value="{{ $nilai[$s->id][$jp->id] ?? '' }}" 
+                                           style="width: 70px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; font-family: inherit; transition: all 0.2s;" 
+                                           onfocus="this.style.borderColor='#166534'; this.style.boxShadow='0 0 0 2px rgba(22, 101, 52, 0.2)';"
+                                           onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none';"
+                                           min="0" max="100" step="0.1" 
+                                           placeholder="-">
+                                </td>
+                            @endforeach
+                        </tr>
                         @endforeach
-                    </tr>
-                    @empty
+                    @else
                     <tr>
                         <td colspan="{{ 3 + count($jenis_penilaian) }}" style="text-align: center; padding: 30px;">
                             <i class="fa-solid fa-users-slash" style="font-size: 24px; color: #cbd5e1; margin-bottom: 10px; display: block;"></i>
                             Belum ada siswa di kelas ini.
                         </td>
                     </tr>
-                    @endforelse
+                    @endif
                 </x-siakad.ui.table>
             </div>
             

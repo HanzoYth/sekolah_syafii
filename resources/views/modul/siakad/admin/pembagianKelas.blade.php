@@ -1,4 +1,4 @@
-<x-siakad-layout 
+﻿<x-siakad-layout 
     title="Pembagian Kelas Siswa" 
     description="Atur penempatan siswa ke dalam ruang kelas masing-masing." 
     position="Administrator" 
@@ -22,7 +22,7 @@
                     @endforeach
                 </select>
             </div>
-            <button type="submit" style="padding: 10px 20px; border: none; background: #0284c7; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            <button type="submit" style="padding: 10px 20px; border: none; background: #3875c5; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;">
                 <i class="fa-solid fa-filter"></i> Tampilkan
             </button>
         </form>
@@ -60,7 +60,7 @@
                 </div>
 
                 @if(count($siswa_belum_ada_kelas) > 0)
-                    <button type="submit" style="width: 100%; padding: 12px; border: none; background: #166534; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <button type="submit" style="width: 100%; padding: 12px; border: none; background: #177455; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <i class="fa-solid fa-arrow-right-to-bracket"></i> Masukkan ke Kelas Ini
                     </button>
                 @endif
@@ -69,7 +69,7 @@
 
         <!-- KOLOM KANAN: SISWA DI DALAM KELAS -->
         <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-            <div style="font-size: 16px; font-weight: bold; color: #166534; margin-bottom: 15px; border-bottom: 2px solid #dcfce7; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 16px; font-weight: bold; color: #1e293b; margin-bottom: 15px; border-bottom: 2px solid #dcfce7; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                 <span><i class="fa-solid fa-users"></i> Anggota Kelas Saat Ini</span>
                 <span style="background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 12px; font-size: 12px;">{{ count($siswa_di_kelas) }} Siswa</span>
             </div>
@@ -92,7 +92,7 @@
                                 <span style="font-size: 12px; color: #64748b;">NIS: {{ $s->nis }}</span>
                             </td>
                             <td style="text-align: center;">
-                                <a href="/sk/hapus-anggota-kelas/{{ $s->id }}" style="display: inline-flex; background: #fee2e2; color: #dc2626; border: none; width: 32px; height: 32px; border-radius: 6px; text-decoration: none; align-items: center; justify-content: center; transition: all 0.2s;" title="Keluarkan dari kelas">
+                                <a href="/sk/hapus-anggota-kelas/{{ $s->id }}" style="display: inline-flex; background: #f8e9e9; color: #b34d4d; border: none; width: 32px; height: 32px; border-radius: 8px; text-decoration: none; align-items: center; justify-content: center; transition: all 0.2s;" title="Keluarkan dari kelas">
                                     <i class="fa-solid fa-user-xmark"></i>
                                 </a>
                             </td>
@@ -111,8 +111,11 @@
     </div>
     @else
         <div style="background: white; border-radius: 12px; padding: 40px; text-align: center; color: #64748b; border: 2px dashed #cbd5e1;">
-            <i class="fa-solid fa-arrow-pointer" style="font-size: 32px; margin-bottom: 15px; color: #94a3b8; display: block;"></i>
+            <i class="fa-solid fa-folder-open" style="font-size: 32px; margin-bottom: 15px; color: #94a3b8; display: block;"></i>
             Silakan pilih kelas terlebih dahulu untuk mengatur anggota kelas.
         </div>
     @endif
 </x-siakad-layout>
+
+
+

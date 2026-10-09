@@ -1,4 +1,4 @@
-<x-siakad-layout title="Kenaikan Kelas & Kelulusan" pageTitle="Kenaikan Kelas & Kelulusan" pageDescription="Pindahkan siswa ke kelas tingkat selanjutnya atau tetapkan kelulusan secara massal.">
+﻿<x-siakad-layout title="Kenaikan Kelas & Kelulusan" pageTitle="Kenaikan Kelas & Kelulusan" pageDescription="Pindahkan siswa ke kelas tingkat selanjutnya atau tetapkan kelulusan secara massal.">
     
     <div class="page-header" style="display: flex; gap: 15px; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 20px;">
         <i class="fa-solid fa-graduation-cap" style="font-size: 24px; color: #0d5c3a;"></i>
@@ -97,9 +97,12 @@
         @endif
     @else
         <div style="text-align: center; padding: 40px; color: #64748b; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px;">
-            <i class="fa-solid fa-chalkboard-user" style="font-size: 32px; color: #cbd5e1; margin-bottom: 15px; display: block;"></i>
+            <i class="fa-solid fa-folder-open" style="font-size: 32px; color: #cbd5e1; margin-bottom: 15px; display: block;"></i>
             Silakan pilih kelas asal terlebih dahulu dari menu *dropdown* di atas.
         </div>
     @endif
 </x-siakad-layout>
+
+
+
 

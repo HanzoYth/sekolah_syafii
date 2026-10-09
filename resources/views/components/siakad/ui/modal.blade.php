@@ -15,7 +15,7 @@
         
         <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
             @if($icon)
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: {{ $iconBg }}; color: {{ $iconColor }}; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            <div style="width: 60px; height: 60px; border-radius: 16px; background: {{ $iconBg }}; color: {{ $iconColor }}; display: flex; align-items: center; justify-content: center; font-size: 1.6rem;">
                 <i class="fa-solid {{ $icon }}"></i>
             </div>
             @endif

@@ -5,7 +5,7 @@
     initials="GR">
 
     <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-        <div style="font-size: 18px; font-weight: bold; margin-bottom: 20px; color: #166534; border-bottom: 2px solid #ecfdf5; padding-bottom: 10px;">
+        <div style="font-size: 18px; font-weight: bold; margin-bottom: 20px; color: #1e293b; border-bottom: 2px solid #ecfdf5; padding-bottom: 10px;">
             <i class="fa-solid fa-star"></i> Kelas & Mata Pelajaran Anda
         </div>
         
