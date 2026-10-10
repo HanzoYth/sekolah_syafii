@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -18,7 +18,7 @@
         <header class="topbar">
             <div class="topbar-inner">
                 <div class="topbar-title">
-                    <span class="font-arabic">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
+                    <span class="font-arabic">Ø¨ÙØ³Ù’Ù…Ù Ø§Ù„Ù„ÙŽÙ‘Ù‡Ù Ø§Ù„Ø±ÙŽÙ‘Ø­Ù’Ù…ÙŽÙ°Ù†Ù Ø§Ù„Ø±ÙŽÙ‘Ø­ÙÙŠÙ…Ù</span>
                     <h1>Edit Data Santri / Siswa</h1>
                     <p>Perbarui Informasi Profil dan Akademik Siswa</p>
                 </div>
@@ -100,3 +100,6 @@
 
 </body>
 </html>
+
+
+

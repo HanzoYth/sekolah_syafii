@@ -11,7 +11,7 @@
 
     <aside class="sidebar" id="sidebar">
 
-        {{-- Header sidebar --}}
+        
         <div class="sidebar-header">
             <div class="brand-logo">
                 <i class="fa-solid fa-mosque"></i>
@@ -20,85 +20,85 @@
         </div>
 
         <div class="sidebar-menu-wrapper">
-            {{-- Dashboard: umum untuk semua role --}}
+            
             <div class="menu-section" id="section-umum">
                 <ul class="menu-list">
-                    <li class="menu-item {{ request()->is('sk/das', 'sk/dsg', 'sk/dbs') ? 'active' : '' }}">
-                        @if (session('role') == "a")
+                    <li class="menu-item <?php echo e(request()->is('sk/das', 'sk/dsg', 'sk/dbs') ? 'active' : ''); ?>">
+                        <?php if(session('role') == "a"): ?>
                             <a href="/sk/das">
                                 <i class="fa-solid fa-house"></i>
                                 <span>Dashboard</span>
                             </a>
-                        @elseif (session('role') == "g")
+                        <?php elseif(session('role') == "g"): ?>
                             <a href="/sk/dsg">
                                 <i class="fa-solid fa-house"></i>
                                 <span>Dashboard</span>
                             </a>
-                        @elseif (session('role') == "s")
+                        <?php elseif(session('role') == "s"): ?>
                             <a href="/sk/dbs">
                                 <i class="fa-solid fa-house"></i>
                                 <span>Dashboard</span>
                             </a>
-                        @endif
+                        <?php endif; ?>
                     </li>
                 </ul>
             </div>
 
-            {{-- ================= ROLE ADMIN ================= --}}
-            @if (session('role') === 'a')
+            
+            <?php if(session('role') === 'a'): ?>
                 <div class="menu-section" id="section-admin-akademik">
                     <span class="menu-label">AKADEMIK</span>
                     <ul class="menu-list">
-                        <li class="menu-item {{ request()->is('sk/kelola-mapel') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/kelola-mapel') ? 'active' : ''); ?>">
                             <a href="/sk/kelola-mapel">
                                 <i class="fa-solid fa-book"></i>
                                 <span>Mata Pelajaran</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ request()->is('sk/kelola-jadwal') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/kelola-jadwal') ? 'active' : ''); ?>">
                             <a href="/sk/kelola-jadwal">
                                 <i class="fa-solid fa-calendar-alt"></i>
                                 <span>Kelola Jadwal</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ request()->is('sk/referensi') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/referensi') ? 'active' : ''); ?>">
                             <a href="/sk/referensi">
                                 <i class="fa-solid fa-database"></i>
                                 <span>Data Referensi</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ request()->is('sk/ds', 'sk/dls/*', 'sk/dts') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/ds', 'sk/dls/*', 'sk/dts') ? 'active' : ''); ?>">
                             <a href="/sk/ds">
                                 <i class="fa-solid fa-user-graduate"></i>
                                 <span>Data Siswa</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ request()->is('sk/tk') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/tk') ? 'active' : ''); ?>">
                             <a href="/sk/tk">
                                 <i class="fa-solid fa-school"></i>
                                 <span>Kelola Kelas</span>
                             </a>
                             
                         </li>
-                        <li class="menu-item {{ request()->is('sk/pembagian-kelas') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/pembagian-kelas') ? 'active' : ''); ?>">
                             <a href="/sk/pembagian-kelas">
                                 <i class="fa-solid fa-users-cog"></i>
                                 <span>Pembagian Kelas</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ request()->is('sk/kelola-wali-kelas') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/kelola-wali-kelas') ? 'active' : ''); ?>">
                             <a href="/sk/kelola-wali-kelas">
                                 <i class="fa-solid fa-user-tie"></i>
                                 <span>Wali Kelas</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ request()->is('sk/kenaikan-kelas') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/kenaikan-kelas') ? 'active' : ''); ?>">
                             <a href="/sk/kenaikan-kelas">
                                 <i class="fa-solid fa-graduation-cap"></i>
                                 <span>Kenaikan & Kelulusan</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ request()->is('sk/laporan-absensi-guru') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/laporan-absensi-guru') ? 'active' : ''); ?>">
                             <a href="/sk/laporan-absensi-guru">
                                 <i class="fa-solid fa-user-clock"></i>
                                 <span>Kehadiran Guru</span>
@@ -110,48 +110,48 @@
                 <div class="menu-section" id="section-admin-pembayaran">
                     <span class="menu-label">ADMINISTRASI PEMBAYARAN</span>
                     <ul class="menu-list">
-                        <li class="menu-item {{ request()->is('sk/bt', 'sk/pb', 'sk/pp', 'sk/pd', 'sk/ppl') ? 'active' : '' }}">
-                            <details class="submenu-wrapper" {{ request()->is('sk/bt', 'sk/pb', 'sk/pp', 'sk/pd', 'sk/ppl') ? 'open' : '' }}>
+                        <li class="menu-item <?php echo e(request()->is('sk/bt', 'sk/pb', 'sk/pp', 'sk/pd', 'sk/ppl') ? 'active' : ''); ?>">
+                            <details class="submenu-wrapper" <?php echo e(request()->is('sk/bt', 'sk/pb', 'sk/pp', 'sk/pd', 'sk/ppl') ? 'open' : ''); ?>>
                                 <summary class="menu-link">
                                     <div class="menu-link-content"><i class="fa-solid fa-file-invoice-dollar"></i><span>Pembayaran</span></div>
                                     <i class="fa-solid fa-chevron-down submenu-icon"></i>
                                 </summary>
                                 <ul class="submenu-list">
-                                    <li class="submenu-item {{ request()->is('sk/bt') ? 'active' : '' }}"><a href="/sk/bt"><i class="fa-solid fa-file-circle-plus"></i><span>Buat Tagihan</span></a></li>
-                                    <li class="submenu-item {{ request()->is('sk/pb') ? 'active' : '' }}"><a href="/sk/pb"><i class="fa-solid fa-wallet"></i><span>Pembayaran IPP</span></a></li>
-                                    <li class="submenu-item {{ request()->is('sk/pp') ? 'active' : '' }}"><a href="/sk/pp"><i class="fa-solid fa-money-check-dollar"></i><span>Uang Pangkal</span></a></li>
-                                    <li class="submenu-item {{ request()->is('sk/pd') ? 'active' : '' }}"><a href="/sk/pd"><i class="fa-solid fa-graduation-cap"></i><span>Pendidikan</span></a></li>
-                                    <li class="submenu-item {{ request()->is('sk/ppl') ? 'active' : '' }}"><a href="/sk/ppl"><i class="fa-solid fa-screwdriver-wrench"></i><span>Pemeliharaan</span></a></li>
+                                    <li class="submenu-item <?php echo e(request()->is('sk/bt') ? 'active' : ''); ?>"><a href="/sk/bt"><i class="fa-solid fa-file-circle-plus"></i><span>Buat Tagihan</span></a></li>
+                                    <li class="submenu-item <?php echo e(request()->is('sk/pb') ? 'active' : ''); ?>"><a href="/sk/pb"><i class="fa-solid fa-wallet"></i><span>Pembayaran IPP</span></a></li>
+                                    <li class="submenu-item <?php echo e(request()->is('sk/pp') ? 'active' : ''); ?>"><a href="/sk/pp"><i class="fa-solid fa-money-check-dollar"></i><span>Uang Pangkal</span></a></li>
+                                    <li class="submenu-item <?php echo e(request()->is('sk/pd') ? 'active' : ''); ?>"><a href="/sk/pd"><i class="fa-solid fa-graduation-cap"></i><span>Pendidikan</span></a></li>
+                                    <li class="submenu-item <?php echo e(request()->is('sk/ppl') ? 'active' : ''); ?>"><a href="/sk/ppl"><i class="fa-solid fa-screwdriver-wrench"></i><span>Pemeliharaan</span></a></li>
                                 </ul>
                             </details>
                         </li>
                     </ul>
                 </div>
 
-            {{-- ================= ROLE GURU ================= --}}
-            @elseif (session('role') === 'g')
-                @php
+            
+            <?php elseif(session('role') === 'g'): ?>
+                <?php
                     // Cek apakah guru ini adalah wali kelas, pastikan session('id') ada
                     $guruId = session('id');
                     $isWallas = $guruId ? \App\Models\wallas::where('guru_id', $guruId)->exists() : false;
-                @endphp
+                ?>
 
                 <div class="menu-section" id="section-guru-pengajar">
                     <span class="menu-label">MENU PENGAJAR</span>
                     <ul class="menu-list">
-                        <li class="menu-item {{ request()->is('sk/jadwal-guru', 'sk/input-nilai-detail/*') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/jadwal-guru', 'sk/input-nilai-detail/*') ? 'active' : ''); ?>">
                             <a href="/sk/jadwal-guru">
                                 <i class="fa-solid fa-calendar-week"></i>
                                 <span>Jadwal Mengajar</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ request()->is('sk/nilai-guru') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/nilai-guru') ? 'active' : ''); ?>">
                             <a href="/sk/nilai-guru">
                                 <i class="fa-solid fa-star"></i>
                                 <span>Manajemen Nilai</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ request()->is('sk/ass') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/ass') ? 'active' : ''); ?>">
                             <a href="/sk/ass">
                                 <i class="fa-solid fa-clipboard-list"></i>
                                 <span>Absensi Mapel</span>
@@ -160,23 +160,23 @@
                     </ul>
                 </div>
 
-                @if($isWallas)
+                <?php if($isWallas): ?>
                 <div class="menu-section" id="section-guru-walas" style="margin-top: 15px;">
                     <span class="menu-label">MENU WALI KELAS</span>
                     <ul class="menu-list">
-                        <li class="menu-item {{ request()->is('sk/wali-kelas') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/wali-kelas') ? 'active' : ''); ?>">
                             <a href="/sk/wali-kelas">
                                 <i class="fa-solid fa-users-rectangle"></i>
                                 <span>Data Siswa (Wali Kelas)</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ request()->is('sk/absensi-walas') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/absensi-walas') ? 'active' : ''); ?>">
                             <a href="/sk/absensi-walas">
                                 <i class="fa-solid fa-clipboard-user"></i>
                                 <span>Absensi Kelas</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ request()->is('sk/rapor-walas') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/rapor-walas') ? 'active' : ''); ?>">
                             <a href="/sk/rapor-walas">
                                 <i class="fa-solid fa-file-contract"></i>
                                 <span>Cetak Rapor</span>
@@ -184,7 +184,7 @@
                         </li>
                     </ul>
                 </div>
-                @endif
+                <?php endif; ?>
 
                 <div class="menu-section" id="section-guru-umum" style="margin-top: 15px;">
                     <span class="menu-label">UMUM</span>
@@ -204,18 +204,18 @@
                     </ul>
                 </div>
 
-            {{-- ================= ROLE SISWA (ORANG TUA) ================= --}}
-            @elseif (session('role') === 's')
+            
+            <?php elseif(session('role') === 's'): ?>
                 <div class="menu-section" id="section-siswa">
                     <span class="menu-label">AKADEMIK & MONITORING</span>
                     <ul class="menu-list">
-                        <li class="menu-item {{ request()->is('sk/jadwal-siswa') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/jadwal-siswa') ? 'active' : ''); ?>">
                             <a href="/sk/jadwal-siswa">
                                 <i class="fa-solid fa-calendar-check"></i>
                                 <span>Jadwal & Absensi</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ request()->is('sk/rapor-siswa') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/rapor-siswa') ? 'active' : ''); ?>">
                             <a href="/sk/rapor-siswa">
                                 <i class="fa-solid fa-star"></i>
                                 <span>Nilai & Rapor</span>
@@ -227,19 +227,19 @@
                 <div class="menu-section" id="section-siswa-administrasi" style="margin-top: 15px;">
                     <span class="menu-label">ADMINISTRASI</span>
                     <ul class="menu-list">
-                        <li class="menu-item {{ request()->is('sk/pbs') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/pbs') ? 'active' : ''); ?>">
                             <a href="/sk/pbs">
                                 <i class="fa-solid fa-file-invoice-dollar"></i>
                                 <span>Riwayat Pembayaran</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ request()->is('sk/ps') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/ps') ? 'active' : ''); ?>">
                             <a href="/sk/ps">
                                 <i class="fa-solid fa-bullhorn"></i>
                                 <span>Pengumuman</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ request()->is('sk/pfs') ? 'active' : '' }}">
+                        <li class="menu-item <?php echo e(request()->is('sk/pfs') ? 'active' : ''); ?>">
                             <a href="/sk/pfs">
                                 <i class="fa-solid fa-id-card"></i>
                                 <span>Profil Anak</span>
@@ -247,7 +247,7 @@
                         </li>
                     </ul>
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
 
         <div class="sidebar-footer">
@@ -328,3 +328,4 @@
     });
 })();
 </script>
+<?php /**PATH D:\laragon\www\sekolahsyafii\resources\views/components/siakad/sidebar.blade.php ENDPATH**/ ?>

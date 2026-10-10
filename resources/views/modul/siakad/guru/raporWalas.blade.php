@@ -4,23 +4,25 @@
     </div>
     
     <x-siakad.ui.table :headers="['No', 'NIS', 'Nama Siswa', 'Gender', 'Aksi']">
-        @forelse($siswa as $index => $s)
-        <tr>
-            <td>{{ $index + 1 }}</td>
-            <td>{{ $s->nis }}</td>
-            <td><strong>{{ $s->nama }}</strong></td>
-            <td>{{ $s->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
-            <td style="text-align: center;">
-                <x-siakad.ui.button href="/sk/detail-rapor-walas/{{ $s->id }}" type="info" icon="fa-solid fa-print" style="background: #0ea5e9; border:none; color:white;">
-                    Lihat & Cetak Rapor
-                </x-siakad.ui.button>
-            </td>
-        </tr>
-        @empty
+        @if(count($siswa) > 0)
+            @foreach($siswa as $index => $s)
+            <tr>
+                <td>{{ $index + 1 }}</td>
+                <td>{{ $s->nis }}</td>
+                <td><strong>{{ $s->nama }}</strong></td>
+                <td>{{ $s->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
+                <td style="text-align: center;">
+                    <x-siakad.ui.button href="/sk/detail-rapor-walas/{{ $s->id }}" type="info" icon="fa-solid fa-print" style="background: #0ea5e9; border:none; color:white;">
+                        Lihat & Cetak Rapor
+                    </x-siakad.ui.button>
+                </td>
+            </tr>
+            @endforeach
+        @else
         <tr>
             <td colspan="5" style="text-align: center; padding: 30px;">Belum ada data siswa di kelas ini.</td>
         </tr>
-        @endforelse
+        @endif
     </x-siakad.ui.table>
 </x-siakad-layout>
 

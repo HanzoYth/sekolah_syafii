@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -49,7 +49,7 @@
                     
                     <div class="header-content">
                         <div class="basmalah-text">
-                            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+                            Ø¨ÙØ³Ù’Ù…Ù Ø§Ù„Ù„ÙŽÙ‘Ù‡Ù Ø§Ù„Ø±ÙŽÙ‘Ø­Ù’Ù…ÙŽÙ°Ù†Ù Ø§Ù„Ø±ÙŽÙ‘Ø­ÙÙŠÙ…Ù
                         </div>
                         <span class="invoice-number">NO. INVOICE: #INV/202608/SPP-0142</span>
                         
@@ -86,7 +86,7 @@
                         </div>
                     </div>
 
-                    <div class="divider-islamic"><span>✦ ✦ ✦</span></div>
+                    <div class="divider-islamic"><span>âœ¦ âœ¦ âœ¦</span></div>
 
                     {{-- INFORMASI TRANSAKSI --}}
                     <div class="section-block">
@@ -121,7 +121,7 @@
                         </table>
                     </div>
 
-                    <div class="divider-islamic"><span>✦ ✦ ✦</span></div>
+                    <div class="divider-islamic"><span>âœ¦ âœ¦ âœ¦</span></div>
 
                     {{-- INFORMASI PEMBAYARAN --}}
                     <div class="section-block">
@@ -172,3 +172,6 @@
 
 </body>
 </html>
+
+
+
