@@ -111,6 +111,62 @@ body {
     border-radius: 20px;
 }
 
+/* ======== ROLE TABS / NODE SWITCHER ======== */
+.role-tabs-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: var(--card-bg);
+    padding: 10px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+}
+
+.role-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid var(--border-color);
+    background-color: #f8fafc;
+    color: var(--text-main);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.role-tab i {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.role-tab:hover {
+    background-color: #ffffff;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.role-tab:hover i {
+    color: var(--primary-color);
+}
+
+.role-tab.active {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.role-tab.active i {
+    color: #a7f3d0;
+}
+
 /* CARD GENERAL */
 .card {
     background-color: var(--card-bg);
@@ -588,6 +644,11 @@ body {
 
     .btn-filter, .btn-reset {
         flex: 1;
+    }
+
+    .role-tabs-container {
+        width: 100%;
+        justify-content: flex-start;
     }
 }
 

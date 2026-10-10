@@ -38,19 +38,19 @@
 
         <!-- NODE / TAB ROLE SELECTION -->
         <div class="role-tabs-container">
-            <button type="button" class="role-tab active">
+            <button type="button" class="role-tab active" data-name ="guru">
                 <i class="fa-solid fa-chalkboard-user"></i>
                 <span>Guru</span>
             </button>
-            <button type="button" class="role-tab">
+            <button type="button" class="role-tab" data-name="bendahara">
                 <i class="fa-solid fa-file-invoice-dollar"></i>
                 <span>Bendahara</span>
             </button>
-            <button type="button" class="role-tab">
+            <button type="button" class="role-tab" data-name="operator">
                 <i class="fa-solid fa-headset"></i>
                 <span>Operator</span>
             </button>
-            <button type="button" class="role-tab">
+            <button type="button" class="role-tab" data-name="satpam">
                 <i class="fa-solid fa-user-shield"></i>
                 <span>Satpam</span>
             </button>
@@ -92,84 +92,6 @@
                             </tr>
                         </thead>
                         <tbody id="absenTableBody">
-                            @foreach ($data_guru as $value)
-                                @php
-                                    $cek = App\Models\master_absen_guru::where("guru_id",$value->id)->where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->exists();
-                                    $data_absen_guru = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("guru_id",$value->id)->first();$cabang = App\Models\cabang_guru::where("id",$value->cabang_id)->first();$bulan = Carbon\Carbon::now()->translatedFormat("m");
-                                    $jumlah_kehadiran = App\Models\master_absen_guru::where("guru_id",$value->id)->where("status_kehadiran","h")->whereMonth("tgl_masuk",$bulan)->count();
-                                    $jumlah_izin = App\Models\master_absen_guru::where("guru_id",$value->id)->where("status_kehadiran","i")->whereMonth("tgl_masuk",$bulan)->count();$jumlah_sakit = App\Models\master_absen_guru::where("guru_id",$value->id)->where("status_kehadiran","s")->whereMonth("tgl_masuk",$bulan)->count();
-                                @endphp
-                                <tr>
-                                    <input type="hidden" value="{{$value->id}}" name="id_guru_{{$value->id}}">
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td class="teacher-name">                                                                                                                                                                             
-                                        <strong>{{$value->nama}}</strong>
-                                    </td>
-                                    <td><span class="nig-badge">{{$jumlah_kehadiran}}</span></td>
-                                    <td><span class="nig-badge">{{$jumlah_izin}}</span></td>
-                                    <td><span class="nig-badge">{{$jumlah_sakit}}</span></td>
-                                    <td><span class="branch-tag">{{$cabang->nama_cabang}}</span></td>
-                                    @if ($cek)
-                                        @if ($data_absen_guru->status_kehadiran == "s")
-                                            <td class="text-center">
-                                                <div class="select-presence-wrapper">
-                                                    <a href="/gr/edklabs/{{$value->id}}">
-                                                        <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
-                                                    </a>
-                                                    <select class="select-presence status-hadir" name="status_{{$value->id}}">
-                                                        <option value="n">--tidak ada pilihan--</option>
-                                                        <option value="h">Hadir</option>
-                                                        <option value="i">Izin</option>
-                                                        <option value="s" selected>Sakit</option>
-                                                    </select>
-                                                </div>
-                                            </td>
-                                        @elseif ($data_absen_guru->status_kehadiran == "i")
-                                            <td class="text-center">
-                                                <div class="select-presence-wrapper">
-                                                    <a href="/gr/edklabs/{{$value->id}}">
-                                                        <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
-                                                    </a>
-                                                    <select class="select-presence status-hadir" name="status_{{$value->id}}">
-                                                        <option value="n">--tidak ada pilihan--</option>
-                                                        <option value="h">Hadir</option>
-                                                        <option value="i" selected>Izin</option>
-                                                        <option value="s">Sakit</option>
-                                                    </select>
-                                                </div>
-                                            </td>
-                                        @else 
-                                            <td class="text-center">
-                                                <div class="select-presence-wrapper">
-                                                    <a href="/gr/edklabs/{{$value->id}}">
-                                                        <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
-                                                    </a>
-                                                    <select class="select-presence status-hadir" name="status_{{$value->id}}">
-                                                        <option value="n">--tidak ada pilihan--</option>
-                                                        <option value="h" selected>Hadir</option>
-                                                        <option value="i">Izin</option>
-                                                        <option value="s">Sakit</option>
-                                                    </select>
-                                                </div>
-                                            </td>
-                                        @endif
-                                    @else
-                                        <td class="text-center">
-                                            <div class="select-presence-wrapper">
-                                                <a href="/gr/edklabs/{{$value->id}}">
-                                                    <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
-                                                </a>
-                                                <select class="select-presence status-hadir" name="status_{{$value->id}}">
-                                                    <option value="n" selected>--tidak ada pilihan--</option>
-                                                    <option value="h">Hadir</option>
-                                                    <option value="i">Izin</option>
-                                                    <option value="s">Sakit</option>
-                                                </select>
-                                            </div>
-                                        </td>
-                                    @endif
-                                </tr>
-                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -214,13 +136,91 @@
 
         renderCurrentDate();
 
+        let dafaultName = "guru";
+
         // Switcher state sederhana untuk visual tab role (tanpa PHP)
         roleTabs.forEach(tab => {
             tab.addEventListener('click', function() {
                 roleTabs.forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
+                changeData(this.dataset.name);
             });
         });
+
+function changeData(name){
+    fetch(`/gr/ambabgr/${name}`)
+    .then(res => {
+        if (!res.ok) throw new Error("Gagal Ambil Data");
+        return res.json();
+    })
+    .then(data => {
+        let tempat = document.getElementById("absenTableBody");
+        tempat.innerHTML = '';
+
+        if (!data || data.length == 0){
+            tempat.innerHTML = `<tr><td colspan="7" class="text-center">Belum ada data</td></tr>`;
+            return;
+        }
+
+        const tanggal = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD, waktu lokal
+        let no = 0;
+
+        data.forEach(item => {
+            no++;
+            let jumlah_kehadiran = 0;
+            let jumlah_izin = 0;
+            let jumlah_sakit = 0;
+
+            item.get_absen.forEach(value => {
+                if (value.status_kehadiran == "h") jumlah_kehadiran++;
+                if (value.status_kehadiran == "i") jumlah_izin++;
+                if (value.status_kehadiran == "s") jumlah_sakit++;
+            });
+
+            // absen hari ini (kalau ada)
+            const absenHariIni = item.get_absen.find(v => v.tgl_masuk == tanggal);
+            const status = absenHariIni ? absenHariIni.status_kehadiran : 'n';
+            const sel = v => status == v ? 'selected' : '';
+            // status selain h/i/s (mis. "a") jatuh ke "--tidak ada pilihan--"
+            const selN = ['h','i','s'].includes(status) ? '' : 'selected';
+
+            let new_data = `
+                <tr>
+                    <td>
+                        <input type="hidden" value="${item.id}" name="id_guru_${item.id}">
+                        ${no}
+                    </td>
+                    <td class="teacher-name">
+                        <strong>${item.nama}</strong>
+                    </td>
+                    <td><span class="nig-badge">${jumlah_kehadiran}</span></td>
+                    <td><span class="nig-badge">${jumlah_izin}</span></td>
+                    <td><span class="nig-badge">${jumlah_sakit}</span></td>
+                    <td><span class="branch-tag">${item.get_cabang.nama_cabang}</span></td>
+                    <td class="text-center">
+                        <div class="select-presence-wrapper">
+                            <a href="/gr/edklabs/${item.id}">
+                                <i class="fa-solid fa-clipboard-list select-rule-icon" title="Aturan Absensi"></i>
+                            </a>
+                            <select class="select-presence status-hadir" name="status_${item.id}">
+                                <option value="n" ${selN}>--tidak ada pilihan--</option>
+                                <option value="h" ${sel('h')}>Hadir</option>
+                                <option value="i" ${sel('i')}>Izin</option>
+                                <option value="s" ${sel('s')}>Sakit</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            tempat.insertAdjacentHTML('beforeend', new_data);
+        });
+    })
+    .catch(err => {
+        console.error(err);
+    });
+}
+
+        changeData(dafaultName);
 
         // Fungsi mengubah warna berdasarkan opsi yang dipilih
         function updateSelectStyle(select) {

@@ -45,7 +45,7 @@ class file_surat extends Controller
 
 
         $data_ketidakhadiran = $data_gaji->ketidakhadiran;
-        $data_keterlambatan = $data_gaji->keterlambatan;
+        $data_keterlambatan = $data_gaji->keterlambatan + $data_gaji->keterlambatan_cepat_pulang;
 
         return view("surat/surat_slip_gaji",[
             "data_guru" => $guru,

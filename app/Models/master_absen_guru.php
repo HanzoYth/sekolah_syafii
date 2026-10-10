@@ -22,7 +22,8 @@ class master_absen_guru extends Model
         "cabang_id",
         "guru_id",
         "lokasi_id",
-        "waktu_id"
+        "waktu_id",
+        "terlambat_pulang_cepat"
     ];
 
 

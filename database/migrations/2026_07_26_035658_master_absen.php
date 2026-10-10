@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreignId("guru_id")->constrained("guru")->cascadeOnDelete();
             $table->foreignId("lokasi_id")->constrained("master_lokasi_absen_guru")->cascadeOnDelete();
             $table->foreignId("waktu_id")->constrained("master_waktu_absen_guru")->cascadeOnDelete();
+            $table->integer("terlambat_pulang_cepat");
         });
     }
 

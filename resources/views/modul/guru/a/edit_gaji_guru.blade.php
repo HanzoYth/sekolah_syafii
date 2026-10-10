@@ -87,6 +87,13 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label>Jumlah Terlambat Pulang Cepat (Menit/Frekuensi)</label>
+                        <div class="input-unit">
+                            <input type="number" id="cepatMenit" name = "cepat_pulang" value="{{$jumlah_terlambat_pulang_cepat}}" class="form-control" placeholder="0">
+                            <span class="unit-text">Menit</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label>Detail Kehadiran</label>
                         <input type="text" name="detail_kehadiran" value="{{$jumlah_kehadiran}}/{{$jumlah_hari_aktif}}" class="form-control readonly" readonly>
                     </div>
@@ -404,10 +411,13 @@ document.addEventListener('DOMContentLoaded', function () {
         // B. Total Potongan
         const absenHariEl = document.getElementById("absenHari");
         const telatMenitEl = document.getElementById("telatMenit");
+        const telatCepatEl = document.getElementById("cepatMenit");
         const countAbsen = absenHariEl ? parseInt(absenHariEl.value) || 0 : 0;
         const countTelat = telatMenitEl ? parseInt(telatMenitEl.value) || 0 : 0;
+        const countCepat = telatCepatEl ? parseInt(telatCepatEl.value) || 0 : 0;
+        const countallTelat = countTelat + countCepat;
 
-        const potTelat = getVal('potonganTelat') * countTelat;
+        const potTelat = getVal('potonganTelat') * countallTelat;
         const potKasbon = getVal('potonganKasbon');
 
         let dynamicPotonganTotal = 0;

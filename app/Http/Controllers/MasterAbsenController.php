@@ -54,13 +54,8 @@ class MasterAbsenController extends Controller
 
     
     function tampilan_kelolaAbsenGuru(){
-        $data_guru = guru::whereHas("getUser", function ($item) {
-            $item->where("aktif",1);
-        })->get();
 
-        return view("modul/guru/a/kelola_absen_guru",[
-            "data_guru" => $data_guru
-        ]);
+        return view("modul/guru/a/kelola_absen_guru");
     }
 
     function SettingAbsenGuru(Request $request,$id) {
@@ -185,13 +180,29 @@ class MasterAbsenController extends Controller
 
         if (!$waktu_sekarang->greaterThan($waktu_keluar)){
             $terlambat = $waktu_sekarang->diffInMinutes($waktu_keluar);
-            $data->terlambat_menit = $data->terlambat_menit  + $terlambat;
+            $data->terlambat_pulang_cepat = $terlambat;
         }
 
         $data->waktu_keluar = $waktu_sekarang;
         $data->save();
 
         return redirect("/gr/das");
+    }
+
+
+    function ambilDataAbsenStaf($kategori){
+        $data = null;    
+        if ($kategori == "guru"){
+            $data = guru::with("getAbsen","getCabang")->where("bendahara",false)->where("operator",false)->where("satpam",false)->get();    
+        }elseif($kategori == "bendahara"){
+            $data = guru::with("getAbsen","getCabang")->where("bendahara",true)->get();
+        }elseif($kategori == "operator"){
+            $data = guru:: with("getAbsen","getCabang")->where("operator",true)->get();
+        }else{
+            $data = guru:: with("getAbsen","getCabang")->where("satpam",true)->get();
+        }
+
+        return response()->json($data);
     }
 
 }

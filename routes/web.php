@@ -37,6 +37,8 @@ Route::get("/ab/idnt/{role}",[identitasController::class,"ambil_DataIdentitas"])
 Route::get("/hpidnt/{id}",[identitasController::class,"hapus_DataIdentitas"]);
 
 Route::get("/gr/ambgr/{kategori}",[modulGuruController::class,"ambilDataStaf"]);
+Route::get("/gr/ambabgr/{kategori}",[MasterAbsenController::class,"ambilDataAbsenStaf"]);
+Route::get("/gr/ambgjgr/{kategori}",[modulGuruController::class,"ambilDataStafGaji"]);
 
 // ini route untuk halaman registrasi
 Route::get('/reg',[akunController::class,"tampilan"]);

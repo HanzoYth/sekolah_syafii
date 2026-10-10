@@ -19,6 +19,7 @@ class riwayat_gaji extends Model
         "ketidakhadiran",
         "keterlambatan",
         "guru_id",
-        "evaluasi"
+        "evaluasi",
+        "keterlambatan_cepat_pulang"
     ];
 }

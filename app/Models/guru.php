@@ -46,4 +46,24 @@ class guru extends Model
     public function getSekolah(){
         return $this->belongsTo(jenis_sekolah::class,"sekolah_id");
     }
+
+    public function getCabang(){
+        return $this->belongsTo(cabang_guru::class,"cabang_id");
+    }
+
+    public function getAbsen(){
+        return $this->hasMany(master_absen_guru::class,"guru_id","id");
+    }
+
+    public function getGaji(){
+        return $this->hasOne(gaji::class,"guru_id","id");
+    }
+
+    public function getTunjangan(){
+        return $this->hasMany(tunjangan::class,"guru_id","id");
+    }
+
+    public function getTunjanganPotongan(){
+        return $this->hasMany(tunjangan_potongan::class,"guru_id","id");
+    }
 }
