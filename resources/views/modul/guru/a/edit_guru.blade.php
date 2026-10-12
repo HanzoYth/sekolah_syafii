@@ -225,7 +225,7 @@
                     @endif
                 @endif
                 
-                @if (!$data_guru->bendahara && !$data_guru->operator && !data_guru->satpam)
+                @if (!$data_guru->bendahara && !$data_guru->operator && !$data_guru->satpam)
                     <!-- SECTION 6: JADWAL PIKET (DENGAN DATA DUMMY) -->
                     <div class="form-section">
                         <div class="section-title section-title-flex">
