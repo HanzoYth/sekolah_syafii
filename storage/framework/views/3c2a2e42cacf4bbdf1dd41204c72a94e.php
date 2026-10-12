@@ -1,12 +1,12 @@
 <link rel="stylesheet" href="<?php echo e(asset('css/component/warning.css')); ?>?v=<?php echo e(time()); ?>">
 <div>
-    <?php if(session('eror')): ?>
+    <?php if(session('eror') || session('error')): ?>
         <div class="alert alert-danger" id="errorToast">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
                 <div>
                     <p>
                         <i class="fas fa-exclamation-circle" style="color: #e63946;"></i> 
-                        <?php echo e(session('eror')); ?>
+                        <?php echo e(session('eror') ?? session('error')); ?>
 
                     </p>
                 </div>

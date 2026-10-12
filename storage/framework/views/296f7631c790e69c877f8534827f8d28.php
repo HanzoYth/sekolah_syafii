@@ -45,17 +45,22 @@
                     </div>
                 </a>
                 <?php elseif(session("role") == "g"): ?>
-                <a href="/sk/dsg" class="module-card siakad">
-                    <div class="icon-wrapper">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    </div>
-                    <h3>Modul SIAKAD</h3>
-                    <p>Sistem Informasi Akademik untuk pengelolaan nilai, jadwal pelajaran, presensi, dan data santri.</p>
-                    <div class="card-action">
-                        <span>Akses SIAKAD</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </div>
-                </a>
+                    <?php
+                        $user = App\Models\guru::find(session("id"));
+                    ?>
+                    <?php if(!$user->satpam && !$user->operator): ?>
+                        <a href="/sk/dsg" class="module-card siakad">
+                            <div class="icon-wrapper">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <h3>Modul SIAKAD</h3>
+                            <p>Sistem Informasi Akademik untuk pengelolaan nilai, jadwal pelajaran, presensi, dan data santri.</p>
+                            <div class="card-action">
+                                <span>Akses SIAKAD</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </a>
+                    <?php endif; ?>
                 <?php else: ?>
                 <!DOCTYPE html>
                 <a href="/sk/dbs" class="module-card siakad">

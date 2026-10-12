@@ -108,7 +108,7 @@
                 </div>
                 
                 @if (session('role') == "a")
-                    @if (!$data_guru->bendahara && !data_guru->operator && !$data_guru->satpam)
+                    @if (!$data_guru->bendahara && !$data_guru->operator && !$data_guru->satpam)
                         <!-- SECTION 3: JABATAN & PENUGASAN -->
                         <div class="form-section">
                             <div class="section-title">
