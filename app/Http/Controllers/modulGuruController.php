@@ -1375,7 +1375,7 @@ class modulGuruController extends Controller
 
     function tampilan_pengajuanGuru(){
         if (session("hasLogin")){
-            $data_pengajuan = pengajuan::all();
+            $data_pengajuan = pengajuan::where("guru_id",session('id'))->get();
             return view("modul/guru/g/pengajuan",[
                 "data_pengajuan" => $data_pengajuan,
             ]);

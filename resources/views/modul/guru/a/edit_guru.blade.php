@@ -108,191 +108,195 @@
                 </div>
                 
                 @if (session('role') == "a")
-                    <!-- SECTION 3: JABATAN & PENUGASAN -->
-                    <div class="form-section">
-                        <div class="section-title">
-                            <i class="fa-solid fa-briefcase"></i> Status & Peran Guru
-                        </div>
-
-                        <div class="checkbox-grid">
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="guru_tetap" value="{{ $data_guru->guru_tetap ? 1 : 0 }}" {{ $data_guru->guru_tetap ? 'checked' : '' }}>
-                                <span>Guru Tetap</span>
-
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="guru_honor" value="{{ $data_guru->guru_honor ? 1 : 0 }}" {{ $data_guru->guru_honor ? 'checked' : '' }}>
-                                <span>Guru Honor</span>
-                            </label>
-
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="pengampu_tahfiz" value="{{ $data_guru->pengampu_tahfiz ? 1 : 0 }}" {{ $data_guru->pengampu_tahfiz ? 'checked' : '' }}>
-                                <span>Pengampu Tahfiz</span>
-                            </label>
-
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="koordinator_tahfiz" value="{{ $data_guru->koordinator_tahfiz ? 1 : 0 }}" {{ $data_guru->koordinator_tahfiz ? 'checked' : '' }}>
-                                <span>Koordinator Tahfiz</span>
-                            </label>
-
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="kepala_sekolah" value="{{ $data_guru->kepala_sekolah ? 1 : 0 }}" {{ $data_guru->kepala_sekolah ? 'checked' : '' }}>
-                                <span>Kepala Sekolah</span>
-                            </label>
-
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="wakil_sekolah" value="{{ $data_guru->wakil_sekolah ? 1 : 0 }}" {{ $data_guru->wakil_sekolah ? 'checked' : '' }}>
-                                <span>Wakil Kepala Sekolah</span>
-                            </label>
-
-                            <label class="checkbox-card">
-                                <input type="checkbox" name="asisten" value="{{ $data_guru->ast_krk ? 1 : 0 }}" {{ $data_guru->ast_krk ? 'checked' : '' }}>
-                                <span>Asisten Kurikulum</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- SECTION 4: CABANG & SEKOLAH -->
-                    <div class="form-section">
-                        <div class="section-title">
-                            <i class="fa-solid fa-school"></i> Penempatan Unit
-                        </div>
-
-                        <div class="form-grid">
-                            <!-- Cabang ID -->
-                            <div class="form-group">
-                                <label for="cabang_id">Cabang Unit</label>
-                                <select id="cabang_id" name="cabang_id" class="form-control" required>
-                                    <option value="">-- Pilih Cabang --</option>
-                                    @if(isset($data_cabang))
-                                        @foreach ($data_cabang as $cb)
-                                            <option value="{{ $cb->id }}" {{ $cb->id == ($data_guru->cabang_id ?? '') ? 'selected' : '' }}>{{ $cb->nama_cabang }}</option>
-                                        @endforeach
-                                    @else
-                                        <option value="1" selected>Cabang Pusat - Jakarta</option>
-                                        <option value="2">Cabang Cabang 2 - Bandung</option>
-                                    @endif
-                                </select>
+                    @if (!$data_guru->bendahara && !data_guru->operator && !$data_guru->satpam)
+                        <!-- SECTION 3: JABATAN & PENUGASAN -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fa-solid fa-briefcase"></i> Status & Peran Guru
                             </div>
 
-                            <!-- Sekolah ID -->
-                            <div class="form-group">
-                                <label for="sekolah_id">Unit Sekolah</label>
-                                <select id="sekolah_id" name="sekolah_id" class="form-control" required>
-                                    <option value="">-- Pilih Sekolah --</option>
-                                    @if(isset($data_jenis_sekolah))
-                                        @foreach ($data_jenis_sekolah as $djs)
-                                            <option value="{{ $djs->id }}" {{ $djs->id == ($data_guru->sekolah_id ?? '') ? 'selected' : '' }}>{{ $djs->jenis }}</option>
-                                        @endforeach
-                                    @else
-                                        <option value="1" selected>SMP Tahfiz</option>
-                                        <option value="2">SMA Tahfiz</option>
-                                    @endif
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SECTION 5: TUGAS WALI KELAS -->
-                    <div class="form-section">
-                        <div class="section-title">
-                            <i class="fa-solid fa-user-graduate"></i> Penugasan Wali Kelas
-                        </div>
-
-                        <div class="form-grid">
-                            <!-- Checkbox Status Wali Kelas -->
-                            <div class="form-group">
+                            <div class="checkbox-grid">
                                 <label class="checkbox-card">
-                                    <input type="checkbox" id="is_wali_kelas" name="is_wali_kelas" value="1" {{ ($cek_wallas ?? true) ? 'checked' : '' }}>
-                                    <span>Bertugas Sebagai Wali Kelas</span>
+                                    <input type="checkbox" name="guru_tetap" value="{{ $data_guru->guru_tetap ? 1 : 0 }}" {{ $data_guru->guru_tetap ? 'checked' : '' }}>
+                                    <span>Guru Tetap</span>
+
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="guru_honor" value="{{ $data_guru->guru_honor ? 1 : 0 }}" {{ $data_guru->guru_honor ? 'checked' : '' }}>
+                                    <span>Guru Honor</span>
+                                </label>
+
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="pengampu_tahfiz" value="{{ $data_guru->pengampu_tahfiz ? 1 : 0 }}" {{ $data_guru->pengampu_tahfiz ? 'checked' : '' }}>
+                                    <span>Pengampu Tahfiz</span>
+                                </label>
+
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="koordinator_tahfiz" value="{{ $data_guru->koordinator_tahfiz ? 1 : 0 }}" {{ $data_guru->koordinator_tahfiz ? 'checked' : '' }}>
+                                    <span>Koordinator Tahfiz</span>
+                                </label>
+
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="kepala_sekolah" value="{{ $data_guru->kepala_sekolah ? 1 : 0 }}" {{ $data_guru->kepala_sekolah ? 'checked' : '' }}>
+                                    <span>Kepala Sekolah</span>
+                                </label>
+
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="wakil_sekolah" value="{{ $data_guru->wakil_sekolah ? 1 : 0 }}" {{ $data_guru->wakil_sekolah ? 'checked' : '' }}>
+                                    <span>Wakil Kepala Sekolah</span>
+                                </label>
+
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="asisten" value="{{ $data_guru->ast_krk ? 1 : 0 }}" {{ $data_guru->ast_krk ? 'checked' : '' }}>
+                                    <span>Asisten Kurikulum</span>
                                 </label>
                             </div>
-
-                            <!-- Select Pilihan Kelas -->
-                            <div class="form-group">
-                                <label for="kelas_id">Pilih Kelas Binaan</label>
-                                <select id="kelas_id" name="kelas" class="form-control">
-                                    <option value="">-- Pilih Kelas --</option>
-                                    @foreach ($data_ruang_kelas as $ruang)
-                                        @foreach ($ruang as $value)
-                                            <option value="{{ $value}}" {{ $value == ($nama_kelas ?? '') ? 'selected' : '' }}>{{ $value }}</option>
-                                        @endforeach
-                                    @endforeach
-                                </select>
-                            </div>
                         </div>
-                    </div>
-                @endif
 
-                <!-- SECTION 6: JADWAL PIKET (DENGAN DATA DUMMY) -->
-                <div class="form-section">
-                    <div class="section-title section-title-flex">
-                        <span><i class="fa-solid fa-calendar-days"></i> Jadwal Piket Guru</span>
-                        <button type="button" class="btn-add-piket" id="btnAddPiket">
-                            <i class="fa-solid fa-plus"></i> Tambah Piket
-                        </button>
-                    </div>
+                        <!-- SECTION 4: CABANG & SEKOLAH -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fa-solid fa-school"></i> Penempatan Unit
+                            </div>
 
-                    <div id="piketContainer" class="piket-container">
-
-                        @foreach($data_piket as $piket)
-                            <div class="piket-item">
-                                <div class="form-group flex-1">
-                                    <label>nama piket</label>
-                                    <input type="text" name="piket_nama[]" class="form-control" value="{{ $piket->nama }}" required>
-                                </div>
-                                <div class="form-group flex-1">
-                                    <label>Hari Piket</label>
-
-                                    <select name="piket_hari[]" class="form-control" required>
-                                        @php
-                                            Carbon\Carbon::setlocale("id");
-                                        @endphp
-                                        <option value="">-- Pilih Hari --</option>
-
-                                        <option value="Senin" {{ $piket->hari == 'Senin' ? 'selected' : '' }}>
-                                            Senin
-                                        </option>
-
-                                        <option value="Selasa" {{ $piket->hari == 'Selasa' ? 'selected' : '' }}>
-                                            Selasa
-                                        </option>
-
-                                        <option value="Rabu" {{ $piket->hari == 'Rabu' ? 'selected' : '' }}>
-                                            Rabu
-                                        </option>
-
-                                        <option value="Kamis" {{ $piket->hari == 'Kamis' ? 'selected' : '' }}>
-                                            Kamis
-                                        </option>
-
-                                        <option value="Jumat" {{ $piket->hari == 'Jumat' ? 'selected' : '' }}>
-                                            Jumat
-                                        </option>
-
-                                        <option value="Sabtu" {{ $piket->hari == 'Sabtu' ? 'selected' : '' }}>
-                                            Sabtu
-                                        </option>
-
-                                        <option value="Minggu" {{ $piket->hari == 'Minggu' ? 'selected' : '' }}>
-                                            Minggu
-                                        </option>
+                            <div class="form-grid">
+                                <!-- Cabang ID -->
+                                <div class="form-group">
+                                    <label for="cabang_id">Cabang Unit</label>
+                                    <select id="cabang_id" name="cabang_id" class="form-control" required>
+                                        <option value="">-- Pilih Cabang --</option>
+                                        @if(isset($data_cabang))
+                                            @foreach ($data_cabang as $cb)
+                                                <option value="{{ $cb->id }}" {{ $cb->id == ($data_guru->cabang_id ?? '') ? 'selected' : '' }}>{{ $cb->nama_cabang }}</option>
+                                            @endforeach
+                                        @else
+                                            <option value="1" selected>Cabang Pusat - Jakarta</option>
+                                            <option value="2">Cabang Cabang 2 - Bandung</option>
+                                        @endif
                                     </select>
                                 </div>
-                                <div class="form-group flex-1">
-                                    <label>Waktu Piket (Jam & Menit)</label>
-                                    <input type="time" name="piket_waktu[]" class="form-control" value="{{ $piket->jam }}" required>
-                                </div>
-                                <button type="button" class="btn-remove-piket btnRemovePiket" title="Hapus Piket">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-                        @endforeach
-                    </div>
 
-                    <p id="emptyPiketNote" class="text-muted-note" style="display: none;">
-                        Belum ada jadwal piket ditambahkan. Klik tombol <strong>+ Tambah Piket</strong> di atas.
-                    </p>
-                </div>
+                                <!-- Sekolah ID -->
+                                <div class="form-group">
+                                    <label for="sekolah_id">Unit Sekolah</label>
+                                    <select id="sekolah_id" name="sekolah_id" class="form-control" required>
+                                        <option value="">-- Pilih Sekolah --</option>
+                                        @if(isset($data_jenis_sekolah))
+                                            @foreach ($data_jenis_sekolah as $djs)
+                                                <option value="{{ $djs->id }}" {{ $djs->id == ($data_guru->sekolah_id ?? '') ? 'selected' : '' }}>{{ $djs->jenis }}</option>
+                                            @endforeach
+                                        @else
+                                            <option value="1" selected>SMP Tahfiz</option>
+                                            <option value="2">SMA Tahfiz</option>
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 5: TUGAS WALI KELAS -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fa-solid fa-user-graduate"></i> Penugasan Wali Kelas
+                            </div>
+
+                            <div class="form-grid">
+                                <!-- Checkbox Status Wali Kelas -->
+                                <div class="form-group">
+                                    <label class="checkbox-card">
+                                        <input type="checkbox" id="is_wali_kelas" name="is_wali_kelas" value="1" {{ ($cek_wallas ?? true) ? 'checked' : '' }}>
+                                        <span>Bertugas Sebagai Wali Kelas</span>
+                                    </label>
+                                </div>
+
+                                <!-- Select Pilihan Kelas -->
+                                <div class="form-group">
+                                    <label for="kelas_id">Pilih Kelas Binaan</label>
+                                    <select id="kelas_id" name="kelas" class="form-control">
+                                        <option value="">-- Pilih Kelas --</option>
+                                        @foreach ($data_ruang_kelas as $ruang)
+                                            @foreach ($ruang as $value)
+                                                <option value="{{ $value}}" {{ $value == ($nama_kelas ?? '') ? 'selected' : '' }}>{{ $value }}</option>
+                                            @endforeach
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @endif
+                
+                @if (!$data_guru->bendahara && !$data_guru->operator && !data_guru->satpam)
+                    <!-- SECTION 6: JADWAL PIKET (DENGAN DATA DUMMY) -->
+                    <div class="form-section">
+                        <div class="section-title section-title-flex">
+                            <span><i class="fa-solid fa-calendar-days"></i> Jadwal Piket Guru</span>
+                            <button type="button" class="btn-add-piket" id="btnAddPiket">
+                                <i class="fa-solid fa-plus"></i> Tambah Piket
+                            </button>
+                        </div>
+
+                        <div id="piketContainer" class="piket-container">
+
+                            @foreach($data_piket as $piket)
+                                <div class="piket-item">
+                                    <div class="form-group flex-1">
+                                        <label>nama piket</label>
+                                        <input type="text" name="piket_nama[]" class="form-control" value="{{ $piket->nama }}" required>
+                                    </div>
+                                    <div class="form-group flex-1">
+                                        <label>Hari Piket</label>
+
+                                        <select name="piket_hari[]" class="form-control" required>
+                                            @php
+                                                Carbon\Carbon::setlocale("id");
+                                            @endphp
+                                            <option value="">-- Pilih Hari --</option>
+
+                                            <option value="Senin" {{ $piket->hari == 'Senin' ? 'selected' : '' }}>
+                                                Senin
+                                            </option>
+
+                                            <option value="Selasa" {{ $piket->hari == 'Selasa' ? 'selected' : '' }}>
+                                                Selasa
+                                            </option>
+
+                                            <option value="Rabu" {{ $piket->hari == 'Rabu' ? 'selected' : '' }}>
+                                                Rabu
+                                            </option>
+
+                                            <option value="Kamis" {{ $piket->hari == 'Kamis' ? 'selected' : '' }}>
+                                                Kamis
+                                            </option>
+
+                                            <option value="Jumat" {{ $piket->hari == 'Jumat' ? 'selected' : '' }}>
+                                                Jumat
+                                            </option>
+
+                                            <option value="Sabtu" {{ $piket->hari == 'Sabtu' ? 'selected' : '' }}>
+                                                Sabtu
+                                            </option>
+
+                                            <option value="Minggu" {{ $piket->hari == 'Minggu' ? 'selected' : '' }}>
+                                                Minggu
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group flex-1">
+                                        <label>Waktu Piket (Jam & Menit)</label>
+                                        <input type="time" name="piket_waktu[]" class="form-control" value="{{ $piket->jam }}" required>
+                                    </div>
+                                    <button type="button" class="btn-remove-piket btnRemovePiket" title="Hapus Piket">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <p id="emptyPiketNote" class="text-muted-note" style="display: none;">
+                            Belum ada jadwal piket ditambahkan. Klik tombol <strong>+ Tambah Piket</strong> di atas.
+                        </p>
+                    </div>
+                @endif
 
                 <!-- TOMBOL SIMPAN -->
                 <div class="form-actions">

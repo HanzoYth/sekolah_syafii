@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Data Guru - EduHRIS</title>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo e(asset('css/modul/guru/kelola_data_guru.css')); ?>?v=<?php echo e(time()); ?>">
+</head>
+<body>
+
+<div class="dashboard-container">
+    <!-- TEMPAT SIDEBAR -->
+    <?php if (isset($component)) { $__componentOriginale234f8d1d87fff37708f17b59eb20f90 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale234f8d1d87fff37708f17b59eb20f90 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.sidebar_guru','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('sidebar_guru'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale234f8d1d87fff37708f17b59eb20f90)): ?>
+<?php $attributes = $__attributesOriginale234f8d1d87fff37708f17b59eb20f90; ?>
+<?php unset($__attributesOriginale234f8d1d87fff37708f17b59eb20f90); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale234f8d1d87fff37708f17b59eb20f90)): ?>
+<?php $component = $__componentOriginale234f8d1d87fff37708f17b59eb20f90; ?>
+<?php unset($__componentOriginale234f8d1d87fff37708f17b59eb20f90); ?>
+<?php endif; ?>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-wrapper">
+        <!-- TOPBAR HEADER -->
+        <?php if(session("role") == "a"): ?>
+            <header class="topbar">
+                <div class="topbar-title">
+                    <div class="title-with-date">
+                        <h2>Kelola Data Guru</h2>
+                        <span class="date-badge">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span id="currentDateText">Loading...</span>
+                        </span>
+                    </div>
+                    <p>Kelola data induk, status keaktifan, dan informasi pengajar</p>
+                </div>
+            </header>
+        <?php else: ?>
+            <header class="topbar">
+                <div class="topbar-title">
+                    <div class="title-with-date">
+                        <h2>Jadwal Piket Guru</h2>
+                        <span class="date-badge">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span id="currentDateText">Loading...</span>
+                        </span>
+                    </div>
+                    <p>Kelola Dan Atur Jadwal Piket Guru</p>
+                </div>
+            </header>
+        <?php endif; ?>
+
+        <!-- CARD KATEGORI (BARU) -->
+        <section class="card category-card">
+            <div class="category-tabs" id="categoryTabs">
+                <button type="button" class="category-tab active" data-kategori="guru">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span>Guru</span>
+                </button>
+                <button type="button" class="category-tab" data-kategori="bendahara">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>Bendahara</span>
+                </button>
+                <button type="button" class="category-tab" data-kategori="satpam">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Satpam</span>
+                </button>
+                <button type="button" class="category-tab" data-kategori="operator">
+                    <i class="fa-solid fa-computer"></i>
+                    <span>Operator</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- CARD FILTER -->
+        <section class="card filter-card">
+            <form action="#" method="GET" class="filter-form" id="filterForm">
+                <div class="form-group">
+                    <label for="searchGuru">Cari Nama Guru / NIG</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="searchGuru" name="search" placeholder="Masukkan nama atau NIG guru..." autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="btn-filter">
+                        <i class="fa-solid fa-filter"></i>
+                        <span>Tampilkan</span>
+                    </button>
+                    <button type="button" class="btn-reset" id="btnResetFilter">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Reset</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- CARD TABEL DATA GURU -->
+        <section class="card table-card">
+            <div class="card-header">
+                <h3>Daftar Tenaga Pengajar</h3>
+                <span class="total-badge" id="totalBadge">Total: 4 Guru</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th width="60">No</th>
+                            <th>Nama Guru</th>
+                            <?php if(session("role") == "a"): ?>
+                                <th>NIG</th>
+                                <th>Kode Identitas</th>
+                                <th>Jenis Sekolah</th>
+                            <?php endif; ?>
+                            <th class="text-center">Status</th>
+                            <th class="text-center" width="160">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="guruTableBody">
+                        <!-- BARIS 1 -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- MODAL CONFIRMATION NONAKTIFKAN GURU -->
+<div class="modal-overlay" id="deactivateModal">
+    <div class="modal-card">
+        <div class="modal-icon warning">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div class="modal-body">
+            <h3>Konfirmasi Nonaktifkan</h3>
+            <p>Apakah Anda yakin ingin menonaktifkan akun guru <strong id="modalTeacherName">-</strong>?</p>
+            <p class="modal-subtext">Guru yang dinonaktifkan tidak akan memiliki akses lagi ke sistem EduHRIS.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-modal-cancel" id="btnCancelModal">Batal</button>
+            <button class="btn-modal-confirm" id="btnConfirmDeactivate">Ya, Nonaktifkan</button>
+        </div>
+    </div>
+</div>
+<?php if (isset($component)) { $__componentOriginal0681b545d180d4f9d8ad2ed4614031e2 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2 = $attributes; } ?>
+<?php $component = App\View\Components\Warning::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('warning'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\Warning::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2)): ?>
+<?php $attributes = $__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2; ?>
+<?php unset($__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal0681b545d180d4f9d8ad2ed4614031e2)): ?>
+<?php $component = $__componentOriginal0681b545d180d4f9d8ad2ed4614031e2; ?>
+<?php unset($__componentOriginal0681b545d180d4f9d8ad2ed4614031e2); ?>
+<?php endif; ?>
+<!-- JAVASCRIPT LOGIC -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- 1. TAMPILKAN TANGGAL OTOMATIS ---
+        const dateElement = document.getElementById('currentDateText');
+        const today = new Date();
+        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        dateElement.textContent = today.toLocaleDateString('id-ID', options);
+
+        // --- 1B. LOGIC TAB KATEGORI (BARU, tampilan saja) ---
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        let activeCategory = 'guru';
+
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', function () {
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                tampilkanData(this.dataset.kategori);
+            });
+        });
+
+        function tampilkanData(kategori){
+            let tempat = document.getElementById("guruTableBody");
+            const totalBadge = document.getElementById("totalBadge");
+            const label = kategori.charAt(0).toUpperCase() + kategori.slice(1);
+
+            tempat.innerHTML = ''; // kosongkan dulu supaya tidak menumpuk
+
+            fetch(`/gr/ambgr/${kategori}`)
+            .then(res => {
+                if (!res.ok) throw new Error("Gagal Ambil Data");
+                return res.json();
+            })
+            .then(data => {
+                if (!data || data.length == 0){
+                    tempat.innerHTML = `<tr><td colspan="7" class="text-center">Belum ada data</td></tr>`;
+                    totalBadge.textContent = `Total: 0 ${label}`;
+                    return;
+                }
+
+                totalBadge.textContent = `Total: ${data.length} ${label}`;
+                let no = 0;
+
+                data.forEach(item => {
+                    const fotoUrl = "<?php echo e(route('file.show', ['path' => '__PATH__'])); ?>"
+                        .replace('__PATH__', item.url_foto);
+                    no++;
+
+                    let newData = `
+                        <tr data-id="${item.id}" data-nama="${item.nama}">
+                            <td>${no}</td>
+                            <td>
+                                <div class="teacher-profile">
+                                    <div class="avatar-circle">
+                                        <img src="${fotoUrl}" alt="">
+                                    </div>
+                                    <div class="teacher-detail">
+                                        <strong>${item.nama}</strong>
+                                        <?php if(session("role") == "a"): ?>
+                                            <small>${item.get_user.email}</small>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </td>
+                            <?php if(session("role") == "a"): ?>
+                                <td><span class="nig-badge">${item.nig}</span></td>
+                                <td><span class="nig-badge">${item.get_user.identitas.identitas}</span></td>
+                                <td><span class="school-tag sma">${item.get_sekolah.jenis}</span></td>
+                            <?php endif; ?>
+                            <td class="text-center">
+                                ${item.get_user.aktif
+                                    ? `<span class="status-badge status-active">
+                                        <i class="fa-solid fa-circle-check"></i> Aktif
+                                    </span>`
+                                    : `<span class="status-badge status-inactive">
+                                        <i class="fa-solid fa-circle-xmark"></i> Non Aktif
+                                    </span>`
+                                }
+                            </td>
+                            <td class="text-center">
+                                <div class="action-buttons">
+                                    ${item.get_user.aktif
+                                        ? `<a href="/gr/edgr/${item.id}" class="btn-action btn-edit" title="Edit Data">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </a>
+                                        <?php if(session("role") == "a"): ?>
+                                            <button class="btn-action btn-deactivate btn-trigger-modal" title="Nonaktifkan Guru" data-akun-guru="${item.get_user.id}">
+                                                <i class="fa-solid fa-user-xmark"></i>
+                                            </button>
+                                        <?php endif; ?>`
+                                        : `<button class="btn-action btn-deactivate" title="Guru Sudah Non-Aktif" disabled>
+                                            <i class="fa-solid fa-user-xmark"></i>
+                                        </button>`
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    tempat.insertAdjacentHTML('beforeend', newData);
+                });
+            })
+            .catch(err => {
+                console.error(err);
+            });
+        }
+
+        tampilkanData(activeCategory);
+
+        // --- 2. LOGIC FILTER DATA GURU ---
+        const filterForm = document.getElementById('filterForm');
+        const searchInput = document.getElementById('searchGuru');
+        const btnReset = document.getElementById('btnResetFilter');
+        const tableRows = document.querySelectorAll('#guruTableBody tr');
+
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = searchInput.value.toLowerCase().trim();
+
+            tableRows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        btnReset.addEventListener('click', function() {
+            searchInput.value = '';
+            tableRows.forEach(row => row.style.display = '');
+        });
+
+        // --- 3. LOGIC MODAL KONFIRMASI NONAKTIFKAN ---
+        const modal = document.getElementById('deactivateModal');
+        const modalTeacherName = document.getElementById('modalTeacherName');
+        const btnCancelModal = document.getElementById('btnCancelModal');
+        const btnConfirmDeactivate = document.getElementById('btnConfirmDeactivate');
+        let selectedRow = null;
+        let selectedId = null;
+
+        // Buka modal saat tombol nonaktifkan diklik
+        document.querySelectorAll('.btn-trigger-modal').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                selectedRow = row;
+                const teacherName = row.getAttribute('data-nama');
+
+
+                selectedId = button.getAttribute('data-akun-guru');
+                console.log(selectedId);
+                modalTeacherName.textContent = teacherName;
+                modal.classList.add('active');
+            });
+        });
+
+        // Tutup Modal
+        function closeModal() {
+            modal.classList.remove('active');
+            // selectedId = null;
+            selectedRow = null;
+        }
+
+        btnCancelModal.addEventListener('click', closeModal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+        });
+
+        // Eksekusi Nonaktifkan Guru
+        btnConfirmDeactivate.addEventListener('click', function() {
+            if (selectedRow) {
+                const statusCell = selectedRow.querySelector('.status-badge');
+                const actionBtn = selectedRow.querySelector('.btn-trigger-modal');
+
+                // Ubah Tampilan Status secara langsung
+                statusCell.className = 'status-badge status-inactive';
+                statusCell.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Non-Aktif';
+
+                // Disable tombol nonaktifkan
+                actionBtn.classList.remove('btn-trigger-modal');
+                actionBtn.disabled = true;
+                actionBtn.title = "Guru Sudah Non-Aktif";
+
+                closeModal();
+            }
+        });
+        document.querySelector(".btn-modal-confirm").addEventListener("click",() => {
+            console.log(selectedId);
+            if (selectedId != null) {
+                window.location.href = "/reg/nakt/"+parseInt(selectedId);
+            }
+        })
+    }); 
+</script>
+
+</body>
+</html><?php /**PATH C:\laragon\www\project_sekolah\sekolah_syafii\resources\views/modul/guru/a/kelola_data_guru.blade.php ENDPATH**/ ?>
