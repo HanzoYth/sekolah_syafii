@@ -95,13 +95,6 @@
                     </div>
                 </section>
 
-                @if(session('success_tahun'))
-                    <div class="alert-toast"><i class="fa-solid fa-circle-check"></i> {{ session('success_tahun') }}</div>
-                @endif
-                @if(session('success_jam'))
-                    <div class="alert-toast"><i class="fa-solid fa-circle-check"></i> {{ session('success_jam') }}</div>
-                @endif
-
                 <!-- BAGIAN TAHUN AJARAN -->
                 <section class="students-card" style="margin-bottom: 40px;">
                     <div class="card-header">
@@ -124,32 +117,34 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($data_tahun as $index => $t)
-                                    <tr>
-                                        <td class="number-column">{{ $index + 1 }}</td>
-                                        <td><strong>{{ $t->nama }}</strong></td>
-                                        <td>{{ \Carbon\Carbon::parse($t->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($t->tanggal_selesai)->format('d M Y') }}</td>
-                                        <td>
-                                            @if($t->aktif)
-                                                <span class="status-badge active"><i class="fa-solid fa-check"></i> Aktif</span>
-                                            @else
-                                                <span class="status-badge inactive"><i class="fa-solid fa-xmark"></i> Non-Aktif</span>
-                                            @endif
-                                        </td>
-                                        <td class="action-column">
-                                            <div class="action-btns" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
-                                                <button class="btn-action-icon btn-action-edit" onclick="openEditTahun({{ $t->id }}, '{{ $t->nama }}', '{{ $t->tanggal_mulai }}', '{{ $t->tanggal_selesai }}', {{ $t->aktif ? 'true' : 'false' }})">
-                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                </button>
-                                                <button class="btn-action-icon btn-action-delete" onclick="openDeleteTahun({{ $t->id }}, '{{ $t->nama }}')">
-                                                    <i class="fa-solid fa-trash-can"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr class="empty-row"><td colspan="5"><i class="fa-solid fa-folder-open"></i> Belum ada data Tahun Ajaran.</td></tr>
-                                @endforelse
+                                @if(count($data_tahun) > 0)
+                                    @foreach($data_tahun as $index => $t)
+                                        <tr>
+                                            <td class="number-column">{{ $index + 1 }}</td>
+                                            <td><strong>{{ $t->nama }}</strong></td>
+                                            <td>{{ \Carbon\Carbon::parse($t->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($t->tanggal_selesai)->format('d M Y') }}</td>
+                                            <td>
+                                                @if($t->aktif)
+                                                    <span class="status-badge active"><i class="fa-solid fa-check"></i> Aktif</span>
+                                                @else
+                                                    <span class="status-badge inactive"><i class="fa-solid fa-xmark"></i> Non-Aktif</span>
+                                                @endif
+                                            </td>
+                                            <td class="action-column">
+                                                <div class="action-btns" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
+                                                    <button class="btn-action-icon btn-action-edit" onclick="openEditTahun({{ $t->id }}, '{{ $t->nama }}', '{{ $t->tanggal_mulai }}', '{{ $t->tanggal_selesai }}', {{ $t->aktif ? 'true' : 'false' }})">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                    </button>
+                                                    <button class="btn-action-icon btn-action-delete" onclick="openDeleteTahun({{ $t->id }}, '{{ $t->nama }}')">
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr class="empty-row"><td colspan="4"><i class="fa-solid fa-folder-open"></i> Belum ada data Tahun Ajaran.</td></tr>
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -170,33 +165,33 @@
                             <thead>
                                 <tr>
                                     <th class="number-column">No.</th>
-                                    <th>Nama Jam</th>
                                     <th>Waktu Mulai</th>
                                     <th>Waktu Selesai</th>
                                     <th class="action-column">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($data_jam as $index => $j)
-                                    <tr>
-                                        <td class="number-column">{{ $index + 1 }}</td>
-                                        <td><strong>{{ $j->nama_jam }}</strong></td>
-                                        <td><i class="fa-regular fa-clock" style="color:var(--student-muted)"></i> {{ $j->jam_mulai }}</td>
-                                        <td><i class="fa-regular fa-clock" style="color:var(--student-muted)"></i> {{ $j->jam_selesai }}</td>
-                                        <td class="action-column">
-                                            <div class="action-btns" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
-                                                <button class="btn-action-icon btn-action-edit" onclick="openEditJam({{ $j->id }}, '{{ $j->nama_jam }}', '{{ $j->jam_mulai }}', '{{ $j->jam_selesai }}')">
-                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                </button>
-                                                <button class="btn-action-icon btn-action-delete" onclick="openDeleteJam({{ $j->id }}, '{{ $j->nama_jam }}')">
-                                                    <i class="fa-solid fa-trash-can"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr class="empty-row"><td colspan="5"><i class="fa-solid fa-folder-open"></i> Belum ada data Jam Pelajaran.</td></tr>
-                                @endforelse
+                                @if(count($data_jam) > 0)
+                                    @foreach($data_jam as $index => $j)
+                                        <tr>
+                                            <td class="number-column">{{ $index + 1 }}</td>
+                                            <td><i class="fa-regular fa-clock" style="color:var(--student-muted)"></i> {{ $j->jam_mulai }}</td>
+                                            <td><i class="fa-regular fa-clock" style="color:var(--student-muted)"></i> {{ $j->jam_selesai }}</td>
+                                            <td class="action-column">
+                                                <div class="action-btns" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
+                                                    <button class="btn-action-icon btn-action-edit" onclick="openEditJam({{ $j->id }}, '{{ $j->jam_mulai }}', '{{ $j->jam_selesai }}')">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                    </button>
+                                                    <button class="btn-action-icon btn-action-delete" onclick="openDeleteJam({{ $j->id }}, '{{ $j->jam_mulai }} - {{ $j->jam_selesai }}')">
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr class="empty-row"><td colspan="4"><i class="fa-solid fa-folder-open"></i> Belum ada data Jam Pelajaran.</td></tr>
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -278,10 +273,7 @@
             <h3>Tambah Jam Pelajaran</h3>
             <form action="/sk/simpan-jam-pelajaran" method="POST">
                 @csrf
-                <div class="form-group">
-                    <label>Nama Jam (Contoh: Jam Ke-1)</label>
-                    <input type="text" name="nama_jam" class="custom-input" required>
-                </div>
+                
                 <div class="form-group" style="display:flex; gap:10px;">
                     <div style="flex:1;">
                         <label>Jam Mulai</label>
@@ -307,10 +299,7 @@
             <h3>Edit Jam Pelajaran</h3>
             <form id="editJamForm" method="POST">
                 @csrf
-                <div class="form-group">
-                    <label>Nama Jam</label>
-                    <input type="text" name="nama_jam" id="ejNama" class="custom-input" required>
-                </div>
+                
                 <div class="form-group" style="display:flex; gap:10px;">
                     <div style="flex:1;">
                         <label>Jam Mulai</label>
@@ -364,9 +353,8 @@
             openModal('editTahunModal');
         }
 
-        function openEditJam(id, nama, mulai, selesai) {
+        function openEditJam(id, mulai, selesai) {
             document.getElementById('editJamForm').action = "/sk/update-jam-pelajaran/" + id;
-            document.getElementById('ejNama').value = nama;
             document.getElementById('ejMulai').value = mulai;
             document.getElementById('ejSelesai').value = selesai;
             openModal('editJamModal');

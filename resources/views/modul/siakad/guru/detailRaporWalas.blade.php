@@ -44,25 +44,27 @@
             </thead>
             <tbody>
                 @php $i = 1; @endphp
-                @forelse($rekap_nilai as $mapel => $data)
-                    @php 
-                        $na = $data['nilai_akhir']; 
-                        $predikat = 'D';
-                        if($na >= 90) $predikat = 'A';
-                        elseif($na >= 80) $predikat = 'B';
-                        elseif($na >= 70) $predikat = 'C';
-                    @endphp
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #cbd5e1;">{{ $i++ }}</td>
-                        <td style="padding: 10px; border: 1px solid #cbd5e1; text-align: left;">{{ $mapel }}</td>
-                        <td style="padding: 10px; border: 1px solid #cbd5e1; font-weight: bold;">{{ number_format($na, 1) }}</td>
-                        <td style="padding: 10px; border: 1px solid #cbd5e1;">{{ $predikat }}</td>
-                    </tr>
-                @empty
+                @if(count($rekap_nilai) > 0)
+                    @foreach($rekap_nilai as $mapel => $data)
+                        @php 
+                            $na = $data['nilai_akhir']; 
+                            $predikat = 'D';
+                            if($na >= 90) $predikat = 'A';
+                            elseif($na >= 80) $predikat = 'B';
+                            elseif($na >= 70) $predikat = 'C';
+                        @endphp
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #cbd5e1;">{{ $i++ }}</td>
+                            <td style="padding: 10px; border: 1px solid #cbd5e1; text-align: left;">{{ $mapel }}</td>
+                            <td style="padding: 10px; border: 1px solid #cbd5e1; font-weight: bold;">{{ number_format($na, 1) }}</td>
+                            <td style="padding: 10px; border: 1px solid #cbd5e1;">{{ $predikat }}</td>
+                        </tr>
+                    @endforeach
+                @else
                     <tr>
                         <td colspan="4" style="padding: 20px; border: 1px solid #cbd5e1;">Belum ada nilai yang diinput.</td>
                     </tr>
-                @endforelse
+                @endif
             </tbody>
         </table>
 

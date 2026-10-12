@@ -1,15 +1,8 @@
-﻿<x-siakad-layout 
+<x-siakad-layout 
     title="Kelola Kelas" 
     description="Buat dan manajemen ruang kelas untuk tahun ajaran berjalan." 
     position="Administrator" 
     initials="AD">
-
-    @if(session('success'))
-        <x-siakad.ui.alert type="success" message="{{ session('success') }}" />
-    @endif
-    @if(session('error'))
-        <x-siakad.ui.alert type="error" message="{{ session('error') }}" />
-    @endif
 
     <div style="display: grid; grid-template-columns: 350px 1fr; gap: 24px;">
         
@@ -69,31 +62,33 @@
                     </tr>
                 </x-slot>
 
-                @forelse($data_kelas as $index => $k)
-                    <tr>
-                        <td style="text-align: center;">{{ $index + 1 }}</td>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="width: 32px; height: 32px; border-radius: 6px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fa-solid fa-chalkboard-user"></i>
+                @if(count($data_kelas) > 0)
+                    @foreach($data_kelas as $index => $k)
+                        <tr>
+                            <td style="text-align: center;">{{ $index + 1 }}</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="width: 32px; height: 32px; border-radius: 6px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fa-solid fa-chalkboard-user"></i>
+                                    </div>
+                                    <strong>{{ $k->nama_kelas }}</strong>
                                 </div>
-                                <strong>{{ $k->nama_kelas }}</strong>
-                            </div>
-                        </td>
-                        <td style="text-align: center;">
-                            <button onclick="deleteKelas({{ $k->id }})" style="background: #f8e9e9; color: #b34d4d; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Hapus Kelas">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </td>
-                    </tr>
-                @empty
+                            </td>
+                            <td style="text-align: center;">
+                                <button onclick="deleteKelas({{ $k->id }})" style="background: #f8e9e9; color: #b34d4d; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Hapus Kelas">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    @endforeach
+                @else
                     <tr>
                         <td colspan="3" style="text-align: center; padding: 40px; color: #64748b;">
                             <i class="fa-solid fa-folder-open" style="font-size: 32px; margin-bottom: 12px; display: block; color: #cbd5e1;"></i>
                             Belum ada ruang kelas yang dibuat.
                         </td>
                     </tr>
-                @endforelse
+                @endif
             </x-siakad.ui.table>
         </div>
     </div>

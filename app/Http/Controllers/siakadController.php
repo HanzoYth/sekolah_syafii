@@ -98,15 +98,26 @@ class siakadController extends Controller
     // MANAJEMEN KENAIKAN KELAS & KELULUSAN (ADMIN)
     // ==========================================
     public function kenaikanKelasAdmin(Request $request) {
+        $sekolah_id = $request->query('sekolah_id');
         $kelas_id = $request->input('kelas_id');
-        $data_kelas = \App\Models\ruang_kelas::orderBy('nama_ruang')->get();
+        
+        $kelas_query = \App\Models\ruang_kelas::orderBy('nama_ruang');
+        if ($sekolah_id) {
+            $jenis = \App\Models\jenis_sekolah::find($sekolah_id);
+            if ($jenis) {
+                $prefix = strtoupper($jenis->jenis);
+                $kelas_query->where('nama_ruang', 'like', $prefix . ' %');
+            }
+        }
+        $data_kelas = $kelas_query->get();
         
         $siswa = collect();
         if ($kelas_id) {
             $siswa = \App\Models\siswa::where('kelas_id', $kelas_id)->where('aktif', 1)->orderBy('nama')->get();
         }
 
-        return view('modul.siakad.admin.kenaikanKelas', compact('data_kelas', 'siswa', 'kelas_id'));
+        $data_sekolah = \App\Models\jenis_sekolah::all();
+        return view('modul.siakad.admin.kenaikanKelas', compact('data_kelas', 'siswa', 'kelas_id', 'data_sekolah', 'sekolah_id'));
     }
 
     public function prosesKenaikanKelas(Request $request) {
@@ -135,11 +146,22 @@ class siakadController extends Controller
     // MANAJEMEN PEMBAGIAN KELAS (ROMBEL)
     // ==========================================
     public function pembagianKelas(Request $request) {
+        $sekolah_id = $request->query('sekolah_id');
         $kelas_id = $request->query('kelas_id');
-        $data_kelas = \App\Models\ruang_kelas::orderBy('nama_ruang')->get();
         
-        // Siswa yang belum punya kelas
-        $siswa_belum_ada_kelas = \App\Models\siswa::whereNull('kelas_id')->orderBy('nama')->get();
+        $kelas_query = \App\Models\ruang_kelas::orderBy('nama_ruang');
+        $siswa_query = \App\Models\siswa::whereNull('kelas_id')->orderBy('nama');
+
+        if ($sekolah_id) {
+            $jenis = \App\Models\jenis_sekolah::find($sekolah_id);
+            if ($jenis) {
+                $prefix = strtoupper($jenis->jenis);
+                $kelas_query->where('nama_ruang', 'like', $prefix . ' %');
+            }
+            $siswa_query->where('sekolah_id', $sekolah_id);
+        }
+        $data_kelas = $kelas_query->get();
+        $siswa_belum_ada_kelas = $siswa_query->get();
         
         $kelas_terpilih = null;
         $siswa_kelas_ini = collect();
@@ -151,7 +173,8 @@ class siakadController extends Controller
             }
         }
         
-        return view('modul.siakad.admin.pembagianKelas', compact('data_kelas', 'siswa_belum_ada_kelas', 'kelas_terpilih', 'siswa_kelas_ini', 'kelas_id'));
+        $data_sekolah = \App\Models\jenis_sekolah::all();
+        return view('modul.siakad.admin.pembagianKelas', compact('data_kelas', 'siswa_belum_ada_kelas', 'kelas_terpilih', 'siswa_kelas_ini', 'kelas_id', 'data_sekolah', 'sekolah_id'));
     }
 
     public function simpanPembagianKelas(Request $request) {
@@ -248,6 +271,16 @@ class siakadController extends Controller
     }
    
     function tambah_kelas(){
+       // Sinkronisasi otomatis dari Modul Guru (ruang_kelas) ke tabel kelas SIAKAD
+       $ruang_kelas_all = \App\Models\ruang_kelas::all();
+       foreach($ruang_kelas_all as $rk) {
+           if (!\App\Models\kelas::where('nama_kelas', $rk->nama_ruang)->exists()) {
+               \App\Models\kelas::create([
+                   'nama_kelas' => $rk->nama_ruang
+               ]);
+           }
+       }
+
        $data_kelas = \App\Models\kelas::all();
        return view("/modul/siakad/admin/tambahKelas", compact('data_kelas'));
     }
@@ -280,7 +313,12 @@ class siakadController extends Controller
         if ($jadwal_id) {
             $jadwal_terpilih = \App\Models\jadwal_pelajaran::find($jadwal_id);
             if ($jadwal_terpilih && $jadwal_terpilih->guru_id == $guru_id) {
-                $siswa = \App\Models\siswa::where('kelas_id', $jadwal_terpilih->kelas_id)->orderBy('nama')->get();
+                // Sinkronisasi kelas ke ruang_kelas
+                $nama_kelas = $jadwal_terpilih->kelas->nama_kelas ?? '';
+                $ruang_kelas = \App\Models\ruang_kelas::where('nama_ruang', $nama_kelas)->first();
+                $ruang_kelas_id = $ruang_kelas ? $ruang_kelas->id : $jadwal_terpilih->kelas_id;
+
+                $siswa = \App\Models\siswa::where('kelas_id', $ruang_kelas_id)->orderBy('nama')->get();
                 $absensi_db = \App\Models\absensi_siswa::where('jadwal_pelajaran_id', $jadwal_id)
                     ->where('tanggal', $tanggal)
                     ->get()
@@ -483,9 +521,15 @@ class siakadController extends Controller
         return back()->with("success","pembayaran berhasil dihapus");
     }
 
-    function tampian_daftarSiswa(){
-        $data_siswa = siswa::all();
-        return view ('/modul/siakad/admin/daftar_siswa',compact("data_siswa"));
+    function tampian_daftarSiswa(Request $request){
+        $sekolah_id = $request->query('sekolah_id');
+        $query = siswa::query();
+        if ($sekolah_id) {
+            $query->where('sekolah_id', $sekolah_id);
+        }
+        $data_siswa = $query->get();
+        $data_sekolah = \App\Models\jenis_sekolah::all();
+        return view ('/modul/siakad/admin/daftar_siswa',compact("data_siswa", "data_sekolah", "sekolah_id"));
     }
 
     function tampilan_detailSiswa($id){
@@ -582,8 +626,12 @@ class siakadController extends Controller
         
         if ($wallas && $wallas->ruangKelas) {
             $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->get();
+            // Sinkronisasi kelas dan ruang_kelas berdasarkan nama
+            $kelas = \App\Models\kelas::where('nama_kelas', $wallas->ruangKelas->nama_ruang)->first();
+            $kelas_id_jadwal = $kelas ? $kelas->id : $wallas->kelas_id;
+
             $jadwal_mingguan = \App\Models\jadwal_pelajaran::with(['guru', 'mata_pelajaran', 'jam_pelajaran'])
-                ->where('kelas_id', $wallas->kelas_id)
+                ->where('kelas_id', $kelas_id_jadwal)
                 ->get()
                 ->sortBy(function($j) {
                     return $j->jam_pelajaran->jam_mulai;
@@ -603,7 +651,12 @@ class siakadController extends Controller
         $tanggal = $request->input('tanggal', date('Y-m-d'));
         $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->orderBy('nama')->get();
         
-        $absensi_db = \App\Models\absensi_siswa::where('kelas_id', $wallas->kelas_id)
+        // Sinkronisasi dengan tabel kelas
+        $nama_kelas = $wallas->ruangKelas->nama_ruang ?? '';
+        $kelas = \App\Models\kelas::where('nama_kelas', $nama_kelas)->first();
+        $kelas_id_absensi = $kelas ? $kelas->id : $wallas->kelas_id;
+
+        $absensi_db = \App\Models\absensi_siswa::where('kelas_id', $kelas_id_absensi)
                         ->whereDate('tanggal', $tanggal)
                         ->get()->keyBy('siswa_id');
 
@@ -620,19 +673,24 @@ class siakadController extends Controller
 
     public function simpanAbsensiWalas(Request $request) {
         $guru_id = session('id');
-        $wallas = \App\Models\wallas::where('guru_id', $guru_id)->first();
+        $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
         if (!$wallas) return redirect()->back();
 
         $tanggal = $request->input('tanggal');
         $status_absen = $request->input('status', []); // array siswa_id => status
         $keterangan = $request->input('keterangan', []); // array siswa_id => keterangan
 
+        // Sinkronisasi dengan tabel kelas
+        $nama_kelas = $wallas->ruangKelas->nama_ruang ?? '';
+        $kelas = \App\Models\kelas::where('nama_kelas', $nama_kelas)->first();
+        $kelas_id_absensi = $kelas ? $kelas->id : $wallas->kelas_id;
+
         foreach ($status_absen as $siswa_id => $status) {
             \App\Models\absensi_siswa::updateOrCreate(
                 [
                     'tanggal' => $tanggal,
                     'siswa_id' => $siswa_id,
-                    'kelas_id' => $wallas->kelas_id
+                    'kelas_id' => $kelas_id_absensi
                 ],
                 [
                     'status' => $status,
@@ -701,15 +759,34 @@ class siakadController extends Controller
 
 
     function kelolaJadwalAdmin(Request $request) {
-        $data_kelas = \App\Models\kelas::all();
+        $sekolah_id = $request->query('sekolah_id');
+        $data_sekolah = \App\Models\jenis_sekolah::all();
+
+        $kelas_query = \App\Models\kelas::query();
+        $mapel_query = \App\Models\mata_pelajaran::query();
+        $jadwal_query = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'guru', 'jam_pelajaran', 'tahun_ajaran'])->orderBy('hari');
+
+        if ($sekolah_id) {
+            $jenis = \App\Models\jenis_sekolah::find($sekolah_id);
+            if ($jenis) {
+                $prefix = strtoupper($jenis->jenis);
+                $kelas_query->where('nama_kelas', 'like', $prefix . ' %');
+                $jadwal_query->whereHas('kelas', function($q) use ($prefix) {
+                    $q->where('nama_kelas', 'like', $prefix . ' %');
+                });
+            }
+            $mapel_query->where('sekolah_id', $sekolah_id);
+        }
+
+        $data_kelas = $kelas_query->get();
+        $data_mapel = $mapel_query->get();
+        $data_jadwal = $jadwal_query->get();
+        
         $data_guru = \App\Models\guru::all();
-        $data_mapel = \App\Models\mata_pelajaran::all();
         $data_jam = \App\Models\jam_pelajaran::orderBy('jam_mulai')->get();
         $data_tahun = \App\Models\tahun_ajaran::all();
-        $data_jadwal = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'guru', 'jam_pelajaran', 'tahun_ajaran'])
-            ->orderBy('hari')
-            ->get();
-        return view('/modul/siakad/admin/kelolaJadwal', compact('data_kelas', 'data_guru', 'data_mapel', 'data_jam', 'data_tahun', 'data_jadwal'));
+        
+        return view('/modul/siakad/admin/kelolaJadwal', compact('data_kelas', 'data_guru', 'data_mapel', 'data_jam', 'data_tahun', 'data_jadwal', 'data_sekolah', 'sekolah_id'));
     }
 
     function simpanJadwalAdmin(Request $request) {
@@ -733,13 +810,22 @@ class siakadController extends Controller
     }
 
     function kelolaMapel(Request $request) {
-        $data_mapel = \App\Models\mata_pelajaran::all();
-        return view('/modul/siakad/admin/kelolaMapel', compact('data_mapel'));
+        $sekolah_id = $request->query('sekolah_id');
+        $query = \App\Models\mata_pelajaran::query();
+        if ($sekolah_id) {
+            $query->where('sekolah_id', $sekolah_id);
+        }
+        $data_mapel = $query->get();
+        $data_sekolah = \App\Models\jenis_sekolah::all();
+        return view('/modul/siakad/admin/kelolaMapel', compact('data_mapel', 'data_sekolah', 'sekolah_id'));
     }
 
     function simpanMapel(Request $request) {
-        $request->validate(['nama_mapel' => 'required']);
-        \App\Models\mata_pelajaran::create(['nama_mapel' => $request->nama_mapel]);
+        $request->validate(['nama_mapel' => 'required', 'sekolah_id' => 'required']);
+        \App\Models\mata_pelajaran::create([
+            'nama_mapel' => $request->nama_mapel,
+            'sekolah_id' => $request->sekolah_id
+        ]);
         return back()->with('success', 'Mata Pelajaran berhasil ditambahkan.');
     }
 
@@ -750,12 +836,16 @@ class siakadController extends Controller
 
     function editMapel($id) {
         $mapel = \App\Models\mata_pelajaran::findOrFail($id);
-        return view('/modul/siakad/admin/editMapel', compact('mapel'));
+        $data_sekolah = \App\Models\jenis_sekolah::all();
+        return view('/modul/siakad/admin/editMapel', compact('mapel', 'data_sekolah'));
     }
 
     function updateMapel(Request $request, $id) {
-        $request->validate(['nama_mapel' => 'required']);
-        \App\Models\mata_pelajaran::findOrFail($id)->update(['nama_mapel' => $request->nama_mapel]);
+        $request->validate(['nama_mapel' => 'required', 'sekolah_id' => 'required']);
+        \App\Models\mata_pelajaran::findOrFail($id)->update([
+            'nama_mapel' => $request->nama_mapel,
+            'sekolah_id' => $request->sekolah_id
+        ]);
         return redirect('/sk/kelola-mapel')->with('success', 'Mata Pelajaran berhasil diperbarui.');
     }
 
@@ -815,7 +905,7 @@ class siakadController extends Controller
             'tanggal_selesai' => $request->tanggal_selesai,
             'aktif' => $request->has('aktif') ? 1 : 0
         ]);
-        return redirect()->back()->with('success_tahun', 'Tahun Ajaran baru berhasil ditambahkan.');
+        return redirect()->back()->with('success', 'Tahun Ajaran baru berhasil ditambahkan.');
     }
 
     public function updateTahunAjaran(Request $request, $id) {
@@ -830,17 +920,17 @@ class siakadController extends Controller
             'tanggal_selesai' => $request->tanggal_selesai,
             'aktif' => $request->has('aktif') ? 1 : 0
         ]);
-        return redirect()->back()->with('success_tahun', 'Tahun Ajaran berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Tahun Ajaran berhasil diperbarui.');
     }
 
     public function hapusTahunAjaran($id) {
         \App\Models\tahun_ajaran::findOrFail($id)->delete();
-        return redirect()->back()->with('success_tahun', 'Tahun Ajaran berhasil dihapus.');
+        return redirect()->back()->with('success', 'Tahun Ajaran berhasil dihapus.');
     }
 
     public function simpanJamPelajaran(Request $request) {
         $request->validate([
-            'nama_jam' => 'required',
+            
             'jam_mulai' => 'required',
             'jam_selesai' => 'required'
         ]);
@@ -849,12 +939,12 @@ class siakadController extends Controller
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai
         ]);
-        return redirect()->back()->with('success_jam', 'Jam Pelajaran baru berhasil ditambahkan.');
+        return redirect()->back()->with('success', 'Jam Pelajaran baru berhasil ditambahkan.');
     }
 
     public function updateJamPelajaran(Request $request, $id) {
         $request->validate([
-            'nama_jam' => 'required',
+            
             'jam_mulai' => 'required',
             'jam_selesai' => 'required'
         ]);
@@ -863,22 +953,40 @@ class siakadController extends Controller
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai
         ]);
-        return redirect()->back()->with('success_jam', 'Jam Pelajaran berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Jam Pelajaran berhasil diperbarui.');
     }
 
     public function hapusJamPelajaran($id) {
         \App\Models\jam_pelajaran::findOrFail($id)->delete();
-        return redirect()->back()->with('success_jam', 'Jam Pelajaran berhasil dihapus.');
+        return redirect()->back()->with('success', 'Jam Pelajaran berhasil dihapus.');
     }
 
     // ==========================================
     // KELOLA WALI KELAS (ADMIN)
     // ==========================================
-    public function kelolaWaliKelas() {
-        $data_wallas = \App\Models\wallas::with(['guru', 'ruangKelas'])->get();
+    public function kelolaWaliKelas(Request $request) {
+        $sekolah_id = $request->query('sekolah_id');
+        
+        $wallas_query = \App\Models\wallas::with(['guru', 'ruangKelas']);
+        $kelas_query = \App\Models\ruang_kelas::orderBy('nama_ruang');
+
+        if ($sekolah_id) {
+            $jenis = \App\Models\jenis_sekolah::find($sekolah_id);
+            if ($jenis) {
+                $prefix = strtoupper($jenis->jenis);
+                $kelas_query->where('nama_ruang', 'like', $prefix . ' %');
+                $wallas_query->whereHas('ruangKelas', function($q) use ($prefix) {
+                    $q->where('nama_ruang', 'like', $prefix . ' %');
+                });
+            }
+        }
+        
+        $data_wallas = $wallas_query->get();
+        $data_kelas = $kelas_query->get();
         $data_guru = \App\Models\guru::all();
-        $data_kelas = \App\Models\ruang_kelas::orderBy('nama_ruang')->get();
-        return view('modul.siakad.admin.kelolaWallas', compact('data_wallas', 'data_guru', 'data_kelas'));
+        $data_sekolah = \App\Models\jenis_sekolah::all();
+
+        return view('modul.siakad.admin.kelolaWallas', compact('data_wallas', 'data_guru', 'data_kelas', 'data_sekolah', 'sekolah_id'));
     }
 
     public function simpanWaliKelas(Request $request) {

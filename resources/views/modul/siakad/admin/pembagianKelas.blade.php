@@ -1,18 +1,30 @@
-﻿<x-siakad-layout 
+<x-siakad-layout 
     title="Pembagian Kelas Siswa" 
     description="Atur penempatan siswa ke dalam ruang kelas masing-masing." 
     position="Administrator" 
     initials="AD">
 
-    @if(session('success'))
-        <x-siakad.ui.alert type="success" message="{{ session('success') }}" />
-    @endif
-    @if(session('error'))
-        <x-siakad.ui.alert type="error" message="{{ session('error') }}" />
-    @endif
-
     <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px;">
+            <div style="font-size: 18px; font-weight: bold; color: #1e293b; display: flex; align-items: center; gap: 15px;">
+                <span><i class="fa-solid fa-users-cog"></i> Pembagian Kelas</span>
+                <form action="" method="GET" style="display: flex; align-items: center;">
+                    <input type="hidden" name="kelas_id" value="{{ $kelas_id }}">
+                    <div style="position: relative; display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 4px 12px; gap: 8px;">
+                        <i class="fa-solid fa-filter" style="color: #64748b; font-size: 14px;"></i>
+                        <select name="sekolah_id" onchange="this.form.submit()" style="background: transparent; border: none; outline: none; font-size: 14px; color: #334155; font-weight: 600; cursor: pointer; padding-right: 8px;">
+                            <option value="">Semua Jenjang</option>
+                            @foreach($data_sekolah as $s)
+                                <option value="{{ $s->id }}" {{ ($sekolah_id ?? '') == $s->id ? 'selected' : '' }}>{{ strtoupper($s->jenis) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <form method="GET" action="/sk/pembagian-kelas" style="display: flex; gap: 15px; align-items: flex-end;">
+            <input type="hidden" name="sekolah_id" value="{{ $sekolah_id ?? '' }}">
             <div style="flex: 1;">
                 <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Pilih Ruang Kelas</label>
                 <select name="kelas_id" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
@@ -43,20 +55,22 @@
                 <input type="hidden" name="kelas_id" value="{{ $kelas_id }}">
                 
                 <div style="max-height: 400px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                    @forelse($siswa_belum_ada_kelas as $s)
-                        <label style="display: flex; align-items: center; gap: 12px; padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                            <input type="checkbox" name="siswa_ids[]" value="{{ $s->id }}" style="width: 18px; height: 18px; accent-color: #166534;">
-                            <div>
-                                <strong style="display: block; color: #1e293b;">{{ $s->nama }}</strong>
-                                <span style="font-size: 12px; color: #64748b;">NIS: {{ $s->nis }}</span>
-                            </div>
-                        </label>
-                    @empty
+                    @if(count($siswa_belum_ada_kelas) > 0)
+                        @foreach($siswa_belum_ada_kelas as $s)
+                            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                                <input type="checkbox" name="siswa_ids[]" value="{{ $s->id }}" style="width: 18px; height: 18px; accent-color: #166534;">
+                                <div>
+                                    <strong style="display: block; color: #1e293b;">{{ $s->nama }}</strong>
+                                    <span style="font-size: 12px; color: #64748b;">NIS: {{ $s->nis }}</span>
+                                </div>
+                            </label>
+                        @endforeach
+                    @else
                         <div style="padding: 30px; text-align: center; color: #94a3b8;">
                             <i class="fa-solid fa-check-circle" style="font-size: 24px; margin-bottom: 10px; color: #cbd5e1; display: block;"></i>
                             Semua siswa sudah masuk kelas.
                         </div>
-                    @endforelse
+                    @endif
                 </div>
 
                 @if(count($siswa_belum_ada_kelas) > 0)
@@ -84,27 +98,29 @@
                         </tr>
                     </x-slot>
                     
-                    @forelse($siswa_di_kelas as $index => $s)
-                        <tr>
-                            <td style="text-align: center;">{{ $index + 1 }}</td>
-                            <td>
-                                <strong style="display: block; color: #1e293b;">{{ $s->nama }}</strong>
-                                <span style="font-size: 12px; color: #64748b;">NIS: {{ $s->nis }}</span>
-                            </td>
-                            <td style="text-align: center;">
-                                <a href="/sk/hapus-anggota-kelas/{{ $s->id }}" style="display: inline-flex; background: #f8e9e9; color: #b34d4d; border: none; width: 32px; height: 32px; border-radius: 8px; text-decoration: none; align-items: center; justify-content: center; transition: all 0.2s;" title="Keluarkan dari kelas">
-                                    <i class="fa-solid fa-user-xmark"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    @empty
+                    @if(count($siswa_di_kelas) > 0)
+                        @foreach($siswa_di_kelas as $index => $s)
+                            <tr>
+                                <td style="text-align: center;">{{ $index + 1 }}</td>
+                                <td>
+                                    <strong style="display: block; color: #1e293b;">{{ $s->nama }}</strong>
+                                    <span style="font-size: 12px; color: #64748b;">NIS: {{ $s->nis }}</span>
+                                </td>
+                                <td style="text-align: center;">
+                                    <a href="/sk/hapus-anggota-kelas/{{ $s->id }}" style="display: inline-flex; background: #f8e9e9; color: #b34d4d; border: none; width: 32px; height: 32px; border-radius: 8px; text-decoration: none; align-items: center; justify-content: center; transition: all 0.2s;" title="Keluarkan dari kelas">
+                                        <i class="fa-solid fa-user-xmark"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
                         <tr>
                             <td colspan="3" style="text-align: center; padding: 30px; color: #94a3b8;">
                                 <i class="fa-solid fa-users-slash" style="font-size: 24px; margin-bottom: 10px; color: #cbd5e1; display: block;"></i>
                                 Kelas ini masih kosong.
                             </td>
                         </tr>
-                    @endforelse
+                    @endif
                 </x-siakad.ui.table>
             </div>
         </div>

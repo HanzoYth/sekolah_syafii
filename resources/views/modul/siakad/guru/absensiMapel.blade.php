@@ -59,7 +59,10 @@
             <input type="hidden" name="tanggal" value="{{ $tanggal }}">
             <input type="hidden" name="jadwal_id" value="{{ $jadwal_id }}">
             
-            <x-siakad.ui.table :headers="['No', 'Nama Siswa', 'NIS', 'Status Kehadiran', 'Keterangan']">
+            @php
+                $tableHeaders = ['No', 'Nama Siswa', 'NIS', 'Status Kehadiran', 'Keterangan'];
+            @endphp
+            <x-siakad.ui.table :headers="$tableHeaders">
                 @if(count($siswa) > 0)
                     @foreach($siswa as $index => $s)
                         @php

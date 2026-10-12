@@ -1,15 +1,39 @@
-﻿<x-siakad-layout title="Kenaikan Kelas & Kelulusan" pageTitle="Kenaikan Kelas & Kelulusan" pageDescription="Pindahkan siswa ke kelas tingkat selanjutnya atau tetapkan kelulusan secara massal.">
+<x-siakad-layout title="Kenaikan Kelas & Kelulusan" pageTitle="Kenaikan Kelas & Kelulusan" pageDescription="Pindahkan siswa ke kelas tingkat selanjutnya atau tetapkan kelulusan secara massal.">
     
-    <div class="page-header" style="display: flex; gap: 15px; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 20px;">
-        <i class="fa-solid fa-graduation-cap" style="font-size: 24px; color: #0d5c3a;"></i>
-        <form method="GET" action="/sk/kenaikan-kelas" style="display: flex; gap: 10px; width: 100%; align-items: center;">
-            <strong style="white-space: nowrap;">Pilih Kelas Asal:</strong>
-            <select name="kelas_id" class="input-ket" style="width: 250px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;" onchange="this.form.submit()">
-                <option value="">-- Pilih Rombongan Belajar --</option>
-                @foreach($data_kelas as $k)
-                    <option value="{{ $k->id }}" {{ $kelas_id == $k->id ? 'selected' : '' }}>{{ $k->nama_ruang }}</option>
-                @endforeach
-            </select>
+    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px;">
+            <div style="font-size: 18px; font-weight: bold; color: #1e293b; display: flex; align-items: center; gap: 15px;">
+                <span><i class="fa-solid fa-graduation-cap" style="color: #0d5c3a;"></i> Kenaikan Kelas & Kelulusan</span>
+            </div>
+            
+            <form action="" method="GET" style="display: flex; align-items: center;">
+                <input type="hidden" name="kelas_id" value="{{ $kelas_id ?? '' }}">
+                <div style="position: relative; display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 4px 12px; gap: 8px;">
+                    <i class="fa-solid fa-filter" style="color: #64748b; font-size: 14px;"></i>
+                    <select name="sekolah_id" onchange="this.form.submit()" style="background: transparent; border: none; outline: none; font-size: 14px; color: #334155; font-weight: 600; cursor: pointer; padding-right: 8px;">
+                        <option value="">Semua Jenjang</option>
+                        @foreach($data_sekolah as $s)
+                            <option value="{{ $s->id }}" {{ ($sekolah_id ?? '') == $s->id ? 'selected' : '' }}>{{ strtoupper($s->jenis) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <form method="GET" action="/sk/kenaikan-kelas" style="display: flex; gap: 15px; align-items: flex-end;">
+            <input type="hidden" name="sekolah_id" value="{{ $sekolah_id ?? '' }}">
+            <div style="flex: 1;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Pilih Kelas Asal</label>
+                <select name="kelas_id" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
+                    <option value="">-- Pilih Rombongan Belajar --</option>
+                    @foreach($data_kelas as $k)
+                        <option value="{{ $k->id }}" {{ $kelas_id == $k->id ? 'selected' : '' }}>{{ $k->nama_ruang }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <button type="submit" style="padding: 10px 20px; border: none; background: #3875c5; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-filter"></i> Tampilkan
+            </button>
         </form>
     </div>
 
@@ -43,7 +67,10 @@
                     </div>
                 </div>
 
-                <x-siakad.ui.table :headers="['Pilih', 'NIS', 'Nama Siswa', 'Gender', 'Status']">
+                @php
+                    $tableHeaders = ['Pilih', 'NIS', 'Nama Siswa', 'Gender', 'Status'];
+                @endphp
+                <x-siakad.ui.table :headers="$tableHeaders">
                     <tr>
                         <td colspan="5" style="background: #f1f5f9; padding: 10px 16px;">
                             <label style="cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 10px;">

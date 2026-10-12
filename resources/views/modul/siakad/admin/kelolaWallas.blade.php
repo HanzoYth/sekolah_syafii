@@ -1,20 +1,25 @@
-﻿<x-siakad-layout 
+<x-siakad-layout 
     title="Kelola Wali Kelas" 
     description="Penugasan guru sebagai wali kelas untuk mendampingi ruang kelas tertentu." 
     position="Administrator" 
     initials="AD">
 
-    @if(session('success'))
-        <x-siakad.ui.alert type="success" message="{{ session('success') }}" />
-    @endif
-    @if(session('error'))
-        <x-siakad.ui.alert type="error" message="{{ session('error') }}" />
-    @endif
-
     <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px;">
-            <div style="font-size: 18px; font-weight: bold; color: #1e293b;">
-                <i class="fa-solid fa-users-rectangle"></i> Daftar Wali Kelas
+            <div style="font-size: 18px; font-weight: bold; color: #1e293b; display: flex; align-items: center; gap: 15px;">
+                <span><i class="fa-solid fa-users-rectangle"></i> Daftar Wali Kelas</span>
+                
+                <form action="" method="GET" style="display: flex; align-items: center;">
+                    <div style="position: relative; display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 4px 12px; gap: 8px;">
+                        <i class="fa-solid fa-filter" style="color: #64748b; font-size: 14px;"></i>
+                        <select name="sekolah_id" onchange="this.form.submit()" style="background: transparent; border: none; outline: none; font-size: 14px; color: #334155; font-weight: 600; cursor: pointer; padding-right: 8px;">
+                            <option value="">Semua Jenjang</option>
+                            @foreach($data_sekolah as $s)
+                                <option value="{{ $s->id }}" {{ ($sekolah_id ?? '') == $s->id ? 'selected' : '' }}>{{ strtoupper($s->jenis) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </form>
             </div>
             <button onclick="openModal('addModal')" style="background: #177455; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s;">
                 <i class="fa-solid fa-plus"></i> Tugaskan Wali Kelas
@@ -31,43 +36,45 @@
                 </tr>
             </x-slot>
 
-            @forelse($data_wallas as $index => $w)
-                <tr>
-                    <td style="text-align: center;">{{ $index + 1 }}</td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 40px; height: 40px; border-radius: 8px; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center;">
-                                <i class="fa-solid fa-user-tie"></i>
+            @if(count($data_wallas) > 0)
+                @foreach($data_wallas as $index => $w)
+                    <tr>
+                        <td style="text-align: center;">{{ $index + 1 }}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 40px; height: 40px; border-radius: 8px; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fa-solid fa-user-tie"></i>
+                                </div>
+                                <div>
+                                    <strong style="display: block; color: #1e293b;">{{ $w->guru->nama ?? '-' }}</strong>
+                                </div>
                             </div>
-                            <div>
-                                <strong style="display: block; color: #1e293b;">{{ $w->guru->nama ?? '-' }}</strong>
+                        </td>
+                        <td>
+                            <span style="background: #e0f2fe; color: #0284c7; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 13px;">
+                                {{ $w->ruangKelas->nama_ruang ?? '-' }}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <div style="display: flex; gap: 8px; justify-content: center;">
+                                <button onclick="editWallas({{ $w->id }}, {{ $w->guru_id }}, {{ $w->kelas_id }})" style="background: #e9f2ff; color: #3875c5; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Edit Data">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button onclick="deleteWallas({{ $w->id }})" style="background: #f8e9e9; color: #b34d4d; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Hapus Data">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <span style="background: #e0f2fe; color: #0284c7; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 13px;">
-                            {{ $w->ruangKelas->nama_ruang ?? '-' }}
-                        </span>
-                    </td>
-                    <td style="text-align: center;">
-                        <div style="display: flex; gap: 8px; justify-content: center;">
-                            <button onclick="editWallas({{ $w->id }}, {{ $w->guru_id }}, {{ $w->kelas_id }})" style="background: #e9f2ff; color: #3875c5; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Edit Data">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                            <button onclick="deleteWallas({{ $w->id }})" style="background: #f8e9e9; color: #b34d4d; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Hapus Data">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            @empty
+                        </td>
+                    </tr>
+                @endforeach
+            @else
                 <tr>
                     <td colspan="4" style="text-align: center; padding: 40px; color: #64748b;">
                         <i class="fa-solid fa-folder-open" style="font-size: 32px; margin-bottom: 12px; display: block; color: #cbd5e1;"></i>
                         Belum ada data wali kelas yang ditugaskan.
                     </td>
                 </tr>
-            @endforelse
+            @endif
         </x-siakad.ui.table>
     </div>
 

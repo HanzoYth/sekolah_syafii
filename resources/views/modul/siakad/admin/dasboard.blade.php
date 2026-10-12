@@ -165,24 +165,26 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        @forelse ($kelasDenganSiswa as $kelas)
-                            <tr class="hover:bg-slate-50/50 transition-colors">
-                                <td class="px-6 py-4 text-sm font-medium text-slate-800">{{ $kelas->nama_ruang }}</td>
-                                <td class="px-6 py-4 text-sm text-slate-600">{{ number_format($kelas->jumlah_siswa) }} siswa</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">
-                                        <i class="fa-solid fa-circle-check mr-1.5"></i> Terdaftar
-                                    </span>
-                                </td>
-                            </tr>
-                        @empty
+                        @if(count($kelasDenganSiswa) > 0)
+                            @foreach ($kelasDenganSiswa as $kelas)
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="px-6 py-4 text-sm font-medium text-slate-800">{{ $kelas->nama_ruang }}</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600">{{ number_format($kelas->jumlah_siswa) }} siswa</td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">
+                                            <i class="fa-solid fa-circle-check mr-1.5"></i> Terdaftar
+                                        </span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @else
                             <tr>
                                 <td colspan="3" class="px-6 py-12 text-center text-slate-500">
                                     <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-3 block"></i>
                                     <p>Belum ada data kelas.</p>
                                 </td>
                             </tr>
-                        @endforelse
+                        @endif
                     </tbody>
                 </table>
             </div>

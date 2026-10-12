@@ -31,14 +31,19 @@ unset($__defined_vars, $__key, $__value); ?>
 <div style="overflow-x: auto; background: white; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 15px;">
     <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
         <thead>
-            <tr>
-                <?php $__currentLoopData = $headers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $header): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <th style="background: #f0fdf4; padding: 12px 16px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7;">
-                        <?php echo e($header); ?>
+            <?php if(isset($thead)): ?>
+                <?php echo e($thead); ?>
 
-                    </th>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </tr>
+            <?php else: ?>
+                <tr>
+                    <?php $__currentLoopData = $headers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $header): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <th style="background: #f0fdf4; padding: 12px 16px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7;">
+                            <?php echo e($header); ?>
+
+                        </th>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </tr>
+            <?php endif; ?>
         </thead>
         <tbody>
             <?php echo e($slot); ?>

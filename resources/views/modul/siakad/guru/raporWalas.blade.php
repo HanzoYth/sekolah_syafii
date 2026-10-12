@@ -3,7 +3,10 @@
         <h2 class="page-title"><i class="fa-solid fa-file-contract"></i> Daftar Siswa - {{ $wallas->ruangKelas->nama_ruang ?? 'Kelas' }}</h2>
     </div>
     
-    <x-siakad.ui.table :headers="['No', 'NIS', 'Nama Siswa', 'Gender', 'Aksi']">
+    @php
+        $tableHeaders = ['No', 'NIS', 'Nama Siswa', 'Gender', 'Aksi'];
+    @endphp
+    <x-siakad.ui.table :headers="$tableHeaders">
         @if(count($siswa) > 0)
             @foreach($siswa as $index => $s)
             <tr>

@@ -28,25 +28,27 @@
                 </tr>
             </x-slot>
 
-            @forelse($jadwal as $j)
-                <tr>
-                    <td>
-                        <span style="background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;">
-                            {{ ucfirst($j->hari) }}
-                        </span>
-                    </td>
-                    <td>{{ $j->jam_pelajaran->jam_mulai ?? '-' }} - {{ $j->jam_pelajaran->jam_selesai ?? '-' }}</td>
-                    <td><strong>{{ $j->mata_pelajaran->nama_mapel ?? '-' }}</strong></td>
-                    <td>{{ $j->guru->nama ?? '-' }}</td>
-                </tr>
-            @empty
+            @if(count($jadwal) > 0)
+                @foreach($jadwal as $j)
+                    <tr>
+                        <td>
+                            <span style="background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;">
+                                {{ ucfirst($j->hari) }}
+                            </span>
+                        </td>
+                        <td>{{ $j->jam_pelajaran->jam_mulai ?? '-' }} - {{ $j->jam_pelajaran->jam_selesai ?? '-' }}</td>
+                        <td><strong>{{ $j->mata_pelajaran->nama_mapel ?? '-' }}</strong></td>
+                        <td>{{ $j->guru->nama ?? '-' }}</td>
+                    </tr>
+                @endforeach
+            @else
                 <tr>
                     <td colspan="4" style="text-align: center; padding: 30px;">
                         <i class="fa-solid fa-calendar-xmark" style="font-size: 24px; color: #cbd5e1; margin-bottom: 10px; display: block;"></i>
                         Belum ada jadwal pelajaran yang diatur untuk kelas ini.
                     </td>
                 </tr>
-            @endforelse
+            @endif
         </x-siakad.ui.table>
     </div>
 </x-siakad-layout>

@@ -1,5 +1,7 @@
 <div>
     <!-- SIDEBAR COMPONENT -->
+    {{-- CSS khusus siakad --}}
+    <link rel="stylesheet" href="{{ asset('css/sidebar/sidebar_siakad.css') }}?v={{ time() }}">
 
     <!-- TOMBOL HAMBURGER (hanya tampil di mobile, via CSS) -->
     <button class="mobile-hamburger-btn" id="mobile-hamburger-btn" aria-label="Buka menu" aria-expanded="false" aria-controls="sidebar">
