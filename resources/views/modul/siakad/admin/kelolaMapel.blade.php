@@ -1,20 +1,24 @@
-﻿<x-siakad-layout 
+<x-siakad-layout 
     title="Kelola Mata Pelajaran" 
     description="Manajemen data mata pelajaran kurikulum" 
     position="Administrator" 
     initials="AD">
 
-    @if(session('success'))
-        <x-siakad.ui.alert type="success" message="{{ session('success') }}" />
-    @endif
-    @if(session('error'))
-        <x-siakad.ui.alert type="error" message="{{ session('error') }}" />
-    @endif
-
     <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px;">
-            <div style="font-size: 18px; font-weight: bold; color: #1e293b;">
-                <i class="fa-solid fa-book"></i> Daftar Mata Pelajaran
+            <div style="font-size: 18px; font-weight: bold; color: #1e293b; display: flex; align-items: center; gap: 15px;">
+                <span><i class="fa-solid fa-book"></i> Daftar Mata Pelajaran</span>
+                <form action="" method="GET" style="display: flex; align-items: center;">
+                    <div style="position: relative; display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 4px 12px; gap: 8px;">
+                        <i class="fa-solid fa-filter" style="color: #64748b; font-size: 14px;"></i>
+                        <select name="sekolah_id" onchange="this.form.submit()" style="background: transparent; border: none; outline: none; font-size: 14px; color: #334155; font-weight: 600; cursor: pointer; padding-right: 8px;">
+                            <option value="">Semua Jenjang</option>
+                            @foreach($data_sekolah as $s)
+                                <option value="{{ $s->id }}" {{ ($sekolah_id ?? '') == $s->id ? 'selected' : '' }}>{{ strtoupper($s->jenis) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </form>
             </div>
             <button onclick="openModal('addModal')" style="background: #177455; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s;">
                 <i class="fa-solid fa-plus"></i> Tambah Mapel
@@ -30,39 +34,41 @@
                 </tr>
             </x-slot>
 
-            @forelse($data_mapel as $index => $m)
-                <tr>
-                    <td style="text-align: center;">{{ $index + 1 }}</td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 40px; height: 40px; border-radius: 8px; background: #f1f5f3; color: #64748b; display: flex; align-items: center; justify-content: center;">
-                                <i class="fa-solid fa-book-open"></i>
+            @if(count($data_mapel) > 0)
+                @foreach($data_mapel as $index => $m)
+                    <tr>
+                        <td style="text-align: center;">{{ $index + 1 }}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 40px; height: 40px; border-radius: 8px; background: #f1f5f3; color: #64748b; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fa-solid fa-book-open"></i>
+                                </div>
+                                <div>
+                                    <strong style="display: block; color: #1e293b;">{{ $m->nama_mapel }}</strong>
+                                    <span style="font-size: 12px; color: #64748b;">ID: MAPEL-{{ str_pad($m->id, 3, '0', STR_PAD_LEFT) }}</span>
+                                </div>
                             </div>
-                            <div>
-                                <strong style="display: block; color: #1e293b;">{{ $m->nama_mapel }}</strong>
-                                <span style="font-size: 12px; color: #64748b;">ID: MAPEL-{{ str_pad($m->id, 3, '0', STR_PAD_LEFT) }}</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <div style="display: flex; gap: 8px; justify-content: center;">
+                                <button onclick="editMapel({{ $m->id }}, '{{ addslashes($m->nama_mapel) }}', '{{ $m->sekolah_id }}')" style="background: #e9f2ff; color: #3875c5; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Edit">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button onclick="deleteMapel({{ $m->id }}, '{{ addslashes($m->nama_mapel) }}')" style="background: #f8e9e9; color: #b34d4d; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Hapus">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
                             </div>
-                        </div>
-                    </td>
-                    <td style="text-align: center;">
-                        <div style="display: flex; gap: 8px; justify-content: center;">
-                            <button onclick="editMapel({{ $m->id }}, '{{ addslashes($m->nama_mapel) }}')" style="background: #e9f2ff; color: #3875c5; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Edit">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                            <button onclick="deleteMapel({{ $m->id }}, '{{ addslashes($m->nama_mapel) }}')" style="background: #f8e9e9; color: #b34d4d; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Hapus">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            @empty
+                        </td>
+                    </tr>
+                @endforeach
+            @else
                 <tr>
                     <td colspan="3" style="text-align: center; padding: 40px; color: #64748b;">
                         <i class="fa-solid fa-folder-open" style="font-size: 32px; margin-bottom: 12px; display: block; color: #cbd5e1;"></i>
                         Belum ada data mata pelajaran yang terdaftar.
                     </td>
                 </tr>
-            @endforelse
+            @endif
         </x-siakad.ui.table>
     </div>
 
@@ -70,6 +76,15 @@
     <x-siakad.ui.modal id="addModal" title="Tambah Mata Pelajaran" icon="fa-book-medical" iconColor="#166534" iconBg="#dcfce7">
         <form action="/sk/simpan-mapel" method="POST">
             @csrf
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Jenjang Sekolah</label>
+                <select name="sekolah_id" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
+                    <option value="">-- Pilih Jenjang --</option>
+                    @foreach($data_sekolah as $s)
+                        <option value="{{ $s->id }}">{{ strtoupper($s->jenis) }}</option>
+                    @endforeach
+                </select>
+            </div>
             <div style="margin-bottom: 20px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Nama Mata Pelajaran</label>
                 <input type="text" name="nama_mapel" required placeholder="Contoh: Pendidikan Agama Islam" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;" autocomplete="off">
@@ -85,6 +100,15 @@
     <x-siakad.ui.modal id="editModal" title="Edit Mata Pelajaran" icon="fa-pen-to-square" iconColor="#3875c5" iconBg="#e9f2ff">
         <form id="editForm" method="POST">
             @csrf
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Jenjang Sekolah</label>
+                <select name="sekolah_id" id="editSekolah" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
+                    <option value="">-- Pilih Jenjang --</option>
+                    @foreach($data_sekolah as $s)
+                        <option value="{{ $s->id }}">{{ strtoupper($s->jenis) }}</option>
+                    @endforeach
+                </select>
+            </div>
             <div style="margin-bottom: 20px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Nama Mata Pelajaran</label>
                 <input type="text" name="nama_mapel" id="editInput" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;" autocomplete="off">
@@ -114,9 +138,14 @@
             document.getElementById(id).style.display = 'none';
         }
 
-        function editMapel(id, nama) {
+        function editMapel(id, nama, sekolah_id) {
             document.getElementById('editForm').action = "/sk/update-mapel/" + id;
             document.getElementById('editInput').value = nama;
+            if (sekolah_id) {
+                document.getElementById('editSekolah').value = sekolah_id;
+            } else {
+                document.getElementById('editSekolah').value = "";
+            }
             openModal('editModal');
         }
 

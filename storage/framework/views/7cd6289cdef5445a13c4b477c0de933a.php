@@ -1,5 +1,7 @@
 <div>
     <!-- SIDEBAR COMPONENT -->
+    
+    <link rel="stylesheet" href="<?php echo e(asset('css/sidebar/sidebar_siakad.css')); ?>?v=<?php echo e(time()); ?>">
 
     <!-- TOMBOL HAMBURGER (hanya tampil di mobile, via CSS) -->
     <button class="mobile-hamburger-btn" id="mobile-hamburger-btn" aria-label="Buka menu" aria-expanded="false" aria-controls="sidebar">

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -62,25 +62,27 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($data_siswa as $index => $siswa)
-                            @php
-                                $data_kelas = App\Models\ruang_kelas::where("id",$siswa->kelas_id)->first();
-                                $namaKelas = $data_kelas->nama_ruang ?? '-';
-                            @endphp
-                            <tr data-student-row data-search="{{ strtolower($siswa->nama . ' ' . $siswa->nis . ' ' . $namaKelas) }}" data-kelas="{{ $namaKelas }}">
-                                <td>{{ $index + 1 }}</td>
-                                <td class="student-name">{{ $siswa->nama }}</td>
-                                <td>{{ $siswa->nis }}</td>
-                                <td><span class="class-pill">{{ $namaKelas }}</span></td>
-                                <td class="text-center">
-                                    <button type="button" class="btn-outline" onclick='openModalTagihan(@json($siswa->id), @json($siswa->nama), @json($siswa->nis))'>
-                                        <i class="fa-solid fa-file-invoice-dollar"></i> Buat Tagihan
-                                    </button>
-                                </td>
-                            </tr>
-                        @empty
+                        @if(count($data_siswa) > 0)
+                            @foreach($data_siswa as $index => $siswa)
+                                @php
+                                    $data_kelas = App\Models\ruang_kelas::where("id",$siswa->kelas_id)->first();
+                                    $namaKelas = $data_kelas->nama_ruang ?? '-';
+                                @endphp
+                                <tr data-student-row data-search="{{ strtolower($siswa->nama . ' ' . $siswa->nis . ' ' . $namaKelas) }}" data-kelas="{{ $namaKelas }}">
+                                    <td>{{ $index + 1 }}</td>
+                                    <td class="student-name">{{ $siswa->nama }}</td>
+                                    <td>{{ $siswa->nis }}</td>
+                                    <td><span class="class-pill">{{ $namaKelas }}</span></td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn-outline" onclick='openModalTagihan(@json($siswa->id), @json($siswa->nama), @json($siswa->nis))'>
+                                            <i class="fa-solid fa-file-invoice-dollar"></i> Buat Tagihan
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @else
                             <tr class="empty-row"><td colspan="5"><i class="fa-solid fa-users-slash"></i> Belum ada data siswa yang dapat ditampilkan.</td></tr>
-                        @endforelse
+                        @endif
                         <tr class="empty-row" id="filterEmpty" hidden><td colspan="5"><i class="fa-solid fa-magnifying-glass"></i> Siswa tidak ditemukan.</td></tr>
                     </tbody>
                 </table>

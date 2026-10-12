@@ -1,4 +1,4 @@
-﻿@php
+@php
     $totalSiswa = count($data_siswa);
     $siswaAktif = collect($data_siswa)->filter(fn ($siswa) => !isset($siswa->aktif) || (int) $siswa->aktif === 1)->count();
     $jumlahKelas = collect($data_siswa)->pluck('kelas_id')->filter()->unique()->count();
@@ -11,8 +11,19 @@
             <div style="font-size: 14px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
                 <i class="fa-solid fa-users"></i> Manajemen Akademik
             </div>
-            <div style="font-size: 18px; font-weight: bold; color: #1e293b;">
-                <i class="fa-solid fa-user-graduate"></i> Daftar Siswa
+            <div style="font-size: 18px; font-weight: bold; color: #1e293b; display: flex; align-items: center; gap: 15px;">
+                <span><i class="fa-solid fa-user-graduate"></i> Daftar Siswa</span>
+                <form action="" method="GET" style="display: flex; align-items: center;">
+                    <div style="position: relative; display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 4px 12px; gap: 8px;">
+                        <i class="fa-solid fa-filter" style="color: #64748b; font-size: 14px;"></i>
+                        <select name="sekolah_id" onchange="this.form.submit()" style="background: transparent; border: none; outline: none; font-size: 14px; color: #334155; font-weight: 600; cursor: pointer; padding-right: 8px;">
+                            <option value="">Semua Jenjang</option>
+                            @foreach($data_sekolah as $s)
+                                <option value="{{ $s->id }}" {{ ($sekolah_id ?? '') == $s->id ? 'selected' : '' }}>{{ strtoupper($s->jenis) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </form>
             </div>
             <div style="color: #64748b; font-size: 14px; margin-top: 4px;">
                 Temukan informasi siswa berdasarkan nama, NIS, jenis kelamin, atau kelas.
@@ -97,71 +108,73 @@
                 </tr>
             </thead>
             <tbody id="studentRows">
-                @forelse ($data_siswa as $index => $siswa)
-                    @php
-                        $kelas = App\Models\ruang_kelas::find($siswa->kelas_id);
-                        $isPerempuan = ($siswa->gender ?? '') === 'p';
-                        $isAktif = !isset($siswa->aktif) || (int) $siswa->aktif === 1;
-                        $kelasNama = $kelas->nama_ruang ?? '-';
-                    @endphp
-                    <tr data-student-row data-gender="{{ $siswa->gender ?? '' }}" data-search="{{ strtolower($siswa->nis . ' ' . $siswa->nama . ' ' . $kelasNama) }}">
-                        <td style="text-align: center;">{{ $index + 1 }}</td>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                @if ($siswa->url_foto)
-                                    <img src="{{ route('file.show', $siswa->url_foto) }}" alt="Foto {{ $siswa->nama }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0;">
-                                @else
-                                    <div style="width: 40px; height: 40px; border-radius: 50%; background: #f1f5f9; color: #94a3b8; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid #e2e8f0;">
-                                        <i class="fa-solid fa-user"></i>
+                @if(count($data_siswa) > 0)
+                    @foreach ($data_siswa as $index => $siswa)
+                        @php
+                            $kelas = App\Models\ruang_kelas::find($siswa->kelas_id);
+                            $isPerempuan = ($siswa->gender ?? '') === 'p';
+                            $isAktif = !isset($siswa->aktif) || (int) $siswa->aktif === 1;
+                            $kelasNama = $kelas->nama_ruang ?? '-';
+                        @endphp
+                        <tr data-student-row data-gender="{{ $siswa->gender ?? '' }}" data-search="{{ strtolower($siswa->nis . ' ' . $siswa->nama . ' ' . $kelasNama) }}">
+                            <td style="text-align: center;">{{ $index + 1 }}</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    @if ($siswa->url_foto)
+                                        <img src="{{ route('file.show', $siswa->url_foto) }}" alt="Foto {{ $siswa->nama }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0;">
+                                    @else
+                                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #f1f5f9; color: #94a3b8; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid #e2e8f0;">
+                                            <i class="fa-solid fa-user"></i>
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <div style="font-weight: 600; color: #1e293b; font-size: 14px;">{{ $siswa->nama }}</div>
+                                        <div style="font-size: 12px; color: #64748b;">NIS: {{ $siswa->nis }}</div>
                                     </div>
-                                @endif
-                                <div>
-                                    <div style="font-weight: 600; color: #1e293b; font-size: 14px;">{{ $siswa->nama }}</div>
-                                    <div style="font-size: 12px; color: #64748b;">NIS: {{ $siswa->nis }}</div>
                                 </div>
-                            </div>
-                        </td>
-                        <td>
-                            @if($isPerempuan)
-                                <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: #fce7f3; color: #be185d; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                                    <i class="fa-solid fa-venus"></i> Perempuan
+                            </td>
+                            <td>
+                                @if($isPerempuan)
+                                    <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: #fce7f3; color: #be185d; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                                        <i class="fa-solid fa-venus"></i> Perempuan
+                                    </span>
+                                @else
+                                    <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: #e9f2ff; color: #3875c5; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                                        <i class="fa-solid fa-mars"></i> Laki-laki
+                                    </span>
+                                @endif
+                            </td>
+                            <td>
+                                <span style="display: inline-block; padding: 4px 10px; background: #f1f5f9; color: #475569; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                                    {{ $kelasNama }}
                                 </span>
-                            @else
-                                <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: #e9f2ff; color: #3875c5; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                                    <i class="fa-solid fa-mars"></i> Laki-laki
-                                </span>
-                            @endif
-                        </td>
-                        <td>
-                            <span style="display: inline-block; padding: 4px 10px; background: #f1f5f9; color: #475569; border-radius: 6px; font-size: 12px; font-weight: 600;">
-                                {{ $kelasNama }}
-                            </span>
-                        </td>
-                        <td style="text-align: center;">
-                            @if($isAktif)
-                                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #dcfce7; color: #166534; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                                    <i class="fa-solid fa-circle-check"></i> Aktif
-                                </span>
-                            @else
-                                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #f3f4f6; color: #4b5563; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                                    <i class="fa-solid fa-circle-pause"></i> Nonaktif
-                                </span>
-                            @endif
-                        </td>
-                        <td style="text-align: center;">
-                            <a href="/sk/dls/{{ $siswa->id }}" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #f1f5f9; color: #475569; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
-                                <i class="fa-solid fa-eye"></i> Detail
-                            </a>
-                        </td>
-                    </tr>
-                @empty
+                            </td>
+                            <td style="text-align: center;">
+                                @if($isAktif)
+                                    <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #dcfce7; color: #166534; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                                        <i class="fa-solid fa-circle-check"></i> Aktif
+                                    </span>
+                                @else
+                                    <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #f3f4f6; color: #4b5563; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                                        <i class="fa-solid fa-circle-pause"></i> Nonaktif
+                                    </span>
+                                @endif
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="/sk/dls/{{ $siswa->id }}" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #f1f5f9; color: #475569; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+                                    <i class="fa-solid fa-eye"></i> Detail
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                @else
                     <tr>
                         <td colspan="6" style="text-align: center; padding: 40px 20px; color: #64748b;">
                             <i class="fa-solid fa-folder-open" style="font-size: 32px; margin-bottom: 12px; color: #cbd5e1;"></i>
                             <p style="margin: 0; font-size: 14px;">Belum ada data siswa yang dapat ditampilkan.</p>
                         </td>
                     </tr>
-                @endforelse
+                @endif
                 <tr id="filterEmpty" style="display: none;">
                     <td colspan="6" style="text-align: center; padding: 40px 20px; color: #64748b;">
                         <i class="fa-solid fa-magnifying-glass" style="font-size: 32px; margin-bottom: 12px; color: #cbd5e1;"></i>

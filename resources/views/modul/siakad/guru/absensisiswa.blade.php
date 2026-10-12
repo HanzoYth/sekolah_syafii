@@ -92,21 +92,14 @@
             @csrf
             <input type="hidden" name="tanggal" value="{{ $tanggal }}">
             
-            <x-siakad.ui.table>
-                <thead>
-                    <tr>
-                        <th style="width: 50px; text-align: center;">No</th>
-                        <th>Nama Siswa</th>
-                        <th style="width: 120px;">NIS</th>
-                        <th style="width: 320px;">Status Kehadiran</th>
-                        <th>Keterangan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if(count($siswa) > 0)
-                        @foreach($siswa as $index => $s)
-                            @php
-                                $absen = $absensi_db[$s->id] ?? null;
+            @php
+                $tableHeaders = ['No', 'Nama Siswa', 'NIS', 'Status Kehadiran', 'Keterangan'];
+            @endphp
+            <x-siakad.ui.table :headers="$tableHeaders">
+                @if(count($siswa) > 0)
+                    @foreach($siswa as $index => $s)
+                        @php
+                            $absen = $absensi_db[$s->id] ?? null;
                                 $status = $absen ? $absen->status : 'h'; // Default hadir
                                 $keterangan = $absen ? $absen->keterangan : '';
                             @endphp
@@ -143,7 +136,6 @@
                         </td>
                     </tr>
                     @endif
-                </tbody>
             </x-siakad.ui.table>
             
             @if(count($siswa) > 0)

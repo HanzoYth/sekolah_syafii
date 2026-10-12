@@ -1,12 +1,12 @@
 <link rel="stylesheet" href="{{asset('css/component/warning.css')}}?v={{ time() }}">
 <div>
-    @if(session('eror'))
+    @if(session('eror') || session('error'))
         <div class="alert alert-danger" id="errorToast">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
                 <div>
                     <p>
                         <i class="fas fa-exclamation-circle" style="color: #e63946;"></i> 
-                        {{ session('eror') }}
+                        {{ session('eror') ?? session('error') }}
                     </p>
                 </div>
                 <button type="button" onclick="closeToast()" style="background:none; border:none; color: var(--text-light); cursor:pointer; font-size:1.1rem; line-height:1;">&times;</button>

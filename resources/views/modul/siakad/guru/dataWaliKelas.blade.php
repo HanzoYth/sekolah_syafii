@@ -13,7 +13,10 @@
                 Rombongan Belajar: {{ $wallas->ruangKelas->nama_ruang ?? '-' }}
             </div>
             
-            <x-siakad.ui.table :headers="['No', 'NIS', 'Nama Lengkap', 'Jenis Kelamin', 'Status']">
+            @php
+                $tableHeadersSiswa = ['No', 'NIS', 'Nama Lengkap', 'Jenis Kelamin', 'Status'];
+            @endphp
+            <x-siakad.ui.table :headers="$tableHeadersSiswa">
                 @if(count($siswa) > 0)
                     @foreach($siswa as $s)
                     <tr>
@@ -47,13 +50,16 @@
             @foreach(['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'] as $hari)
                 @if(isset($jadwal_mingguan[$hari]) && $jadwal_mingguan[$hari]->count() > 0)
                     <h4 style="margin-top: 20px; color: #334155; font-size: 16px;"><i class="fa-solid fa-calendar-day" style="color: #177455; margin-right: 8px;"></i> Hari {{ ucfirst($hari) }}</h4>
-                    <x-siakad.ui.table :headers="['Jam', 'Waktu', 'Mata Pelajaran', 'Guru Pengajar']">
+                    @php
+                        $tableHeadersJadwal = ['Jam', 'Waktu', 'Mata Pelajaran', 'Guru Pengajar'];
+                    @endphp
+                    <x-siakad.ui.table :headers="$tableHeadersJadwal">
                         @foreach($jadwal_mingguan[$hari] as $j)
                             <tr>
-                                <td>{{ $j->jam_pelajaran->nama_jam }}</td>
-                                <td>{{ substr($j->jam_pelajaran->jam_mulai, 0, 5) }} - {{ substr($j->jam_pelajaran->jam_selesai, 0, 5) }}</td>
-                                <td><strong>{{ $j->mata_pelajaran->nama_pelajaran }}</strong></td>
-                                <td>{{ $j->guru->nama }}</td>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ substr($j->jam_pelajaran->jam_mulai ?? '-', 0, 5) }} - {{ substr($j->jam_pelajaran->jam_selesai ?? '-', 0, 5) }}</td>
+                                <td><strong>{{ $j->mata_pelajaran->nama_mapel ?? '-' }}</strong></td>
+                                <td>{{ $j->guru->nama ?? '-' }}</td>
                             </tr>
                         @endforeach
                     </x-siakad.ui.table>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo e($title ?? 'SIAKAD'); ?></title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <?php echo $__env->make('components.siakad.styles', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     <style>
         .page-container { padding: 24px; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; }
@@ -59,19 +60,7 @@
 <?php endif; ?>
 
             <div class="page-container">
-                <?php if(session('success')): ?>
-                    <div class="alert-toast">
-                        <i class="fa-solid fa-circle-check"></i> <?php echo e(session('success')); ?>
-
-                    </div>
-                <?php endif; ?>
-                
-                <?php if(session('error')): ?>
-                    <div class="alert-toast alert-error">
-                        <i class="fa-solid fa-circle-exclamation"></i> <?php echo e(session('error')); ?>
-
-                    </div>
-                <?php endif; ?>
+                <?php echo $__env->make('components.warning', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
                 <?php echo e($slot); ?>
 

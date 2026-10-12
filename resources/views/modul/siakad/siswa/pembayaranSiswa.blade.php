@@ -1,4 +1,4 @@
-﻿@php
+@php
     $riwayat = $riwayat_pembayaran ?? [
         (object)['tanggal' => '12 Apr 2026', 'nama_tagihan' => 'IPP Bulan April 2026', 'jenis' => 'IPP Bulanan', 'keterangan' => 'Menunggu konfirmasi pembayaran', 'nominal' => 500000, 'status' => 'belum'],
         (object)['tanggal' => '12 Mar 2026', 'nama_tagihan' => 'IPP Bulan Maret 2026', 'jenis' => 'IPP Bulanan', 'keterangan' => 'Pembayaran via Transfer Bank', 'nominal' => 500000, 'status' => 'lunas'],
@@ -84,28 +84,30 @@
                 <span style="font-size: 13px; font-weight: 600; color: #64748b; background: #f1f5f9; padding: 6px 12px; border-radius: 20px;">{{ count($tagihanAktif) }} tagihan</span>
             </div>
 
-            @forelse($tagihanAktif as $tagihan)
-                <div style="display: flex; align-items: center; gap: 16px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 12px; background: #f8fafc;">
-                    <div style="width: 40px; height: 40px; border-radius: 8px; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
-                        <i class="fa-solid fa-wallet"></i>
+            @if(count($tagihanAktif) > 0)
+                @foreach($tagihanAktif as $tagihan)
+                    <div style="display: flex; align-items: center; gap: 16px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 12px; background: #f8fafc;">
+                        <div style="width: 40px; height: 40px; border-radius: 8px; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <strong style="display: block; color: #1e293b; font-size: 15px; margin-bottom: 4px;">{{ $tagihan->nama_tagihan }}</strong>
+                            <p style="margin: 0 0 6px; font-size: 13px; color: #64748b;">{{ $tagihan->keterangan }}</p>
+                            <small style="color: #94a3b8; font-size: 12px;"><i class="fa-regular fa-calendar"></i> {{ $tagihan->tanggal }}</small>
+                        </div>
+                        <div style="text-align: right;">
+                            <strong style="display: block; color: #1e293b; font-size: 16px; margin-bottom: 4px;">Rp {{ number_format($tagihan->nominal, 0, ',', '.') }}</strong>
+                            <span style="font-size: 12px; font-weight: 600; color: #dc2626;">Menunggu pembayaran</span>
+                        </div>
                     </div>
-                    <div style="flex: 1;">
-                        <strong style="display: block; color: #1e293b; font-size: 15px; margin-bottom: 4px;">{{ $tagihan->nama_tagihan }}</strong>
-                        <p style="margin: 0 0 6px; font-size: 13px; color: #64748b;">{{ $tagihan->keterangan }}</p>
-                        <small style="color: #94a3b8; font-size: 12px;"><i class="fa-regular fa-calendar"></i> {{ $tagihan->tanggal }}</small>
-                    </div>
-                    <div style="text-align: right;">
-                        <strong style="display: block; color: #1e293b; font-size: 16px; margin-bottom: 4px;">Rp {{ number_format($tagihan->nominal, 0, ',', '.') }}</strong>
-                        <span style="font-size: 12px; font-weight: 600; color: #dc2626;">Menunggu pembayaran</span>
-                    </div>
-                </div>
-            @empty
+                @endforeach
+            @else
                 <div style="text-align: center; padding: 40px; color: #64748b; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px;">
                     <i class="fa-solid fa-circle-check" style="font-size: 32px; color: #16a34a; margin-bottom: 12px; display: block;"></i>
                     <strong style="display: block; font-size: 16px; color: #1e293b; margin-bottom: 4px;">Tidak ada tagihan aktif</strong>
                     <p style="margin: 0; font-size: 14px;">Seluruh tagihan pada periode ini telah lunas.</p>
                 </div>
-            @endforelse
+            @endif
         </div>
 
         <!-- Bantuan -->

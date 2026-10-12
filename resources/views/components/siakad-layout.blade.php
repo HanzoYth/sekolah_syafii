@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'SIAKAD' }}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     @include('components.siakad.styles')
     <style>
         .page-container { padding: 24px; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; }
@@ -25,17 +26,7 @@
             />
 
             <div class="page-container">
-                @if(session('success'))
-                    <div class="alert-toast">
-                        <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
-                    </div>
-                @endif
-                
-                @if(session('error'))
-                    <div class="alert-toast alert-error">
-                        <i class="fa-solid fa-circle-exclamation"></i> {{ session('error') }}
-                    </div>
-                @endif
+                @include('components.warning')
 
                 {{ $slot }}
             </div>
