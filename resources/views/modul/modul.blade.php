@@ -48,7 +48,7 @@
                     @php
                         $user = App\Models\guru::find(session("id"));
                     @endphp
-                    @if (!$user->bendahara)
+                    @if (!$user->satpam && !$user->operator)
                         <a href="/sk/dsg" class="module-card siakad">
                             <div class="icon-wrapper">
                                 <i class="fa-solid fa-graduation-cap"></i>
