@@ -87,7 +87,13 @@
                 <select name="guru_id" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
                     <option value="">-- Pilih Guru --</option>
                     @foreach($data_guru as $guru)
-                        <option value="{{ $guru->id }}">{{ $guru->nama }}</option>
+                        @php
+                            $tags = [];
+                            if ($guru->guru_tetap) $tags[] = 'Guru Tetap';
+                            elseif ($guru->guru_honor) $tags[] = 'Guru Honor';
+                            $tagLabel = count($tags) > 0 ? ' (' . implode(', ', $tags) . ')' : '';
+                        @endphp
+                        <option value="{{ $guru->id }}">{{ $guru->nama }}{{ $tagLabel }}</option>
                     @endforeach
                 </select>
             </div>
@@ -118,7 +124,13 @@
                 <select name="guru_id" id="editGuruId" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
                     <option value="">-- Pilih Guru --</option>
                     @foreach($data_guru as $guru)
-                        <option value="{{ $guru->id }}">{{ $guru->nama }}</option>
+                        @php
+                            $tags = [];
+                            if ($guru->guru_tetap) $tags[] = 'Guru Tetap';
+                            elseif ($guru->guru_honor) $tags[] = 'Guru Honor';
+                            $tagLabel = count($tags) > 0 ? ' (' . implode(', ', $tags) . ')' : '';
+                        @endphp
+                        <option value="{{ $guru->id }}">{{ $guru->nama }}{{ $tagLabel }}</option>
                     @endforeach
                 </select>
             </div>

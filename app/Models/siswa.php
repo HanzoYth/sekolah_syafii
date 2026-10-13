@@ -22,4 +22,24 @@ class siswa extends Model
         "sekolah_id",
         "user_id"
     ];
+
+    public function kelas()
+    {
+        return $this->belongsTo(ruang_kelas::class, 'kelas_id');
+    }
+
+    public function ruangKelas()
+    {
+        return $this->belongsTo(ruang_kelas::class, 'kelas_id');
+    }
+
+    public function sekolah()
+    {
+        return $this->belongsTo(jenis_sekolah::class, 'sekolah_id');
+    }
+
+    public function tahunAjaran()
+    {
+        return $this->belongsTo(tahun_ajaran::class, 'tahun_ajaran_id');
+    }
 }

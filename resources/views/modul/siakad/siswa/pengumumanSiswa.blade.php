@@ -1,58 +1,78 @@
 @php
-    $pengumuman = (isset($list_pengumuman) && count($list_pengumuman)) ? $list_pengumuman : [
-        (object)['tanggal'=>'28 Agu 2026','judul'=>'Libur Nasional Hari Kemerdekaan','ringkasan'=>'Kegiatan belajar mengajar diliburkan sesuai kalender pendidikan yang berlaku.','ditujukan'=>'Seluruh Siswa','isi'=>'Sehubungan dengan peringatan Hari Kemerdekaan Republik Indonesia, seluruh kegiatan belajar mengajar diliburkan. Kegiatan belajar akan kembali berjalan normal pada hari kerja berikutnya.'],
-        (object)['tanggal'=>'20 Agu 2026','judul'=>'Jadwal Ujian Tengah Semester','ringkasan'=>'Jadwal UTS semester ganjil dapat dilihat melalui wali kelas masing-masing.','ditujukan'=>'Kelas 1A - 6B','isi'=>'Ujian Tengah Semester ganjil akan dilaksanakan mulai tanggal 1 September 2026 sampai dengan 5 September 2026. Siswa diharapkan hadir tepat waktu dan membawa perlengkapan ujian masing-masing.'],
-        (object)['tanggal'=>'12 Agu 2026','judul'=>'Pembagian Rapor Semester Genap','ringkasan'=>'Rapor dapat diambil oleh wali murid di ruang tata usaha.','ditujukan'=>'Wali Murid','isi'=>'Pembagian rapor semester genap dilaksanakan pada tanggal 15 Agustus 2026 pukul 08.00 - 12.00 WITA. Rapor diambil langsung oleh wali murid dengan menunjukkan kartu identitas.'],
-    ];
+    $pengumuman = (isset($list_pengumuman) && count($list_pengumuman) > 0) ? $list_pengumuman : collect([
+        (object)['tanggal' => now()->locale('id')->isoFormat('D MMM Y'), 'judul' => 'Pemantauan Kehadiran & Jurnal Belajar Harian', 'ringkasan' => 'Orang tua dan siswa dapat memantau kehadiran per mata pelajaran beserta pokok bahasan materi yang diajarkan guru setiap hari.', 'ditujukan' => 'Seluruh Siswa & Wali Murid', 'isi' => 'Melalui pembaruan Sistem Informasi Akademik (SIAKAD), orang tua dan wali murid kini dapat memantau jadwal pelajaran harian, kehadiran guru di kelas, materi pembelajaran yang diajarkan pada setiap sesi, serta capaian nilai komponen (Tugas, UH, UTS, UAS) secara transparan dan real-time.'],
+        (object)['tanggal' => now()->subDays(5)->locale('id')->isoFormat('D MMM Y'), 'judul' => 'Informasi Ketertiban & Presensi Pagi', 'ringkasan' => 'Siswa diharapkan hadir di lingkungan sekolah minimal 10 menit sebelum jam pelajaran pertama dimulai.', 'ditujukan' => 'Seluruh Siswa', 'isi' => 'Demi menjaga ketertiban dan kedisiplinan kegiatan belajar mengajar, seluruh peserta didik diharapkan sudah berada di kelas masing-masing sebelum bel jam pelajaran pertama berbunyi. Presensi harian kelas akan dicatat oleh Wali Kelas dan terintegrasi langsung dengan laporan Rapor Semester.'],
+    ]);
 @endphp
-<x-siakad-layout title="Pengumuman Akademik" description="Informasi dan pengumuman terbaru dari pihak sekolah." position="Orang Tua / Siswa" initials="OT">
-    
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px;">
-        <div style="flex: 1;">
-            <div style="font-size: 14px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
-                <i class="fa-solid fa-bullhorn"></i> Administrasi Siswa
+<x-siakad-layout 
+    title="Pengumuman Akademik Sekolah" 
+    description="Informasi resmi, agenda akademik, dan pemberitahuan kegiatan sekolah untuk siswa dan orang tua." 
+    position="Siswa / Orang Tua" 
+    initials="SW">
+
+    <x-slot name="breadcrumb">
+        <li class="flex items-center">
+            <a href="/sk/dbs" class="text-slate-500 hover:text-emerald-600 transition-colors">Dashboard</a>
+            <i class="fa-solid fa-chevron-right text-[10px] mx-2 text-slate-400"></i>
+        </li>
+        <li class="flex items-center">
+            <span class="text-slate-700 font-medium">Pengumuman Sekolah</span>
+        </li>
+    </x-slot>
+
+    <!-- Header Filter Bar -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+            <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg flex-shrink-0">
+                <i class="fa-solid fa-bullhorn"></i>
             </div>
-            <div style="font-size: 18px; font-weight: bold; color: #1e293b;">
-                Pengumuman Akademik
-            </div>
-            <div style="color: #64748b; font-size: 14px; margin-top: 4px;">
-                Tetap *up-to-date* dengan informasi terbaru seputar kegiatan sekolah.
+            <div>
+                <h3 class="text-base font-bold text-slate-800">Papan Informasi & Pengumuman Akademik</h3>
+                <p class="text-xs text-slate-500">Menampilkan {{ count($pengumuman) }} pengumuman resmi sekolah</p>
             </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 10px 16px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; font-weight: 600; color: #334155;">
-            <i class="fa-solid fa-bell" style="color: #3875c5;"></i>
-            <span>{{ count($pengumuman) }} pengumuman baru</span>
+
+        <div class="relative w-full sm:w-72">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" id="searchPengumuman" placeholder="Cari judul pengumuman..."
+                   class="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors">
         </div>
     </div>
 
-    <div style="display: grid; gap: 20px;">
+    <!-- Announcements List -->
+    <div id="pengumumanList" class="space-y-5 mb-8">
         @if(count($pengumuman) > 0)
-            @foreach($pengumuman as $index => $item)
-                <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); overflow: hidden;">
-                    <div style="padding: 24px; display: flex; gap: 24px; align-items: flex-start;">
-                        <div style="width: 64px; height: 64px; border-radius: 12px; background: #e9f2ff; color: #3875c5; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0;">
+            @foreach($pengumuman as $item)
+                <div class="pengumuman-item bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:border-emerald-300 transition-all">
+                    <div class="flex flex-col sm:flex-row sm:items-start gap-5">
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl flex-shrink-0">
                             <i class="fa-solid fa-envelope-open-text"></i>
                         </div>
-                        <div style="flex: 1;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                <h3 style="margin: 0; font-size: 18px; color: #1e293b;">{{ $item->judul }}</h3>
-                                <span style="font-size: 13px; font-weight: 600; color: #64748b; display: flex; align-items: center; gap: 6px;">
-                                    <i class="fa-regular fa-calendar"></i> {{ $item->tanggal }}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                                <h4 class="text-base font-bold text-slate-800">{{ $item->judul }}</h4>
+                                <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-full self-start sm:self-auto whitespace-nowrap">
+                                    <i class="fa-regular fa-calendar text-[11px] text-emerald-600"></i> {{ $item->tanggal }}
                                 </span>
                             </div>
-                            <div style="display: flex; gap: 12px; margin-bottom: 16px;">
-                                <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: #f1f5f9; color: #475569; border-radius: 6px; font-size: 12px; font-weight: 600;">
-                                    <i class="fa-solid fa-users"></i> Ditujukan: {{ $item->ditujukan }}
+
+                            <div class="flex flex-wrap items-center gap-2 mb-3">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <i class="fa-solid fa-users text-[10px]"></i> Ditujukan: {{ $item->ditujukan ?? 'Seluruh Siswa' }}
                                 </span>
                             </div>
-                            <p style="margin: 0 0 16px; font-size: 14px; color: #475569; line-height: 1.6;">{{ $item->ringkasan }}</p>
-                            
-                            <details style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
-                                <summary style="padding: 12px 16px; font-size: 13px; font-weight: 600; color: #3875c5; cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px;">
-                                    <i class="fa-solid fa-chevron-down"></i> Baca selengkapnya
+
+                            <p class="text-sm text-slate-600 leading-relaxed mb-4">{{ $item->ringkasan }}</p>
+
+                            <details class="group bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                                <summary class="px-4 py-2.5 text-xs font-bold text-emerald-700 cursor-pointer list-none flex items-center justify-between hover:bg-slate-100/80 transition-colors">
+                                    <span class="flex items-center gap-2">
+                                        <i class="fa-solid fa-book-open text-[11px]"></i> Baca Isi Pengumuman Selengkapnya
+                                    </span>
+                                    <i class="fa-solid fa-chevron-down text-[10px] group-open:rotate-180 transition-transform"></i>
                                 </summary>
-                                <div style="padding: 0 16px 16px; font-size: 14px; color: #1e293b; line-height: 1.6; border-top: 1px solid #e2e8f0; margin-top: 8px; padding-top: 16px;">
-                                    {{ $item->isi }}
+                                <div class="p-4 text-sm text-slate-700 leading-relaxed border-t border-slate-200 bg-white">
+                                    {!! nl2br(e($item->isi)) !!}
                                 </div>
                             </details>
                         </div>
@@ -60,17 +80,20 @@
                 </div>
             @endforeach
         @else
-            <div style="text-align: center; padding: 60px 20px; color: #64748b; background: white; border: 1px dashed #cbd5e1; border-radius: 12px;">
-                <i class="fa-solid fa-folder-open" style="font-size: 48px; color: #cbd5e1; margin-bottom: 16px; display: block;"></i>
-                <h3 style="margin: 0 0 8px; font-size: 18px; color: #1e293b;">Belum ada pengumuman</h3>
-                <p style="margin: 0; font-size: 14px;">Saat ini tidak ada informasi atau pengumuman baru dari sekolah.</p>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center text-slate-500">
+                <i class="fa-solid fa-folder-open text-3xl text-slate-300 mb-3 block"></i>
+                <h4 class="text-sm font-bold text-slate-700">Belum Ada Pengumuman</h4>
+                <p class="text-xs text-slate-400 mt-1">Saat ini belum ada pengumuman baru yang diterbitkan oleh pihak sekolah.</p>
             </div>
         @endif
     </div>
 
-    <style>
-        details > summary::-webkit-details-marker { display: none; }
-        details[open] summary i { transform: rotate(180deg); transition: transform 0.2s; }
-        details summary i { transition: transform 0.2s; }
-    </style>
+    <script>
+        document.getElementById('searchPengumuman')?.addEventListener('input', function() {
+            const q = this.value.toLowerCase();
+            document.querySelectorAll('.pengumuman-item').forEach(el => {
+                el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        });
+    </script>
 </x-siakad-layout>

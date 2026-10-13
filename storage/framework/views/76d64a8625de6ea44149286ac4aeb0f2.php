@@ -8,7 +8,7 @@
             <div>
                 <p class="siakad-topbar-kicker">SISTEM INFORMASI AKADEMIK</p>
                 <h1><?php echo e($title); ?></h1>
-                <p><?php echo e($description); ?></p>
+                <p><?php echo $description; ?></p>
             </div>
         </div>
 

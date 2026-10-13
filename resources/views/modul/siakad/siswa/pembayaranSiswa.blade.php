@@ -1,198 +1,294 @@
 @php
-    $riwayat = $riwayat_pembayaran ?? [
-        (object)['tanggal' => '12 Apr 2026', 'nama_tagihan' => 'IPP Bulan April 2026', 'jenis' => 'IPP Bulanan', 'keterangan' => 'Menunggu konfirmasi pembayaran', 'nominal' => 500000, 'status' => 'belum'],
-        (object)['tanggal' => '12 Mar 2026', 'nama_tagihan' => 'IPP Bulan Maret 2026', 'jenis' => 'IPP Bulanan', 'keterangan' => 'Pembayaran via Transfer Bank', 'nominal' => 500000, 'status' => 'lunas'],
-        (object)['tanggal' => '10 Jul 2026', 'nama_tagihan' => 'Uang Pangkal Tahun Ajaran 2026/2027', 'jenis' => 'Uang Pangkal', 'keterangan' => 'Pembayaran via Transfer Bank', 'nominal' => 1000000, 'status' => 'lunas'],
-        (object)['tanggal' => '05 Jan 2026', 'nama_tagihan' => 'Dana Pengembangan Pendidikan 2026', 'jenis' => 'Dana Pendidikan', 'keterangan' => 'Pembayaran via Transfer Bank', 'nominal' => 750000, 'status' => 'lunas'],
-        (object)['tanggal' => '15 Mei 2026', 'nama_tagihan' => 'Pemeliharaan Fasilitas Semester Genap 2026', 'jenis' => 'Pemeliharaan', 'keterangan' => 'Pembayaran via Transfer Bank', 'nominal' => 400000, 'status' => 'lunas'],
-    ];
-    $riwayat = is_array($riwayat) ? $riwayat : $riwayat->all();
-    $totalTagihan = array_sum(array_map(fn ($item) => $item->nominal, $riwayat));
-    $totalDibayar = array_sum(array_map(fn ($item) => $item->status === 'lunas' ? $item->nominal : 0, $riwayat));
-    $sisaTagihan = $totalTagihan - $totalDibayar;
-    $tagihanAktif = array_values(array_filter($riwayat, fn ($item) => $item->status !== 'lunas'));
+    $riwayat = isset($riwayat_pembayaran) ? (is_array($riwayat_pembayaran) ? collect($riwayat_pembayaran) : $riwayat_pembayaran) : collect();
+    $totalTagihan = $riwayat->sum('nominal');
+    $totalDibayar = $riwayat->sum(fn($item) => $item->dibayar ?? ($item->status === 'lunas' ? $item->nominal : 0));
+    $sisaTagihan = max(0, $totalTagihan - $totalDibayar);
+    $tagihanAktif = $riwayat->filter(fn($item) => $item->status !== 'lunas')->values();
+    $namaKelas = $data_kelas->nama_ruang ?? 'Belum Ada Kelas';
+    $namaTahun = $tahun_aktif->nama ?? '2026/2027';
 @endphp
-<x-siakad-layout title="Slip Pembayaran" description="Lihat status tagihan dan riwayat pembayaran Anda." position="Orang Tua / Siswa" initials="OT">
-    
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px;">
-        <div style="flex: 1;">
-            <div style="font-size: 14px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
-                <i class="fa-solid fa-file-invoice-dollar"></i> Administrasi Siswa
-            </div>
-            <div style="font-size: 18px; font-weight: bold; color: #1e293b;">
-                Ringkasan Pembayaran
-            </div>
-            <div style="color: #64748b; font-size: 14px; margin-top: 4px;">
-                {{ $data_siswa->nama }} - {{ $data_kelas->nama_ruang ?? 'Belum ada kelas' }} - T.A. 2026/2027
-            </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 10px 16px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; font-weight: 600; color: #334155;">
-            <i class="fa-regular fa-calendar" style="color: #177455;"></i>
-            <span>Periode 2026/2027</span>
-        </div>
-    </div>
+<x-siakad-layout 
+    title="Riwayat & Tagihan Pembayaran Siswa" 
+    description="Pantau status tagihan SPP/IPP bulanan, Uang Pangkal, Dana Pendidikan, dan cetak bukti pembayaran." 
+    position="Siswa / Orang Tua" 
+    initials="SW">
 
-    @if(session('eror'))
-        <x-siakad.ui.alert type="danger" message="{{ session('eror') }}" />
-    @endif
+    <x-slot name="breadcrumb">
+        <li class="flex items-center">
+            <a href="/sk/dbs" class="text-slate-500 hover:text-emerald-600 transition-colors">Dashboard</a>
+            <i class="fa-solid fa-chevron-right text-[10px] mx-2 text-slate-400"></i>
+        </li>
+        <li class="flex items-center">
+            <span class="text-slate-700 font-medium">Riwayat Pembayaran</span>
+        </li>
+    </x-slot>
 
-    <!-- Metrics Section -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 24px;">
-        <div style="background: white; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: #f1f5f9; color: #475569; display: flex; align-items: center; justify-content: center; font-size: 20px;">
-                <i class="fa-solid fa-file-invoice"></i>
+    <!-- KPI Cards -->
+    <div class="no-print grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-start space-x-4">
+            <div class="p-3 bg-slate-100 text-slate-700 rounded-lg">
+                <i class="fa-solid fa-file-invoice-dollar text-xl"></i>
             </div>
             <div>
-                <div style="font-size: 13px; color: #64748b; font-weight: 600;">Total Tagihan</div>
-                <div style="font-size: 20px; font-weight: bold; color: #1e293b;">Rp {{ number_format($totalTagihan, 0, ',', '.') }}</div>
-                <div style="font-size: 12px; color: #94a3b8;">Seluruh periode</div>
+                <p class="text-sm font-medium text-slate-500">Total Tagihan Tercatat</p>
+                <h3 class="text-2xl font-bold text-slate-800">Rp {{ number_format($totalTagihan, 0, ',', '.') }}</h3>
+                <p class="text-xs text-slate-400 mt-1">{{ $riwayat->count() }} item tagihan administrasi</p>
             </div>
         </div>
 
-        <div style="background: white; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 20px;">
-                <i class="fa-solid fa-circle-check"></i>
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-start space-x-4">
+            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
+                <i class="fa-solid fa-circle-check text-xl"></i>
             </div>
             <div>
-                <div style="font-size: 13px; color: #64748b; font-weight: 600;">Sudah Dibayar</div>
-                <div style="font-size: 20px; font-weight: bold; color: #1e293b;">Rp {{ number_format($totalDibayar, 0, ',', '.') }}</div>
-                <div style="font-size: 12px; color: #94a3b8;">{{ count($riwayat) - count($tagihanAktif) }} transaksi lunas</div>
+                <p class="text-sm font-medium text-slate-500">Sudah Dibayar</p>
+                <h3 class="text-2xl font-bold text-emerald-600">Rp {{ number_format($totalDibayar, 0, ',', '.') }}</h3>
+                <p class="text-xs text-slate-400 mt-1">{{ $riwayat->count() - $tagihanAktif->count() }} tagihan telah lunas</p>
             </div>
         </div>
 
-        <div style="background: white; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 20px;">
-                <i class="fa-solid fa-clock"></i>
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-start space-x-4">
+            <div class="p-3 {{ $sisaTagihan > 0 ? 'bg-rose-50 text-rose-600' : 'bg-blue-50 text-blue-600' }} rounded-lg">
+                <i class="fa-solid {{ $sisaTagihan > 0 ? 'fa-clock' : 'fa-shield-check' }} text-xl"></i>
             </div>
             <div>
-                <div style="font-size: 13px; color: #64748b; font-weight: 600;">Sisa Tagihan</div>
-                <div style="font-size: 20px; font-weight: bold; color: #1e293b;">Rp {{ number_format($sisaTagihan, 0, ',', '.') }}</div>
-                <div style="font-size: 12px; color: #94a3b8;">{{ count($tagihanAktif) }} tagihan perlu ditinjau</div>
+                <p class="text-sm font-medium text-slate-500">Sisa Tagihan / Tunggakan</p>
+                <h3 class="text-2xl font-bold {{ $sisaTagihan > 0 ? 'text-rose-600' : 'text-slate-800' }}">Rp {{ number_format($sisaTagihan, 0, ',', '.') }}</h3>
+                <p class="text-xs text-slate-400 mt-1">{{ $tagihanAktif->count() }} tagihan menunggu pelunasan</p>
             </div>
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; align-items: start;">
-        
-        <!-- Tagihan Aktif -->
-        <div style="background: white; border-radius: 12px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <!-- Tagihan Aktif & Informasi Pembayaran -->
+    <div class="no-print grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Daftar Tagihan Aktif -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex items-center justify-between">
                 <div>
-                    <div style="font-size: 12px; font-weight: 700; color: #dc2626; letter-spacing: 1px; margin-bottom: 4px;">PERLU PERHATIAN</div>
-                    <h3 style="margin: 0; font-size: 16px; color: #1e293b;">Tagihan Aktif</h3>
+                    <h3 class="text-base font-bold text-slate-800">Tagihan Aktif / Menunggu Pelunasan</h3>
+                    <p class="text-xs text-slate-500">Daftar tagihan yang diterbitkan oleh bagian Keuangan / Admin SIAKAD</p>
                 </div>
-                <span style="font-size: 13px; font-weight: 600; color: #64748b; background: #f1f5f9; padding: 6px 12px; border-radius: 20px;">{{ count($tagihanAktif) }} tagihan</span>
+                <span class="px-3 py-1 rounded-full text-xs font-bold {{ $tagihanAktif->count() > 0 ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800' }}">
+                    {{ $tagihanAktif->count() }} Tagihan Aktif
+                </span>
             </div>
 
-            @if(count($tagihanAktif) > 0)
-                @foreach($tagihanAktif as $tagihan)
-                    <div style="display: flex; align-items: center; gap: 16px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 12px; background: #f8fafc;">
-                        <div style="width: 40px; height: 40px; border-radius: 8px; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
-                            <i class="fa-solid fa-wallet"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <strong style="display: block; color: #1e293b; font-size: 15px; margin-bottom: 4px;">{{ $tagihan->nama_tagihan }}</strong>
-                            <p style="margin: 0 0 6px; font-size: 13px; color: #64748b;">{{ $tagihan->keterangan }}</p>
-                            <small style="color: #94a3b8; font-size: 12px;"><i class="fa-regular fa-calendar"></i> {{ $tagihan->tanggal }}</small>
-                        </div>
-                        <div style="text-align: right;">
-                            <strong style="display: block; color: #1e293b; font-size: 16px; margin-bottom: 4px;">Rp {{ number_format($tagihan->nominal, 0, ',', '.') }}</strong>
-                            <span style="font-size: 12px; font-weight: 600; color: #dc2626;">Menunggu pembayaran</span>
-                        </div>
+            <div class="p-6">
+                @if($tagihanAktif->count() > 0)
+                    <div class="space-y-3">
+                        @foreach($tagihanAktif as $tagihan)
+                            <div class="p-4 rounded-xl border border-rose-200 bg-rose-50/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div class="flex items-start gap-3.5">
+                                    <div class="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <i class="fa-solid fa-wallet"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-slate-800">{{ $tagihan->nama_tagihan }}</h4>
+                                        <p class="text-xs text-slate-500 mt-0.5">{{ $tagihan->keterangan }}</p>
+                                        <span class="inline-flex items-center gap-1 text-[11px] text-slate-400 mt-1">
+                                            <i class="fa-regular fa-calendar"></i> Terbit: {{ $tagihan->tanggal }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="sm:text-right flex sm:flex-col items-center sm:items-end justify-between border-t sm:border-t-0 pt-2 sm:pt-0 border-rose-100">
+                                    <div>
+                                        <span class="text-[11px] text-slate-400 block">Sisa Tagihan:</span>
+                                        <strong class="text-base font-extrabold text-rose-600">Rp {{ number_format($tagihan->sisa ?? $tagihan->nominal, 0, ',', '.') }}</strong>
+                                    </div>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-800 mt-1">
+                                        Belum Lunas
+                                    </span>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                @endforeach
-            @else
-                <div style="text-align: center; padding: 40px; color: #64748b; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px;">
-                    <i class="fa-solid fa-circle-check" style="font-size: 32px; color: #16a34a; margin-bottom: 12px; display: block;"></i>
-                    <strong style="display: block; font-size: 16px; color: #1e293b; margin-bottom: 4px;">Tidak ada tagihan aktif</strong>
-                    <p style="margin: 0; font-size: 14px;">Seluruh tagihan pada periode ini telah lunas.</p>
-                </div>
-            @endif
+                @else
+                    <div class="py-10 text-center bg-emerald-50/40 border border-dashed border-emerald-200 rounded-xl">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-800">Tidak Ada Tunggakan Tagihan</h4>
+                        <p class="text-xs text-slate-500 mt-1">Terima kasih, seluruh tagihan administrasi pada periode ini telah lunas.</p>
+                    </div>
+                @endif
+            </div>
         </div>
 
-        <!-- Bantuan -->
-        <div style="background: white; border-radius: 12px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); text-align: center;">
-            <div style="width: 48px; height: 48px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 20px; margin: 0 auto 16px;">
-                <i class="fa-solid fa-circle-info"></i>
-            </div>
-            <h3 style="margin: 0 0 12px; font-size: 16px; color: #1e293b;">Butuh Bantuan Pembayaran?</h3>
-            <p style="margin: 0 0 20px; font-size: 13px; color: #64748b; line-height: 1.5;">Hubungi bagian administrasi sekolah apabila terdapat perbedaan data atau kendala pembayaran.</p>
-            <div style="display: flex; flex-direction: column; gap: 12px; text-align: left; background: #f8fafc; padding: 16px; border-radius: 8px;">
-                <div style="display: flex; align-items: center; gap: 12px; font-size: 13px; color: #475569;">
-                    <i class="fa-solid fa-clock" style="color: #94a3b8; width: 16px; text-align: center;"></i>
-                    <span>Senin-Jumat, 07.00-14.00 WITA</span>
+        <!-- Informasi Layanan Loket Keuangan -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
+            <div>
+                <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg mb-4">
+                    <i class="fa-solid fa-building-columns"></i>
                 </div>
-                <div style="display: flex; align-items: center; gap: 12px; font-size: 13px; color: #475569;">
-                    <i class="fa-solid fa-building" style="color: #94a3b8; width: 16px; text-align: center;"></i>
-                    <span>Loket Administrasi Sekolah</span>
+                <h3 class="text-base font-bold text-slate-800">Informasi Layanan Pembayaran</h3>
+                <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                    Pembayaran SPP/IPP, Uang Pangkal, dan Dana Pendidikan diverifikasi oleh Admin Keuangan Sekolah.
+                </p>
+
+                <div class="mt-5 space-y-3 p-4 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-600">
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-regular fa-clock text-emerald-600 w-4 text-center"></i>
+                        <span>Senin – Jumat, 07.30 – 14.00 WIB</span>
+                    </div>
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-solid fa-location-dot text-emerald-600 w-4 text-center"></i>
+                        <span>Loket Administrasi & Tata Usaha</span>
+                    </div>
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-solid fa-user-graduate text-emerald-600 w-4 text-center"></i>
+                        <span>NIS Siswa: <strong class="font-mono text-slate-800">{{ $data_siswa->nis ?? '-' }}</strong></span>
+                    </div>
                 </div>
             </div>
+
+            <p class="text-[11px] text-slate-400 mt-4 pt-3 border-t border-slate-100">
+                Simpan bukti cetak kwitansi sebagai arsip pembayaran resmi.
+            </p>
         </div>
     </div>
 
-    <!-- Riwayat Transaksi -->
-    <div style="background: white; border-radius: 12px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+    <!-- Tabel Riwayat Seluruh Transaksi & Tagihan -->
+    <div class="no-print bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+        <div class="px-6 py-5 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <div style="font-size: 12px; font-weight: 700; color: #177455; letter-spacing: 1px; margin-bottom: 4px;">ARSIP PEMBAYARAN</div>
-                <h3 style="margin: 0; font-size: 16px; color: #1e293b;">Riwayat Transaksi</h3>
+                <h3 class="text-base font-bold text-slate-800">Arsip & Riwayat Tagihan Pembayaran</h3>
+                <p class="text-xs text-slate-500">Daftar lengkap seluruh tagihan dan pembayaran yang tercatat untuk {{ $data_siswa->nama ?? 'Siswa' }}</p>
             </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <div style="position: relative;">
-                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
-                    <input type="text" id="paymentSearch" placeholder="Cari tagihan atau jenis..." style="padding: 8px 12px 8px 36px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; width: 250px;">
-                </div>
-                <span style="font-size: 13px; font-weight: 600; color: #64748b; background: #f1f5f9; padding: 6px 12px; border-radius: 20px;">{{ count($riwayat) }} transaksi</span>
+
+            <div class="relative w-full sm:w-64">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="paymentSearch" placeholder="Cari nama atau jenis tagihan..."
+                       class="w-full pl-9 pr-4 py-2 text-xs bg-white border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:border-emerald-500">
             </div>
         </div>
 
-        <x-siakad.ui.table>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                        <th class="px-5 py-3.5">Tanggal</th>
+                        <th class="px-5 py-3.5">Rincian Tagihan</th>
+                        <th class="px-5 py-3.5">Kategori</th>
+                        <th class="px-5 py-3.5 text-right">Nominal Tagihan</th>
+                        <th class="px-5 py-3.5 text-right">Terbayar</th>
+                        <th class="px-5 py-3.5 text-center">Status</th>
+                        <th class="px-5 py-3.5 text-center">Kwitansi</th>
+                    </tr>
+                </thead>
+                <tbody id="paymentRows" class="divide-y divide-slate-100 text-sm">
+                    @if($riwayat->count() > 0)
+                        @foreach($riwayat as $item)
+                            <tr class="hover:bg-slate-50/70 transition-colors">
+                                <td class="px-5 py-4 text-xs text-slate-500 whitespace-nowrap">{{ $item->tanggal }}</td>
+                                <td class="px-5 py-4">
+                                    <span class="font-bold text-slate-800 block">{{ $item->nama_tagihan }}</span>
+                                    <span class="text-xs text-slate-400">{{ $item->keterangan }}</span>
+                                </td>
+                                <td class="px-5 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700">
+                                        {{ $item->jenis }}
+                                    </span>
+                                </td>
+                                <td class="px-5 py-4 text-right font-mono font-semibold text-slate-700">
+                                    Rp {{ number_format($item->nominal, 0, ',', '.') }}
+                                </td>
+                                <td class="px-5 py-4 text-right font-mono font-bold text-emerald-700">
+                                    Rp {{ number_format($item->dibayar ?? ($item->status === 'lunas' ? $item->nominal : 0), 0, ',', '.') }}
+                                </td>
+                                <td class="px-5 py-4 text-center">
+                                    @if($item->status === 'lunas')
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                                            <i class="fa-solid fa-circle-check mr-1 text-[10px]"></i> Lunas
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800">
+                                            <i class="fa-solid fa-clock mr-1 text-[10px]"></i> Belum Lunas
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-5 py-4 text-center">
+                                    <button type="button"
+                                            onclick="cetakKwitansi('{{ $item->id ?? 'INV' }}', '{{ $item->tanggal }}', '{{ addslashes($item->nama_tagihan) }}', '{{ $item->jenis }}', '{{ number_format($item->nominal, 0, ',', '.') }}', '{{ number_format($item->dibayar ?? ($item->status === 'lunas' ? $item->nominal : 0), 0, ',', '.') }}', '{{ $item->status === 'lunas' ? 'LUNAS' : 'BELUM LUNAS' }}')"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold transition-colors">
+                                        <i class="fa-solid fa-print"></i> Cetak
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center text-slate-500">
+                                <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-slate-50 flex items-center justify-center text-slate-300">
+                                    <i class="fa-solid fa-receipt text-2xl"></i>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-700">Belum Ada Riwayat Tagihan</h4>
+                                <p class="text-xs text-slate-400 mt-1">Belum ada data tagihan SPP/IPP, Uang Pangkal, atau Pendidikan yang diterbitkan untuk akun Anda.</p>
+                            </td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Area Cetak Kwitansi Pembayaran Siswa -->
+    <div id="kwitansiPrintArea" class="hidden print-area bg-white border border-slate-300 rounded-xl p-8 max-w-2xl mx-auto">
+        <div class="text-center border-b-2 border-slate-800 pb-4 mb-6">
+            <h2 class="text-lg font-extrabold uppercase text-slate-900">Bukti Tagihan & Kwitansi Pembayaran Siswa</h2>
+            <p class="text-xs font-semibold text-slate-600 mt-1">Sistem Informasi Akademik (SIAKAD) &bull; Tahun Ajaran {{ $namaTahun }}</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 text-xs sm:text-sm mb-6">
+            <div>
+                <p class="text-slate-500">Nama Siswa:</p>
+                <p class="font-bold text-slate-900">{{ $data_siswa->nama ?? '-' }}</p>
+            </div>
+            <div>
+                <p class="text-slate-500">NIS / Kelas:</p>
+                <p class="font-bold text-slate-900">{{ $data_siswa->nis ?? '-' }} / {{ $namaKelas }}</p>
+            </div>
+            <div>
+                <p class="text-slate-500">Nomor Referensi:</p>
+                <p class="font-mono font-bold text-slate-900" id="kwId">-</p>
+            </div>
+            <div>
+                <p class="text-slate-500">Tanggal Tagihan:</p>
+                <p class="font-bold text-slate-900" id="kwTanggal">-</p>
+            </div>
+        </div>
+
+        <table class="w-full border-collapse border border-slate-400 text-sm mb-6">
             <thead>
-                <tr>
-                    <th style="width: 120px;">Tanggal</th>
-                    <th>Tagihan</th>
-                    <th style="width: 150px;">Jenis</th>
-                    <th style="width: 150px; text-align: right;">Nominal</th>
-                    <th style="width: 130px; text-align: center;">Status</th>
-                    <th style="width: 80px; text-align: center;">Slip</th>
+                <tr class="bg-slate-100">
+                    <th class="border border-slate-400 px-3 py-2 text-left">Deskripsi Tagihan</th>
+                    <th class="border border-slate-400 px-3 py-2 text-center">Kategori</th>
+                    <th class="border border-slate-400 px-3 py-2 text-right">Nominal</th>
+                    <th class="border border-slate-400 px-3 py-2 text-right">Dibayar</th>
                 </tr>
             </thead>
-            <tbody id="paymentRows">
-                @foreach($riwayat as $item)
-                    <tr>
-                        <td style="color: #64748b; font-size: 13px;">{{ $item->tanggal }}</td>
-                        <td>
-                            <strong style="display: block; color: #1e293b; font-size: 14px; margin-bottom: 4px;">{{ $item->nama_tagihan }}</strong>
-                            <span style="color: #64748b; font-size: 12px;">{{ $item->keterangan }}</span>
-                        </td>
-                        <td>
-                            <span style="display: inline-block; padding: 4px 10px; background: #f1f5f9; color: #475569; border-radius: 6px; font-size: 12px; font-weight: 600;">
-                                {{ $item->jenis }}
-                            </span>
-                        </td>
-                        <td style="text-align: right; font-weight: bold; color: #1e293b;">
-                            Rp {{ number_format($item->nominal, 0, ',', '.') }}
-                        </td>
-                        <td style="text-align: center;">
-                            @if($item->status === 'lunas')
-                                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #dcfce7; color: #166534; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                                    <i class="fa-solid fa-circle-check"></i> Lunas
-                                </span>
-                            @else
-                                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #fee2e2; color: #dc2626; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                                    <i class="fa-solid fa-clock"></i> Belum
-                                </span>
-                            @endif
-                        </td>
-                        <td style="text-align: center;">
-                            <a href="/sk/dsp" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #e9f2ff; color: #3875c5; border-radius: 8px; transition: all 0.2s; text-decoration: none;" onmouseover="this.style.background='#3875c5'; this.style.color='#fff';" onmouseout="this.style.background='#e9f2ff'; this.style.color='#3875c5';">
-                                <i class="fa-solid fa-download"></i>
-                            </a>
-                        </td>
-                    </tr>
-                @endforeach
+            <tbody>
+                <tr>
+                    <td class="border border-slate-400 px-3 py-2.5 font-semibold" id="kwNama">-</td>
+                    <td class="border border-slate-400 px-3 py-2.5 text-center" id="kwJenis">-</td>
+                    <td class="border border-slate-400 px-3 py-2.5 text-right font-mono">Rp <span id="kwNominal">0</span></td>
+                    <td class="border border-slate-400 px-3 py-2.5 text-right font-mono font-bold">Rp <span id="kwDibayar">0</span></td>
+                </tr>
+                <tr class="bg-slate-50 font-bold">
+                    <td colspan="2" class="border border-slate-400 px-3 py-2 text-right">Status Pembayaran:</td>
+                    <td colspan="2" class="border border-slate-400 px-3 py-2 text-center" id="kwStatus">LUNAS</td>
+                </tr>
             </tbody>
-        </x-siakad.ui.table>
+        </table>
+
+        <div class="flex justify-between items-end text-xs text-slate-600 mt-10">
+            <div>
+                <p>Dicetak melalui Portal Siswa SIAKAD pada {{ date('d/m/Y H:i') }}</p>
+            </div>
+            <div class="text-center">
+                <p class="mb-14">Administrasi Keuangan Sekolah</p>
+                <p class="font-bold underline">............................................</p>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -202,5 +298,36 @@
                 row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
             });
         });
+
+        function cetakKwitansi(id, tanggal, nama, jenis, nominal, dibayar, status) {
+            document.getElementById('kwId').textContent = id;
+            document.getElementById('kwTanggal').textContent = tanggal;
+            document.getElementById('kwNama').textContent = nama;
+            document.getElementById('kwJenis').textContent = jenis;
+            document.getElementById('kwNominal').textContent = nominal;
+            document.getElementById('kwDibayar').textContent = dibayar;
+            document.getElementById('kwStatus').textContent = status;
+
+            const area = document.getElementById('kwitansiPrintArea');
+            area.classList.remove('hidden');
+            window.print();
+        }
     </script>
+
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            .no-print { display: none !important; }
+            .print-area, .print-area * { visibility: visible; }
+            .print-area {
+                display: block !important;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none !important;
+                box-shadow: none !important;
+            }
+        }
+    </style>
 </x-siakad-layout>

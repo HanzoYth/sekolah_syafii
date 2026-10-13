@@ -20,8 +20,8 @@ class Topbar extends Component
         public ?string $name = null,
         public string $position = 'Pengguna SIAKAD',
         public ?string $initials = null,
-        public string $title = 'SIAKAD',
-        public string $description = 'Kelola informasi akademik sekolah dalam satu tempat.',
+        public mixed $title = 'SIAKAD',
+        public mixed $description = 'Kelola informasi akademik sekolah dalam satu tempat.',
     ) {
         $this->currentName = $name ?? session('nama', 'Pengguna SIAKAD');
         $this->currentPosition = $position;
@@ -36,7 +36,16 @@ class Topbar extends Component
 
             if ($role === 'g' || $role === 'guru') {
                 $user = guru::where('user_id', $akunId)->first();
-                $label = 'Guru Pengajar';
+                $isWallas = $user ? \App\Models\wallas::where('guru_id', $user->id)->exists() : false;
+                $isPengajar = $user ? (($user->guru_tetap || $user->guru_honor) || \App\Models\jadwal_pelajaran::where('guru_id', $user->id)->exists()) : false;
+
+                if ($isWallas && $isPengajar) {
+                    $label = 'Guru & Wali Kelas';
+                } elseif ($isWallas) {
+                    $label = 'Wali Kelas';
+                } else {
+                    $label = 'Guru Pengajar';
+                }
             } elseif ($role === 'a' || $role === 'admin') {
                 $user = admin::where('user_id', $akunId)->first();
                 $label = 'Administrator';

@@ -18,5 +18,15 @@ class absensi_siswa extends Model
     {
         return $this->belongsTo(jadwal_pelajaran::class, 'jadwal_pelajaran_id');
     }
+
+    public function guru()
+    {
+        return $this->belongsTo(guru::class, 'guru_id');
+    }
+
+    public function kelas()
+    {
+        return $this->belongsTo(kelas::class, 'kelas_id');
+    }
 }
 

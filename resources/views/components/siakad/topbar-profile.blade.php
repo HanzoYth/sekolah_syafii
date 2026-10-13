@@ -8,7 +8,7 @@
             <div>
                 <p class="siakad-topbar-kicker">SISTEM INFORMASI AKADEMIK</p>
                 <h1>{{ $title }}</h1>
-                <p>{{ $description }}</p>
+                <p>{!! $description !!}</p>
             </div>
         </div>
 

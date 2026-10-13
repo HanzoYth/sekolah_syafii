@@ -16,24 +16,32 @@ use Illuminate\Support\Facades\DB;
 class siakadController extends Controller
 {
     // ==========================================
-    // MANAJEMEN NILAI (GURU PENGAJAR)
+    // MANAJEMEN NILAI (GURU PENGAJAR & WALI KELAS)
     // ==========================================
-    public function inputNilaiDetail($jadwal_id) {
+    public function inputNilaiDetail(Request $request, $jadwal_id) {
         $guru_id = session('id');
-        $jadwal = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran'])->where('id', $jadwal_id)->where('guru_id', $guru_id)->first();
+        $jadwal = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran', 'tahun_ajaran', 'guru'])->find($jadwal_id);
         
         if (!$jadwal) {
-            return redirect()->back()->with('error', 'Jadwal tidak ditemukan atau Anda tidak memiliki akses.');
+            return redirect()->back()->with('error', 'Jadwal tidak ditemukan.');
         }
 
-        // Sinkronisasi kelas_id (karena tabel kelas dan ruang_kelas terpisah namun namanya sama)
+        // Cek apakah user adalah Guru Pengajar jadwal ini ATAU Wali Kelas dari kelas jadwal ini
         $nama_kelas = $jadwal->kelas->nama_kelas ?? '';
         $ruang_kelas = \App\Models\ruang_kelas::where('nama_ruang', $nama_kelas)->first();
-        
-        $siswa = collect();
-        if ($ruang_kelas) {
-            $siswa = \App\Models\siswa::where('kelas_id', $ruang_kelas->id)->orderBy('nama')->get();
+        $ruang_kelas_id = $ruang_kelas ? $ruang_kelas->id : $jadwal->kelas_id;
+
+        $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
+        $isWalasKelasIni = $wallas && ($wallas->kelas_id == $ruang_kelas_id || ($wallas->ruangKelas && $wallas->ruangKelas->nama_ruang === $nama_kelas));
+
+        if ($jadwal->guru_id != $guru_id && !$isWalasKelasIni) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengelola nilai mata pelajaran ini.');
         }
+
+        $isWalasAccess = ($request->query('from') === 'walas') || ($jadwal->guru_id != $guru_id && $isWalasKelasIni);
+
+        $siswa = \App\Models\siswa::where('kelas_id', $ruang_kelas_id)->orderBy('nama')->get();
+
         $jenis_penilaian = \App\Models\jenis_penilaian::all();
         if ($jenis_penilaian->isEmpty()) {
             \App\Models\jenis_penilaian::insert([
@@ -45,9 +53,8 @@ class siakadController extends Controller
             $jenis_penilaian = \App\Models\jenis_penilaian::all();
         }
         
-        // Ambil nilai yang sudah ada
+        // Ambil nilai yang sudah ada untuk mata pelajaran & siswa di kelas ini
         $nilai_db = \App\Models\nilai::where('mapel_id', $jadwal->mapel_id)
-                        ->where('guru_id', $guru_id)
                         ->whereIn('siswa_id', $siswa->pluck('id'))
                         ->get();
                         
@@ -57,15 +64,27 @@ class siakadController extends Controller
             $nilai[$n->siswa_id][$n->jenis_penilaian_id] = $n->nilai;
         }
 
-        return view('modul.siakad.guru.inputNilaiDetail', compact('jadwal', 'siswa', 'jenis_penilaian', 'nilai'));
+        return view('modul.siakad.guru.inputNilaiDetail', compact('jadwal', 'siswa', 'jenis_penilaian', 'nilai', 'isWalasAccess'));
     }
 
     public function simpanNilaiSiswa(Request $request, $jadwal_id) {
         $guru_id = session('id');
-        $jadwal = \App\Models\jadwal_pelajaran::find($jadwal_id);
+        $jadwal = \App\Models\jadwal_pelajaran::with('kelas')->find($jadwal_id);
         
         if (!$jadwal) {
             return redirect()->back()->with('error', 'Jadwal tidak ditemukan.');
+        }
+
+        // Validasi hak akses: Guru Pengajar jadwal ini ATAU Wali Kelas dari kelas ini
+        $nama_kelas = $jadwal->kelas->nama_kelas ?? '';
+        $ruang_kelas = \App\Models\ruang_kelas::where('nama_ruang', $nama_kelas)->first();
+        $ruang_kelas_id = $ruang_kelas ? $ruang_kelas->id : $jadwal->kelas_id;
+
+        $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
+        $isWalasKelasIni = $wallas && ($wallas->kelas_id == $ruang_kelas_id || ($wallas->ruangKelas && $wallas->ruangKelas->nama_ruang === $nama_kelas));
+
+        if ($jadwal->guru_id != $guru_id && !$isWalasKelasIni) {
+            return redirect()->back()->with('error', 'Akses ditolak.');
         }
 
         $input_nilai = $request->input('nilai'); // format: nilai[siswa_id][jenis_penilaian_id] = angka
@@ -78,12 +97,12 @@ class siakadController extends Controller
                             [
                                 'siswa_id' => $siswa_id,
                                 'mapel_id' => $jadwal->mapel_id,
-                                'guru_id' => $guru_id,
                                 'jenis_penilaian_id' => $jenis_id,
                                 'semester' => 'ganjil', // Default ganjil sementara
                                 'tahun_ajaran_id' => $jadwal->tahun_ajaran_id
                             ],
                             [
+                                'guru_id' => $jadwal->guru_id,
                                 'nilai' => $angka
                             ]
                         );
@@ -92,7 +111,7 @@ class siakadController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', 'Nilai berhasil disimpan!');
+        return redirect()->back()->with('success', 'Data nilai siswa berhasil disimpan dan diperbarui!');
     }
     // ==========================================
     // MANAJEMEN KENAIKAN KELAS & KELULUSAN (ADMIN)
@@ -164,17 +183,18 @@ class siakadController extends Controller
         $siswa_belum_ada_kelas = $siswa_query->get();
         
         $kelas_terpilih = null;
-        $siswa_kelas_ini = collect();
+        $siswa_di_kelas = collect();
         
         if ($kelas_id) {
             $kelas_terpilih = \App\Models\ruang_kelas::find($kelas_id);
             if ($kelas_terpilih) {
-                $siswa_kelas_ini = \App\Models\siswa::where('kelas_id', $kelas_id)->orderBy('nama')->get();
+                $siswa_di_kelas = \App\Models\siswa::where('kelas_id', $kelas_id)->orderBy('nama')->get();
             }
         }
+        $siswa_kelas_ini = $siswa_di_kelas;
         
         $data_sekolah = \App\Models\jenis_sekolah::all();
-        return view('modul.siakad.admin.pembagianKelas', compact('data_kelas', 'siswa_belum_ada_kelas', 'kelas_terpilih', 'siswa_kelas_ini', 'kelas_id', 'data_sekolah', 'sekolah_id'));
+        return view('modul.siakad.admin.pembagianKelas', compact('data_kelas', 'siswa_belum_ada_kelas', 'kelas_terpilih', 'siswa_di_kelas', 'siswa_kelas_ini', 'kelas_id', 'data_sekolah', 'sekolah_id'));
     }
 
     public function simpanPembagianKelas(Request $request) {
@@ -243,6 +263,10 @@ class siakadController extends Controller
         $guru = \App\Models\guru::find($guru_id);
         
         $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
+        $isWallas = $wallas ? true : false;
+
+        // Walas sudah tentu menjadi guru pengajar juga, bahkan jika checkbox di modul guru dimatikan
+        $isPengajar = $isWallas || ($guru && ($guru->guru_tetap || $guru->guru_honor)) || \App\Models\jadwal_pelajaran::where('guru_id', $guru_id)->exists();
         
         $hari_ini = date('l');
         $hari_indo = [
@@ -254,20 +278,30 @@ class siakadController extends Controller
             'Saturday' => 'Sabtu',
             'Sunday' => 'Minggu'
         ];
-        $nama_hari = $hari_indo[$hari_ini];
+        $nama_hari = $hari_indo[$hari_ini] ?? 'Senin';
         
-        $jadwal_hari_ini = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran'])
-                            ->where('guru_id', $guru_id)
-                            ->where('hari', $nama_hari)
-                            ->get()
-                            ->sortBy(function($j) {
-                                return $j->jam_pelajaran->jam_mulai;
-                            });
-                            
-        $kelas_mapel_ids = \App\Models\jadwal_pelajaran::where('guru_id', $guru_id)->pluck('kelas_id')->unique();
-        $kelas_diampu = \App\Models\kelas::whereIn('id', $kelas_mapel_ids)->get();
+        $jadwal_hari_ini = collect();
+        $kelas_diampu = collect();
+        if ($isPengajar) {
+            $jadwal_hari_ini = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran'])
+                                ->where('guru_id', $guru_id)
+                                ->where('hari', strtolower($nama_hari))
+                                ->get()
+                                ->sortBy(function($j) {
+                                    return $j->jam_pelajaran->jam_mulai ?? '00:00';
+                                });
+                                
+            $kelas_mapel_ids = \App\Models\jadwal_pelajaran::where('guru_id', $guru_id)->pluck('kelas_id')->unique();
+            $kelas_diampu = \App\Models\kelas::whereIn('id', $kelas_mapel_ids)->get();
+        }
 
-        return view("/modul/siakad/guru/dashboard_guru", compact('guru', 'wallas', 'jadwal_hari_ini', 'kelas_diampu', 'nama_hari'));
+        // Data siswa binaan wali kelas
+        $siswa_walas = collect();
+        if ($isWallas && $wallas) {
+            $siswa_walas = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->get();
+        }
+
+        return view("/modul/siakad/guru/dashboard_guru", compact('guru', 'wallas', 'isWallas', 'isPengajar', 'jadwal_hari_ini', 'kelas_diampu', 'nama_hari', 'siswa_walas'));
     }
    
     function tambah_kelas(){
@@ -286,32 +320,141 @@ class siakadController extends Controller
     }
     public function laporanAbsensiGuru(Request $request) {
         $tanggal = $request->input('tanggal', date('Y-m-d'));
+        $status_filter = $request->input('status', 'semua');
         
-        $absensi_guru = \App\Models\absensi_mengajar_guru::with(['guru', 'jadwal.mapel', 'jadwal.jam_pelajaran', 'jadwal.kelas'])
-            ->where('tanggal', $tanggal)
-            ->get();
+        $carbonTanggal = \Carbon\Carbon::parse($tanggal)->locale('id');
+        $hari_terpilih = strtolower($carbonTanggal->isoFormat('dddd'));
+        $hari_indonesia = ucfirst($carbonTanggal->isoFormat('dddd, D MMMM Y'));
+
+        // Ambil semua jadwal pelajaran pada hari yang sesuai dengan tanggal terpilih
+        $semua_jadwal = \App\Models\jadwal_pelajaran::with(['guru', 'mata_pelajaran', 'jam_pelajaran', 'kelas'])
+            ->where('hari', $hari_terpilih)
+            ->get()
+            ->sortBy(function($j) {
+                return $j->jam_pelajaran->jam_mulai ?? '00:00';
+            });
+
+        // Ambil absensi mengajar guru yang tercatat pada tanggal tersebut
+        $absensi_guru_db = \App\Models\absensi_mengajar_guru::where('tanggal', $tanggal)
+            ->get()
+            ->keyBy('jadwal_pelajaran_id');
+
+        // Ambil data rekap absensi siswa per jadwal pada tanggal tersebut
+        $absensi_siswa_db = \App\Models\absensi_siswa::where('tanggal', $tanggal)
+            ->whereNotNull('jadwal_pelajaran_id')
+            ->get()
+            ->groupBy('jadwal_pelajaran_id');
+
+        $laporan = collect();
+        $total_sesi = $semua_jadwal->count();
+        $total_tepat_waktu = 0;
+        $total_terlambat = 0;
+        $total_belum_absen = 0;
+
+        foreach ($semua_jadwal as $jadwal) {
+            $absen = $absensi_guru_db->get($jadwal->id);
+            $siswa_absen = $absensi_siswa_db->get($jadwal->id, collect());
             
-        return view('/modul/siakad/admin/laporanAbsensiGuru', compact('absensi_guru', 'tanggal'));
+            $jam_mulai = $jadwal->jam_pelajaran ? \Carbon\Carbon::parse($jadwal->jam_pelajaran->jam_mulai) : null;
+            $jam_batas = $jam_mulai ? $jam_mulai->copy()->addMinutes(5) : null;
+            
+            $status = 'belum_absen';
+            $jam_masuk = null;
+
+            if ($absen) {
+                $status = $absen->status; // 'tepat_waktu' | 'terlambat'
+                $jam_masuk = $absen->jam_masuk;
+                if ($status === 'tepat_waktu') {
+                    $total_tepat_waktu++;
+                } else {
+                    $total_terlambat++;
+                }
+            } else {
+                $total_belum_absen++;
+            }
+
+            // Filter status jika ada
+            if ($status_filter !== 'semua' && $status !== $status_filter) {
+                continue;
+            }
+
+            $laporan->push((object)[
+                'jadwal' => $jadwal,
+                'guru' => $jadwal->guru,
+                'mata_pelajaran' => $jadwal->mata_pelajaran,
+                'kelas' => $jadwal->kelas,
+                'jam_pelajaran' => $jadwal->jam_pelajaran,
+                'jam_mulai' => $jam_mulai ? $jam_mulai->format('H:i') : '-',
+                'jam_selesai' => $jadwal->jam_pelajaran ? substr($jadwal->jam_pelajaran->jam_selesai, 0, 5) : '-',
+                'jam_batas_toleransi' => $jam_batas ? $jam_batas->format('H:i') : '-',
+                'jam_masuk' => $jam_masuk,
+                'status' => $status,
+                'materi' => $absen->materi ?? null,
+                'catatan' => $absen->catatan ?? null,
+                'rekap_siswa' => [
+                    'hadir' => $siswa_absen->where('status', 'h')->count(),
+                    'sakit' => $siswa_absen->where('status', 's')->count(),
+                    'izin'  => $siswa_absen->where('status', 'i')->count(),
+                    'alpa'  => $siswa_absen->where('status', 'a')->count(),
+                    'total' => $siswa_absen->count()
+                ]
+            ]);
+        }
+
+        $stats = [
+            'total_sesi' => $total_sesi,
+            'tepat_waktu' => $total_tepat_waktu,
+            'terlambat' => $total_terlambat,
+            'belum_absen' => $total_belum_absen
+        ];
+
+        return view('/modul/siakad/admin/laporanAbsensiGuru', compact('laporan', 'tanggal', 'hari_indonesia', 'stats', 'status_filter'));
     }
 
     function absenSiswa(Request $request){
         $guru_id = session('id');
-        $hari_ini = strtolower(now()->locale('id')->isoFormat('dddd'));
+        $guru = \App\Models\guru::find($guru_id);
+        $isWallas = \App\Models\wallas::where('guru_id', $guru_id)->exists();
+        $isPengajar = $isWallas || ($guru && ($guru->guru_tetap || $guru->guru_honor)) || \App\Models\jadwal_pelajaran::where('guru_id', $guru_id)->exists();
+        if (!$isPengajar) {
+            return redirect('/sk/dsg')->with('error', 'Status Anda pada modul guru bukan sebagai Guru Pengajar.');
+        }
+
         $tanggal = $request->input('tanggal', date('Y-m-d'));
+        $carbonTanggal = \Carbon\Carbon::parse($tanggal)->locale('id');
+        $hari_terpilih = strtolower($carbonTanggal->isoFormat('dddd'));
+        $hari_indonesia = ucfirst($carbonTanggal->isoFormat('dddd, D MMMM Y'));
         
-        // Ambil jadwal guru hari ini
+        // Ambil jadwal mengajar guru pada hari tanggal terpilih
         $jadwal_hari_ini = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran'])
             ->where('guru_id', $guru_id)
-            ->where('hari', $hari_ini)
-            ->get();
+            ->where('hari', $hari_terpilih)
+            ->get()
+            ->sortBy(function($j) {
+                return $j->jam_pelajaran->jam_mulai ?? '00:00';
+            });
+
+        // Ambil data absensi guru untuk semua jadwal hari itu
+        $absensi_guru_semua = \App\Models\absensi_mengajar_guru::whereIn('jadwal_pelajaran_id', $jadwal_hari_ini->pluck('id'))
+            ->where('tanggal', $tanggal)
+            ->get()
+            ->keyBy('jadwal_pelajaran_id');
+
+        // Ambil data absensi siswa untuk semua jadwal hari itu
+        $absensi_siswa_semua = \App\Models\absensi_siswa::whereIn('jadwal_pelajaran_id', $jadwal_hari_ini->pluck('id'))
+            ->where('tanggal', $tanggal)
+            ->get()
+            ->groupBy('jadwal_pelajaran_id');
             
         $jadwal_id = $request->input('jadwal_id');
         $siswa = collect();
         $absensi_db = collect();
         $jadwal_terpilih = null;
+        $absen_guru = null;
+        $toleransi_info = null;
         
         if ($jadwal_id) {
-            $jadwal_terpilih = \App\Models\jadwal_pelajaran::find($jadwal_id);
+            $jadwal_terpilih = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran'])->find($jadwal_id);
             if ($jadwal_terpilih && $jadwal_terpilih->guru_id == $guru_id) {
                 // Sinkronisasi kelas ke ruang_kelas
                 $nama_kelas = $jadwal_terpilih->kelas->nama_kelas ?? '';
@@ -323,10 +466,58 @@ class siakadController extends Controller
                     ->where('tanggal', $tanggal)
                     ->get()
                     ->keyBy('siswa_id');
+
+                $absen_guru = $absensi_guru_semua->get($jadwal_id);
+
+                $jam_mulai = $jadwal_terpilih->jam_pelajaran ? \Carbon\Carbon::parse($jadwal_terpilih->jam_pelajaran->jam_mulai) : null;
+                $jam_buka = $jam_mulai ? $jam_mulai->copy()->subMinutes(5) : null; // Buka 5 mnt sebelum bel
+                $jam_batas = $jam_mulai ? $jam_mulai->copy()->addMinutes(5) : null; // Toleransi 5 mnt setelah bel
+                $sekarang = now();
+                $is_today = ($tanggal === date('Y-m-d'));
+
+                // Cek apakah belum boleh absen (terlalu dini sebelum waktu buka)
+                $terlalu_dini = false;
+                if ($is_today && !$absen_guru) {
+                    $terlalu_dini = $jam_buka && ($sekarang->format('H:i:s') < $jam_buka->format('H:i:s'));
+                }
+
+                $estimasi = 'tepat_waktu';
+                if ($is_today) {
+                    if ($terlalu_dini) {
+                        $estimasi = 'belum_buka';
+                    } else if ($jam_batas && $sekarang->format('H:i:s') <= $jam_batas->format('H:i:s')) {
+                        $estimasi = 'tepat_waktu';
+                    } else {
+                        $estimasi = 'terlambat';
+                    }
+                } else if ($tanggal < date('Y-m-d')) {
+                    $estimasi = 'terlambat';
+                }
+
+                $toleransi_info = [
+                    'jam_mulai' => $jam_mulai ? $jam_mulai->format('H:i') : '-',
+                    'jam_selesai' => $jadwal_terpilih->jam_pelajaran ? substr($jadwal_terpilih->jam_pelajaran->jam_selesai, 0, 5) : '-',
+                    'jam_buka' => $jam_buka ? $jam_buka->format('H:i') : '-',
+                    'jam_batas' => $jam_batas ? $jam_batas->format('H:i') : '-',
+                    'estimasi_status' => $estimasi,
+                    'terlalu_dini' => $terlalu_dini,
+                    'is_today' => $is_today
+                ];
             }
         }
         
-        return view("/modul/siakad/guru/absensiMapel", compact('jadwal_hari_ini', 'siswa', 'absensi_db', 'tanggal', 'jadwal_id', 'jadwal_terpilih'));
+        $rekap_siswa = [
+            'total' => $siswa->count(),
+            'hadir' => $absensi_db->where('status', 'h')->count(),
+            'sakit' => $absensi_db->where('status', 's')->count(),
+            'izin'  => $absensi_db->where('status', 'i')->count(),
+            'alpa'  => $absensi_db->where('status', 'a')->count(),
+        ];
+
+        return view("/modul/siakad/guru/absensiMapel", compact(
+            'jadwal_hari_ini', 'siswa', 'absensi_db', 'tanggal', 'jadwal_id', 'jadwal_terpilih', 
+            'absen_guru', 'toleransi_info', 'rekap_siswa', 'hari_indonesia', 'absensi_guru_semua', 'absensi_siswa_semua'
+        ));
     }
 
     public function simpanAbsensiMapel(Request $request) {
@@ -334,10 +525,35 @@ class siakadController extends Controller
         $jadwal_id = $request->input('jadwal_id');
         $tanggal = $request->input('tanggal', date('Y-m-d'));
         $absensi = $request->input('absensi', []);
+        $materi = $request->input('materi');
+        $catatan = $request->input('catatan');
         
-        $jadwal = \App\Models\jadwal_pelajaran::with('jam_pelajaran')->find($jadwal_id);
+        if ($tanggal > date('Y-m-d')) {
+            return redirect()->back()->with('error', 'Tidak dapat melakukan absensi untuk tanggal di masa depan.');
+        }
+
+        $jadwal = \App\Models\jadwal_pelajaran::with(['jam_pelajaran', 'mata_pelajaran', 'kelas'])->find($jadwal_id);
         if (!$jadwal || $jadwal->guru_id != $guru_id) {
-            return redirect()->back()->with('error', 'Jadwal tidak valid.');
+            return redirect()->back()->with('error', 'Jadwal mengajar tidak valid atau bukan milik Anda.');
+        }
+
+        // Cek & Rekam Kehadiran Guru Mengajar
+        // Toleransi masuk kelas: jam_pelajaran->jam_mulai + 5 menit
+        $absen_guru = \App\Models\absensi_mengajar_guru::where('jadwal_pelajaran_id', $jadwal_id)
+            ->where('tanggal', $tanggal)
+            ->first();
+
+        $jam_mulai_str = $jadwal->jam_pelajaran->jam_mulai ?? '07:00:00';
+        $jam_mulai = \Carbon\Carbon::parse($jam_mulai_str);
+        $jam_buka = $jam_mulai->copy()->subMinutes(5); // buka 5 menit sebelum jam mulai
+        $jam_batas = $jam_mulai->copy()->addMinutes(5); // batas toleransi 5 menit setelah jam mulai
+        $sekarang = now();
+
+        // Validasi Anti-Kecurangan Absen Terlalu Dini
+        if (!$absen_guru && $tanggal === date('Y-m-d')) {
+            if ($sekarang->format('H:i:s') < $jam_buka->format('H:i:s')) {
+                return redirect()->back()->with('error', 'Presensi belum dapat dilakukan. Sesi ini baru dapat dibuka mulai pukul ' . $jam_buka->format('H:i') . ' WIB (5 menit sebelum jam mulai).');
+            }
         }
 
         // Simpan Absensi Siswa
@@ -351,43 +567,88 @@ class siakadController extends Controller
                 [
                     'kelas_id' => $jadwal->kelas_id,
                     'guru_id' => $guru_id,
-                    'status' => $data['status'],
+                    'status' => $data['status'] ?? 'h',
                     'keterangan' => $data['keterangan'] ?? null
                 ]
             );
         }
 
-        // Cek Kehadiran Guru
-        // Menggunakan jam_pelajaran->jam_mulai + toleransi 5 menit
-        $absen_guru = \App\Models\absensi_mengajar_guru::where('jadwal_pelajaran_id', $jadwal_id)
-            ->where('tanggal', $tanggal)
-            ->first();
-
+        $info_status = '';
         if (!$absen_guru) {
-            $jam_mulai = \Carbon\Carbon::parse($jadwal->jam_pelajaran->jam_mulai);
-            $jam_batas = $jam_mulai->copy()->addMinutes(5);
-            $sekarang = now();
+            if ($tanggal === date('Y-m-d')) {
+                $jam_masuk = $sekarang->format('H:i:s');
+                $status_guru = ($jam_masuk <= $jam_batas->format('H:i:s')) ? 'tepat_waktu' : 'terlambat';
+            } else if ($tanggal < date('Y-m-d')) {
+                // Input susulan setelah hari H dianggap terlambat
+                $status_guru = 'terlambat';
+                $jam_masuk = $jam_batas->copy()->addMinutes(15)->format('H:i:s');
+            } else {
+                $status_guru = 'tepat_waktu';
+                $jam_masuk = $jam_mulai->format('H:i:s');
+            }
 
-            $status_guru = $sekarang->format('H:i:s') <= $jam_batas->format('H:i:s') ? 'tepat_waktu' : 'terlambat';
-
-            \App\Models\absensi_mengajar_guru::create([
+            $absen_baru = \App\Models\absensi_mengajar_guru::create([
                 'jadwal_pelajaran_id' => $jadwal_id,
                 'guru_id' => $guru_id,
                 'tanggal' => $tanggal,
-                'jam_masuk' => $sekarang->format('H:i:s'),
-                'status' => $status_guru
+                'jam_masuk' => $jam_masuk,
+                'status' => $status_guru,
+                'materi' => $materi,
+                'catatan' => $catatan
             ]);
+
+            $status_badge = ($status_guru === 'tepat_waktu') ? 'Tepat Waktu' : 'Terlambat';
+            $info_status = "Presensi kehadiran & jurnal materi Anda berhasil dicatat sebagai {$status_badge} (Masuk pukul " . substr($jam_masuk, 0, 5) . " WIB, batas toleransi " . $jam_batas->format('H:i') . " WIB).";
+        } else {
+            $absen_guru->update([
+                'materi' => $materi,
+                'catatan' => $catatan
+            ]);
+            $status_badge = ($absen_guru->status === 'tepat_waktu') ? 'Tepat Waktu' : 'Terlambat';
+            $info_status = "Presensi siswa & jurnal materi diperbarui. Waktu masuk guru tetap tercatat {$status_badge} (Pukul " . substr($absen_guru->jam_masuk, 0, 5) . " WIB).";
         }
 
-        return redirect()->back()->with('success', 'Data absensi siswa dan guru berhasil disimpan.');
+        return redirect()->back()->with('success', 'Data absensi mapel berhasil disimpan! ' . $info_status);
     }
 
     function profilGuru(){
-       return view("/modul/siakad/guru/profilGuru");
+        $guru_id = session('id');
+        $guru = \App\Models\guru::with(['getCabang', 'getSekolah'])->find($guru_id);
+        $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
+        $total_jadwal = \App\Models\jadwal_pelajaran::where('guru_id', $guru_id)->count();
+        return view("/modul/siakad/guru/profilGuru", compact('guru', 'wallas', 'total_jadwal'));
     }
 
     function slipPembayaranGuru(){
-       return view("/modul/siakad/guru/slipPembayaran");
+        $guru_id = session('id');
+        $guru = \App\Models\guru::with(['getCabang', 'getSekolah'])->find($guru_id);
+        $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
+        
+        // Ambil riwayat kehadiran mengajar guru untuk rekapitulasi jam mengajar
+        $riwayat_absen = \App\Models\absensi_mengajar_guru::with(['jadwal.mata_pelajaran', 'jadwal.kelas', 'jadwal.jam_pelajaran'])
+            ->where('guru_id', $guru_id)
+            ->orderByDesc('tanggal')
+            ->get();
+
+        $rekap_bulanan = $riwayat_absen->groupBy(function($item) {
+            return \Carbon\Carbon::parse($item->tanggal)->format('Y-m');
+        })->map(function($items, $ym) {
+            $carbon = \Carbon\Carbon::createFromFormat('Y-m', $ym)->locale('id');
+            return [
+                'periode_kode' => $ym,
+                'label_bulan' => $carbon->isoFormat('MMMM Y'),
+                'periode_nama' => $carbon->isoFormat('MMMM Y'),
+                'tanggal_terbit' => $carbon->endOfMonth()->isoFormat('D MMM Y'),
+                'total_sesi' => $items->count(),
+                'tepat_waktu' => $items->where('status', 'tepat_waktu')->count(),
+                'terlambat' => $items->where('status', 'terlambat')->count(),
+                'items' => $items
+            ];
+        })->values();
+
+        $total_jadwal_mingguan = \App\Models\jadwal_pelajaran::where('guru_id', $guru_id)->count();
+
+        return view("/modul/siakad/guru/slipPembayaran", compact('guru', 'wallas', 'riwayat_absen', 'rekap_bulanan', 'total_jadwal_mingguan'));
     }
     function tampilanPembayaranPemeliharaan(){
        return view("/modul/siakad/admin/pemeliharaan");
@@ -599,6 +860,13 @@ class siakadController extends Controller
 
     function jadwalMengajarGuru(Request $request) {
         $guru_id = session('id'); 
+        $guru = \App\Models\guru::find($guru_id);
+        $isWallas = \App\Models\wallas::where('guru_id', $guru_id)->exists();
+        $isPengajar = $isWallas || ($guru && ($guru->guru_tetap || $guru->guru_honor)) || \App\Models\jadwal_pelajaran::where('guru_id', $guru_id)->exists();
+        if (!$isPengajar) {
+            return redirect('/sk/dsg')->with('error', 'Status Anda pada modul guru bukan sebagai Guru Pengajar.');
+        }
+
         $jadwal = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran'])
             ->where('guru_id', $guru_id)
             ->orderBy('hari')
@@ -608,7 +876,14 @@ class siakadController extends Controller
 
     function inputNilaiGuru(Request $request) {
         $guru_id = session('id');
-        $mapel_guru = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran'])
+        $guru = \App\Models\guru::find($guru_id);
+        $isWallas = \App\Models\wallas::where('guru_id', $guru_id)->exists();
+        $isPengajar = $isWallas || ($guru && ($guru->guru_tetap || $guru->guru_honor)) || \App\Models\jadwal_pelajaran::where('guru_id', $guru_id)->exists();
+        if (!$isPengajar) {
+            return redirect('/sk/dsg')->with('error', 'Status Anda pada modul guru bukan sebagai Guru Pengajar.');
+        }
+
+        $mapel_guru = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran', 'tahun_ajaran'])
             ->where('guru_id', $guru_id)
             ->get();
         return view('/modul/siakad/guru/inputNilai', compact('mapel_guru'));
@@ -623,6 +898,10 @@ class siakadController extends Controller
         }
         $siswa = collect();
         $jadwal_mingguan = collect();
+        $jadwal_hari_ini = collect();
+        $absensi_mengajar_hari_ini = collect();
+        $hari_ini_indonesia = ucfirst(now()->locale('id')->isoFormat('dddd, D MMMM Y'));
+        $absensi_siswa_hari_ini = collect();
         
         if ($wallas && $wallas->ruangKelas) {
             $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->get();
@@ -630,15 +909,37 @@ class siakadController extends Controller
             $kelas = \App\Models\kelas::where('nama_kelas', $wallas->ruangKelas->nama_ruang)->first();
             $kelas_id_jadwal = $kelas ? $kelas->id : $wallas->kelas_id;
 
-            $jadwal_mingguan = \App\Models\jadwal_pelajaran::with(['guru', 'mata_pelajaran', 'jam_pelajaran'])
+            $jadwal_semua = \App\Models\jadwal_pelajaran::with(['guru', 'mata_pelajaran', 'jam_pelajaran'])
                 ->where('kelas_id', $kelas_id_jadwal)
-                ->get()
+                ->get();
+
+            $jadwal_mingguan = $jadwal_semua
                 ->sortBy(function($j) {
-                    return $j->jam_pelajaran->jam_mulai;
+                    return $j->jam_pelajaran->jam_mulai ?? '00:00';
                 })
                 ->groupBy('hari');
+
+            // Jadwal Pelajaran Kelas Binaan Hari Ini
+            $hari_ini = strtolower(now()->locale('id')->isoFormat('dddd'));
+            $jadwal_hari_ini = $jadwal_semua->where('hari', $hari_ini)->sortBy(function($j) {
+                return $j->jam_pelajaran->jam_mulai ?? '00:00';
+            });
+
+            if ($jadwal_hari_ini->isNotEmpty()) {
+                $absensi_mengajar_hari_ini = \App\Models\absensi_mengajar_guru::whereIn('jadwal_pelajaran_id', $jadwal_hari_ini->pluck('id'))
+                    ->where('tanggal', date('Y-m-d'))
+                    ->get()
+                    ->keyBy('jadwal_pelajaran_id');
+
+                $absensi_siswa_hari_ini = \App\Models\absensi_siswa::whereIn('jadwal_pelajaran_id', $jadwal_hari_ini->pluck('id'))
+                    ->where('tanggal', date('Y-m-d'))
+                    ->get()
+                    ->groupBy('jadwal_pelajaran_id');
+            }
         }
-        return view('/modul/siakad/guru/dataWaliKelas', compact('wallas', 'siswa', 'jadwal_mingguan'));
+        return view('/modul/siakad/guru/dataWaliKelas', compact(
+            'wallas', 'siswa', 'jadwal_mingguan', 'jadwal_hari_ini', 'absensi_mengajar_hari_ini', 'hari_ini_indonesia', 'absensi_siswa_hari_ini'
+        ));
     }
 
     public function absensiWalas(Request $request) {
@@ -649,6 +950,7 @@ class siakadController extends Controller
         }
 
         $tanggal = $request->input('tanggal', date('Y-m-d'));
+        $tab = $request->input('tab', 'harian');
         $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->orderBy('nama')->get();
         
         // Sinkronisasi dengan tabel kelas
@@ -656,7 +958,9 @@ class siakadController extends Controller
         $kelas = \App\Models\kelas::where('nama_kelas', $nama_kelas)->first();
         $kelas_id_absensi = $kelas ? $kelas->id : $wallas->kelas_id;
 
+        // Absensi harian wali kelas (jadwal_pelajaran_id = null)
         $absensi_db = \App\Models\absensi_siswa::where('kelas_id', $kelas_id_absensi)
+                        ->whereNull('jadwal_pelajaran_id')
                         ->whereDate('tanggal', $tanggal)
                         ->get()->keyBy('siswa_id');
 
@@ -668,7 +972,37 @@ class siakadController extends Controller
             'alpa'  => $absensi_db->where('status', 'a')->count(),
         ];
 
-        return view('modul.siakad.guru.absensisiswa', compact('wallas', 'siswa', 'tanggal', 'absensi_db', 'rekap'));
+        // Rekap Akumulasi Absensi Kelas (Seluruh Hari Efektif)
+        $semua_absensi_kelas = \App\Models\absensi_siswa::where('kelas_id', $kelas_id_absensi)
+            ->whereNull('jadwal_pelajaran_id')
+            ->get();
+
+        $total_hari_efektif = $semua_absensi_kelas->pluck('tanggal')->unique()->count();
+        $absensi_per_siswa = $semua_absensi_kelas->groupBy('siswa_id');
+
+        $rekap_akumulasi = [];
+        foreach ($siswa as $s) {
+            $catatan_siswa = $absensi_per_siswa->get($s->id, collect());
+            $h = $catatan_siswa->where('status', 'h')->count();
+            $skt = $catatan_siswa->where('status', 's')->count();
+            $izn = $catatan_siswa->where('status', 'i')->count();
+            $alp = $catatan_siswa->where('status', 'a')->count();
+            $total_catat = $catatan_siswa->count();
+            $persen = $total_catat > 0 ? round(($h / $total_catat) * 100) : 0;
+
+            $rekap_akumulasi[$s->id] = [
+                'hadir' => $h,
+                'sakit' => $skt,
+                'izin' => $izn,
+                'alpa' => $alp,
+                'total' => $total_catat,
+                'persentase' => $persen
+            ];
+        }
+
+        return view('modul.siakad.guru.absensisiswa', compact(
+            'wallas', 'siswa', 'tanggal', 'absensi_db', 'rekap', 'rekap_akumulasi', 'total_hari_efektif', 'tab'
+        ));
     }
 
     public function simpanAbsensiWalas(Request $request) {
@@ -690,7 +1024,8 @@ class siakadController extends Controller
                 [
                     'tanggal' => $tanggal,
                     'siswa_id' => $siswa_id,
-                    'kelas_id' => $kelas_id_absensi
+                    'kelas_id' => $kelas_id_absensi,
+                    'jadwal_pelajaran_id' => null
                 ],
                 [
                     'status' => $status,
@@ -700,53 +1035,247 @@ class siakadController extends Controller
             );
         }
 
-        return redirect()->back()->with('success', 'Absensi berhasil disimpan!');
+        return redirect()->back()->with('success', 'Absensi harian kelas berhasil disimpan!');
     }
 
     public function raporWalas(Request $request) {
         $guru_id = session('id');
-        $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
+        $wallas = \App\Models\wallas::with(['ruangKelas', 'guru'])->where('guru_id', $guru_id)->first();
         if (!$wallas) {
             return redirect()->back()->with('error', 'Anda bukan Wali Kelas.');
         }
 
         $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->orderBy('nama')->get();
+        $total_siswa = $siswa->count();
 
-        return view('modul.siakad.guru.raporWalas', compact('wallas', 'siswa'));
+        // Sinkronisasi kelas dengan tabel kelas untuk jadwal pelajaran
+        $nama_kelas = $wallas->ruangKelas->nama_ruang ?? '';
+        $kelas = \App\Models\kelas::where('nama_kelas', $nama_kelas)->first();
+        $kelas_id_jadwal = $kelas ? $kelas->id : $wallas->kelas_id;
+
+        $jadwal_kelas = \App\Models\jadwal_pelajaran::with(['mata_pelajaran', 'guru', 'jam_pelajaran', 'tahun_ajaran'])
+            ->where('kelas_id', $kelas_id_jadwal)
+            ->get();
+
+        // Daftar mata pelajaran unik di kelas perwalian ini
+        $daftar_jadwal_mapel = $jadwal_kelas->unique('mapel_id')->values();
+
+        $jenis_penilaian = \App\Models\jenis_penilaian::all();
+        if ($jenis_penilaian->isEmpty()) {
+            \App\Models\jenis_penilaian::insert([
+                ['nama_jenis' => 'Tugas', 'bobot' => 20],
+                ['nama_jenis' => 'Ulangan Harian', 'bobot' => 30],
+                ['nama_jenis' => 'UTS', 'bobot' => 20],
+                ['nama_jenis' => 'UAS', 'bobot' => 30]
+            ]);
+            $jenis_penilaian = \App\Models\jenis_penilaian::all();
+        }
+        $jumlah_komponen = $jenis_penilaian->count();
+
+        // Ambil seluruh nilai siswa di kelas ini
+        $nilai_db = \App\Models\nilai::with(['mata_pelajaran', 'jenis_penilaian'])
+            ->whereIn('siswa_id', $siswa->pluck('id'))
+            ->get();
+
+        // Kelompokkan nilai: $map_nilai[siswa_id][mapel_id][jenis_penilaian_id] = nilai
+        $map_nilai = [];
+        foreach ($nilai_db as $n) {
+            $map_nilai[$n->siswa_id][$n->mapel_id][$n->jenis_penilaian_id] = $n->nilai;
+        }
+
+        // 1. Rekap Per Mata Pelajaran (Untuk Manajemen Nilai Pengajar oleh Walas)
+        $rekap_mapel = collect();
+        foreach ($daftar_jadwal_mapel as $j) {
+            $mapel_id = $j->mapel_id;
+            $kkm = $j->mata_pelajaran->kkm ?? 75;
+            $siswa_dinilai = 0;
+            $siswa_lengkap = 0;
+            $siswa_tuntas = 0;
+            $siswa_remedi = 0;
+            $total_na_mapel = 0;
+
+            foreach ($siswa as $s) {
+                $komponen_siswa = $map_nilai[$s->id][$mapel_id] ?? [];
+                if (count($komponen_siswa) > 0) {
+                    $siswa_dinilai++;
+                    if (count($komponen_siswa) >= $jumlah_komponen) {
+                        $siswa_lengkap++;
+                    }
+                    $na = 0;
+                    foreach ($jenis_penilaian as $jp) {
+                        $skor = $komponen_siswa[$jp->id] ?? 0;
+                        $na += ($skor * ($jp->bobot / 100));
+                    }
+                    $total_na_mapel += $na;
+                    if ($na >= $kkm) {
+                        $siswa_tuntas++;
+                    } else {
+                        $siswa_remedi++;
+                    }
+                }
+            }
+
+            $rata_mapel = $siswa_dinilai > 0 ? round($total_na_mapel / $siswa_dinilai, 1) : 0;
+
+            $rekap_mapel->push((object)[
+                'jadwal_id' => $j->id,
+                'mapel_id' => $mapel_id,
+                'nama_mapel' => $j->mata_pelajaran->nama_mapel ?? '-',
+                'kkm' => $kkm,
+                'guru_nama' => $j->guru->nama ?? '-',
+                'hari' => ucfirst($j->hari ?? '-'),
+                'jam_mulai' => substr($j->jam_pelajaran->jam_mulai ?? '', 0, 5),
+                'jam_selesai' => substr($j->jam_pelajaran->jam_selesai ?? '', 0, 5),
+                'total_siswa' => $total_siswa,
+                'siswa_dinilai' => $siswa_dinilai,
+                'siswa_lengkap' => $siswa_lengkap,
+                'siswa_tuntas' => $siswa_tuntas,
+                'siswa_remedi' => $siswa_remedi,
+                'rata_rata' => $rata_mapel,
+                'status_input' => $siswa_dinilai === 0 ? 'belum_input' : ($siswa_lengkap >= $total_siswa && $total_siswa > 0 ? 'lengkap' : 'sebagian')
+            ]);
+        }
+
+        // 2. Rekap Leger Nilai Per Siswa (Semua Mata Pelajaran)
+        $leger_temp = [];
+        $total_mapel_kelas = $daftar_jadwal_mapel->count();
+
+        foreach ($siswa as $s) {
+            $nilai_per_mapel = [];
+            $total_nilai_siswa = 0;
+            $jumlah_mapel_terisi = 0;
+
+            foreach ($daftar_jadwal_mapel as $j) {
+                $m_id = $j->mapel_id;
+                $kkm = $j->mata_pelajaran->kkm ?? 75;
+                $komponen_siswa = $map_nilai[$s->id][$m_id] ?? [];
+
+                if (count($komponen_siswa) > 0) {
+                    $na = 0;
+                    foreach ($jenis_penilaian as $jp) {
+                        $skor = $komponen_siswa[$jp->id] ?? 0;
+                        $na += ($skor * ($jp->bobot / 100));
+                    }
+                    $na_round = round($na, 1);
+                    $nilai_per_mapel[$m_id] = [
+                        'ada' => true,
+                        'nilai_akhir' => $na_round,
+                        'tuntas' => $na_round >= $kkm,
+                        'lengkap' => count($komponen_siswa) >= $jumlah_komponen
+                    ];
+                    $total_nilai_siswa += $na_round;
+                    $jumlah_mapel_terisi++;
+                } else {
+                    $nilai_per_mapel[$m_id] = [
+                        'ada' => false,
+                        'nilai_akhir' => null,
+                        'tuntas' => false,
+                        'lengkap' => false
+                    ];
+                }
+            }
+
+            $rata_siswa = $jumlah_mapel_terisi > 0 ? round($total_nilai_siswa / $jumlah_mapel_terisi, 1) : 0;
+            $predikat = '-';
+            if ($jumlah_mapel_terisi > 0) {
+                if ($rata_siswa >= 90) $predikat = 'A';
+                elseif ($rata_siswa >= 80) $predikat = 'B';
+                elseif ($rata_siswa >= 75) $predikat = 'C';
+                else $predikat = 'D';
+            }
+
+            $leger_temp[] = [
+                'siswa' => $s,
+                'nilai_mapel' => $nilai_per_mapel,
+                'total_nilai' => round($total_nilai_siswa, 1),
+                'rata_rata' => $rata_siswa,
+                'mapel_terisi' => $jumlah_mapel_terisi,
+                'total_mapel' => $total_mapel_kelas,
+                'predikat' => $predikat
+            ];
+        }
+
+        // Hitung Peringkat Kelas berdasarkan rata_rata tertinggi
+        $sorted_by_score = collect($leger_temp)->sortByDesc('total_nilai')->values();
+        $rank_map = [];
+        foreach ($sorted_by_score as $idx => $item) {
+            $rank_map[$item['siswa']->id] = $item['mapel_terisi'] > 0 ? ($idx + 1) : '-';
+        }
+
+        $leger_siswa = collect($leger_temp)->map(function($item) use ($rank_map) {
+            $item['peringkat'] = $rank_map[$item['siswa']->id] ?? '-';
+            return (object)$item;
+        });
+
+        $stats_nilai = [
+            'total_mapel' => $total_mapel_kelas,
+            'mapel_sudah_input' => $rekap_mapel->where('siswa_dinilai', '>', 0)->count(),
+            'mapel_lengkap' => $rekap_mapel->where('status_input', 'lengkap')->count(),
+            'rata_kelas' => $rekap_mapel->where('siswa_dinilai', '>', 0)->count() > 0 
+                ? round($rekap_mapel->where('siswa_dinilai', '>', 0)->avg('rata_rata'), 1) 
+                : 0
+        ];
+
+        if ($request->query('tab') === 'nilai') {
+            return view('modul.siakad.guru.manajemenNilaiWalas', compact(
+                'wallas', 'siswa', 'rekap_mapel', 'leger_siswa', 'stats_nilai', 'jenis_penilaian'
+            ));
+        }
+
+        return view('modul.siakad.guru.raporWalas', compact(
+            'wallas', 'siswa', 'rekap_mapel', 'leger_siswa', 'stats_nilai'
+        ));
     }
 
     public function detailRaporWalas(Request $request, $siswa_id) {
         $guru_id = session('id');
-        $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
+        $wallas = \App\Models\wallas::with(['ruangKelas', 'guru'])->where('guru_id', $guru_id)->first();
         if (!$wallas) {
             return redirect()->back()->with('error', 'Akses ditolak.');
         }
 
         $siswa = \App\Models\siswa::where('id', $siswa_id)->where('kelas_id', $wallas->kelas_id)->firstOrFail();
+        $semua_siswa_kelas = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->get();
+        $total_siswa_kelas = $semua_siswa_kelas->count();
         
-        // Ambil Data Nilai
+        // Ambil Tahun Ajaran Aktif
+        $tahun_aktif = \App\Models\tahun_ajaran::where('aktif', 1)->first() ?? \App\Models\tahun_ajaran::orderByDesc('id')->first();
+
+        // Ambil Data Nilai Siswa
         $nilai_db = \App\Models\nilai::with(['mata_pelajaran', 'jenis_penilaian'])
                         ->where('siswa_id', $siswa_id)
                         ->get();
 
         // Rekap Nilai per Mata Pelajaran
         $rekap_nilai = [];
+        $total_nilai_akhir = 0;
         foreach ($nilai_db as $n) {
+            if (!$n->mata_pelajaran || !$n->jenis_penilaian) continue;
             $mapel = $n->mata_pelajaran->nama_mapel;
             if (!isset($rekap_nilai[$mapel])) {
                 $rekap_nilai[$mapel] = [
+                    'kkm' => $n->mata_pelajaran->kkm ?? 75,
                     'rincian' => [],
                     'nilai_akhir' => 0
                 ];
             }
             $rekap_nilai[$mapel]['rincian'][$n->jenis_penilaian->nama_jenis] = $n->nilai;
-            // Hitung nilai akhir berdasarkan bobot
             $bobot = $n->jenis_penilaian->bobot / 100;
             $rekap_nilai[$mapel]['nilai_akhir'] += ($n->nilai * $bobot);
         }
 
-        // Ambil Rekap Absensi
-        $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa_id)->get();
+        foreach ($rekap_nilai as $m => $d) {
+            $total_nilai_akhir += $d['nilai_akhir'];
+        }
+        $rata_rata_rapor = count($rekap_nilai) > 0 ? round($total_nilai_akhir / count($rekap_nilai), 1) : 0;
+
+        // Ambil Rekap Absensi Harian Kelas (jadwal_pelajaran_id = null)
+        $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa_id)
+            ->whereNull('jadwal_pelajaran_id')
+            ->get();
+        if ($absensi->isEmpty()) {
+            $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa_id)->get();
+        }
         $rekap_absensi = [
             'hadir' => $absensi->where('status', 'h')->count(),
             'sakit' => $absensi->where('status', 's')->count(),
@@ -754,7 +1283,9 @@ class siakadController extends Controller
             'alpa'  => $absensi->where('status', 'a')->count(),
         ];
 
-        return view('modul.siakad.guru.detailRaporWalas', compact('siswa', 'wallas', 'rekap_nilai', 'rekap_absensi'));
+        return view('modul.siakad.guru.detailRaporWalas', compact(
+            'siswa', 'wallas', 'rekap_nilai', 'rekap_absensi', 'rata_rata_rapor', 'total_nilai_akhir', 'total_siswa_kelas', 'tahun_aktif'
+        ));
     }
 
 
@@ -1032,65 +1563,258 @@ class siakadController extends Controller
     }
 
     // ==========================================
-    // MENU SISWA (PORTAL ORANG TUA)
+    // MENU SISWA (PORTAL ORANG TUA & SISWA)
     // ==========================================
     public function jadwalSiswa(Request $request) {
         $siswa_id = session('id');
-        $siswa = \App\Models\siswa::with('kelas')->find($siswa_id);
+        $siswa = \App\Models\siswa::with(['kelas', 'sekolah', 'tahunAjaran'])->find($siswa_id);
         
-        if (!$siswa || !$siswa->kelas_id) {
-            return redirect()->back()->with('error', 'Data kelas siswa tidak ditemukan.');
+        if (!$siswa) {
+            return redirect('/sk/dbs')->with('error', 'Data siswa tidak ditemukan.');
         }
 
+        $tab = $request->query('tab', 'jadwal');
+        $wallas = $siswa->kelas_id ? \App\Models\wallas::with(['guru', 'ruangKelas'])->where('kelas_id', $siswa->kelas_id)->first() : null;
+
+        // Sinkronisasi ruang_kelas (siswa->kelas_id) dengan tabel kelas (jadwal_pelajaran->kelas_id)
+        $nama_ruang = $siswa->kelas->nama_ruang ?? '';
+        $kelas_jadwal = $nama_ruang ? \App\Models\kelas::where('nama_kelas', $nama_ruang)->first() : null;
+        $kelas_id_jadwal = $kelas_jadwal ? $kelas_jadwal->id : $siswa->kelas_id;
+
         // Ambil jadwal pelajaran berdasarkan kelas siswa
-        $jadwal = \App\Models\jadwal_pelajaran::with(['mata_pelajaran', 'guru', 'jam_pelajaran'])
-            ->where('kelas_id', $siswa->kelas_id)
-            ->orderBy('hari')
+        $jadwal = collect();
+        if ($kelas_id_jadwal) {
+            $jadwal = \App\Models\jadwal_pelajaran::with(['mata_pelajaran', 'guru', 'jam_pelajaran', 'tahun_ajaran'])
+                ->where('kelas_id', $kelas_id_jadwal)
+                ->get()
+                ->sortBy(function($j) {
+                    return $j->jam_pelajaran->jam_mulai ?? '00:00:00';
+                })
+                ->values();
+        }
+
+        $jadwal_per_hari = $jadwal->groupBy(function($j) {
+            return strtolower($j->hari ?? '');
+        });
+
+        // Jadwal Hari Ini & Status Kehadiran Guru Pengajar
+        $hari_ini = strtolower(now()->locale('id')->isoFormat('dddd'));
+        $hari_ini_label = ucfirst(now()->locale('id')->isoFormat('dddd, D MMMM Y'));
+        $jadwal_hari_ini = $jadwal_per_hari->get($hari_ini, collect());
+
+        $absensi_guru_hari_ini = collect();
+        $absensi_siswa_hari_ini = collect();
+        if ($jadwal_hari_ini->isNotEmpty()) {
+            $absensi_guru_hari_ini = \App\Models\absensi_mengajar_guru::whereIn('jadwal_pelajaran_id', $jadwal_hari_ini->pluck('id'))
+                ->whereDate('tanggal', date('Y-m-d'))
+                ->get()
+                ->keyBy('jadwal_pelajaran_id');
+
+            $absensi_siswa_hari_ini = \App\Models\absensi_siswa::where('siswa_id', $siswa_id)
+                ->whereIn('jadwal_pelajaran_id', $jadwal_hari_ini->pluck('id'))
+                ->whereDate('tanggal', date('Y-m-d'))
+                ->get()
+                ->keyBy('jadwal_pelajaran_id');
+        }
+
+        // Semua data absensi siswa
+        $semua_absensi = \App\Models\absensi_siswa::with(['jadwal.mata_pelajaran', 'jadwal.guru', 'jadwal.jam_pelajaran', 'guru'])
+            ->where('siswa_id', $siswa_id)
+            ->orderByDesc('tanggal')
+            ->orderByDesc('id')
             ->get();
 
-        // Rekap Absensi Siswa
-        $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa_id)->get();
+        // 1. Riwayat Absensi Harian Kelas (Wali Kelas: jadwal_pelajaran_id = null)
+        $riwayat_absensi_harian = $semua_absensi->whereNull('jadwal_pelajaran_id')->values();
+
+        // 2. Riwayat Absensi Sesi Mata Pelajaran (Guru Pengajar: jadwal_pelajaran_id != null) + Jurnal Materi
+        $absensi_mapel_raw = $semua_absensi->whereNotNull('jadwal_pelajaran_id')->values();
+        $jurnal_guru_map = collect();
+        if ($absensi_mapel_raw->isNotEmpty()) {
+            $jurnal_list = \App\Models\absensi_mengajar_guru::whereIn('jadwal_pelajaran_id', $absensi_mapel_raw->pluck('jadwal_pelajaran_id')->unique())
+                ->get();
+            foreach ($jurnal_list as $jg) {
+                $jurnal_guru_map[$jg->jadwal_pelajaran_id . '_' . $jg->tanggal] = $jg;
+            }
+        }
+
+        $riwayat_absensi_mapel = $absensi_mapel_raw->map(function($item) use ($jurnal_guru_map) {
+            $jurnal = $jurnal_guru_map[$item->jadwal_pelajaran_id . '_' . $item->tanggal] ?? null;
+            $item->jurnal_materi = $jurnal->materi ?? null;
+            $item->jurnal_catatan = $jurnal->catatan ?? null;
+            $item->jam_masuk_guru = $jurnal->jam_masuk ?? null;
+            $item->status_masuk_guru = $jurnal->status ?? null;
+            return $item;
+        });
+
+        // Rekap Absensi Utama (Prioritaskan Harian Wali Kelas jika ada, atau gabungan)
+        $sumber_rekap = $riwayat_absensi_harian->isNotEmpty() ? $riwayat_absensi_harian : $semua_absensi;
+        $total_rekap = $sumber_rekap->count();
+        $hadir_rekap = $sumber_rekap->where('status', 'h')->count();
         $rekap_absen = [
-            'h' => $absensi->where('status', 'h')->count(),
-            'i' => $absensi->where('status', 'i')->count(),
-            's' => $absensi->where('status', 's')->count(),
-            'a' => $absensi->where('status', 'a')->count(),
+            'h' => $hadir_rekap,
+            'i' => $sumber_rekap->where('status', 'i')->count(),
+            's' => $sumber_rekap->where('status', 's')->count(),
+            'a' => $sumber_rekap->where('status', 'a')->count(),
+            'total' => $total_rekap,
+            'persentase' => $total_rekap > 0 ? round(($hadir_rekap / $total_rekap) * 100) : 100,
         ];
 
-        return view('modul.siakad.siswa.jadwalSiswa', compact('siswa', 'jadwal', 'rekap_absen'));
+        $total_mapel_sesi = $riwayat_absensi_mapel->count();
+        $hadir_mapel_sesi = $riwayat_absensi_mapel->where('status', 'h')->count();
+        $rekap_absen_mapel = [
+            'h' => $hadir_mapel_sesi,
+            'i' => $riwayat_absensi_mapel->where('status', 'i')->count(),
+            's' => $riwayat_absensi_mapel->where('status', 's')->count(),
+            'a' => $riwayat_absensi_mapel->where('status', 'a')->count(),
+            'total' => $total_mapel_sesi,
+            'persentase' => $total_mapel_sesi > 0 ? round(($hadir_mapel_sesi / $total_mapel_sesi) * 100) : 100,
+        ];
+
+        return view('modul.siakad.siswa.jadwalSiswa', compact(
+            'siswa', 'wallas', 'jadwal', 'jadwal_per_hari', 'jadwal_hari_ini', 'hari_ini_label',
+            'absensi_guru_hari_ini', 'absensi_siswa_hari_ini',
+            'riwayat_absensi_harian', 'riwayat_absensi_mapel',
+            'rekap_absen', 'rekap_absen_mapel', 'tab'
+        ));
     }
 
     public function raporSiswa(Request $request) {
         $siswa_id = session('id');
-        $siswa = \App\Models\siswa::with('kelas')->findOrFail($siswa_id);
+        $siswa = \App\Models\siswa::with(['kelas', 'sekolah', 'tahunAjaran'])->findOrFail($siswa_id);
+        $tab = $request->query('tab', 'transkrip');
 
-        $nilai = \App\Models\nilai::with(['mata_pelajaran', 'jenis_penilaian'])
+        $wallas = $siswa->kelas_id ? \App\Models\wallas::with(['guru', 'ruangKelas'])->where('kelas_id', $siswa->kelas_id)->first() : null;
+        $tahun_aktif = \App\Models\tahun_ajaran::where('aktif', 1)->first() ?? \App\Models\tahun_ajaran::orderByDesc('id')->first();
+
+        $jenis_penilaian = \App\Models\jenis_penilaian::all();
+        if ($jenis_penilaian->isEmpty()) {
+            \App\Models\jenis_penilaian::insert([
+                ['nama_jenis' => 'Tugas', 'bobot' => 20],
+                ['nama_jenis' => 'Ulangan Harian', 'bobot' => 30],
+                ['nama_jenis' => 'UTS', 'bobot' => 20],
+                ['nama_jenis' => 'UAS', 'bobot' => 30]
+            ]);
+            $jenis_penilaian = \App\Models\jenis_penilaian::all();
+        }
+
+        // Sinkronisasi kelas siswa dengan jadwal pelajaran
+        $nama_ruang = $siswa->kelas->nama_ruang ?? '';
+        $kelas_jadwal = $nama_ruang ? \App\Models\kelas::where('nama_kelas', $nama_ruang)->first() : null;
+        $kelas_id_jadwal = $kelas_jadwal ? $kelas_jadwal->id : $siswa->kelas_id;
+
+        $jadwal_kelas = collect();
+        if ($kelas_id_jadwal) {
+            $jadwal_kelas = \App\Models\jadwal_pelajaran::with(['mata_pelajaran', 'guru'])
+                ->where('kelas_id', $kelas_id_jadwal)
+                ->get()
+                ->unique('mapel_id');
+        }
+
+        $nilai = \App\Models\nilai::with(['mata_pelajaran', 'jenis_penilaian', 'guru'])
             ->where('siswa_id', $siswa_id)
             ->get();
 
-        $jenis_penilaian = \App\Models\jenis_penilaian::all();
         $rekap_nilai = [];
 
+        // Inisialisasi daftar mapel dari jadwal kelas agar semua mapel kelas terlihat
+        foreach ($jadwal_kelas as $jk) {
+            if (!$jk->mata_pelajaran) continue;
+            $rekap_nilai[$jk->mapel_id] = [
+                'mata_pelajaran' => $jk->mata_pelajaran,
+                'guru_nama' => $jk->guru->nama ?? '-',
+                'kkm' => $jk->mata_pelajaran->kkm ?? 75,
+                'nilai_detail' => [],
+                'ada_nilai' => false,
+                'nilai_akhir' => 0,
+            ];
+        }
+
+        // Masukkan nilai aktual dari tabel nilai
         foreach ($nilai as $n) {
+            if (!$n->mata_pelajaran) continue;
             $mapel_id = $n->mapel_id;
             if (!isset($rekap_nilai[$mapel_id])) {
                 $rekap_nilai[$mapel_id] = [
                     'mata_pelajaran' => $n->mata_pelajaran,
+                    'guru_nama' => $n->guru->nama ?? '-',
+                    'kkm' => $n->mata_pelajaran->kkm ?? 75,
                     'nilai_detail' => [],
-                    'nilai_akhir' => 0
+                    'ada_nilai' => false,
+                    'nilai_akhir' => 0,
                 ];
             }
+            $rekap_nilai[$mapel_id]['ada_nilai'] = true;
             $rekap_nilai[$mapel_id]['nilai_detail'][$n->jenis_penilaian_id] = $n->nilai;
-            
-            // Kalkulasi nilai akhir dengan bobot
+
             if ($n->jenis_penilaian) {
                 $bobot = $n->jenis_penilaian->bobot / 100;
                 $rekap_nilai[$mapel_id]['nilai_akhir'] += ($n->nilai * $bobot);
             }
         }
 
-        // Ambil rekap absen untuk ditampilkan di rapor
-        $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa_id)->get();
+        // Hitung predikat, ketuntasan, dan statistik keseluruhan
+        $total_nilai_akhir = 0;
+        $mapel_dinilai = 0;
+        $mapel_tuntas = 0;
+
+        foreach ($rekap_nilai as $m_id => &$item) {
+            $na = round($item['nilai_akhir'], 1);
+            $item['nilai_akhir'] = $na;
+            $kkm = $item['kkm'];
+            $namaMapel = $item['mata_pelajaran']->nama_mapel ?? 'Mata Pelajaran';
+
+            if ($item['ada_nilai']) {
+                $mapel_dinilai++;
+                $total_nilai_akhir += $na;
+                $tuntas = $na >= $kkm;
+                if ($tuntas) $mapel_tuntas++;
+
+                $predikat = 'D';
+                if ($na >= 90) $predikat = 'A';
+                elseif ($na >= 80) $predikat = 'B';
+                elseif ($na >= 70) $predikat = 'C';
+
+                $item['predikat'] = $predikat;
+                $item['tuntas'] = $tuntas;
+                $item['deskripsi'] = $na >= 90
+                    ? "Sangat baik dalam menguasai seluruh kompetensi dasar mata pelajaran {$namaMapel}."
+                    : ($tuntas
+                        ? "Baik dan telah mencapai ketuntasan kompetensi pada mata pelajaran {$namaMapel}."
+                        : "Perlu bimbingan dan penguatan lebih lanjut pada kompetensi dasar {$namaMapel}.");
+            } else {
+                $item['predikat'] = '-';
+                $item['tuntas'] = false;
+                $item['deskripsi'] = 'Nilai belum diinput oleh Guru Pengajar.';
+            }
+        }
+        unset($item);
+
+        $rata_rata = $mapel_dinilai > 0 ? round($total_nilai_akhir / $mapel_dinilai, 1) : 0;
+        $predikat_umum = '-';
+        if ($mapel_dinilai > 0) {
+            if ($rata_rata >= 90) $predikat_umum = 'A (Sangat Baik)';
+            elseif ($rata_rata >= 80) $predikat_umum = 'B (Baik)';
+            elseif ($rata_rata >= 75) $predikat_umum = 'C (Cukup)';
+            else $predikat_umum = 'D (Perlu Bimbingan)';
+        }
+
+        $stats_akademik = [
+            'total_mapel' => count($rekap_nilai),
+            'mapel_dinilai' => $mapel_dinilai,
+            'mapel_tuntas' => $mapel_tuntas,
+            'total_nilai_akhir' => round($total_nilai_akhir, 1),
+            'rata_rata' => $rata_rata,
+            'predikat_umum' => $predikat_umum,
+        ];
+
+        // Ambil rekap absen harian wali kelas untuk ditampilkan di rapor
+        $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa_id)
+            ->whereNull('jadwal_pelajaran_id')
+            ->get();
+        if ($absensi->isEmpty()) {
+            $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa_id)->get();
+        }
         $rekap_absen = [
             'h' => $absensi->where('status', 'h')->count(),
             'i' => $absensi->where('status', 'i')->count(),
@@ -1098,7 +1822,9 @@ class siakadController extends Controller
             'a' => $absensi->where('status', 'a')->count(),
         ];
 
-        return view('modul.siakad.siswa.raporSiswa', compact('siswa', 'rekap_nilai', 'jenis_penilaian', 'rekap_absen'));
+        return view('modul.siakad.siswa.raporSiswa', compact(
+            'siswa', 'wallas', 'tahun_aktif', 'rekap_nilai', 'jenis_penilaian', 'rekap_absen', 'stats_akademik', 'tab'
+        ));
     }
 }
 

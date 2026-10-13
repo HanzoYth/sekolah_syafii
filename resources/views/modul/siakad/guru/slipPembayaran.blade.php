@@ -1,86 +1,245 @@
-﻿<x-siakad-layout title="Slip Pembayaran" description="Daftar riwayat penerimaan honorarium dan slip gaji Anda." position="Guru" initials="GR">
-    
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px;">
-        <div style="flex: 1;">
-            <div style="font-size: 14px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
-                <i class="fa-solid fa-wallet"></i> Keuangan Guru
+<x-siakad-layout 
+    title="Slip Pembayaran & Rekap Kehadiran Mengajar" 
+    description="Rekapitulasi kehadiran sesi mengajar bulanan dan informasi insentif/honorarium pendidik." 
+    position="Guru SIAKAD" 
+    initials="GR">
+
+    <x-slot name="breadcrumb">
+        <li class="flex items-center">
+            <a href="/sk/dsg" class="text-slate-500 hover:text-emerald-600 transition-colors">Dashboard</a>
+            <i class="fa-solid fa-chevron-right text-[10px] mx-2 text-slate-400"></i>
+        </li>
+        <li class="flex items-center">
+            <span class="text-slate-700 font-medium">Slip Pembayaran & Kehadiran</span>
+        </li>
+    </x-slot>
+
+    @php
+        $totalSesiTercatat = isset($riwayat_absen) ? $riwayat_absen->count() : 0;
+        $totalTepatWaktu = isset($riwayat_absen) ? $riwayat_absen->where('status', 'tepat_waktu')->count() : 0;
+        $totalTerlambat = isset($riwayat_absen) ? $riwayat_absen->where('status', 'terlambat')->count() : 0;
+    @endphp
+
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 no-print">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl flex-shrink-0">
+                <i class="fa-solid fa-calendar-week"></i>
             </div>
-            <div style="font-size: 18px; font-weight: bold; color: #1e293b;">
-                Arsip Slip Pembayaran
+            <div>
+                <p class="text-xs font-medium text-slate-500">Beban Jadwal Mingguan</p>
+                <h3 class="text-xl font-bold text-slate-800">{{ $total_jadwal_mingguan ?? 0 }} Sesi</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Jadwal mengajar aktif</p>
             </div>
-            <div style="color: #64748b; font-size: 14px; margin-top: 4px;">
-                Akses dan unduh slip gaji atau honorarium yang telah diterbitkan.
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center text-xl flex-shrink-0">
+                <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+            <div>
+                <p class="text-xs font-medium text-slate-500">Total Kehadiran Mengajar</p>
+                <h3 class="text-xl font-bold text-slate-800">{{ $totalSesiTercatat }} Sesi</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Akumulasi terealisasi</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl flex-shrink-0">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <p class="text-xs font-medium text-slate-500">Sesi Tepat Waktu</p>
+                <h3 class="text-xl font-bold text-emerald-600">{{ $totalTepatWaktu }} Sesi</h3>
+                <p class="text-[11px] text-emerald-700 font-semibold mt-0.5">Disiplin &le; 5 menit</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl flex-shrink-0">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+            <div>
+                <p class="text-xs font-medium text-slate-500">Sesi Terlambat</p>
+                <h3 class="text-xl font-bold text-amber-600">{{ $totalTerlambat }} Sesi</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Lewat toleransi 5 menit</p>
             </div>
         </div>
     </div>
 
-    <div style="background: white; border-radius: 12px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-        
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
-            <div style="font-size: 16px; font-weight: bold; color: #1e293b;">
-                Daftar Transaksi
+    <!-- Tabel Rekapitulasi Bulanan & Slip Kehadiran Mengajar -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8 no-print">
+        <div class="px-6 py-5 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h3 class="text-base font-bold text-slate-800">Rekapitulasi Kehadiran Mengajar & Slip Bulanan</h3>
+                <p class="text-xs text-slate-500">Dasar perhitungan tunjangan kehadiran mengajar bulanan berdasarkan presensi aktual di kelas</p>
             </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <div style="position: relative;">
-                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
-                    <input type="text" id="slipSearch" placeholder="Cari periode atau keterangan..." style="padding: 8px 12px 8px 36px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; width: 250px;">
-                </div>
+
+            <div class="relative w-full sm:w-64">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="slipSearch" placeholder="Cari periode bulan..."
+                       class="w-full pl-9 pr-4 py-2 text-xs bg-white border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:border-emerald-500">
             </div>
         </div>
 
-        <x-siakad.ui.table>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                        <th class="px-5 py-3.5 w-14 text-center">No</th>
+                        <th class="px-5 py-3.5">Periode Bulan</th>
+                        <th class="px-5 py-3.5">Status Kepegawaian</th>
+                        <th class="px-5 py-3.5 text-center">Total Sesi</th>
+                        <th class="px-5 py-3.5 text-center">Tepat Waktu</th>
+                        <th class="px-5 py-3.5 text-center">Terlambat</th>
+                        <th class="px-5 py-3.5 text-center">Indeks Disiplin</th>
+                        <th class="px-5 py-3.5 text-center">Status Verifikasi</th>
+                        <th class="px-5 py-3.5 text-center">Cetak Bukti</th>
+                    </tr>
+                </thead>
+                <tbody id="slipRows" class="divide-y divide-slate-100 text-sm">
+                    @if(isset($rekap_bulanan) && $rekap_bulanan->count() > 0)
+                        @foreach($rekap_bulanan as $rb)
+                            @php
+                                $indeks = $rb['total_sesi'] > 0 ? round(($rb['tepat_waktu'] / $rb['total_sesi']) * 100) : 100;
+                                $statusPegawai = ($guru && $guru->guru_tetap) ? 'Guru Tetap' : (($guru && $guru->guru_honor) ? 'Guru Honor' : 'Guru Pengajar');
+                            @endphp
+                            <tr class="hover:bg-slate-50/70 transition-colors">
+                                <td class="px-5 py-4 text-center text-slate-400 font-medium">{{ $loop->iteration }}</td>
+                                <td class="px-5 py-4">
+                                    <span class="font-bold text-slate-800 block">{{ $rb['label_bulan'] }}</span>
+                                    <span class="text-xs text-slate-400">Rekap Presensi Mengajar</span>
+                                </td>
+                                <td class="px-5 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700">
+                                        {{ $statusPegawai }}
+                                    </span>
+                                </td>
+                                <td class="px-5 py-4 text-center font-bold text-slate-800">{{ $rb['total_sesi'] }} Sesi</td>
+                                <td class="px-5 py-4 text-center">
+                                    <span class="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 font-bold text-xs">{{ $rb['tepat_waktu'] }}</span>
+                                </td>
+                                <td class="px-5 py-4 text-center">
+                                    <span class="px-2.5 py-1 rounded-md {{ $rb['terlambat'] > 0 ? 'bg-amber-50 text-amber-700' : 'bg-slate-50 text-slate-500' }} font-bold text-xs">{{ $rb['terlambat'] }}</span>
+                                </td>
+                                <td class="px-5 py-4 text-center">
+                                    <span class="font-bold {{ $indeks >= 90 ? 'text-emerald-600' : ($indeks >= 75 ? 'text-amber-600' : 'text-rose-600') }}">{{ $indeks }}%</span>
+                                </td>
+                                <td class="px-5 py-4 text-center">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                                        <i class="fa-solid fa-circle-check mr-1.5 text-[10px]"></i> Tercatat Sistem
+                                    </span>
+                                </td>
+                                <td class="px-5 py-4 text-center">
+                                    <button type="button" 
+                                            onclick="cetakSlipPeriode('{{ $rb['label_bulan'] }}', '{{ $rb['total_sesi'] }}', '{{ $rb['tepat_waktu'] }}', '{{ $rb['terlambat'] }}', '{{ $indeks }}%', '{{ $statusPegawai }}')"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold transition-colors">
+                                        <i class="fa-solid fa-print"></i> Cetak Slip
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                        @php
+                            $bulanSekarang = \Carbon\Carbon::now()->translatedFormat('F Y');
+                            $statusPegawai = ($guru && $guru->guru_tetap) ? 'Guru Tetap' : (($guru && $guru->guru_honor) ? 'Guru Honor' : 'Guru Pengajar');
+                        @endphp
+                        <tr class="hover:bg-slate-50/70 transition-colors">
+                            <td class="px-5 py-4 text-center text-slate-400 font-medium">1</td>
+                            <td class="px-5 py-4">
+                                <span class="font-bold text-slate-800 block">{{ $bulanSekarang }} (Periode Berjalan)</span>
+                                <span class="text-xs text-slate-400">Menunggu realisasi presensi mengajar</span>
+                            </td>
+                            <td class="px-5 py-4">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700">
+                                    {{ $statusPegawai }}
+                                </span>
+                            </td>
+                            <td class="px-5 py-4 text-center font-bold text-slate-800">0 Sesi</td>
+                            <td class="px-5 py-4 text-center"><span class="text-xs text-slate-400">0</span></td>
+                            <td class="px-5 py-4 text-center"><span class="text-xs text-slate-400">0</span></td>
+                            <td class="px-5 py-4 text-center"><span class="text-xs text-slate-400">-</span></td>
+                            <td class="px-5 py-4 text-center">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                                    Periode Aktif
+                                </span>
+                            </td>
+                            <td class="px-5 py-4 text-center">
+                                <button type="button" 
+                                        onclick="cetakSlipPeriode('{{ $bulanSekarang }}', '0', '0', '0', '100%', '{{ $statusPegawai }}')"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors">
+                                    <i class="fa-solid fa-print"></i> Cetak Slip
+                                </button>
+                            </td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Area Bukti Cetak Slip Kehadiran & Honorarium -->
+    <div id="slipPrintContainer" class="hidden print-area bg-white rounded-xl border border-slate-300 p-8 max-w-2xl mx-auto mb-8">
+        <div class="text-center border-b-2 border-slate-800 pb-4 mb-6">
+            <h2 class="text-lg font-extrabold uppercase text-slate-900">Bukti Rekapitulasi Kehadiran Mengajar & Slip Pendidik</h2>
+            <p class="text-xs font-semibold text-slate-600 mt-1">Sistem Informasi Akademik (SIAKAD) • Periode: <span id="printPeriode">-</span></p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 text-xs sm:text-sm mb-6">
+            <div>
+                <p class="text-slate-500">Nama Pendidik:</p>
+                <p class="font-bold text-slate-900">{{ $guru->nama ?? auth()->user()->name ?? '-' }}</p>
+            </div>
+            <div>
+                <p class="text-slate-500">NIG / Nomor Induk:</p>
+                <p class="font-mono font-bold text-slate-900">{{ $guru->nig ?? '-' }}</p>
+            </div>
+            <div>
+                <p class="text-slate-500">Status Kepegawaian:</p>
+                <p class="font-bold text-slate-900" id="printStatusPegawai">-</p>
+            </div>
+            <div>
+                <p class="text-slate-500">Beban Jadwal Mingguan:</p>
+                <p class="font-bold text-slate-900">{{ $total_jadwal_mingguan ?? 0 }} Sesi / Minggu</p>
+            </div>
+        </div>
+
+        <table class="w-full border-collapse border border-slate-400 text-sm mb-6">
             <thead>
-                <tr>
-                    <th style="width: 50px; text-align: center;">No</th>
-                    <th style="width: 150px;">Tanggal Terbit</th>
-                    <th>Periode & Keterangan</th>
-                    <th style="width: 150px; text-align: right;">Nominal (Rp)</th>
-                    <th style="width: 120px; text-align: center;">Status</th>
-                    <th style="width: 80px; text-align: center;">Unduh</th>
+                <tr class="bg-slate-100">
+                    <th class="border border-slate-400 px-3 py-2 text-left">Komponen Kinerja Mengajar</th>
+                    <th class="border border-slate-400 px-3 py-2 text-center w-36">Capaian</th>
                 </tr>
             </thead>
-            <tbody id="slipRows">
-                <!-- Data Dummy -->
+            <tbody>
                 <tr>
-                    <td style="text-align: center;">1</td>
-                    <td style="color: #64748b; font-size: 13px;">25 Agu 2026</td>
-                    <td>
-                        <strong style="display: block; color: #1e293b; font-size: 14px; margin-bottom: 4px;">Honorarium Agustus 2026</strong>
-                        <span style="color: #64748b; font-size: 12px;">Gaji pokok dan tunjangan</span>
-                    </td>
-                    <td style="text-align: right; font-weight: bold; color: #1e293b;">3.500.000</td>
-                    <td style="text-align: center;">
-                        <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #dcfce7; color: #166534; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                            <i class="fa-solid fa-circle-check"></i> Selesai
-                        </span>
-                    </td>
-                    <td style="text-align: center;">
-                        <button style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #e9f2ff; color: #3875c5; border-radius: 8px; border: none; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#3875c5'; this.style.color='#fff';" onmouseout="this.style.background='#e9f2ff'; this.style.color='#3875c5';">
-                            <i class="fa-solid fa-download"></i>
-                        </button>
-                    </td>
+                    <td class="border border-slate-400 px-3 py-2">Total Sesi Kehadiran Mengajar</td>
+                    <td class="border border-slate-400 px-3 py-2 text-center font-bold"><span id="printTotalSesi">0</span> Sesi</td>
                 </tr>
                 <tr>
-                    <td style="text-align: center;">2</td>
-                    <td style="color: #64748b; font-size: 13px;">25 Jul 2026</td>
-                    <td>
-                        <strong style="display: block; color: #1e293b; font-size: 14px; margin-bottom: 4px;">Honorarium Juli 2026</strong>
-                        <span style="color: #64748b; font-size: 12px;">Gaji pokok dan tunjangan</span>
-                    </td>
-                    <td style="text-align: right; font-weight: bold; color: #1e293b;">3.500.000</td>
-                    <td style="text-align: center;">
-                        <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #dcfce7; color: #166534; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                            <i class="fa-solid fa-circle-check"></i> Selesai
-                        </span>
-                    </td>
-                    <td style="text-align: center;">
-                        <button style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #e9f2ff; color: #3875c5; border-radius: 8px; border: none; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#3875c5'; this.style.color='#fff';" onmouseout="this.style.background='#e9f2ff'; this.style.color='#3875c5';">
-                            <i class="fa-solid fa-download"></i>
-                        </button>
-                    </td>
+                    <td class="border border-slate-400 px-3 py-2">Kehadiran Tepat Waktu (&le; 5 Menit Toleransi)</td>
+                    <td class="border border-slate-400 px-3 py-2 text-center font-bold text-emerald-800"><span id="printTepatWaktu">0</span> Sesi</td>
+                </tr>
+                <tr>
+                    <td class="border border-slate-400 px-3 py-2">Kehadiran Terlambat (&gt; 5 Menit)</td>
+                    <td class="border border-slate-400 px-3 py-2 text-center font-bold text-amber-800"><span id="printTerlambat">0</span> Sesi</td>
+                </tr>
+                <tr class="bg-slate-50 font-bold">
+                    <td class="border border-slate-400 px-3 py-2">Indeks Ketepatan Waktu Mengajar</td>
+                    <td class="border border-slate-400 px-3 py-2 text-center" id="printIndeks">100%</td>
                 </tr>
             </tbody>
-        </x-siakad.ui.table>
+        </table>
+
+        <div class="flex justify-between items-end text-xs text-slate-600 mt-10">
+            <div>
+                <p>Dicetak otomatis melalui SIAKAD pada {{ date('d/m/Y H:i') }}</p>
+            </div>
+            <div class="text-center">
+                <p class="mb-14">Bagian Keuangan / Akademik</p>
+                <p class="font-bold underline">............................................</p>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -90,5 +249,35 @@
                 row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
             });
         });
+
+        function cetakSlipPeriode(periode, totalSesi, tepatWaktu, terlambat, indeks, statusPegawai) {
+            document.getElementById('printPeriode').textContent = periode;
+            document.getElementById('printTotalSesi').textContent = totalSesi;
+            document.getElementById('printTepatWaktu').textContent = tepatWaktu;
+            document.getElementById('printTerlambat').textContent = terlambat;
+            document.getElementById('printIndeks').textContent = indeks;
+            document.getElementById('printStatusPegawai').textContent = statusPegawai;
+
+            const container = document.getElementById('slipPrintContainer');
+            container.classList.remove('hidden');
+            window.print();
+        }
     </script>
+
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            .no-print { display: none !important; }
+            .print-area, .print-area * { visibility: visible; }
+            .print-area {
+                display: block !important;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none !important;
+                box-shadow: none !important;
+            }
+        }
+    </style>
 </x-siakad-layout>
