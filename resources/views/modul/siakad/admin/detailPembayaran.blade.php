@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -19,7 +19,8 @@
 <body>
 
     <div class="dashboard-container">
-
+        {{-- WADAH TEMPLATE SIDEBAR --}}
+        <x-sidebar_siakad />
 
         {{-- MAIN CONTENT --}}
         <main class="main-content">
@@ -92,33 +93,35 @@
                     <div class="section-block">
                         <h4 class="section-title"><i class="fa-solid fa-receipt"></i> Rincian Tagihan</h4>
                         
-                        <table class="receipt-table">
-                            <thead>
-                                <tr>
-                                    <th>Deskripsi Pembayaran</th>
-                                    <th>Periode</th>
-                                    <th class="text-right">Jumlah</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>SPP Bulanan (Siswa Reguler)</td>
-                                    <td>Agustus 2026</td>
-                                    <td class="text-right">Rp 350.000</td>
-                                </tr>
-                                <tr>
-                                    <td>Infaq / Biaya Admin</td>
-                                    <td>-</td>
-                                    <td class="text-right">Rp 0</td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="2" class="text-right bold">Total Tagihan</td>
-                                    <td class="text-right total-amount">Rp 350.000</td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                        <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%;">
+                            <table class="receipt-table" style="min-width: 320px;">
+                                <thead>
+                                    <tr>
+                                        <th>Deskripsi Pembayaran</th>
+                                        <th>Periode</th>
+                                        <th class="text-right">Jumlah</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>SPP Bulanan (Siswa Reguler)</td>
+                                        <td>Agustus 2026</td>
+                                        <td class="text-right">Rp 350.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Infaq / Biaya Admin</td>
+                                        <td>-</td>
+                                        <td class="text-right">Rp 0</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2" class="text-right bold">Total Tagihan</td>
+                                        <td class="text-right total-amount">Rp 350.000</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
 
                     <div class="divider-islamic"><span>âœ¦ âœ¦ âœ¦</span></div>

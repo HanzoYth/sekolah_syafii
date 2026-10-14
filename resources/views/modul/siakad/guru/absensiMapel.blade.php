@@ -498,7 +498,7 @@
                                 <i class="fa-solid fa-shield-halved text-emerald-600"></i>
                                 <span>Menyimpan form ini akan memperbarui status siswa dan merekam presensi jam masuk kelas Anda.</span>
                             </div>
-                            <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-sm transition-all flex items-center gap-2">
+                            <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-sm transition-all flex items-center justify-center gap-2 w-full sm:w-auto">
                                 <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Absensi Siswa & Kehadiran Guru
                             </button>
                         </div>

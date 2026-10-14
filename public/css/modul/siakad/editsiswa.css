@@ -185,11 +185,29 @@ body {
 }
 
 @media (max-width: 768px) {
+    .topbar {
+        padding: 16px 20px;
+    }
+
+    .topbar-inner {
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+
+    .page {
+        padding: 16px;
+    }
+
     .form-grid {
         grid-template-columns: 1fr;
     }
 
     .full-width {
         grid-column: span 1;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+        justify-content: center;
     }
 }

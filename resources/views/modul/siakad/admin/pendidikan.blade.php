@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -119,22 +119,25 @@
                             @foreach ($data_slip_pendidikan as $value)
                                 @php
                                     $data_siswa = App\Models\siswa::where("id", $value->siswa_id)->first();
-                                    $data_kelas = App\Models\ruang_kelas::where("id",$data_siswa->kelas_id)->first();
-                                    $sisa_bayar = $value->nominal - $value->jumlah_di_bayar;
+                                    $data_kelas = ($data_siswa && $data_siswa->kelas_id) ? App\Models\ruang_kelas::where("id",$data_siswa->kelas_id)->first() : null;
+                                    $nama_siswa = $data_siswa->nama ?? 'Siswa #' . $value->siswa_id;
+                                    $nis_siswa = $data_siswa->nis ?? '-';
+                                    $nama_kelas = $data_kelas->nama_ruang ?? 'Belum Ditentukan';
+                                    $sisa_bayar = max(0, $value->nominal - ($value->jumlah_di_bayar ?? 0));
                                 @endphp
                                 <tr>
-                                    <td><span class="student-name">{{$data_siswa->nama}}</span><span class="student-nis">NIS: {{$data_siswa->nis}}</span></td>
-                                    <td><span class="class-pill">{{$data_kelas->nama_ruang}}</span></td>
+                                    <td><span class="student-name">{{$nama_siswa}}</span><span class="student-nis">NIS: {{$nis_siswa}}</span></td>
+                                    <td><span class="class-pill">{{$nama_kelas}}</span></td>
                                     <td class="amount">Rp{{number_format($value->nominal,0,",",".")}}</td>
                                     <td class="amount text-success">Rp{{number_format($value->jumlah_di_bayar,0,",",".")}}</td>
                                     <td class="amount">Rp{{number_format($sisa_bayar,0,",",".")}}</td>
                                     <td class="status"><span class="badge {{$value->status ? 'success' : 'danger'}}"><i class="fa-solid fa-triangle-exclamation"></i> {{$value->status ? 'lunas':'menunggak'}}</span></td>
                                     <td>
                                         <div class="action-buttons" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
-                                            <button class="btn-action view" title="Konfirmasi & Bukti Pembayaran" onclick="openDetailModal('{{$data_siswa->nama}}', '{{$data_siswa->nis}}', '{{$value->nominal}}', '{{$value->jumlah_di_bayar}}', '{{$sisa_bayar}}', '{{$value->status}}')"><i class="fa-solid fa-eye"></i></button>
-                                            <button class="btn-action edit" title="Bayar Angsuran" onclick="openBayarModal('{{$value->id}}','{{$data_siswa->nama}}', '{{$data_siswa->nis}}', '{{$value->nominal}}','{{$sisa_bayar}}','{{$value->status}}')"><i class="fa-solid fa-cash-register"></i></button>
-                                            <button class="btn-action publish" title="Publish Tagihan" onclick="openPublishModal('{{$data_siswa->id}}', '{{$data_siswa->nama}}', '{{$data_siswa->nis}}')"><i class="fa-solid fa-paper-plane"></i></button>
-                                            <button class="btn-action delete" style="background-color: #ef4444; color: #fff;" title="Hapus Tagihan" onclick="openDeleteModal('{{$value->id}}', '{{$data_siswa->nama}}', '{{$data_siswa->nis}}')"><i class="fa-solid fa-trash-can"></i></button>
+                                            <button class="btn-action view" title="Konfirmasi & Bukti Pembayaran" onclick="openDetailModal('{{$nama_siswa}}', '{{$nis_siswa}}', '{{$value->nominal}}', '{{$value->jumlah_di_bayar}}', '{{$sisa_bayar}}', '{{$value->status}}')"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn-action edit" title="Bayar Angsuran" onclick="openBayarModal('{{$value->id}}','{{$nama_siswa}}', '{{$nis_siswa}}', '{{$value->nominal}}','{{$sisa_bayar}}','{{$value->status}}')"><i class="fa-solid fa-cash-register"></i></button>
+                                            <button class="btn-action publish" title="Publish Tagihan" onclick="openPublishModal('{{$value->siswa_id}}', '{{$nama_siswa}}', '{{$nis_siswa}}')"><i class="fa-solid fa-paper-plane"></i></button>
+                                            <button class="btn-action delete" style="background-color: #ef4444; color: #fff;" title="Hapus Tagihan" onclick="openDeleteModal('{{$value->id}}', '{{$nama_siswa}}', '{{$nis_siswa}}')"><i class="fa-solid fa-trash-can"></i></button>
                                         </div>
                                     </td>
                                 </tr>

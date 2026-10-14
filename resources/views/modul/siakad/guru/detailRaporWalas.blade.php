@@ -111,7 +111,8 @@
         <!-- A. Capaian Nilai Akademik -->
         <div class="mb-6">
             <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 mb-2.5">A. Capaian Nilai Akademik</h3>
-            <table class="w-full border-collapse border border-slate-400 text-xs sm:text-sm">
+            <div class="overflow-x-auto w-full">
+                <table class="w-full border-collapse border border-slate-400 text-xs sm:text-sm min-w-[620px]">
                 <thead>
                     <tr class="bg-slate-100 text-slate-800 font-bold text-center">
                         <th class="border border-slate-400 px-3 py-2.5 w-10">No</th>
@@ -128,28 +129,35 @@
                     @if(count($rekap_nilai) > 0)
                         @foreach($rekap_nilai as $mapel => $data)
                             @php 
+                                $adaNilai = !empty($data['ada_nilai']);
                                 $na = $data['nilai_akhir']; 
                                 $kkm = $data['kkm'] ?? 75;
-                                $predikat = 'D';
-                                if($na >= 90) $predikat = 'A';
-                                elseif($na >= 80) $predikat = 'B';
-                                elseif($na >= 70) $predikat = 'C';
-                                
-                                $tuntas = $na >= $kkm;
-                                $deskripsi = $na >= 90 
-                                    ? "Sangat baik dalam menguasai seluruh kompetensi dasar mata pelajaran {$mapel}."
-                                    : ($na >= $kkm 
-                                        ? "Baik dan tuntas dalam memahami materi pokok mata pelajaran {$mapel}."
-                                        : "Perlu bimbingan dan penguatan lebih lanjut pada kompetensi dasar {$mapel}.");
+                                if ($adaNilai) {
+                                    $predikat = 'D';
+                                    if($na >= 90) $predikat = 'A';
+                                    elseif($na >= 80) $predikat = 'B';
+                                    elseif($na >= 70) $predikat = 'C';
+                                    
+                                    $tuntas = $na >= $kkm;
+                                    $deskripsi = $na >= 90 
+                                        ? "Sangat baik dalam menguasai seluruh kompetensi dasar mata pelajaran {$mapel}."
+                                        : ($na >= $kkm 
+                                            ? "Baik dan tuntas dalam memahami materi pokok mata pelajaran {$mapel}."
+                                            : "Perlu bimbingan dan penguatan lebih lanjut pada kompetensi dasar {$mapel}.");
+                                } else {
+                                    $predikat = '-';
+                                    $tuntas = false;
+                                    $deskripsi = "Nilai belum diinput oleh Guru Pengajar.";
+                                }
                             @endphp
                             <tr>
                                 <td class="border border-slate-400 px-3 py-2 text-center">{{ $i++ }}</td>
                                 <td class="border border-slate-400 px-3 py-2 font-semibold">{{ $mapel }}</td>
                                 <td class="border border-slate-400 px-3 py-2 text-center text-slate-600">{{ $kkm }}</td>
-                                <td class="border border-slate-400 px-3 py-2 text-center font-bold">{{ number_format($na, 1) }}</td>
+                                <td class="border border-slate-400 px-3 py-2 text-center font-bold">{{ $adaNilai ? number_format($na, 1) : '-' }}</td>
                                 <td class="border border-slate-400 px-3 py-2 text-center font-bold">{{ $predikat }}</td>
-                                <td class="border border-slate-400 px-3 py-2 text-center font-semibold {{ $tuntas ? 'text-emerald-800' : 'text-rose-700' }}">
-                                    {{ $tuntas ? 'Tuntas' : 'Belum Tuntas' }}
+                                <td class="border border-slate-400 px-3 py-2 text-center font-semibold {{ $adaNilai ? ($tuntas ? 'text-emerald-800' : 'text-rose-700') : 'text-slate-400 italic' }}">
+                                    {{ $adaNilai ? ($tuntas ? 'Tuntas' : 'Belum Tuntas') : 'Belum Diinput' }}
                                 </td>
                                 <td class="border border-slate-400 px-3 py-2 text-xs text-slate-700 leading-relaxed">{{ $deskripsi }}</td>
                             </tr>
@@ -170,26 +178,29 @@
                     @endif
                 </tbody>
             </table>
+            </div>
         </div>
 
         <!-- B. Ketidakhadiran & C. Catatan Wali Kelas -->
         <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-10">
             <div class="md:col-span-5">
                 <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 mb-2.5">B. Rekapitulasi Ketidakhadiran</h3>
-                <table class="w-full border-collapse border border-slate-400 text-sm">
-                    <tr>
-                        <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">1. Sakit</td>
-                        <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold w-28">{{ $rekap_absensi['sakit'] ?? 0 }} Hari</td>
-                    </tr>
-                    <tr>
-                        <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">2. Izin</td>
-                        <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold">{{ $rekap_absensi['izin'] ?? 0 }} Hari</td>
-                    </tr>
-                    <tr>
-                        <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">3. Tanpa Keterangan (Alpa)</td>
-                        <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold">{{ $rekap_absensi['alpa'] ?? 0 }} Hari</td>
-                    </tr>
-                </table>
+                <div class="overflow-x-auto w-full">
+                    <table class="w-full border-collapse border border-slate-400 text-sm min-w-[260px]">
+                        <tr>
+                            <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">1. Sakit</td>
+                            <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold w-28">{{ $rekap_absensi['sakit'] ?? 0 }} Hari</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">2. Izin</td>
+                            <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold">{{ $rekap_absensi['izin'] ?? 0 }} Hari</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">3. Tanpa Keterangan (Alpa)</td>
+                            <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold">{{ $rekap_absensi['alpa'] ?? 0 }} Hari</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
 
             <div class="md:col-span-7">
@@ -201,13 +212,13 @@
         </div>
 
         <!-- Tanda Tangan Pengesahan -->
-        <div class="grid grid-cols-2 gap-8 mt-12 text-sm text-center">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-12 text-sm text-center">
             <div>
-                <p class="mb-20">Mengetahui,<br>Orang Tua / Wali Peserta Didik</p>
+                <p class="mb-14 sm:mb-20">Mengetahui,<br>Orang Tua / Wali Peserta Didik</p>
                 <p class="font-bold underline">....................................................</p>
             </div>
             <div>
-                <p class="mb-20">Diterbitkan pada {{ \Carbon\Carbon::now()->isoFormat('D MMMM Y') }}<br>Wali Kelas {{ $wallas->ruangKelas->nama_ruang ?? '' }}</p>
+                <p class="mb-14 sm:mb-20">Diterbitkan pada {{ \Carbon\Carbon::now()->isoFormat('D MMMM Y') }}<br>Wali Kelas {{ $wallas->ruangKelas->nama_ruang ?? '' }}</p>
                 <p class="font-bold underline">{{ $wallas->guru->nama ?? '....................................................' }}</p>
                 @if(!empty($wallas->guru->nig))
                     <p class="text-xs text-slate-600 mt-0.5">NIG. {{ $wallas->guru->nig }}</p>

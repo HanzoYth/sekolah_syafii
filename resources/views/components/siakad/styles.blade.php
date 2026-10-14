@@ -502,51 +502,47 @@ body.sidebar-is-open .mobile-hamburger-btn {
    RESPONSIVE (TABLET & MOBILE)
    ========================================================================== */
 
+/* ==========================================================================
+   RESPONSIVE (TABLET & MOBILE)
+   Drawer off-canvas pada layar <= 1024px (iPad/Tablet & Smartphone)
+   ========================================================================== */
+
 @media (max-width: 1024px) {
-  .sidebar {
-    width: var(--sidebar-w-collapsed);
-  }
-
-  .sidebar .brand-logo span,
-  .sidebar .menu-item a span,
-  .sidebar .menu-link-content span,
-  .sidebar .menu-label,
-  .sidebar .logout-btn span,
-  .sidebar .submenu-icon {
-    display: none;
-  }
-
-  .sidebar .submenu-wrapper[open] .submenu-list {
-    display: none;
-  }
-
-  .sidebar .menu-item a,
-  .sidebar .menu-link {
-    justify-content: center;
-    padding: 12px 0;
-    margin: 0 10px;
-  }
-
-  .sidebar .logout-btn {
-    justify-content: center;
-  }
-}
-
-@media (max-width: 992px) {
   .mobile-hamburger-btn {
-    display: flex;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #0b3b2e;
+    color: #f8d46d;
+    border: 1px solid rgba(216, 185, 74, 0.4);
+    box-shadow: 0 4px 14px rgba(7, 36, 28, 0.35);
+    z-index: 1001;
+    cursor: pointer;
   }
 
   .sidebar {
-    width: var(--sidebar-w) !important;
-    max-height: 100vh;
-    max-height: 100dvh;
+    width: 280px !important;
+    max-width: 85vw;
+    height: 100vh;
+    height: 100dvh;
     transform: translateX(-100%);
-    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.4);
+    box-shadow: 8px 0 30px rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .sidebar.open {
     transform: translateX(0);
+  }
+
+  .sidebar-overlay {
+    z-index: 1040;
   }
 
   .sidebar .brand-logo span,
@@ -565,12 +561,20 @@ body.sidebar-is-open .mobile-hamburger-btn {
   .sidebar .menu-item a,
   .sidebar .menu-link {
     justify-content: flex-start !important;
-    padding: 12px 24px !important;
-    margin: 0 12px !important;
+    padding: 12px 20px !important;
+    margin: 0 10px !important;
   }
 
   .sidebar .logout-btn {
     justify-content: flex-start !important;
+    padding: 12px 20px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .sidebar {
+    width: 260px !important;
+    max-width: 82vw;
   }
 }
 
@@ -1487,7 +1491,7 @@ tbody tr:last-child td, .styled-table tbody tr:last-child td { border-bottom: no
     .summary-cards { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
     /* .sidebar removed to prevent conflict with sidebar_siakad.css */
     .main-content { 
         margin-left: 0; 
@@ -1495,6 +1499,19 @@ tbody tr:last-child td, .styled-table tbody tr:last-child td { border-bottom: no
         padding: 1.25rem; 
     }
     .topbar { flex-direction: column; align-items: flex-start; gap: 14px; }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem 0.75rem !important;
+    }
+    .table-responsive, .table-wrapper, .overview-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+    }
 }
 
 @media (max-width: 640px) {

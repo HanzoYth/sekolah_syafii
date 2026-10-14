@@ -73,7 +73,7 @@
 
     <!-- Tab Bar & Print Button -->
     <div class="no-print flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div class="inline-flex p-1.5 rounded-xl bg-slate-200/70 border border-slate-200 self-start">
+        <div class="inline-flex flex-wrap p-1.5 rounded-xl bg-slate-200/70 border border-slate-200 self-start gap-1">
             <a href="/sk/rapor-siswa?tab=transkrip" 
                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all <?php echo e($activeTab !== 'rapor' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-600 hover:text-slate-800'); ?>">
                 <i class="fa-solid fa-list-check"></i>
@@ -132,18 +132,19 @@
             <!-- A. Capaian Nilai Akademik -->
             <div class="mb-6">
                 <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 mb-2.5">A. Capaian Nilai Akademik</h3>
-                <table class="w-full border-collapse border border-slate-400 text-xs sm:text-sm">
-                    <thead>
-                        <tr class="bg-slate-100 text-slate-800 font-bold text-center">
-                            <th class="border border-slate-400 px-3 py-2.5 w-10">No</th>
-                            <th class="border border-slate-400 px-3 py-2.5 text-left">Mata Pelajaran</th>
-                            <th class="border border-slate-400 px-3 py-2.5 w-16">KKM</th>
-                            <th class="border border-slate-400 px-3 py-2.5 w-24">Nilai Akhir</th>
-                            <th class="border border-slate-400 px-3 py-2.5 w-20">Predikat</th>
-                            <th class="border border-slate-400 px-3 py-2.5 w-28">Ketuntasan</th>
-                            <th class="border border-slate-400 px-3 py-2.5 text-left">Deskripsi Capaian Kompetensi</th>
-                        </tr>
-                    </thead>
+                <div class="overflow-x-auto w-full">
+                    <table class="w-full border-collapse border border-slate-400 text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-800 font-bold text-center">
+                                <th class="border border-slate-400 px-3 py-2.5 w-10">No</th>
+                                <th class="border border-slate-400 px-3 py-2.5 text-left">Mata Pelajaran</th>
+                                <th class="border border-slate-400 px-3 py-2.5 w-16">KKM</th>
+                                <th class="border border-slate-400 px-3 py-2.5 w-24">Nilai Akhir</th>
+                                <th class="border border-slate-400 px-3 py-2.5 w-20">Predikat</th>
+                                <th class="border border-slate-400 px-3 py-2.5 w-28">Ketuntasan</th>
+                                <th class="border border-slate-400 px-3 py-2.5 text-left">Deskripsi Capaian Kompetensi</th>
+                            </tr>
+                        </thead>
                     <tbody>
                         <?php if(count($rekap_nilai) > 0): ?>
                             <?php $__currentLoopData = $rekap_nilai; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mapel_id => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -179,26 +180,29 @@
                         <?php endif; ?>
                     </tbody>
                 </table>
+                </div>
             </div>
 
             <!-- B. Ketidakhadiran & C. Evaluasi Wali Kelas -->
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-10">
                 <div class="md:col-span-5">
                     <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 mb-2.5">B. Rekapitulasi Ketidakhadiran</h3>
-                    <table class="w-full border-collapse border border-slate-400 text-sm">
-                        <tr>
-                            <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">1. Sakit</td>
-                            <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold w-28"><?php echo e($rekap_absen['s'] ?? 0); ?> Hari</td>
-                        </tr>
-                        <tr>
-                            <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">2. Izin</td>
-                            <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold"><?php echo e($rekap_absen['i'] ?? 0); ?> Hari</td>
-                        </tr>
-                        <tr>
-                            <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">3. Tanpa Keterangan (Alpa)</td>
-                            <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold"><?php echo e($rekap_absen['a'] ?? 0); ?> Hari</td>
-                        </tr>
-                    </table>
+                    <div class="overflow-x-auto w-full">
+                        <table class="w-full border-collapse border border-slate-400 text-sm">
+                            <tr>
+                                <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">1. Sakit</td>
+                                <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold w-28"><?php echo e($rekap_absen['s'] ?? 0); ?> Hari</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">2. Izin</td>
+                                <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold"><?php echo e($rekap_absen['i'] ?? 0); ?> Hari</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">3. Tanpa Keterangan (Alpa)</td>
+                                <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold"><?php echo e($rekap_absen['a'] ?? 0); ?> Hari</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
 
                 <div class="md:col-span-7">
@@ -218,13 +222,13 @@
             </div>
 
             <!-- Tanda Tangan -->
-            <div class="grid grid-cols-2 gap-8 mt-12 text-sm text-center">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-12 text-sm text-center">
                 <div>
-                    <p class="mb-20">Mengetahui,<br>Orang Tua / Wali Peserta Didik</p>
+                    <p class="mb-14 sm:mb-20">Mengetahui,<br>Orang Tua / Wali Peserta Didik</p>
                     <p class="font-bold underline">....................................................</p>
                 </div>
                 <div>
-                    <p class="mb-20">Wali Kelas <?php echo e($namaKelas); ?></p>
+                    <p class="mb-14 sm:mb-20">Wali Kelas <?php echo e($namaKelas); ?></p>
                     <p class="font-bold underline"><?php echo e($wallas->guru->nama ?? '....................................................'); ?></p>
                     <?php if(!empty($wallas->guru->nig)): ?>
                         <p class="text-xs text-slate-600 mt-0.5">NIG. <?php echo e($wallas->guru->nig); ?></p>

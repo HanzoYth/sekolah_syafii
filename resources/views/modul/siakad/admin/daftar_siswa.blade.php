@@ -6,12 +6,12 @@
 <x-siakad-layout title="Data Siswa" description="Kelola dan pantau data siswa yang terdaftar pada SIAKAD." position="Administrator SIAKAD" initials="AD">
 
     <!-- Header Section -->
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px;">
-        <div style="flex: 1;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px; flex-wrap: wrap; gap: 14px;">
+        <div style="flex: 1; min-width: 250px;">
             <div style="font-size: 14px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
                 <i class="fa-solid fa-users"></i> Manajemen Akademik
             </div>
-            <div style="font-size: 18px; font-weight: bold; color: #1e293b; display: flex; align-items: center; gap: 15px;">
+            <div style="font-size: 18px; font-weight: bold; color: #1e293b; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
                 <span><i class="fa-solid fa-user-graduate"></i> Daftar Siswa</span>
                 <form action="" method="GET" style="display: flex; align-items: center;">
                     <div style="position: relative; display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 4px 12px; gap: 8px;">
@@ -29,10 +29,16 @@
                 Temukan informasi siswa berdasarkan nama, NIS, jenis kelamin, atau kelas.
             </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 10px 16px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; font-weight: 600; color: #334155;">
-            <i class="fa-solid fa-user-graduate" style="color: #177455;"></i>
-            <span>{{ $totalSiswa }} siswa terdaftar</span>
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <a href="/sk/frss" style="display: inline-flex; align-items: center; gap: 8px; background: #166534; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; box-shadow: 0 2px 4px rgba(22, 101, 52, 0.2); transition: all 0.2s;" onmouseover="this.style.background='#14532d'" onmouseout="this.style.background='#166534'">
+                <i class="fa-solid fa-user-plus"></i> Tambah Siswa Baru
+            </a>
+            <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 10px 16px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; font-weight: 600; color: #334155;">
+                <i class="fa-solid fa-user-graduate" style="color: #177455;"></i>
+                <span>{{ $totalSiswa }} siswa terdaftar</span>
+            </div>
         </div>
+
     </div>
 
     <!-- Metrics Section -->
@@ -79,10 +85,10 @@
             <div style="font-size: 16px; font-weight: bold; color: #1e293b;">
                 Data Siswa Terdaftar
             </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <div style="position: relative;">
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <div style="position: relative; min-width: 180px;">
                     <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
-                    <input type="text" id="studentSearch" placeholder="Cari nama, NIS, atau kelas..." style="padding: 8px 12px 8px 36px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; width: 250px;">
+                    <input type="text" id="studentSearch" placeholder="Cari nama, NIS, atau kelas..." style="padding: 8px 12px 8px 36px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; width: 100%; box-sizing: border-box;">
                 </div>
                 <div style="position: relative;">
                     <i class="fa-solid fa-filter" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
@@ -111,7 +117,8 @@
                 @if(count($data_siswa) > 0)
                     @foreach ($data_siswa as $index => $siswa)
                         @php
-                            $kelas = App\Models\ruang_kelas::find($siswa->kelas_id);
+                            $kelas = $siswa->kelas;
+
                             $isPerempuan = ($siswa->gender ?? '') === 'p';
                             $isAktif = !isset($siswa->aktif) || (int) $siswa->aktif === 1;
                             $kelasNama = $kelas->nama_ruang ?? '-';

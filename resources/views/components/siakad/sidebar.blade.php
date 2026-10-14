@@ -296,7 +296,7 @@
 
     if (!sidebar) return;
 
-    var MOBILE_BREAKPOINT = 768;
+    var MOBILE_BREAKPOINT = 1024;
 
     function isMobile() {
         return window.innerWidth <= MOBILE_BREAKPOINT;
@@ -304,15 +304,15 @@
 
     function openMobileSidebar() {
         sidebar.classList.add('open');
-        overlay.classList.add('active');
-        hamburger.setAttribute('aria-expanded', 'true');
+        if (overlay) overlay.classList.add('active');
+        if (hamburger) hamburger.setAttribute('aria-expanded', 'true');
         document.body.style.overflow = 'hidden';
     }
 
     function closeMobileSidebar() {
         sidebar.classList.remove('open');
-        overlay.classList.remove('active');
-        hamburger.setAttribute('aria-expanded', 'false');
+        if (overlay) overlay.classList.remove('active');
+        if (hamburger) hamburger.setAttribute('aria-expanded', 'false');
         document.body.style.overflow = '';
     }
 
@@ -323,6 +323,11 @@
             openMobileSidebar();
         }
     }
+
+    // Expose helpers globally for topbar / other buttons
+    window.toggleSiakadSidebar = toggleMobileSidebar;
+    window.openSiakadSidebar   = openMobileSidebar;
+    window.closeSiakadSidebar  = closeMobileSidebar;
 
     if (hamburger) {
         hamburger.addEventListener('click', toggleMobileSidebar);

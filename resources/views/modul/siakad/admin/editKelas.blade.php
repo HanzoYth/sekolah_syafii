@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -14,6 +14,11 @@
         .form-group input { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; }
         .btn-submit { background: #0d5c3a; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
         .btn-cancel { background: #cbd5e1; color: #334155; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block; text-align: center; }
+        @media (max-width: 640px) {
+            .mapel-container { width: 100%; max-width: 100%; padding: 16px; }
+            .btn-actions { flex-direction: column; width: 100%; }
+            .btn-submit, .btn-cancel { width: 100%; text-align: center; display: block; box-sizing: border-box; }
+        }
     </style>
 </head>
 <body>
@@ -29,7 +34,7 @@
                         <label>Nama Ruang Kelas</label>
                         <input type="text" name="nama_kelas" value="{{ $kelas->nama_kelas }}" required>
                     </div>
-                    <div style="display: flex; gap: 10px;">
+                    <div class="btn-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button type="submit" class="btn-submit"><i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan</button>
                         <a href="/sk/tk" class="btn-cancel">Batal</a>
                     </div>

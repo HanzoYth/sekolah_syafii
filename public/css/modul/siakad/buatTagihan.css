@@ -60,7 +60,7 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
     .main-content {
         margin-left: 0;
         width: 100%;
@@ -734,7 +734,7 @@ body {
 .empty-row td { padding: 38px 16px; color: #6b7b75; text-align: center; }
 .empty-row i { margin-right: 6px; color: #90a69b; }
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
     .billing-page { width: 100%; margin-left: 0; padding: 0 20px 32px; }
 }
 

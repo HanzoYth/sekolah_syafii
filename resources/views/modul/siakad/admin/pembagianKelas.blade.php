@@ -23,9 +23,9 @@
             </div>
         </div>
 
-        <form method="GET" action="/sk/pembagian-kelas" style="display: flex; gap: 15px; align-items: flex-end;">
+        <form method="GET" action="/sk/pembagian-kelas" style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
             <input type="hidden" name="sekolah_id" value="{{ $sekolah_id ?? '' }}">
-            <div style="flex: 1;">
+            <div style="flex: 1; min-width: 220px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Pilih Ruang Kelas</label>
                 <select name="kelas_id" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
                     <option value="">-- Pilih Kelas --</option>
@@ -41,7 +41,7 @@
     </div>
 
     @if($kelas_id)
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         <!-- KOLOM KIRI: SISWA BELUM ADA KELAS -->
         <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">

@@ -98,7 +98,12 @@ class siswaController extends Controller
 
     function dashboardSiswa()
     {
+        if (session('role') !== 's') {
+            return redirect(session('role') === 'g' ? '/sk/dsg' : '/sk/das');
+        }
+
         $siswa_id = session("id");
+
         $data_siswa = siswa::with(['kelas', 'sekolah', 'tahunAjaran'])->where("id", $siswa_id)->first();
         $data_kelas = $data_siswa ? ruang_kelas::where("id", $data_siswa->kelas_id)->first() : null;
         $wallas = ($data_siswa && $data_siswa->kelas_id) ? wallas::with('guru')->where('kelas_id', $data_siswa->kelas_id)->first() : null;
@@ -208,6 +213,10 @@ class siswaController extends Controller
 
     function pembayaranSiswa()
     {
+        if (session('role') !== 's') {
+            return redirect(session('role') === 'g' ? '/sk/dsg' : '/sk/das');
+        }
+
         $siswa_id = session("id");
         $data_siswa = siswa::with(['kelas', 'sekolah', 'tahunAjaran'])->where("id", $siswa_id)->first();
         $data_kelas = $data_siswa ? ruang_kelas::where("id", $data_siswa->kelas_id)->first() : null;
@@ -223,6 +232,10 @@ class siswaController extends Controller
 
     function profilSiswa()
     {
+        if (session('role') !== 's') {
+            return redirect(session('role') === 'g' ? '/sk/dsg' : '/sk/das');
+        }
+
         $siswa_id = session("id");
         $data_siswa = siswa::with(['kelas', 'sekolah', 'tahunAjaran'])->where("id", $siswa_id)->first();
         $data_kelas = $data_siswa ? ruang_kelas::where("id", $data_siswa->kelas_id)->first() : null;
@@ -241,7 +254,12 @@ class siswaController extends Controller
 
     function pengumumanSiswa()
     {
+        if (session('role') !== 's') {
+            return redirect(session('role') === 'g' ? '/sk/dsg' : '/sk/das');
+        }
+
         $siswa_id = session("id");
+
         $data_siswa = siswa::with(['kelas', 'sekolah'])->where("id", $siswa_id)->first();
         $data_kelas = $data_siswa ? ruang_kelas::where("id", $data_siswa->kelas_id)->first() : null;
 
@@ -295,9 +313,14 @@ class siswaController extends Controller
             "sekolah_id" => $request->sekolah_id,
             "user_id" => (int) session("id_akun")
         ]);
+        if (session('role') === 'a') {
+            return redirect('/sk/ds')->with('success', 'Data siswa baru berhasil ditambahkan.');
+        }
+
         $data_siswa = siswa::where("nis", $request->nis)->first();
         session()->put("id", $data_siswa->id);
         session()->put("nama", $data_siswa->nama);
         return redirect("/mod");
+
     }
 }

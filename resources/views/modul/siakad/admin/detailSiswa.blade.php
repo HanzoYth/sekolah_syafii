@@ -1,4 +1,4 @@
-﻿@php
+@php
     $isPerempuan = ($data_siswa->gender ?? '') === 'p';
     $isAktif = !isset($data_siswa->aktif) || (int) $data_siswa->aktif === 1;
     $namaKelas = $data_kelas->nama_ruang ?? 'Belum ditempatkan';
@@ -9,8 +9,8 @@
 <x-siakad-layout title="Detail Siswa" description="Tinjau informasi profil dan akademik siswa." position="Administrator SIAKAD" initials="AD">
     
     <!-- Header Section -->
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px;">
-        <div style="flex: 1;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px; flex-wrap: wrap; gap: 14px;">
+        <div style="flex: 1; min-width: 250px;">
             <div style="font-size: 14px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
                 <i class="fa-solid fa-user-graduate"></i> Manajemen Akademik
             </div>
@@ -75,10 +75,10 @@
     </div>
 
     <!-- Detail Layout Grid -->
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start;">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         
         <!-- Personal Info -->
-        <div style="background: white; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <div class="lg:col-span-2" style="background: white; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
                 <div style="width: 40px; height: 40px; border-radius: 10px; background: #e9f2ff; color: #3875c5; display: flex; align-items: center; justify-content: center; font-size: 18px;">
                     <i class="fa-solid fa-id-card"></i>
@@ -89,7 +89,7 @@
                 </div>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                     <div style="font-size: 13px; color: #64748b; font-weight: 600; margin-bottom: 4px;">NIS</div>
                     <div style="font-size: 15px; color: #1e293b; font-weight: 500;">{{ $data_siswa->nis }}</div>
@@ -106,7 +106,7 @@
                     <div style="font-size: 13px; color: #64748b; font-weight: 600; margin-bottom: 4px;">Tanggal lahir</div>
                     <div style="font-size: 15px; color: #1e293b; font-weight: 500;">{{ $tanggalLahir }}</div>
                 </div>
-                <div style="grid-column: 1 / -1;">
+                <div class="sm:col-span-2">
                     <div style="font-size: 13px; color: #64748b; font-weight: 600; margin-bottom: 4px;">Alamat</div>
                     <div style="font-size: 15px; color: #1e293b; font-weight: 500; line-height: 1.5;">{{ $data_siswa->alamat ?: 'Belum tersedia' }}</div>
                 </div>

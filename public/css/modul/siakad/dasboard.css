@@ -912,7 +912,7 @@ tbody tr:last-child td, .styled-table tbody tr:last-child td { border-bottom: no
     .summary-cards { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
     /* .sidebar removed to prevent conflict with sidebar_siakad.css */
     .main-content { 
         margin-left: 0; 

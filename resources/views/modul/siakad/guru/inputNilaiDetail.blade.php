@@ -142,6 +142,27 @@
             z-index: 50;
         }
 
+        @media (max-width: 640px) {
+            .sticky-save-bar {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px 16px;
+                bottom: 10px;
+                align-items: stretch;
+            }
+            .sticky-save-bar > div:last-child {
+                display: flex;
+                width: 100%;
+                gap: 8px;
+            }
+            .sticky-save-bar > div:last-child a,
+            .sticky-save-bar > div:last-child button {
+                flex: 1;
+                justify-content: center;
+                text-align: center;
+            }
+        }
+
         .table-grading tr:hover td {
             background: #f8fafc;
         }

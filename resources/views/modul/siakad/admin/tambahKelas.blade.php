@@ -4,10 +4,10 @@
     position="Administrator" 
     initials="AD">
 
-    <div style="display: grid; grid-template-columns: 350px 1fr; gap: 24px;">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- Form Tambah Kelas -->
-        <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); align-self: start;">
+        <div class="lg:col-span-4" style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); align-self: start;">
             <div style="font-size: 18px; font-weight: bold; color: #1e293b; margin-bottom: 20px; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px;">
                 <i class="fa-solid fa-school"></i> Buat Kelas Baru
             </div>
@@ -48,7 +48,7 @@
         </div>
 
         <!-- Tabel Daftar Kelas -->
-        <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <div class="lg:col-span-8" style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
             <div style="font-size: 18px; font-weight: bold; color: #1e293b; margin-bottom: 20px; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px;">
                 <i class="fa-solid fa-list"></i> Daftar Ruang Kelas
             </div>

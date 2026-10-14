@@ -30,7 +30,7 @@
 
     <!-- Header & Tab Switcher -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div class="inline-flex p-1.5 rounded-xl bg-slate-200/70 border border-slate-200 self-start">
+        <div class="inline-flex flex-wrap p-1.5 rounded-xl bg-slate-200/70 border border-slate-200 self-start gap-1">
             <a href="/sk/absensi-walas?tab=harian&tanggal={{ $tanggal }}" 
                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all {{ $activeTab !== 'rekap' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-600 hover:text-slate-800' }}">
                 <i class="fa-solid fa-clipboard-user"></i>
@@ -43,7 +43,7 @@
             </a>
         </div>
 
-        <form method="GET" action="/sk/absensi-walas" class="flex items-center gap-2.5">
+        <form method="GET" action="/sk/absensi-walas" class="flex flex-wrap items-center gap-2.5">
             <input type="hidden" name="tab" value="{{ $activeTab }}">
             <div class="relative">
                 <i class="fa-regular fa-calendar absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>

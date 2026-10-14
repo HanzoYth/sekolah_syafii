@@ -15,10 +15,23 @@ use Illuminate\Support\Facades\DB;
 
 class siakadController extends Controller
 {
+    private function guardRoles(array $allowedRoles) {
+        $currentRole = session('role');
+        if (!in_array($currentRole, $allowedRoles)) {
+            if ($currentRole === 'a') return redirect('/sk/das')->with('error', 'Akses dialihkan ke Portal Admin.');
+            if ($currentRole === 'g') return redirect('/sk/dsg')->with('error', 'Akses dialihkan ke Portal Guru.');
+            if ($currentRole === 's') return redirect('/sk/dbs')->with('error', 'Akses dialihkan ke Portal Siswa.');
+            return redirect('/')->with('error', 'Silakan masuk terlebih dahulu.');
+        }
+        return null;
+    }
+
     // ==========================================
     // MANAJEMEN NILAI (GURU PENGAJAR & WALI KELAS)
     // ==========================================
     public function inputNilaiDetail(Request $request, $jadwal_id) {
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
         $guru_id = session('id');
         $jadwal = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran', 'tahun_ajaran', 'guru'])->find($jadwal_id);
         
@@ -68,6 +81,8 @@ class siakadController extends Controller
     }
 
     public function simpanNilaiSiswa(Request $request, $jadwal_id) {
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
         $guru_id = session('id');
         $jadwal = \App\Models\jadwal_pelajaran::with('kelas')->find($jadwal_id);
         
@@ -93,6 +108,7 @@ class siakadController extends Controller
             foreach ($input_nilai as $siswa_id => $penilaian) {
                 foreach ($penilaian as $jenis_id => $angka) {
                     if ($angka !== null && $angka !== '') {
+                        $cleanScore = min(100, max(0, floatval($angka)));
                         \App\Models\nilai::updateOrCreate(
                             [
                                 'siswa_id' => $siswa_id,
@@ -103,10 +119,11 @@ class siakadController extends Controller
                             ],
                             [
                                 'guru_id' => $jadwal->guru_id,
-                                'nilai' => $angka
+                                'nilai' => $cleanScore
                             ]
                         );
                     }
+
                 }
             }
         }
@@ -117,6 +134,9 @@ class siakadController extends Controller
     // MANAJEMEN KENAIKAN KELAS & KELULUSAN (ADMIN)
     // ==========================================
     public function kenaikanKelasAdmin(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $sekolah_id = $request->query('sekolah_id');
         $kelas_id = $request->input('kelas_id');
         
@@ -140,6 +160,9 @@ class siakadController extends Controller
     }
 
     public function prosesKenaikanKelas(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $request->validate([
             'siswa_id' => 'required|array',
             'aksi' => 'required|in:naik,lulus',
@@ -165,6 +188,9 @@ class siakadController extends Controller
     // MANAJEMEN PEMBAGIAN KELAS (ROMBEL)
     // ==========================================
     public function pembagianKelas(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $sekolah_id = $request->query('sekolah_id');
         $kelas_id = $request->query('kelas_id');
         
@@ -198,6 +224,9 @@ class siakadController extends Controller
     }
 
     public function simpanPembagianKelas(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $request->validate([
             'kelas_id' => 'required|exists:ruang_kelas,id',
             'siswa_ids' => 'required|array'
@@ -210,6 +239,9 @@ class siakadController extends Controller
     }
 
     public function keluarkanSiswaDariKelas($id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $siswa = \App\Models\siswa::find($id);
         if ($siswa) {
             $siswa->update(['kelas_id' => null]);
@@ -218,6 +250,9 @@ class siakadController extends Controller
         return redirect()->back()->with('error', 'Siswa tidak ditemukan.');
     }
     function tampilanBuatTagihan_Siswa(){
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $data_siswa = siswa::all();
         return view("/modul/siakad/buatTagihan",[
             "data_siswa" => $data_siswa
@@ -225,10 +260,16 @@ class siakadController extends Controller
     }
 
     function edit_siswa(){
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         return view ('/modul/siakad/admin/editSiswa');
     }
 
     function dashboard_siakad(){
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $jumlahSiswa = siswa::count();
         $jumlahSiswaAktif = siswa::where(function ($query) {
             $query->where('aktif', true)->orWhereNull('aktif');
@@ -259,6 +300,9 @@ class siakadController extends Controller
     }
 
     function tampilanDashboardGuru(){
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
+
         $guru_id = session('id');
         $guru = \App\Models\guru::find($guru_id);
         
@@ -305,6 +349,9 @@ class siakadController extends Controller
     }
    
     function tambah_kelas(){
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
        // Sinkronisasi otomatis dari Modul Guru (ruang_kelas) ke tabel kelas SIAKAD
        $ruang_kelas_all = \App\Models\ruang_kelas::all();
        foreach($ruang_kelas_all as $rk) {
@@ -319,6 +366,8 @@ class siakadController extends Controller
        return view("/modul/siakad/admin/tambahKelas", compact('data_kelas'));
     }
     public function laporanAbsensiGuru(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
         $tanggal = $request->input('tanggal', date('Y-m-d'));
         $status_filter = $request->input('status', 'semua');
         
@@ -412,6 +461,9 @@ class siakadController extends Controller
     }
 
     function absenSiswa(Request $request){
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
+
         $guru_id = session('id');
         $guru = \App\Models\guru::find($guru_id);
         $isWallas = \App\Models\wallas::where('guru_id', $guru_id)->exists();
@@ -521,12 +573,15 @@ class siakadController extends Controller
     }
 
     public function simpanAbsensiMapel(Request $request) {
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
+
         $guru_id = session('id');
         $jadwal_id = $request->input('jadwal_id');
         $tanggal = $request->input('tanggal', date('Y-m-d'));
         $absensi = $request->input('absensi', []);
         $materi = $request->input('materi');
-        $catatan = $request->input('catatan');
+        $catatan = $request->input('catatan') ?? $request->input('catatan_jurnal');
         
         if ($tanggal > date('Y-m-d')) {
             return redirect()->back()->with('error', 'Tidak dapat melakukan absensi untuk tanggal di masa depan.');
@@ -612,6 +667,9 @@ class siakadController extends Controller
     }
 
     function profilGuru(){
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
+
         $guru_id = session('id');
         $guru = \App\Models\guru::with(['getCabang', 'getSekolah'])->find($guru_id);
         $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
@@ -620,6 +678,9 @@ class siakadController extends Controller
     }
 
     function slipPembayaranGuru(){
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
+
         $guru_id = session('id');
         $guru = \App\Models\guru::with(['getCabang', 'getSekolah'])->find($guru_id);
         $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
@@ -651,11 +712,17 @@ class siakadController extends Controller
         return view("/modul/siakad/guru/slipPembayaran", compact('guru', 'wallas', 'riwayat_absen', 'rekap_bulanan', 'total_jadwal_mingguan'));
     }
     function tampilanPembayaranPemeliharaan(){
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
        return view("/modul/siakad/admin/pemeliharaan");
        
     }
 
     function tambahTagihan_Siswa(Request $request){
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         if ($request->jenis_pembayaran == "ipp"){
             $data_awal_bulan = Carbon::parse($request->tanggal_mulai)->startOfMonth();
             $data_akhir_bulan = Carbon::parse($request->tanggal_akhir)->startOfMonth();
@@ -683,6 +750,9 @@ class siakadController extends Controller
     }
 
     function tampilanPembayaranIpp_siswa(){
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $data_slip_ipp = slip_pembayaran_ipp::paginate(6)->onEachSide(1);
         $data_kelas = ruang_kelas::all();
         $jumlah_total_bayar_lunas = slip_pembayaran_ipp::where("status",true)->sum("jumlah_dibayar");
@@ -694,6 +764,9 @@ class siakadController extends Controller
     }
 
     function tampilanPembayaranPangkal(){
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $data_slip_pangkal = slip_pembayaran_pangkal::paginate(6)->onEachSide(1);
         $data_kelas = ruang_kelas::all();
         $target_pangkal_belum_lunas = slip_pembayaran_pangkal::sum("nominal");
@@ -705,6 +778,8 @@ class siakadController extends Controller
     }
 
     function tampilanPembayaranPendidikan(){
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
         $data_slip_pendidikan = slip_pembayaran_pendidikan::paginate(6)->onEachSide(1);
         $data_kelas = ruang_kelas::all();
         $target_pendidikan_belum_lunas = slip_pembayaran_pendidikan::sum("nominal");
@@ -718,39 +793,105 @@ class siakadController extends Controller
 
     function edit_slipPembayaranIpp(Request $request)
     {
-        $data_slip = slip_pembayaran_ipp::where('id',$request->id)->first();
-        $data_slip->tanggal_awal = Carbon::parse($request->tanggal_awal)->translatedFormat("Y-m-d");
-        $data_slip->nominal = $request->nominal;
-        $data_slip->status = $request->status == 'Menunggak' ? false : true;
-        $data_slip->jumlah_dibayar += (int) $request->bayar;
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
+        $id = $request->id ?? $request->id_siswa;
+        $data_slip = slip_pembayaran_ipp::find($id);
+        if (!$data_slip) {
+            return back()->with('error', 'Data slip pembayaran IPP tidak ditemukan.');
+        }
+        if ($request->filled('tanggal_awal')) {
+            $data_slip->tanggal_awal = Carbon::parse($request->tanggal_awal)->translatedFormat("Y-m-d");
+        }
+        if ($request->filled('nominal')) {
+            $data_slip->nominal = (float) $request->nominal;
+        }
+        if ($request->filled('bayar')) {
+            $data_slip->jumlah_dibayar += (float) $request->bayar;
+        }
+
+        $nominal = (float) $data_slip->nominal;
+        $dibayar = (float) $data_slip->jumlah_dibayar;
+
+        if ($request->has('status') && $request->status !== null && $request->status !== '') {
+            $data_slip->status = (strtolower($request->status) === 'lunas' || $request->status === '1' || $request->status === true);
+        } else {
+            $data_slip->status = ($dibayar >= $nominal && $nominal > 0);
+        }
+
         $data_slip->save();
         return back()->with('success','berhasil edit pembayaran');
     }
 
 
     function edit_slipPembayaranPangkal(Request $request){
-        $data_slip = slip_pembayaran_pangkal::where("id",(int) $request->id_siswa)->first();
-        $data_slip->nominal = $request->nominal;
-        $data_slip->jumlah_di_bayar += (int) $request->bayar;
-        $data_slip->status = $request->status == 'Menunggak' ? false : true;
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
+        $id = $request->id ?? $request->id_siswa;
+        $data_slip = slip_pembayaran_pangkal::find($id);
+        if (!$data_slip) {
+            return back()->with('error', 'Data slip pembayaran uang pangkal tidak ditemukan.');
+        }
+        if ($request->filled('nominal')) {
+            $data_slip->nominal = (float) $request->nominal;
+        }
+        if ($request->filled('bayar')) {
+            $data_slip->jumlah_di_bayar += (float) $request->bayar;
+        }
+
+        $nominal = (float) $data_slip->nominal;
+        $dibayar = (float) $data_slip->jumlah_di_bayar;
+
+        if ($request->has('status') && $request->status !== null && $request->status !== '') {
+            $data_slip->status = (strtolower($request->status) === 'lunas' || $request->status === '1' || $request->status === true);
+        } else {
+            $data_slip->status = ($dibayar >= $nominal && $nominal > 0);
+        }
+
         $data_slip->save();
         return back()->with("success","berhasil edit pembayaran");
     }
 
     function edit_slipPembayaranPendidikan(Request $request){
-        $data_slip = slip_pembayaran_pendidikan::where("id",(int) $request->id_siswa)->first();
-        $data_slip->nominal = $request->nominal;
-        $data_slip->jumlah_di_bayar += (int) $request->bayar;
-        $data_slip->status = $request->status == 'Menunggak' ? false : true;
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
+        $id = $request->id ?? $request->id_siswa;
+        $data_slip = slip_pembayaran_pendidikan::find($id);
+        if (!$data_slip) {
+            return back()->with('error', 'Data slip pembayaran dana pendidikan tidak ditemukan.');
+        }
+        if ($request->filled('nominal')) {
+            $data_slip->nominal = (float) $request->nominal;
+        }
+        if ($request->filled('bayar')) {
+            $data_slip->jumlah_di_bayar += (float) $request->bayar;
+        }
+
+        $nominal = (float) $data_slip->nominal;
+        $dibayar = (float) $data_slip->jumlah_di_bayar;
+
+        if ($request->has('status') && $request->status !== null && $request->status !== '') {
+            $data_slip->status = (strtolower($request->status) === 'lunas' || $request->status === '1' || $request->status === true);
+        } else {
+            $data_slip->status = ($dibayar >= $nominal && $nominal > 0);
+        }
+
         $data_slip->save();
         return back()->with("success","berhasil edit pembayaran");
     }
 
     function publish_slipPembayaran(Request $request){
-        $data_siswa = siswa::where('id',$request->id_siswa)->first();
-        $data_akun = akun::where("id",$data_siswa->user_id)->first();
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
 
-        $data_fonte = new FonteService();
+        $data_siswa = siswa::where('id',$request->id_siswa)->first();
+        if (!$data_siswa) {
+            return back()->with('error', 'Data siswa tidak ditemukan.');
+        }
+        $data_akun = akun::where("id",$data_siswa->user_id)->first();
 
         $pesan = "";
 
@@ -762,11 +903,20 @@ class siakadController extends Controller
             $pesan = "pembayaran spp anda sudah lunas cek web anda untuk melihat update pembayaran";
         }
 
-        $data_fonte->sendMassage($data_akun->noWa,$pesan);
+        try {
+            $data_fonte = new FonteService();
+            if ($data_akun && $data_akun->noWa) {
+                $data_fonte->sendMassage($data_akun->noWa,$pesan);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("Gagal kirim notifikasi WA publish: " . $e->getMessage());
+        }
         return back()->with("success","tagihan berhasil di publish");
     }
 
     function hapus_SlipPembayaran(Request $request){
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
         $data_slipPembayaran = null;
 
         if ($request->pembayaran == "pendidikan"){
@@ -777,14 +927,21 @@ class siakadController extends Controller
             $data_slipPembayaran = slip_pembayaran_ipp::where("id",$request->id)->first();
         }
 
+        if (!$data_slipPembayaran) {
+            return back()->with('error', 'Data pembayaran tidak ditemukan.');
+        }
+
         $data_slipPembayaran->delete();
 
         return back()->with("success","pembayaran berhasil dihapus");
     }
 
     function tampian_daftarSiswa(Request $request){
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $sekolah_id = $request->query('sekolah_id');
-        $query = siswa::query();
+        $query = siswa::with(['kelas', 'sekolah']);
         if ($sekolah_id) {
             $query->where('sekolah_id', $sekolah_id);
         }
@@ -794,11 +951,21 @@ class siakadController extends Controller
     }
 
     function tampilan_detailSiswa($id){
-        $data_siswa = siswa::where("id",$id)->first();
-        $data_kelas = ruang_kelas::where("id",$data_siswa->kelas_id)->first();
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
+        $data_siswa = siswa::with(['kelas', 'sekolah', 'tahunAjaran'])->find($id);
+        if (!$data_siswa) {
+            return redirect('/sk/ds')->with('error', 'Data siswa tidak ditemukan.');
+        }
+        $data_kelas = $data_siswa->kelas;
         return view ('/modul/siakad/admin/detailSiswa',compact("data_siswa","data_kelas"));
     }
+
     function simpan_kelas(Request $request){
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $request->validate([
             'tingkat_sekolah' => 'required',
             'no_kelas' => 'required',
@@ -828,12 +995,18 @@ class siakadController extends Controller
         return back()->with('success', 'Ruang kelas berhasil ditambahkan.');
     }
 
-        function editKelas($id) {
+    function editKelas($id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $kelas = \App\Models\kelas::findOrFail($id);
         return view('/modul/siakad/admin/editKelas', compact('kelas'));
     }
 
     function updateKelas(Request $request, $id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $request->validate(['nama_kelas' => 'required']);
         
         $kelas = \App\Models\kelas::findOrFail($id);
@@ -849,16 +1022,34 @@ class siakadController extends Controller
     }
 
     function hapusKelas($id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $kelas = \App\Models\kelas::findOrFail($id);
-        
-        // Also try to find and delete from ruang_kelas by matching name
-        \App\Models\ruang_kelas::where('nama_ruang', $kelas->nama_kelas)->delete();
-        
+        $nama_ruang = $kelas->nama_kelas;
+
+        $ruang = \App\Models\ruang_kelas::where('nama_ruang', $nama_ruang)->first();
+        $ruang_id = $ruang ? $ruang->id : $kelas->id;
+
+        $adaSiswa = \App\Models\siswa::where('kelas_id', $ruang_id)->orWhere('kelas_id', $kelas->id)->exists();
+        if ($adaSiswa) {
+            return back()->with('error', 'Tidak dapat menghapus kelas karena masih ada siswa yang terdaftar di kelas ini.');
+        }
+
+        $adaJadwal = \App\Models\jadwal_pelajaran::where('kelas_id', $kelas->id)->exists();
+        if ($adaJadwal) {
+            return back()->with('error', 'Tidak dapat menghapus kelas karena masih terdapat jadwal pelajaran aktif.');
+        }
+
+        \App\Models\ruang_kelas::where('nama_ruang', $nama_ruang)->delete();
         $kelas->delete();
         return back()->with('success', 'Ruang kelas berhasil dihapus.');
     }
 
     function jadwalMengajarGuru(Request $request) {
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
+
         $guru_id = session('id'); 
         $guru = \App\Models\guru::find($guru_id);
         $isWallas = \App\Models\wallas::where('guru_id', $guru_id)->exists();
@@ -875,6 +1066,9 @@ class siakadController extends Controller
     }
 
     function inputNilaiGuru(Request $request) {
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
+
         $guru_id = session('id');
         $guru = \App\Models\guru::find($guru_id);
         $isWallas = \App\Models\wallas::where('guru_id', $guru_id)->exists();
@@ -890,6 +1084,9 @@ class siakadController extends Controller
     }
 
     function dataWaliKelas(Request $request) {
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
+
         $guru_id = session('id');
         $wallas = \App\Models\wallas::with(['guru', 'ruangKelas'])->where('guru_id', $guru_id)->first();
         
@@ -943,6 +1140,9 @@ class siakadController extends Controller
     }
 
     public function absensiWalas(Request $request) {
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
+
         $guru_id = session('id');
         $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
         if (!$wallas) {
@@ -1006,6 +1206,9 @@ class siakadController extends Controller
     }
 
     public function simpanAbsensiWalas(Request $request) {
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
+
         $guru_id = session('id');
         $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
         if (!$wallas) return redirect()->back();
@@ -1039,6 +1242,9 @@ class siakadController extends Controller
     }
 
     public function raporWalas(Request $request) {
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
+
         $guru_id = session('id');
         $wallas = \App\Models\wallas::with(['ruangKelas', 'guru'])->where('guru_id', $guru_id)->first();
         if (!$wallas) {
@@ -1228,6 +1434,9 @@ class siakadController extends Controller
     }
 
     public function detailRaporWalas(Request $request, $siswa_id) {
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
+
         $guru_id = session('id');
         $wallas = \App\Models\wallas::with(['ruangKelas', 'guru'])->where('guru_id', $guru_id)->first();
         if (!$wallas) {
@@ -1241,6 +1450,19 @@ class siakadController extends Controller
         // Ambil Tahun Ajaran Aktif
         $tahun_aktif = \App\Models\tahun_ajaran::where('aktif', 1)->first() ?? \App\Models\tahun_ajaran::orderByDesc('id')->first();
 
+        // Ambil sinkronisasi nama_ruang kelas dengan tabel kelas
+        $nama_kelas = $wallas->ruangKelas->nama_ruang ?? '';
+        $kelas_jadwal = \App\Models\kelas::where('nama_kelas', $nama_kelas)->first();
+        $kelas_id_jadwal = $kelas_jadwal ? $kelas_jadwal->id : $wallas->kelas_id;
+
+        $jadwal_kelas = collect();
+        if ($kelas_id_jadwal) {
+            $jadwal_kelas = \App\Models\jadwal_pelajaran::with(['mata_pelajaran', 'guru'])
+                ->where('kelas_id', $kelas_id_jadwal)
+                ->get()
+                ->unique('mapel_id');
+        }
+
         // Ambil Data Nilai Siswa
         $nilai_db = \App\Models\nilai::with(['mata_pelajaran', 'jenis_penilaian'])
                         ->where('siswa_id', $siswa_id)
@@ -1248,7 +1470,17 @@ class siakadController extends Controller
 
         // Rekap Nilai per Mata Pelajaran
         $rekap_nilai = [];
-        $total_nilai_akhir = 0;
+        // Inisialisasi dari jadwal kelas agar semua mapel kelas tampil lengkap di lembar rapor
+        foreach ($jadwal_kelas as $jk) {
+            if (!$jk->mata_pelajaran) continue;
+            $rekap_nilai[$jk->mata_pelajaran->nama_mapel] = [
+                'kkm' => $jk->mata_pelajaran->kkm ?? 75,
+                'rincian' => [],
+                'nilai_akhir' => 0,
+                'ada_nilai' => false
+            ];
+        }
+
         foreach ($nilai_db as $n) {
             if (!$n->mata_pelajaran || !$n->jenis_penilaian) continue;
             $mapel = $n->mata_pelajaran->nama_mapel;
@@ -1256,18 +1488,26 @@ class siakadController extends Controller
                 $rekap_nilai[$mapel] = [
                     'kkm' => $n->mata_pelajaran->kkm ?? 75,
                     'rincian' => [],
-                    'nilai_akhir' => 0
+                    'nilai_akhir' => 0,
+                    'ada_nilai' => false
                 ];
             }
+            $rekap_nilai[$mapel]['ada_nilai'] = true;
             $rekap_nilai[$mapel]['rincian'][$n->jenis_penilaian->nama_jenis] = $n->nilai;
             $bobot = $n->jenis_penilaian->bobot / 100;
             $rekap_nilai[$mapel]['nilai_akhir'] += ($n->nilai * $bobot);
         }
 
+        $total_nilai_akhir = 0;
+        $mapel_dinilai = 0;
         foreach ($rekap_nilai as $m => $d) {
-            $total_nilai_akhir += $d['nilai_akhir'];
+            if (!empty($d['ada_nilai'])) {
+                $total_nilai_akhir += $d['nilai_akhir'];
+                $mapel_dinilai++;
+            }
         }
-        $rata_rata_rapor = count($rekap_nilai) > 0 ? round($total_nilai_akhir / count($rekap_nilai), 1) : 0;
+        $rata_rata_rapor = $mapel_dinilai > 0 ? round($total_nilai_akhir / $mapel_dinilai, 1) : 0;
+
 
         // Ambil Rekap Absensi Harian Kelas (jadwal_pelajaran_id = null)
         $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa_id)
@@ -1290,6 +1530,9 @@ class siakadController extends Controller
 
 
     function kelolaJadwalAdmin(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $sekolah_id = $request->query('sekolah_id');
         $data_sekolah = \App\Models\jenis_sekolah::all();
 
@@ -1321,6 +1564,9 @@ class siakadController extends Controller
     }
 
     function simpanJadwalAdmin(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $request->validate([
             'kelas_id' => 'required',
             'guru_id' => 'required',
@@ -1329,11 +1575,32 @@ class siakadController extends Controller
             'jam_pelajaran_id' => 'required',
             'tahun_ajaran_id' => 'required',
         ]);
+
+        // Validasi Bentrok Jadwal Mengajar Guru
+        $bentrokGuru = \App\Models\jadwal_pelajaran::where('guru_id', $request->guru_id)
+            ->where('hari', strtolower($request->hari))
+            ->where('jam_pelajaran_id', $request->jam_pelajaran_id)
+            ->where('tahun_ajaran_id', $request->tahun_ajaran_id)
+            ->exists();
+        if ($bentrokGuru) {
+            return back()->with('error', 'Guru tersebut sudah memiliki jadwal mengajar di kelas lain pada hari dan sesi jam yang sama.');
+        }
+
+        // Validasi Bentrok Jadwal Kelas (Ruang Kelas tidak boleh memiliki 2 mapel bersamaan)
+        $bentrokKelas = \App\Models\jadwal_pelajaran::where('kelas_id', $request->kelas_id)
+            ->where('hari', strtolower($request->hari))
+            ->where('jam_pelajaran_id', $request->jam_pelajaran_id)
+            ->where('tahun_ajaran_id', $request->tahun_ajaran_id)
+            ->exists();
+        if ($bentrokKelas) {
+            return back()->with('error', 'Kelas tersebut sudah terisi mata pelajaran lain pada hari dan sesi jam yang sama.');
+        }
+
         \App\Models\jadwal_pelajaran::create([
             'kelas_id' => $request->kelas_id,
             'guru_id' => $request->guru_id,
             'mapel_id' => $request->mapel_id,
-            'hari' => $request->hari,
+            'hari' => strtolower($request->hari),
             'jam_pelajaran_id' => $request->jam_pelajaran_id,
             'tahun_ajaran_id' => $request->tahun_ajaran_id
         ]);
@@ -1341,6 +1608,9 @@ class siakadController extends Controller
     }
 
     function kelolaMapel(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $sekolah_id = $request->query('sekolah_id');
         $query = \App\Models\mata_pelajaran::query();
         if ($sekolah_id) {
@@ -1352,6 +1622,9 @@ class siakadController extends Controller
     }
 
     function simpanMapel(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $request->validate(['nama_mapel' => 'required', 'sekolah_id' => 'required']);
         \App\Models\mata_pelajaran::create([
             'nama_mapel' => $request->nama_mapel,
@@ -1361,17 +1634,33 @@ class siakadController extends Controller
     }
 
     function hapusMapel($id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
+        if (\App\Models\jadwal_pelajaran::where('mapel_id', $id)->exists()) {
+            return back()->with('error', 'Tidak dapat menghapus mata pelajaran karena masih digunakan pada jadwal pelajaran aktif.');
+        }
+        if (\App\Models\nilai::where('mapel_id', $id)->exists()) {
+            return back()->with('error', 'Tidak dapat menghapus mata pelajaran karena memiliki data nilai siswa.');
+        }
+
         \App\Models\mata_pelajaran::findOrFail($id)->delete();
         return back()->with('success', 'Mata Pelajaran berhasil dihapus.');
     }
 
     function editMapel($id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $mapel = \App\Models\mata_pelajaran::findOrFail($id);
         $data_sekolah = \App\Models\jenis_sekolah::all();
         return view('/modul/siakad/admin/editMapel', compact('mapel', 'data_sekolah'));
     }
 
     function updateMapel(Request $request, $id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $request->validate(['nama_mapel' => 'required', 'sekolah_id' => 'required']);
         \App\Models\mata_pelajaran::findOrFail($id)->update([
             'nama_mapel' => $request->nama_mapel,
@@ -1381,11 +1670,17 @@ class siakadController extends Controller
     }
 
     function hapusJadwal($id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         \App\Models\jadwal_pelajaran::findOrFail($id)->delete();
         return back()->with('success', 'Jadwal berhasil dihapus.');
     }
 
     function editJadwal($id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $jadwal = \App\Models\jadwal_pelajaran::findOrFail($id);
         $data_kelas = \App\Models\kelas::all();
         $data_guru = \App\Models\guru::all();
@@ -1396,6 +1691,9 @@ class siakadController extends Controller
     }
 
     function updateJadwal(Request $request, $id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $request->validate([
             'kelas_id' => 'required',
             'guru_id' => 'required',
@@ -1404,27 +1702,57 @@ class siakadController extends Controller
             'jam_pelajaran_id' => 'required',
             'tahun_ajaran_id' => 'required',
         ]);
+
+        // Validasi Bentrok Jadwal Mengajar Guru
+        $bentrokGuru = \App\Models\jadwal_pelajaran::where('guru_id', $request->guru_id)
+            ->where('hari', strtolower($request->hari))
+            ->where('jam_pelajaran_id', $request->jam_pelajaran_id)
+            ->where('tahun_ajaran_id', $request->tahun_ajaran_id)
+            ->where('id', '!=', $id)
+            ->exists();
+        if ($bentrokGuru) {
+            return back()->with('error', 'Guru tersebut sudah memiliki jadwal mengajar di kelas lain pada hari dan sesi jam yang sama.');
+        }
+
+        // Validasi Bentrok Jadwal Kelas
+        $bentrokKelas = \App\Models\jadwal_pelajaran::where('kelas_id', $request->kelas_id)
+            ->where('hari', strtolower($request->hari))
+            ->where('jam_pelajaran_id', $request->jam_pelajaran_id)
+            ->where('tahun_ajaran_id', $request->tahun_ajaran_id)
+            ->where('id', '!=', $id)
+            ->exists();
+        if ($bentrokKelas) {
+            return back()->with('error', 'Kelas tersebut sudah terisi mata pelajaran lain pada hari dan sesi jam yang sama.');
+        }
+
         \App\Models\jadwal_pelajaran::findOrFail($id)->update([
             'kelas_id' => $request->kelas_id,
             'guru_id' => $request->guru_id,
             'mapel_id' => $request->mapel_id,
-            'hari' => $request->hari,
+            'hari' => strtolower($request->hari),
             'jam_pelajaran_id' => $request->jam_pelajaran_id,
             'tahun_ajaran_id' => $request->tahun_ajaran_id
         ]);
         return redirect('/sk/kelola-jadwal')->with('success', 'Jadwal pelajaran berhasil diperbarui.');
     }
 
+
     // ==========================================
     // KELOLA REFERENSI AKADEMIK (Tahun & Jam)
     // ==========================================
     public function kelolaReferensi() {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $data_tahun = \App\Models\tahun_ajaran::orderBy('id', 'desc')->get();
         $data_jam = \App\Models\jam_pelajaran::orderBy('jam_mulai', 'asc')->get();
         return view('modul.siakad.admin.kelolaReferensi', compact('data_tahun', 'data_jam'));
     }
 
     public function simpanTahunAjaran(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $request->validate([
             'nama' => 'required',
             'tanggal_mulai' => 'required|date',
@@ -1440,6 +1768,9 @@ class siakadController extends Controller
     }
 
     public function updateTahunAjaran(Request $request, $id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $request->validate([
             'nama' => 'required',
             'tanggal_mulai' => 'required|date',
@@ -1455,18 +1786,26 @@ class siakadController extends Controller
     }
 
     public function hapusTahunAjaran($id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
+        if (\App\Models\jadwal_pelajaran::where('tahun_ajaran_id', $id)->exists()) {
+            return back()->with('error', 'Tidak dapat menghapus tahun ajaran yang masih digunakan oleh jadwal pelajaran aktif.');
+        }
+
         \App\Models\tahun_ajaran::findOrFail($id)->delete();
         return redirect()->back()->with('success', 'Tahun Ajaran berhasil dihapus.');
     }
 
     public function simpanJamPelajaran(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $request->validate([
-            
             'jam_mulai' => 'required',
             'jam_selesai' => 'required'
         ]);
         \App\Models\jam_pelajaran::create([
-            'nama_jam' => $request->nama_jam,
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai
         ]);
@@ -1474,13 +1813,14 @@ class siakadController extends Controller
     }
 
     public function updateJamPelajaran(Request $request, $id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $request->validate([
-            
             'jam_mulai' => 'required',
             'jam_selesai' => 'required'
         ]);
         \App\Models\jam_pelajaran::findOrFail($id)->update([
-            'nama_jam' => $request->nama_jam,
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai
         ]);
@@ -1488,6 +1828,13 @@ class siakadController extends Controller
     }
 
     public function hapusJamPelajaran($id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
+        if (\App\Models\jadwal_pelajaran::where('jam_pelajaran_id', $id)->exists()) {
+            return back()->with('error', 'Tidak dapat menghapus jam pelajaran yang masih digunakan oleh jadwal pelajaran aktif.');
+        }
+
         \App\Models\jam_pelajaran::findOrFail($id)->delete();
         return redirect()->back()->with('success', 'Jam Pelajaran berhasil dihapus.');
     }
@@ -1496,6 +1843,9 @@ class siakadController extends Controller
     // KELOLA WALI KELAS (ADMIN)
     // ==========================================
     public function kelolaWaliKelas(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $sekolah_id = $request->query('sekolah_id');
         
         $wallas_query = \App\Models\wallas::with(['guru', 'ruangKelas']);
@@ -1521,6 +1871,9 @@ class siakadController extends Controller
     }
 
     public function simpanWaliKelas(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $request->validate([
             'guru_id' => 'required',
             'kelas_id' => 'required'
@@ -1531,6 +1884,11 @@ class siakadController extends Controller
             return redirect()->back()->with('error', 'Kelas tersebut sudah memiliki wali kelas.');
         }
 
+        // Cek apakah guru sudah menjadi wali kelas di kelas lain
+        if (\App\Models\wallas::where('guru_id', $request->guru_id)->exists()) {
+            return redirect()->back()->with('error', 'Guru tersebut sudah ditugaskan sebagai wali kelas di kelas lain.');
+        }
+
         \App\Models\wallas::create([
             'guru_id' => $request->guru_id,
             'kelas_id' => $request->kelas_id
@@ -1539,6 +1897,9 @@ class siakadController extends Controller
     }
 
     public function updateWaliKelas(Request $request, $id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         $request->validate([
             'guru_id' => 'required',
             'kelas_id' => 'required'
@@ -1550,6 +1911,12 @@ class siakadController extends Controller
             return redirect()->back()->with('error', 'Kelas tersebut sudah memiliki wali kelas.');
         }
 
+        // Cek duplikasi guru sudah jadi walas di kelas lain
+        $cekGuru = \App\Models\wallas::where('guru_id', $request->guru_id)->where('id', '!=', $id)->exists();
+        if ($cekGuru) {
+            return redirect()->back()->with('error', 'Guru tersebut sudah ditugaskan sebagai wali kelas di kelas lain.');
+        }
+
         \App\Models\wallas::findOrFail($id)->update([
             'guru_id' => $request->guru_id,
             'kelas_id' => $request->kelas_id
@@ -1558,6 +1925,9 @@ class siakadController extends Controller
     }
 
     public function hapusWaliKelas($id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
         \App\Models\wallas::findOrFail($id)->delete();
         return redirect()->back()->with('success', 'Penugasan Wali Kelas berhasil dihapus.');
     }
@@ -1566,6 +1936,10 @@ class siakadController extends Controller
     // MENU SISWA (PORTAL ORANG TUA & SISWA)
     // ==========================================
     public function jadwalSiswa(Request $request) {
+        if (session('role') !== 's') {
+            return redirect(session('role') === 'g' ? '/sk/dsg' : '/sk/das')->with('error', 'Akses khusus Siswa / Wali Murid.');
+        }
+
         $siswa_id = session('id');
         $siswa = \App\Models\siswa::with(['kelas', 'sekolah', 'tahunAjaran'])->find($siswa_id);
         
@@ -1680,8 +2054,13 @@ class siakadController extends Controller
     }
 
     public function raporSiswa(Request $request) {
+        if (session('role') !== 's') {
+            return redirect(session('role') === 'g' ? '/sk/dsg' : '/sk/das')->with('error', 'Akses khusus Siswa / Wali Murid.');
+        }
+
         $siswa_id = session('id');
         $siswa = \App\Models\siswa::with(['kelas', 'sekolah', 'tahunAjaran'])->findOrFail($siswa_id);
+
         $tab = $request->query('tab', 'transkrip');
 
         $wallas = $siswa->kelas_id ? \App\Models\wallas::with(['guru', 'ruangKelas'])->where('kelas_id', $siswa->kelas_id)->first() : null;
