@@ -5,8 +5,8 @@
     initials="AD">
 
     <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px;">
-            <div style="font-size: 18px; font-weight: bold; color: #1e293b; display: flex; align-items: center; gap: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px; flex-wrap: wrap; gap: 14px;">
+            <div style="font-size: 18px; font-weight: bold; color: #1e293b; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
                 <span><i class="fa-solid fa-users-rectangle"></i> Daftar Wali Kelas</span>
                 
                 <form action="" method="GET" style="display: flex; align-items: center;">
@@ -87,7 +87,13 @@
                 <select name="guru_id" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
                     <option value="">-- Pilih Guru --</option>
                     @foreach($data_guru as $guru)
-                        <option value="{{ $guru->id }}">{{ $guru->nama }}</option>
+                        @php
+                            $tags = [];
+                            if ($guru->guru_tetap) $tags[] = 'Guru Tetap';
+                            elseif ($guru->guru_honor) $tags[] = 'Guru Honor';
+                            $tagLabel = count($tags) > 0 ? ' (' . implode(', ', $tags) . ')' : '';
+                        @endphp
+                        <option value="{{ $guru->id }}">{{ $guru->nama }}{{ $tagLabel }}</option>
                     @endforeach
                 </select>
             </div>
@@ -118,7 +124,13 @@
                 <select name="guru_id" id="editGuruId" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
                     <option value="">-- Pilih Guru --</option>
                     @foreach($data_guru as $guru)
-                        <option value="{{ $guru->id }}">{{ $guru->nama }}</option>
+                        @php
+                            $tags = [];
+                            if ($guru->guru_tetap) $tags[] = 'Guru Tetap';
+                            elseif ($guru->guru_honor) $tags[] = 'Guru Honor';
+                            $tagLabel = count($tags) > 0 ? ' (' . implode(', ', $tags) . ')' : '';
+                        @endphp
+                        <option value="{{ $guru->id }}">{{ $guru->nama }}{{ $tagLabel }}</option>
                     @endforeach
                 </select>
             </div>

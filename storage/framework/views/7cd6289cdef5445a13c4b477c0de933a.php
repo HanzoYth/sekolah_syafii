@@ -133,21 +133,25 @@
             
             <?php elseif(session('role') === 'g'): ?>
                 <?php
-                    // Cek apakah guru ini adalah wali kelas, pastikan session('id') ada
+                    // Cek peran guru: status di modul guru (tetap/honor), penugasan jadwal, dan wali kelas
                     $guruId = session('id');
+                    $guruData = $guruId ? \App\Models\guru::find($guruId) : null;
                     $isWallas = $guruId ? \App\Models\wallas::where('guru_id', $guruId)->exists() : false;
+                    // Wali kelas sudah tentu menjadi guru pengajar juga, bahkan jika checkbox di modul guru dimatikan
+                    $isPengajar = $isWallas || ($guruData ? ($guruData->guru_tetap || $guruData->guru_honor || \App\Models\jadwal_pelajaran::where('guru_id', $guruId)->exists()) : false);
                 ?>
 
+                <?php if($isPengajar): ?>
                 <div class="menu-section" id="section-guru-pengajar">
                     <span class="menu-label">MENU PENGAJAR</span>
                     <ul class="menu-list">
-                        <li class="menu-item <?php echo e(request()->is('sk/jadwal-guru', 'sk/input-nilai-detail/*') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(request()->is('sk/jadwal-guru') ? 'active' : ''); ?>">
                             <a href="/sk/jadwal-guru">
                                 <i class="fa-solid fa-calendar-week"></i>
                                 <span>Jadwal Mengajar</span>
                             </a>
                         </li>
-                        <li class="menu-item <?php echo e(request()->is('sk/nilai-guru') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(request()->is('sk/nilai-guru') || (request()->is('sk/input-nilai-detail/*') && request('from') !== 'walas') ? 'active' : ''); ?>">
                             <a href="/sk/nilai-guru">
                                 <i class="fa-solid fa-star"></i>
                                 <span>Manajemen Nilai</span>
@@ -161,6 +165,7 @@
                         </li>
                     </ul>
                 </div>
+                <?php endif; ?>
 
                 <?php if($isWallas): ?>
                 <div class="menu-section" id="section-guru-walas" style="margin-top: 15px;">
@@ -178,7 +183,13 @@
                                 <span>Absensi Kelas</span>
                             </a>
                         </li>
-                        <li class="menu-item <?php echo e(request()->is('sk/rapor-walas') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e((request()->is('sk/rapor-walas') && request('tab') === 'nilai') || (request()->is('sk/input-nilai-detail/*') && request('from') === 'walas') ? 'active' : ''); ?>">
+                            <a href="/sk/rapor-walas?tab=nilai">
+                                <i class="fa-solid fa-sliders"></i>
+                                <span>Manajemen Nilai Kelas</span>
+                            </a>
+                        </li>
+                        <li class="menu-item <?php echo e((request()->is('sk/rapor-walas') && request('tab') !== 'nilai') || request()->is('sk/detail-rapor-walas/*') ? 'active' : ''); ?>">
                             <a href="/sk/rapor-walas">
                                 <i class="fa-solid fa-file-contract"></i>
                                 <span>Cetak Rapor</span>
@@ -191,13 +202,13 @@
                 <div class="menu-section" id="section-guru-umum" style="margin-top: 15px;">
                     <span class="menu-label">UMUM</span>
                     <ul class="menu-list">
-                        <li class="menu-item">
+                        <li class="menu-item <?php echo e(request()->is('sk/gsp') ? 'active' : ''); ?>">
                             <a href="/sk/gsp">
                                 <i class="fa-solid fa-file-invoice-dollar"></i>
                                 <span>Slip Pembayaran</span>
                             </a>
                         </li>
-                        <li class="menu-item">
+                        <li class="menu-item <?php echo e(request()->is('sk/pr') ? 'active' : ''); ?>">
                             <a href="/sk/pr">
                                 <i class="fa-solid fa-id-card"></i>
                                 <span>Profil</span>
@@ -211,16 +222,28 @@
                 <div class="menu-section" id="section-siswa">
                     <span class="menu-label">AKADEMIK & MONITORING</span>
                     <ul class="menu-list">
-                        <li class="menu-item <?php echo e(request()->is('sk/jadwal-siswa') ? 'active' : ''); ?>">
-                            <a href="/sk/jadwal-siswa">
-                                <i class="fa-solid fa-calendar-check"></i>
-                                <span>Jadwal & Absensi</span>
+                        <li class="menu-item <?php echo e(request()->is('sk/jadwal-siswa') && !in_array(request('tab'), ['absensi_mapel', 'absensi_harian']) ? 'active' : ''); ?>">
+                            <a href="/sk/jadwal-siswa?tab=jadwal">
+                                <i class="fa-solid fa-calendar-week"></i>
+                                <span>Jadwal Pelajaran</span>
                             </a>
                         </li>
-                        <li class="menu-item <?php echo e(request()->is('sk/rapor-siswa') ? 'active' : ''); ?>">
-                            <a href="/sk/rapor-siswa">
+                        <li class="menu-item <?php echo e(request()->is('sk/jadwal-siswa') && in_array(request('tab'), ['absensi_mapel', 'absensi_harian']) ? 'active' : ''); ?>">
+                            <a href="/sk/jadwal-siswa?tab=absensi_mapel">
+                                <i class="fa-solid fa-clipboard-check"></i>
+                                <span>Absensi & Jurnal Belajar</span>
+                            </a>
+                        </li>
+                        <li class="menu-item <?php echo e(request()->is('sk/rapor-siswa') && request('tab') !== 'rapor' ? 'active' : ''); ?>">
+                            <a href="/sk/rapor-siswa?tab=transkrip">
                                 <i class="fa-solid fa-star"></i>
-                                <span>Nilai & Rapor</span>
+                                <span>Nilai & Transkrip</span>
+                            </a>
+                        </li>
+                        <li class="menu-item <?php echo e(request()->is('sk/rapor-siswa') && request('tab') === 'rapor' ? 'active' : ''); ?>">
+                            <a href="/sk/rapor-siswa?tab=rapor">
+                                <i class="fa-solid fa-file-contract"></i>
+                                <span>Rapor Semester</span>
                             </a>
                         </li>
                     </ul>
@@ -229,7 +252,7 @@
                 <div class="menu-section" id="section-siswa-administrasi" style="margin-top: 15px;">
                     <span class="menu-label">ADMINISTRASI</span>
                     <ul class="menu-list">
-                        <li class="menu-item <?php echo e(request()->is('sk/pbs') ? 'active' : ''); ?>">
+                        <li class="menu-item <?php echo e(request()->is('sk/pbs', 'sk/dsp') ? 'active' : ''); ?>">
                             <a href="/sk/pbs">
                                 <i class="fa-solid fa-file-invoice-dollar"></i>
                                 <span>Riwayat Pembayaran</span>
@@ -244,7 +267,7 @@
                         <li class="menu-item <?php echo e(request()->is('sk/pfs') ? 'active' : ''); ?>">
                             <a href="/sk/pfs">
                                 <i class="fa-solid fa-id-card"></i>
-                                <span>Profil Anak</span>
+                                <span>Profil Siswa</span>
                             </a>
                         </li>
                     </ul>
@@ -273,7 +296,7 @@
 
     if (!sidebar) return;
 
-    var MOBILE_BREAKPOINT = 768;
+    var MOBILE_BREAKPOINT = 1024;
 
     function isMobile() {
         return window.innerWidth <= MOBILE_BREAKPOINT;
@@ -281,15 +304,15 @@
 
     function openMobileSidebar() {
         sidebar.classList.add('open');
-        overlay.classList.add('active');
-        hamburger.setAttribute('aria-expanded', 'true');
+        if (overlay) overlay.classList.add('active');
+        if (hamburger) hamburger.setAttribute('aria-expanded', 'true');
         document.body.style.overflow = 'hidden';
     }
 
     function closeMobileSidebar() {
         sidebar.classList.remove('open');
-        overlay.classList.remove('active');
-        hamburger.setAttribute('aria-expanded', 'false');
+        if (overlay) overlay.classList.remove('active');
+        if (hamburger) hamburger.setAttribute('aria-expanded', 'false');
         document.body.style.overflow = '';
     }
 
@@ -300,6 +323,11 @@
             openMobileSidebar();
         }
     }
+
+    // Expose helpers globally for topbar / other buttons
+    window.toggleSiakadSidebar = toggleMobileSidebar;
+    window.openSiakadSidebar   = openMobileSidebar;
+    window.closeSiakadSidebar  = closeMobileSidebar;
 
     if (hamburger) {
         hamburger.addEventListener('click', toggleMobileSidebar);
@@ -330,4 +358,7 @@
     });
 })();
 </script>
+
+<?php echo $__env->make('components.siakad.loader', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+
 <?php /**PATH D:\laragon\www\sekolahsyafii\resources\views/components/siakad/sidebar.blade.php ENDPATH**/ ?>

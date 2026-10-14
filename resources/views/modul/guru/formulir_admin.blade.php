@@ -29,7 +29,7 @@
         </header>
 
         <!-- KONTEN FORM -->
-        <section class="content-body">
+        <section class="content-body">`
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fa-solid fa-user-plus"></i> Formulir Bio Data Admin</h3>

@@ -23,9 +23,9 @@
             </div>
         </div>
 
-        <form method="GET" action="/sk/pembagian-kelas" style="display: flex; gap: 15px; align-items: flex-end;">
+        <form method="GET" action="/sk/pembagian-kelas" style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
             <input type="hidden" name="sekolah_id" value="{{ $sekolah_id ?? '' }}">
-            <div style="flex: 1;">
+            <div style="flex: 1; min-width: 220px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Pilih Ruang Kelas</label>
                 <select name="kelas_id" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
                     <option value="">-- Pilih Kelas --</option>
@@ -41,13 +41,13 @@
     </div>
 
     @if($kelas_id)
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         <!-- KOLOM KIRI: SISWA BELUM ADA KELAS -->
         <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
             <div style="font-size: 16px; font-weight: bold; color: #b45309; margin-bottom: 15px; border-bottom: 2px solid #fef3c7; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                 <span><i class="fa-solid fa-users-slash"></i> Belum Memiliki Kelas</span>
-                <span style="background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 12px; font-size: 12px;">{{ count($siswa_belum_ada_kelas) }} Siswa</span>
+                <span style="background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 12px; font-size: 12px;">{{ count($siswa_belum_ada_kelas ?? []) }} Siswa</span>
             </div>
 
             <form action="/sk/simpan-pembagian-kelas" method="POST">
@@ -55,7 +55,7 @@
                 <input type="hidden" name="kelas_id" value="{{ $kelas_id }}">
                 
                 <div style="max-height: 400px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                    @if(count($siswa_belum_ada_kelas) > 0)
+                    @if(count($siswa_belum_ada_kelas ?? []) > 0)
                         @foreach($siswa_belum_ada_kelas as $s)
                             <label style="display: flex; align-items: center; gap: 12px; padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
                                 <input type="checkbox" name="siswa_ids[]" value="{{ $s->id }}" style="width: 18px; height: 18px; accent-color: #166534;">
@@ -73,7 +73,7 @@
                     @endif
                 </div>
 
-                @if(count($siswa_belum_ada_kelas) > 0)
+                @if(count($siswa_belum_ada_kelas ?? []) > 0)
                     <button type="submit" style="width: 100%; padding: 12px; border: none; background: #177455; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <i class="fa-solid fa-arrow-right-to-bracket"></i> Masukkan ke Kelas Ini
                     </button>
@@ -85,7 +85,7 @@
         <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
             <div style="font-size: 16px; font-weight: bold; color: #1e293b; margin-bottom: 15px; border-bottom: 2px solid #dcfce7; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                 <span><i class="fa-solid fa-users"></i> Anggota Kelas Saat Ini</span>
-                <span style="background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 12px; font-size: 12px;">{{ count($siswa_di_kelas) }} Siswa</span>
+                <span style="background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 12px; font-size: 12px;">{{ count($siswa_di_kelas ?? []) }} Siswa</span>
             </div>
 
             <div style="max-height: 400px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 8px;">
@@ -98,7 +98,7 @@
                         </tr>
                     </x-slot>
                     
-                    @if(count($siswa_di_kelas) > 0)
+                    @if(count($siswa_di_kelas ?? []) > 0)
                         @foreach($siswa_di_kelas as $index => $s)
                             <tr>
                                 <td style="text-align: center;">{{ $index + 1 }}</td>

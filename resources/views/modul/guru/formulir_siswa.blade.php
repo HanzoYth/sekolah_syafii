@@ -23,9 +23,10 @@
                 <h2>Tambah Data Siswa</h2>
                 <p>Input data pribadi dan akademik siswa</p>
             </div>
-            <a href="/siswa" class="btn-back">
+            <a href="/sk/ds" class="btn-back">
                 <i class="fa-solid fa-arrow-left"></i> Kembali
             </a>
+
         </header>
 
         <!-- KONTEN FORM -->

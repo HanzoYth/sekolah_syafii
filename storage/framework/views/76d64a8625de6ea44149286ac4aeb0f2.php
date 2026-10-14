@@ -4,11 +4,14 @@
     <div class="siakad-topbar-pattern" aria-hidden="true"></div>
     <div class="siakad-topbar-content">
         <div class="siakad-topbar-title">
+            <button class="topbar-hamburger-btn" id="topbar-hamburger-btn" type="button" aria-label="Buka Menu SIAKAD" onclick="if(window.toggleSiakadSidebar){window.toggleSiakadSidebar();}else{var h=document.getElementById('mobile-hamburger-btn');if(h)h.click();}">
+                <i class="fa-solid fa-bars"></i>
+            </button>
             <p class="siakad-arabic">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
             <div>
                 <p class="siakad-topbar-kicker">SISTEM INFORMASI AKADEMIK</p>
                 <h1><?php echo e($title); ?></h1>
-                <p><?php echo e($description); ?></p>
+                <p><?php echo $description; ?></p>
             </div>
         </div>
 

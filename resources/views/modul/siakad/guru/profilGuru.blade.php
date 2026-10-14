@@ -1,130 +1,149 @@
-﻿<x-siakad-layout title="Profil Guru" description="Tinjau informasi kepegawaian dan data pribadi Anda." position="Guru" initials="GR">
-    
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px;">
-        <div style="flex: 1;">
-            <div style="font-size: 14px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
-                <i class="fa-solid fa-id-card"></i> Administrasi Kepegawaian
-            </div>
-            <div style="font-size: 18px; font-weight: bold; color: #1e293b;">
-                Profil Pendidik
-            </div>
-            <div style="color: #64748b; font-size: 14px; margin-top: 4px;">
-                Tinjau informasi kepegawaian dan data pribadi yang terdaftar pada sistem.
+<x-siakad-layout 
+    title="Profil Pendidik" 
+    description="Tinjau informasi kepegawaian, penugasan akademik, dan data pribadi Anda yang terdaftar pada SIAKAD." 
+    position="Guru SIAKAD" 
+    initials="GR">
+
+    <x-slot name="breadcrumb">
+        <li class="flex items-center">
+            <a href="/sk/dsg" class="text-slate-500 hover:text-emerald-600 transition-colors">Dashboard</a>
+            <i class="fa-solid fa-chevron-right text-[10px] mx-2 text-slate-400"></i>
+        </li>
+        <li class="flex items-center">
+            <span class="text-slate-700 font-medium">Profil Guru</span>
+        </li>
+    </x-slot>
+
+    <!-- Profile Hero Card -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-center sm:items-start gap-6">
+        <div class="w-28 h-28 rounded-2xl overflow-hidden bg-emerald-50 border-4 border-white shadow-md flex-shrink-0 flex items-center justify-center text-emerald-600 text-4xl">
+            @if(!empty($guru->url_foto))
+                <img src="{{ asset('storage/' . $guru->url_foto) }}" alt="{{ $guru->nama ?? 'Guru' }}" class="w-full h-full object-cover">
+            @else
+                <i class="fa-solid fa-user-tie"></i>
+            @endif
+        </div>
+
+        <div class="flex-1 text-center sm:text-left">
+            <span class="text-[11px] font-bold uppercase tracking-widest text-emerald-600 block mb-1">Tenaga Pendidik SIAKAD</span>
+            <h2 class="text-2xl font-bold text-slate-800">{{ $guru->nama ?? auth()->user()->name ?? 'Guru SIAKAD' }}</h2>
+            <p class="text-sm text-slate-500 font-mono mt-1">
+                <i class="fa-solid fa-id-badge text-slate-400 mr-1.5"></i> NIG: {{ $guru->nig ?? '-' }}
+            </p>
+
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 mt-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                    <i class="fa-solid fa-circle-check text-[10px]"></i> Pendidik Aktif
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                    <i class="fa-solid fa-chalkboard-user text-[10px]"></i>
+                    {{ ($guru && $guru->guru_tetap) ? 'Guru Tetap' : (($guru && $guru->guru_honor) ? 'Guru Honor' : 'Guru Pengajar') }}
+                </span>
+                @if(isset($wallas) && $wallas)
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                        <i class="fa-solid fa-user-graduate text-[10px]"></i>
+                        Wali Kelas {{ $wallas->ruangKelas->nama_ruang ?? 'Aktif' }}
+                    </span>
+                @endif
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
+                    <i class="fa-solid fa-clock text-[10px] text-slate-500"></i>
+                    {{ $total_jadwal ?? 0 }} Sesi Mengajar / Minggu
+                </span>
             </div>
         </div>
     </div>
 
-    <!-- Profile Hero -->
-    <div style="background: white; border-radius: 16px; padding: 30px; display: flex; align-items: center; gap: 30px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 24px; flex-wrap: wrap;">
-        
-        <div style="width: 120px; height: 120px; border-radius: 20px; overflow: hidden; background: #f1f5f9; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 48px; color: #94a3b8;">
-            <i class="fa-solid fa-user-tie"></i>
-        </div>
-        
-        <div style="flex: 1; min-width: 250px;">
-            <div style="font-size: 12px; font-weight: 700; color: #177455; letter-spacing: 1px; margin-bottom: 8px;">TENAGA PENDIDIK</div>
-            <h2 style="margin: 0 0 8px; font-size: 24px; color: #1e293b;">Ustadzah Fitri</h2>
-            <div style="color: #64748b; font-size: 15px; margin-bottom: 16px;">
-                <i class="fa-solid fa-id-badge"></i> NIP/NUPTK: 198506152010012015
-            </div>
-            
-            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #dcfce7; color: #166534; border-radius: 8px; font-size: 13px; font-weight: 600;">
-                    <i class="fa-solid fa-circle-check"></i> Guru Aktif
-                </span>
-                <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #e9f2ff; color: #3875c5; border-radius: 8px; font-size: 13px; font-weight: 600;">
-                    <i class="fa-solid fa-chalkboard-user"></i> Pengajar Tetap
-                </span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Detail Layout Grid -->
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start;">
-        
-        <!-- Personal Info -->
-        <div style="background: white; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
-                <div style="width: 40px; height: 40px; border-radius: 10px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+    <!-- Detail Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Identitas Pribadi -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
                     <i class="fa-solid fa-id-card"></i>
                 </div>
                 <div>
-                    <div style="font-size: 12px; font-weight: 700; color: #16a34a; letter-spacing: 1px; margin-bottom: 4px;">IDENTITAS</div>
-                    <h3 style="margin: 0; font-size: 16px; color: #1e293b;">Data Pribadi</h3>
+                    <h3 class="text-sm font-bold text-slate-800">Identitas & Data Pribadi</h3>
+                    <p class="text-xs text-slate-500">Informasi biodata pendidik yang tercatat di pangkalan data sekolah</p>
                 </div>
             </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+            <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
                 <div>
-                    <div style="font-size: 13px; color: #64748b; font-weight: 600; margin-bottom: 4px;">Jenis kelamin</div>
-                    <div style="font-size: 15px; color: #1e293b; font-weight: 500;">Perempuan</div>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Nama Lengkap</span>
+                    <p class="font-bold text-slate-800">{{ $guru->nama ?? '-' }}</p>
                 </div>
                 <div>
-                    <div style="font-size: 13px; color: #64748b; font-weight: 600; margin-bottom: 4px;">Pendidikan Terakhir</div>
-                    <div style="font-size: 15px; color: #1e293b; font-weight: 500;">S1 Pendidikan Agama Islam</div>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Nomor Induk Guru (NIG)</span>
+                    <p class="font-mono font-semibold text-slate-700">{{ $guru->nig ?? '-' }}</p>
                 </div>
                 <div>
-                    <div style="font-size: 13px; color: #64748b; font-weight: 600; margin-bottom: 4px;">Tempat, tanggal lahir</div>
-                    <div style="font-size: 15px; color: #1e293b; font-weight: 500;">Jakarta, 15 Juni 1985</div>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Jenis Kelamin</span>
+                    <p class="font-semibold text-slate-700">{{ strtolower($guru->gender ?? '') == 'p' ? 'Perempuan' : 'Laki-laki' }}</p>
                 </div>
                 <div>
-                    <div style="font-size: 13px; color: #64748b; font-weight: 600; margin-bottom: 4px;">Agama</div>
-                    <div style="font-size: 15px; color: #1e293b; font-weight: 500;">Islam</div>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Pendidikan Terakhir</span>
+                    <p class="font-semibold text-slate-700">{{ strtoupper($guru->pendidikan_terakhir ?? '-') }}</p>
                 </div>
-                <div style="grid-column: 1 / -1;">
-                    <div style="font-size: 13px; color: #64748b; font-weight: 600; margin-bottom: 4px;">Alamat</div>
-                    <div style="font-size: 15px; color: #1e293b; font-weight: 500; line-height: 1.5;">Jl. Mawar Merah No. 12, Jakarta Selatan</div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Tempat, Tanggal Lahir</span>
+                    <p class="font-semibold text-slate-700">
+                        {{ $guru->tempat_lahir ?? '-' }}, {{ !empty($guru->tanggal_lahir) ? \Carbon\Carbon::parse($guru->tanggal_lahir)->translatedFormat('d F Y') : '-' }}
+                    </p>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Agama</span>
+                    <p class="font-semibold text-slate-700">{{ $guru->agama ?? 'Islam' }}</p>
+                </div>
+                <div class="sm:col-span-2 pt-2 border-t border-slate-100">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Alamat Domisili</span>
+                    <p class="font-medium text-slate-700 leading-relaxed">{{ $guru->alamat ?? '-' }}</p>
                 </div>
             </div>
         </div>
 
-        <!-- Academic Status -->
-        <div style="background: white; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
-                <div style="width: 40px; height: 40px; border-radius: 10px; background: #fef9c3; color: #eab308; display: flex; align-items: center; justify-content: center; font-size: 18px;">
-                    <i class="fa-solid fa-briefcase"></i>
+        <!-- Status Kepegawaian & Akademik -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between">
+            <div>
+                <div class="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800">Penugasan Akademik</h3>
+                        <p class="text-xs text-slate-500">Status kepegawaian & perwalian</p>
+                    </div>
                 </div>
-                <div>
-                    <div style="font-size: 12px; font-weight: 700; color: #eab308; letter-spacing: 1px; margin-bottom: 4px;">KEPEGAWAIAN</div>
-                    <h3 style="margin: 0; font-size: 16px; color: #1e293b;">Data Tugas</h3>
+
+                <div class="p-6 divide-y divide-slate-100 text-sm">
+                    <div class="py-3 flex items-center justify-between">
+                        <span class="text-slate-500 font-medium">Status Kepegawaian</span>
+                        <span class="font-bold text-slate-800">{{ ($guru && $guru->guru_tetap) ? 'Guru Tetap' : (($guru && $guru->guru_honor) ? 'Guru Honor' : 'Tenaga Pendidik') }}</span>
+                    </div>
+                    <div class="py-3 flex items-center justify-between">
+                        <span class="text-slate-500 font-medium">Tugas Wali Kelas</span>
+                        <span class="font-bold text-emerald-700">{{ (isset($wallas) && $wallas && $wallas->ruangKelas) ? 'Kelas ' . $wallas->ruangKelas->nama_ruang : 'Tidak Ada' }}</span>
+                    </div>
+                    <div class="py-3 flex items-center justify-between">
+                        <span class="text-slate-500 font-medium">Beban Mengajar</span>
+                        <span class="font-bold text-slate-800">{{ $total_jadwal ?? 0 }} Sesi / Minggu</span>
+                    </div>
+                    <div class="py-3 flex items-center justify-between">
+                        <span class="text-slate-500 font-medium">Unit Sekolah</span>
+                        <span class="font-bold text-slate-800">{{ $guru->getSekolah->jenis ?? '-' }}</span>
+                    </div>
+                    <div class="py-3 flex items-center justify-between">
+                        <span class="text-slate-500 font-medium">Cabang</span>
+                        <span class="font-bold text-slate-800">{{ $guru->getCabang->nama_cabang ?? '-' }}</span>
+                    </div>
                 </div>
             </div>
-            
-            <div style="display: flex; flex-direction: column; gap: 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px dashed #e2e8f0;">
-                    <div style="font-size: 14px; color: #64748b; font-weight: 600;">Status Guru</div>
-                    <div style="font-size: 14px; color: #1e293b; font-weight: bold;">Tetap (GTY)</div>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px dashed #e2e8f0;">
-                    <div style="font-size: 14px; color: #64748b; font-weight: 600;">Tugas Tambahan</div>
-                    <div style="font-size: 14px; color: #1e293b; font-weight: bold;">Wali Kelas</div>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px dashed #e2e8f0;">
-                    <div style="font-size: 14px; color: #64748b; font-weight: 600;">Tahun Mulai Mengabdi</div>
-                    <div style="font-size: 14px; color: #1e293b; font-weight: bold;">2010</div>
-                </div>
+
+            <div class="p-4 m-4 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-3">
+                <i class="fa-solid fa-shield-halved text-emerald-600 mt-0.5"></i>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    Data kepegawaian dikelola terpusat oleh Admin SIAKAD. Hubungi bagian Tata Usaha apabila terdapat perubahan biodata.
+                </p>
             </div>
         </div>
-
-        <div style="grid-column: 1 / -1; background: white; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
-                <div style="width: 40px; height: 40px; border-radius: 10px; background: #e9f2ff; color: #3875c5; display: flex; align-items: center; justify-content: center; font-size: 18px;">
-                    <i class="fa-solid fa-shield-halved"></i>
-                </div>
-                <div>
-                    <div style="font-size: 12px; font-weight: 700; color: #3875c5; letter-spacing: 1px; margin-bottom: 4px;">KEAMANAN AKUN</div>
-                    <h3 style="margin: 0; font-size: 16px; color: #1e293b;">Informasi Akses</h3>
-                </div>
-            </div>
-            
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; display: flex; gap: 20px; align-items: center;">
-                <i class="fa-solid fa-lock" style="font-size: 32px; color: #94a3b8;"></i>
-                <div>
-                    <strong style="display: block; color: #1e293b; font-size: 16px; margin-bottom: 4px;">Data akun Anda dikelola oleh Admin</strong>
-                    <p style="margin: 0; font-size: 14px; color: #64748b;">Untuk memperbarui data profil atau kata sandi, silakan hubungi Administrator Sistem SIAKAD.</p>
-                </div>
-            </div>
-        </div>
-
     </div>
 </x-siakad-layout>

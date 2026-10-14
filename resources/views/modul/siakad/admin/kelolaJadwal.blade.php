@@ -5,8 +5,8 @@
     initials="AD">
 
     <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px;">
-            <div style="font-size: 18px; font-weight: bold; color: #1e293b; display: flex; align-items: center; gap: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px; flex-wrap: wrap; gap: 14px;">
+            <div style="font-size: 18px; font-weight: bold; color: #1e293b; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
                 <span><i class="fa-solid fa-calendar-alt"></i> Daftar Jadwal Pelajaran</span>
                 <form action="" method="GET" style="display: flex; align-items: center;">
                     <div style="position: relative; display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 4px 12px; gap: 8px;">
@@ -80,7 +80,7 @@
     <x-siakad.ui.modal id="addModal" title="Tambah Jadwal Pelajaran" icon="fa-calendar-plus" iconColor="#166534" iconBg="#dcfce7">
         <form action="/sk/simpan-jadwal" method="POST">
             @csrf
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-3.5">
                 <!-- Hari -->
                 <div>
                     <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Hari</label>
@@ -132,7 +132,14 @@
                 <select name="guru_id" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
                     <option value="">-- Pilih Guru --</option>
                     @foreach($data_guru as $guru)
-                        <option value="{{ $guru->id }}">{{ $guru->nama }}</option>
+                        @php
+                            $tags = [];
+                            if ($guru->guru_tetap) $tags[] = 'Guru Tetap';
+                            elseif ($guru->guru_honor) $tags[] = 'Guru Honor';
+                            if (\App\Models\wallas::where('guru_id', $guru->id)->exists()) $tags[] = 'Wali Kelas';
+                            $tagLabel = count($tags) > 0 ? ' (' . implode(', ', $tags) . ')' : '';
+                        @endphp
+                        <option value="{{ $guru->id }}">{{ $guru->nama }}{{ $tagLabel }}</option>
                     @endforeach
                 </select>
             </div>

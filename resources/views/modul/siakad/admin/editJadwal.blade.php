@@ -31,7 +31,14 @@
                     <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Guru Pengajar</label>
                     <select name="guru_id" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
                         @foreach($data_guru as $g)
-                            <option value="{{ $g->id }}" {{ $jadwal->guru_id == $g->id ? 'selected' : '' }}>{{ $g->nama }}</option>
+                            @php
+                                $tags = [];
+                                if ($g->guru_tetap) $tags[] = 'Guru Tetap';
+                                elseif ($g->guru_honor) $tags[] = 'Guru Honor';
+                                if (\App\Models\wallas::where('guru_id', $g->id)->exists()) $tags[] = 'Wali Kelas';
+                                $tagLabel = count($tags) > 0 ? ' (' . implode(', ', $tags) . ')' : '';
+                            @endphp
+                            <option value="{{ $g->id }}" {{ $jadwal->guru_id == $g->id ? 'selected' : '' }}>{{ $g->nama }}{{ $tagLabel }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -58,12 +65,12 @@
                     <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Jam Pelajaran</label>
                     <select name="jam_pelajaran_id" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
                         @foreach($data_jam as $jam)
-                            <option value="{{ $jam->id }}" {{ $jadwal->jam_pelajaran_id == $jam->id ? 'selected' : '' }}>{{ $jam->nama_jam }} ({{ $jam->jam_mulai }} - {{ $jam->jam_selesai }})</option>
+                            <option value="{{ $jam->id }}" {{ $jadwal->jam_pelajaran_id == $jam->id ? 'selected' : '' }}>Jam ke-{{ $loop->iteration }} ({{ substr($jam->jam_mulai, 0, 5) }} - {{ substr($jam->jam_selesai, 0, 5) }})</option>
                         @endforeach
                     </select>
                 </div>
             </div>
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button type="submit" style="padding: 10px 20px; border: none; background: #0d5c3a; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-save"></i> Simpan Perubahan</button>
                 <a href="/sk/kelola-jadwal" style="padding: 10px 20px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; font-weight: bold; text-decoration: none;">Batal</a>
             </div>

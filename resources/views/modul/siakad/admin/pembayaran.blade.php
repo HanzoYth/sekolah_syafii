@@ -397,14 +397,17 @@
                                 @php
                                     Carbon\Carbon::setLocale("id");
                                     $data_siswa = App\Models\siswa::where("id",$value->siswa_id)->first();
-                                    $data_kelas = App\Models\ruang_kelas::where("id",$data_siswa->kelas_id)->first();
-                                    $data_sekolah = App\Models\jenis_sekolah::where("id",$data_siswa->sekolah_id)->first();
-                                    $bulan = Carbon\Carbon::parse($value->tanggal_awal)->translatedFormat("F Y");
-                                    $sisa_bayar = $value->nominal - $value->jumlah_dibayar;
+                                    $data_kelas = ($data_siswa && $data_siswa->kelas_id) ? App\Models\ruang_kelas::where("id",$data_siswa->kelas_id)->first() : null;
+                                    $data_sekolah = ($data_siswa && $data_siswa->sekolah_id) ? App\Models\jenis_sekolah::where("id",$data_siswa->sekolah_id)->first() : null;
+                                    $nama_siswa = $data_siswa->nama ?? 'Siswa #' . $value->siswa_id;
+                                    $nama_kelas = $data_kelas->nama_ruang ?? 'Belum Ditentukan';
+                                    $nama_sekolah = $data_sekolah->jenis ?? '-';
+                                    $bulan = $value->tanggal_awal ? Carbon\Carbon::parse($value->tanggal_awal)->translatedFormat("F Y") : '-';
+                                    $sisa_bayar = max(0, $value->nominal - ($value->jumlah_dibayar ?? 0));
                                 @endphp
                                 <tr>
-                                    <td><span class="student-name">{{$data_siswa->nama}}</span></td>
-                                    <td><span class="class-pill">{{$data_kelas->nama_ruang}}</span></td>
+                                    <td><span class="student-name">{{$nama_siswa}}</span></td>
+                                    <td><span class="class-pill">{{$nama_kelas}}</span></td>
                                     <td class="bulan">{{$bulan}}</td>
                                     <td class="amount">Rp{{number_format($value->nominal,0,",",".")}}</td>
                                     <td>Rp{{isset($value->jumlah_dibayar) ? number_format($value->jumlah_dibayar,0,",",".") : '0'}}</td>
@@ -413,15 +416,15 @@
                                     <td>
                                         <div class="action-buttons" style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 8px; white-space: nowrap;">
                                             <a href="/sk/dp" class="btn-action view" title="Detail"><i class="fa-solid fa-eye"></i></a>
-                                            <button type="button" class="btn-action edit" title="Edit" onclick="openEditModal('{{$value->id}}','{{$data_siswa->nama}}', '{{$data_kelas->nama_ruang}}', '{{$data_sekolah->jenis}}','{{ \Carbon\Carbon::parse($value->tanggal_awal)->format('Y-m-d') }}','{{$value->nominal}}','{{$value->status}}','{{$sisa_bayar}}')"><i class="fa-solid fa-pen-to-square"></i></button>
+                                            <button type="button" class="btn-action edit" title="Edit" onclick="openEditModal('{{$value->id}}','{{$nama_siswa}}', '{{$nama_kelas}}', '{{$nama_sekolah}}','{{ $value->tanggal_awal ? \Carbon\Carbon::parse($value->tanggal_awal)->format('Y-m-d') : '' }}','{{$value->nominal}}','{{$value->status}}','{{$sisa_bayar}}')"><i class="fa-solid fa-pen-to-square"></i></button>
                                             
                                             {{-- TOMBOL PUBLISH --}}
-                                            <button type="button" class="btn-action publish" title="Publish" onclick="openPublishModal('{{$data_siswa->id}}', '{{$data_siswa->nama}}')">
+                                            <button type="button" class="btn-action publish" title="Publish" onclick="openPublishModal('{{$value->siswa_id}}', '{{$nama_siswa}}')">
                                                 <i class="fa-solid fa-paper-plane"></i>
                                             </button>
 
                                             {{-- TOMBOL HAPUS --}}
-                                            <button type="button" class="btn-action delete" title="Hapus" onclick="openDeleteModal('{{$value->id}}', '{{$data_siswa->nama}}')">
+                                            <button type="button" class="btn-action delete" title="Hapus" onclick="openDeleteModal('{{$value->id}}', '{{$nama_siswa}}')">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         </div>

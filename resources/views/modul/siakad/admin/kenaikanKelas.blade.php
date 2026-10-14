@@ -1,8 +1,8 @@
 <x-siakad-layout title="Kenaikan Kelas & Kelulusan" pageTitle="Kenaikan Kelas & Kelulusan" pageDescription="Pindahkan siswa ke kelas tingkat selanjutnya atau tetapkan kelulusan secara massal.">
     
     <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-bottom: 24px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px;">
-            <div style="font-size: 18px; font-weight: bold; color: #1e293b; display: flex; align-items: center; gap: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px; flex-wrap: wrap; gap: 14px;">
+            <div style="font-size: 18px; font-weight: bold; color: #1e293b; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
                 <span><i class="fa-solid fa-graduation-cap" style="color: #0d5c3a;"></i> Kenaikan Kelas & Kelulusan</span>
             </div>
             
@@ -20,9 +20,9 @@
             </form>
         </div>
 
-        <form method="GET" action="/sk/kenaikan-kelas" style="display: flex; gap: 15px; align-items: flex-end;">
+        <form method="GET" action="/sk/kenaikan-kelas" style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
             <input type="hidden" name="sekolah_id" value="{{ $sekolah_id ?? '' }}">
-            <div style="flex: 1;">
+            <div style="flex: 1; min-width: 220px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Pilih Kelas Asal</label>
                 <select name="kelas_id" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
                     <option value="">-- Pilih Rombongan Belajar --</option>
@@ -41,7 +41,7 @@
         @if($siswa->count() > 0)
             <form method="POST" action="/sk/proses-kenaikan-kelas">
                 @csrf
-                <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; display: flex; gap: 20px; align-items: flex-end;">
+                <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap;">
                     <div style="flex: 1;">
                         <label style="display: block; font-weight: bold; margin-bottom: 8px;">Aksi Eksekusi</label>
                         <select name="aksi" id="aksi-select" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;" onchange="toggleKelasTujuan()">
