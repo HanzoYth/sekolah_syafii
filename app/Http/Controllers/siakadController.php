@@ -580,7 +580,7 @@ class siakadController extends Controller
         $jadwal_id = $request->input('jadwal_id');
         $tanggal = $request->input('tanggal', date('Y-m-d'));
         $absensi = $request->input('absensi', []);
-        $materi = $request->input('materi');
+        $materi = $request->input('materi') ?: 'Pertemuan Pembelajaran Rutin';
         $catatan = $request->input('catatan') ?? $request->input('catatan_jurnal');
         
         if ($tanggal > date('Y-m-d')) {
@@ -611,8 +611,16 @@ class siakadController extends Controller
             }
         }
 
+        // Sinkronisasi kelas jadwal ke ruang_kelas (foreign key absensi_siswa.kelas_id -> ruang_kelas.id)
+        $nama_kelas = $jadwal->kelas->nama_kelas ?? ($jadwal->kelas->nama_ruang ?? '');
+        $ruang_kelas = \App\Models\ruang_kelas::where('nama_ruang', $nama_kelas)->first();
+        $ruang_kelas_id = $jadwal->kelas->ruang_kelas_id ?? ($ruang_kelas ? $ruang_kelas->id : null);
+
         // Simpan Absensi Siswa
         foreach ($absensi as $siswa_id => $data) {
+            $siswa_obj = \App\Models\siswa::find($siswa_id);
+            $kelas_id_to_save = $ruang_kelas_id ?? ($siswa_obj ? $siswa_obj->kelas_id : $jadwal->kelas_id);
+
             \App\Models\absensi_siswa::updateOrCreate(
                 [
                     'jadwal_pelajaran_id' => $jadwal_id,
@@ -620,7 +628,7 @@ class siakadController extends Controller
                     'tanggal' => $tanggal
                 ],
                 [
-                    'kelas_id' => $jadwal->kelas_id,
+                    'kelas_id' => $kelas_id_to_save,
                     'guru_id' => $guru_id,
                     'status' => $data['status'] ?? 'h',
                     'keterangan' => $data['keterangan'] ?? null
@@ -1151,43 +1159,175 @@ class siakadController extends Controller
 
         $tanggal = $request->input('tanggal', date('Y-m-d'));
         $tab = $request->input('tab', 'harian');
+        $carbonTanggal = \Carbon\Carbon::parse($tanggal)->locale('id');
+        $hari_terpilih = strtolower($carbonTanggal->isoFormat('dddd'));
+        $hari_indonesia = ucfirst($carbonTanggal->isoFormat('dddd, D MMMM Y'));
+
         $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->orderBy('nama')->get();
         
-        // Sinkronisasi dengan tabel kelas
+        // Sinkronisasi ID ruang_kelas dan kelas untuk query jadwal
+        $kelas_id_absensi = $wallas->kelas_id;
         $nama_kelas = $wallas->ruangKelas->nama_ruang ?? '';
         $kelas = \App\Models\kelas::where('nama_kelas', $nama_kelas)->first();
-        $kelas_id_absensi = $kelas ? $kelas->id : $wallas->kelas_id;
+        $kelas_id_jadwal = $kelas ? $kelas->id : $wallas->kelas_id;
+        $kelas_ids_query = array_unique(array_filter([$kelas_id_absensi, $kelas ? $kelas->id : null]));
 
-        // Absensi harian wali kelas (jadwal_pelajaran_id = null)
-        $absensi_db = \App\Models\absensi_siswa::where('kelas_id', $kelas_id_absensi)
-                        ->whereNull('jadwal_pelajaran_id')
-                        ->whereDate('tanggal', $tanggal)
-                        ->get()->keyBy('siswa_id');
+        // 1. Ambil Jadwal Pelajaran kelas ini pada hari yang dipilih
+        $jadwal_hari_ini = \App\Models\jadwal_pelajaran::with(['mata_pelajaran', 'guru', 'jam_pelajaran'])
+            ->where('kelas_id', $kelas_id_jadwal)
+            ->where('hari', $hari_terpilih)
+            ->get()
+            ->sortBy(function($j) {
+                return $j->jam_pelajaran->jam_mulai ?? '00:00';
+            })
+            ->values();
+
+        // 2. Ambil Rekam Presensi Masuk & Jurnal Mengajar Guru Mapel pada tanggal tersebut
+        $absensi_guru_hari_ini = \App\Models\absensi_mengajar_guru::whereIn('jadwal_pelajaran_id', $jadwal_hari_ini->pluck('id'))
+            ->where('tanggal', $tanggal)
+            ->get()
+            ->keyBy('jadwal_pelajaran_id');
+
+        // 3. Ambil Data Presensi Siswa dari Guru Pengajar (per mapel) pada tanggal tersebut
+        $absensi_mapel_siswa = \App\Models\absensi_siswa::whereIn('jadwal_pelajaran_id', $jadwal_hari_ini->pluck('id'))
+            ->where('tanggal', $tanggal)
+            ->get()
+            ->groupBy('siswa_id');
+
+        // 4. Ambil Absensi Harian Wali Kelas yang sudah pernah diverifikasi/disimpan manual (jadwal_pelajaran_id = null)
+        $absensi_walas_db = \App\Models\absensi_siswa::whereIn('kelas_id', $kelas_ids_query)
+            ->whereNull('jadwal_pelajaran_id')
+            ->whereDate('tanggal', $tanggal)
+            ->get()
+            ->keyBy('siswa_id');
+
+        // 5. Konsolidasi Kehadiran Otomatis Siswa Hari Ini
+        $konsolidasi_siswa = [];
+        $total_hadir = 0;
+        $total_sakit = 0;
+        $total_izin = 0;
+        $total_alpa = 0;
+        $total_belum = 0;
+
+        foreach ($siswa as $s) {
+            $catatan_mapel = $absensi_mapel_siswa->get($s->id, collect());
+            $absen_walas = $absensi_walas_db->get($s->id);
+
+            $status_terpilih = 'h';
+            $sumber = 'belum';
+            $keterangan_default = '';
+
+            $catatan_khusus = $catatan_mapel->first(function($c) {
+                return !empty($c->keterangan);
+            });
+            $ket_teks = $catatan_khusus ? $catatan_khusus->keterangan : '';
+
+            if ($catatan_mapel->isNotEmpty()) {
+                $sumber = 'mapel';
+                if ($catatan_mapel->contains('status', 's')) {
+                    $status_terpilih = 's';
+                    $keterangan_default = $ket_teks ?: 'Sakit';
+                } elseif ($catatan_mapel->contains('status', 'i')) {
+                    $status_terpilih = 'i';
+                    $keterangan_default = $ket_teks ?: 'Izin';
+                } elseif ($catatan_mapel->contains('status', 'a')) {
+                    $status_terpilih = 'a';
+                    $keterangan_default = $ket_teks ?: 'Alpa';
+                } else {
+                    $status_terpilih = 'h';
+                    $keterangan_default = $ket_teks ?: '';
+                }
+            } elseif ($absen_walas) {
+                $status_terpilih = $absen_walas->status;
+                $sumber = 'mapel';
+                $keterangan_default = $absen_walas->keterangan ?? '';
+            } else {
+                $status_terpilih = 'h';
+                $sumber = 'belum';
+                $keterangan_default = '';
+            }
+
+            // Hitung ringkasan
+            if ($sumber === 'belum') {
+                $total_belum++;
+            } else {
+                if ($status_terpilih === 'h') $total_hadir++;
+                elseif ($status_terpilih === 's') $total_sakit++;
+                elseif ($status_terpilih === 'i') $total_izin++;
+                elseif ($status_terpilih === 'a') $total_alpa++;
+            }
+
+            // Detail per mapel hari ini untuk siswa ini
+            $mapel_info = [];
+            foreach ($jadwal_hari_ini as $j) {
+                $rec = $catatan_mapel->where('jadwal_pelajaran_id', $j->id)->first();
+                $guru_absen = $absensi_guru_hari_ini->get($j->id);
+                $mapel_info[] = [
+                    'mapel' => $j->mata_pelajaran->nama_mapel ?? 'Mapel',
+                    'guru' => $j->guru->nama ?? 'Guru',
+                    'jam' => $j->jam_pelajaran ? substr($j->jam_pelajaran->jam_mulai, 0, 5) . '-' . substr($j->jam_pelajaran->jam_selesai, 0, 5) : '',
+                    'guru_hadir' => $guru_absen ? true : false,
+                    'status_siswa' => $rec ? $rec->status : ($guru_absen ? 'a' : 'belum'),
+                    'keterangan_guru' => $rec->keterangan ?? ($guru_absen ? '' : 'Belum diabsen')
+                ];
+            }
+
+            $konsolidasi_siswa[$s->id] = [
+                'status' => $status_terpilih,
+                'sumber' => $sumber,
+                'keterangan' => $keterangan_default,
+                'mapel_info' => $mapel_info,
+                'total_mapel_hadir' => $catatan_mapel->where('status', 'h')->count(),
+                'total_mapel_sesi' => $catatan_mapel->count()
+            ];
+        }
 
         $rekap = [
             'total' => $siswa->count(),
-            'hadir' => $absensi_db->where('status', 'h')->count(),
-            'sakit' => $absensi_db->where('status', 's')->count(),
-            'izin'  => $absensi_db->where('status', 'i')->count(),
-            'alpa'  => $absensi_db->where('status', 'a')->count(),
+            'hadir' => $total_hadir,
+            'sakit' => $total_sakit,
+            'izin'  => $total_izin,
+            'alpa'  => $total_alpa,
+            'belum' => $total_belum,
+            'total_sesi' => $jadwal_hari_ini->count(),
+            'sesi_diabsen' => $absensi_guru_hari_ini->count()
         ];
 
-        // Rekap Akumulasi Absensi Kelas (Seluruh Hari Efektif)
-        $semua_absensi_kelas = \App\Models\absensi_siswa::where('kelas_id', $kelas_id_absensi)
-            ->whereNull('jadwal_pelajaran_id')
-            ->get();
+        // 6. Rekap Akumulasi Absensi Kelas (Seluruh Hari Efektif) - Mengintegrasikan Otomatis Data Mapel & Data Walas
+        $semua_absensi_siswa = \App\Models\absensi_siswa::whereIn('kelas_id', $kelas_ids_query)->get();
+        $semua_tanggal_efektif = $semua_absensi_siswa->pluck('tanggal')->unique()->values();
+        $total_hari_efektif = $semua_tanggal_efektif->count();
 
-        $total_hari_efektif = $semua_absensi_kelas->pluck('tanggal')->unique()->count();
-        $absensi_per_siswa = $semua_absensi_kelas->groupBy('siswa_id');
-
+        // Rekapitulasi per siswa dihitung secara terpadu
         $rekap_akumulasi = [];
         foreach ($siswa as $s) {
-            $catatan_siswa = $absensi_per_siswa->get($s->id, collect());
-            $h = $catatan_siswa->where('status', 'h')->count();
-            $skt = $catatan_siswa->where('status', 's')->count();
-            $izn = $catatan_siswa->where('status', 'i')->count();
-            $alp = $catatan_siswa->where('status', 'a')->count();
-            $total_catat = $catatan_siswa->count();
+            $h = 0; $skt = 0; $izn = 0; $alp = 0;
+            
+            // Loop setiap tanggal efektif yang ada catatan presensinya
+            foreach ($semua_tanggal_efektif as $tgl) {
+                $abs_tgl = $semua_absensi_siswa->where('siswa_id', $s->id)->where('tanggal', $tgl);
+                if ($abs_tgl->isEmpty()) continue;
+
+                // Prioritaskan verifikasi Walas harian jika ada (jadwal_pelajaran_id null)
+                $walas_rec = $abs_tgl->whereNull('jadwal_pelajaran_id')->first();
+                if ($walas_rec) {
+                    $st = $walas_rec->status;
+                } else {
+                    // Jika walas belum verifikasi hari itu, ambil agregasi dari guru mapel
+                    $mapel_recs = $abs_tgl->whereNotNull('jadwal_pelajaran_id');
+                    if ($mapel_recs->contains('status', 's')) $st = 's';
+                    elseif ($mapel_recs->contains('status', 'i')) $st = 'i';
+                    elseif ($mapel_recs->contains('status', 'a')) $st = 'a';
+                    else $st = 'h';
+                }
+
+                if ($st === 'h') $h++;
+                elseif ($st === 's') $skt++;
+                elseif ($st === 'i') $izn++;
+                elseif ($st === 'a') $alp++;
+            }
+
+            $total_catat = $h + $skt + $izn + $alp;
             $persen = $total_catat > 0 ? round(($h / $total_catat) * 100) : 0;
 
             $rekap_akumulasi[$s->id] = [
@@ -1201,7 +1341,9 @@ class siakadController extends Controller
         }
 
         return view('modul.siakad.guru.absensisiswa', compact(
-            'wallas', 'siswa', 'tanggal', 'absensi_db', 'rekap', 'rekap_akumulasi', 'total_hari_efektif', 'tab'
+            'wallas', 'siswa', 'tanggal', 'hari_indonesia', 'jadwal_hari_ini',
+            'absensi_guru_hari_ini', 'konsolidasi_siswa', 'rekap', 'rekap_akumulasi', 
+            'total_hari_efektif', 'tab'
         ));
     }
 
@@ -1217,10 +1359,8 @@ class siakadController extends Controller
         $status_absen = $request->input('status', []); // array siswa_id => status
         $keterangan = $request->input('keterangan', []); // array siswa_id => keterangan
 
-        // Sinkronisasi dengan tabel kelas
-        $nama_kelas = $wallas->ruangKelas->nama_ruang ?? '';
-        $kelas = \App\Models\kelas::where('nama_kelas', $nama_kelas)->first();
-        $kelas_id_absensi = $kelas ? $kelas->id : $wallas->kelas_id;
+        // Sinkronisasi dengan tabel ruang_kelas (foreign key absensi_siswa.kelas_id -> ruang_kelas.id)
+        $kelas_id_absensi = $wallas->kelas_id;
 
         foreach ($status_absen as $siswa_id => $status) {
             \App\Models\absensi_siswa::updateOrCreate(

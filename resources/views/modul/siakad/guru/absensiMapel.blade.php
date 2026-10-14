@@ -325,6 +325,11 @@
                                         <p class="text-xs text-slate-500 mt-1">
                                             Toleransi keterlambatan 5 menit dari jadwal mulai (<span class="font-semibold">{{ $toleransi_info['jam_mulai'] }}</span> s/d <span class="font-semibold">{{ $toleransi_info['jam_batas'] }} WIB</span>).
                                         </p>
+                                        <div class="mt-3">
+                                            <a href="#btnSimpanBawah" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition-all shadow-sm">
+                                                <i class="fa-solid fa-arrow-down text-[10px]"></i> Menuju Tombol Simpan
+                                            </a>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
@@ -366,21 +371,26 @@
                 </div>
 
                 <!-- Form Absensi Siswa -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8" id="form-presensi-siswa">
                     <div class="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
                             <h3 class="text-base font-bold text-slate-800">Presensi Siswa: {{ $jadwal_terpilih->mata_pelajaran->nama_mapel ?? '-' }}</h3>
                             <p class="text-xs text-slate-500">Kelas {{ $jadwal_terpilih->kelas->nama_kelas ?? ($jadwal_terpilih->kelas->nama_ruang ?? '-') }} • Tanggal {{ \Carbon\Carbon::parse($tanggal)->isoFormat('dddd, D MMMM Y') }}</p>
                         </div>
 
-                        @if(count($siswa) > 0)
-                        <button type="button" onclick="setSemuaHadir()" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold transition-colors">
-                            <i class="fa-solid fa-check-double mr-1.5"></i> Tandai Semua Hadir
-                        </button>
-                        @endif
+                        <div class="flex items-center gap-2">
+                            @if(count($siswa) > 0)
+                            <button type="button" onclick="setSemuaHadir()" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold transition-colors">
+                                <i class="fa-solid fa-check-double mr-1.5"></i> Tandai Semua Hadir
+                            </button>
+                            @endif
+                            <button type="submit" form="formAbsensi" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-sm transition-all gap-1.5">
+                                <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Absensi & Kehadiran
+                            </button>
+                        </div>
                     </div>
 
-                    <form action="/sk/simpan-absensi-mapel" method="POST">
+                    <form id="formAbsensi" action="/sk/simpan-absensi-mapel" method="POST">
                         @csrf
                         <input type="hidden" name="tanggal" value="{{ $tanggal }}">
                         <input type="hidden" name="jadwal_id" value="{{ $jadwal_id }}">
@@ -483,8 +493,8 @@
                                                 <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-slate-50 flex items-center justify-center text-slate-300">
                                                     <i class="fa-solid fa-users-slash text-2xl"></i>
                                                 </div>
-                                                <h4 class="text-sm font-semibold text-slate-700">Belum Ada Siswa</h4>
-                                                <p class="text-xs text-slate-400 mt-1">Belum ada peserta didik yang terdaftar di kelas rombel ini.</p>
+                                                <h4 class="text-sm font-semibold text-slate-700">Belum Ada Siswa di Kelas Ini</h4>
+                                                <p class="text-xs text-slate-400 mt-1">Belum ada peserta didik yang terdaftar di kelas rombel ini. Anda tetap dapat menyimpan materi jurnal dan kehadiran guru di bawah.</p>
                                             </td>
                                         </tr>
                                     @endif
@@ -492,17 +502,19 @@
                             </table>
                         </div>
 
-                        @if(count($siswa) > 0)
                         <div class="p-6 bg-slate-50/50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div class="text-xs text-slate-500 flex items-center gap-2">
                                 <i class="fa-solid fa-shield-halved text-emerald-600"></i>
-                                <span>Menyimpan form ini akan memperbarui status siswa dan merekam presensi jam masuk kelas Anda.</span>
+                                @if(count($siswa) > 0)
+                                    <span>Menyimpan form ini akan memperbarui status presensi {{ count($siswa) }} siswa dan merekam jam masuk kelas guru.</span>
+                                @else
+                                    <span>Belum ada siswa di kelas rombel ini. Anda tetap dapat merekam presensi guru dan materi jurnal harian dengan menekan tombol simpan.</span>
+                                @endif
                             </div>
-                            <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-sm transition-all flex items-center justify-center gap-2 w-full sm:w-auto">
+                            <button type="submit" id="btnSimpanBawah" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-sm transition-all flex items-center justify-center gap-2 w-full sm:w-auto">
                                 <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Absensi Siswa & Kehadiran Guru
                             </button>
                         </div>
-                        @endif
                     </form>
                 </div>
             @endif
