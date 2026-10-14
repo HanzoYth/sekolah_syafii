@@ -16,4 +16,8 @@ class PageController extends Controller
         }
         return redirect("/reg");
     }
+
+    function tampilan_profile_sekolah(){
+        return view("profile_sekolah");
+    }
 }

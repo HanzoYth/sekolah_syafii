@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Storage;
 // ini route untuk halaman modul dan welcome
 Route::get("/",[PageController::class,"tampilan_welcome"]);
 Route::get("/mod",[PageController::class,"tampilan_modul"]);
+Route::get("/prof",[PageController::class,"tampilan_profile_sekolah"]);
 
 //ini route untuk atur identitas_rahasia
 Route::get("/idnt",[identitasController::class,"tampilan_identitas"]);
@@ -152,12 +153,18 @@ Route::get("/sk/ssp",[file_surat::class,"suratSlipPembayaran"]);
 
 
 //ini route untuk dasboard tahfiz
+Route::get('/tf/ad/dash',[tahfizController::class,"dash_admin"]);
+Route::get('/tf/ad/ms',[tahfizController::class,"manajemen_siswa"]);
+Route::get('/tf/ad/mg',[tahfizController::class,"manajemen_guru"]);
+Route::get('/tf/ad/mt',[tahfizController::class,"monitoring"]);
+Route::get('/tf/ad/lp',[tahfizController::class,"laporan"]);
 Route::get('/tf/das',[modulTahfidzController::class,"dashboard_tahfidz"]);
 Route::get('/tf/kls',[kelasHalaqahController::class,"kelas_halaqah"]);
 Route::get('/tf/ss',[tahfizController::class,"siswa_tahfiz"]);
 Route::get('/tf/rm',[tahfizController::class,"rekap_mgg"]);
 Route::get('/tf/rb',[tahfizController::class,"rekap_bln"]);
 Route::get('/tf/lh',[tahfizController::class,"laporan_harian"]);
+Route::get('/tf/ins',[tahfizController::class,"input_setoran"]);
 Route::get('/tf/pg',[tahfizController::class,"pengampu"]);
 Route::get('/tf/pgm',[tahfizController::class,"pengumuman"]);
 Route::get('/tf/sw/dass',[tahfizController::class,"dashboard_siswa"]);

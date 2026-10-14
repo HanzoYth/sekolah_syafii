@@ -8,12 +8,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Leaflet CSS (baru, untuk peta) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>">
     <link rel="stylesheet" href="<?php echo e(asset('css/welcome.css')); ?>?v=<?php echo e(time()); ?>">
 </head>
 <body>
 
-    <!-- ======== NAVBAR ======== -->
+    <!--
+        CATATAN:
+        Section yang diberi atribut "hidden" hanya DISEMBUNYIKAN sementara (kodenya tetap ada).
+        Untuk menampilkannya lagi, cukup hapus kata  hidden  dari tag <section> / <footer> tersebut.
+        CSS (welcome.css) tidak diubah sama sekali.
+    -->
+
+    <!-- ======== NAVBAR (TIDAK DIUBAH) ======== -->
     <nav class="navbar" id="navbar" aria-label="Navigasi utama">
         <div class="container navbar-container">
             <a href="#home" class="logo">
@@ -31,20 +40,7 @@
                     <li><a href="#home">Beranda</a></li>
 
                     <li class="has-dropdown">
-                        <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-                            Profil Sekolah <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="#profil">Tentang Sekolah</a></li>
-                            <li><a href="#profil">Sejarah Sekolah</a></li>
-                            <li><a href="#profil">Visi dan Misi</a></li>
-                            <li><a href="#sambutan">Sambutan Kepala Sekolah</a></li>
-                            <li><a href="#sambutan">Sambutan Wakil Kepala Sekolah</a></li>
-                            <li><a href="#profil">Struktur Organisasi</a></li>
-                            <li><a href="#profil">Guru dan Tenaga Kependidikan</a></li>
-                            <li><a href="#fasilitas">Fasilitas Sekolah</a></li>
-                            <li><a href="#profil">Identitas dan Legalitas Sekolah</a></li>
-                        </ul>
+                        <a href="/prof">Profil Sekolah <i class="fa-solid" aria-hidden="true"></i></a>
                     </li>
 
                     <li class="has-dropdown">
@@ -76,17 +72,8 @@
 
                     <li class="has-dropdown">
                         <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-                            Galeri <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                            Galeri <i class="fa-solid " aria-hidden="true"></i>
                         </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="#galeri">Galeri Foto</a></li>
-                            <li><a href="#galeri">Galeri Video</a></li>
-                            <li><a href="#galeri">Kegiatan Sekolah</a></li>
-                            <li><a href="#galeri">Kegiatan Tahfiz</a></li>
-                            <li><a href="#galeri">Wisuda dan Kelulusan</a></li>
-                            <li><a href="#galeri">Perlombaan dan Kegiatan Siswa</a></li>
-                            <li><a href="#fasilitas">Fasilitas Sekolah</a></li>
-                        </ul>
                     </li>
 
                     <li class="has-dropdown">
@@ -97,7 +84,6 @@
                             <li><a href="#berita">Berita Sekolah</a></li>
                             <li><a href="#berita">Pengumuman</a></li>
                             <li><a href="#berita">Agenda Kegiatan</a></li>
-                            <li><a href="#berita">Artikel Pendidikan</a></li>
                         </ul>
                     </li>
 
@@ -112,7 +98,7 @@
         </div>
     </nav>
 
-    <!-- ======== 1. HERO ======== -->
+    <!-- ======== 1. HERO (TAMPIL) ======== -->
     <section id="home" class="hero" style="--hero-bg: url('<?php echo e(asset('img/bg_skl.jpeg')); ?>?v=<?php echo e(time()); ?>');">
         <div class="container">
             <div class="hero-wrapper">
@@ -134,8 +120,8 @@
         <div class="hero-overlay"></div>
     </section>
 
-    <!-- ======== 2. SAMBUTAN KEPALA SEKOLAH ======== -->
-    <section id="sambutan" class="section">
+    <!-- ======== 2. SAMBUTAN KEPALA SEKOLAH (DISEMBUNYIKAN) ======== -->
+    <section id="sambutan" class="section" hidden>
         <div class="container">
             <h2 class="section-title" data-aos="fade-up">Sambutan Kepala Sekolah</h2>
             <div class="sambutan-wrapper" data-aos="fade-up">
@@ -158,7 +144,7 @@
         </div>
     </section>
 
-    <!-- ======== 3. PROFIL SINGKAT (+ KEUNGGULAN) ======== -->
+    <!-- ======== 3. PROFIL SINGKAT (+ KEUNGGULAN) (TAMPIL) ======== -->
     <section id="profil" class="section alt">
         <div class="container">
             <div class="keunggulan-wrapper">
@@ -193,9 +179,9 @@
         </div>
     </section>
 
-    <!-- ======== 4. STATISTIK ======== -->
+    <!-- ======== 4. STATISTIK (DISEMBUNYIKAN) ======== -->
     <!-- ISI: ganti tanda "—" dengan angka resmi. Jangan isi angka perkiraan. -->
-    <section id="statistik" class="statistik" aria-label="Statistik sekolah">
+    <section id="statistik" class="statistik" aria-label="Statistik sekolah" hidden>
         <div class="container">
             <div class="stat-grid">
                 <div class="stat-card" data-aos="zoom-in">
@@ -218,7 +204,7 @@
         </div>
     </section>
 
-    <!-- ======== 5. PROGRAM UNGGULAN ======== -->
+    <!-- ======== 5. PROGRAM UNGGULAN (TAMPIL) ======== -->
     <section id="program" class="section">
         <div class="container">
             <h2 class="section-title" data-aos="fade-up">Program Unggulan</h2>
@@ -245,9 +231,9 @@
         </div>
     </section>
 
-    <!-- ======== 6. GALERI KEGIATAN TERBARU ======== -->
+    <!-- ======== 6. GALERI KEGIATAN TERBARU (DISEMBUNYIKAN) ======== -->
     <!-- ISI: ganti src/judul/tanggal/kategori sesuai foto asli. Salin satu <figure> untuk menambah foto. -->
-    <section id="galeri" class="section alt">
+    <section id="galeri" class="section alt" hidden>
         <div class="container">
             <h2 class="section-title" data-aos="fade-up">Galeri Kegiatan Terbaru</h2>
             <div class="galeri-grid">
@@ -291,8 +277,8 @@
         </div>
     </section>
 
-    <!-- ======== 7. BERITA & PENGUMUMAN ======== -->
-    <section id="berita" class="section">
+    <!-- ======== 7. BERITA & PENGUMUMAN (DISEMBUNYIKAN) ======== -->
+    <section id="berita" class="section" hidden>
         <div class="container">
             <h2 class="section-title" data-aos="fade-up">Berita dan Pengumuman</h2>
             <div class="berita-layout">
@@ -340,8 +326,8 @@
         </div>
     </section>
 
-    <!-- ======== 8. PRESTASI ======== -->
-    <section id="prestasi" class="section alt">
+    <!-- ======== 8. PRESTASI (DISEMBUNYIKAN) ======== -->
+    <section id="prestasi" class="section alt" hidden>
         <div class="container">
             <h2 class="section-title" data-aos="fade-up">Prestasi Sekolah</h2>
             <div class="prestasi-grid">
@@ -368,8 +354,8 @@
         </div>
     </section>
 
-    <!-- ======== 9. FASILITAS ======== -->
-    <section id="fasilitas" class="section">
+    <!-- ======== 9. FASILITAS (DISEMBUNYIKAN) ======== -->
+    <section id="fasilitas" class="section" hidden>
         <div class="container">
             <h2 class="section-title" data-aos="fade-up">Fasilitas Sekolah</h2>
             <div class="fasilitas-grid">
@@ -393,8 +379,8 @@
         </div>
     </section>
 
-    <!-- ======== 10. PPDB ======== -->
-    <section id="ppdb" class="ppdb">
+    <!-- ======== 10. PPDB (DISEMBUNYIKAN) ======== -->
+    <section id="ppdb" class="ppdb" hidden>
         <div class="container">
             <div class="ppdb-box" data-aos="zoom-in">
                 <h2>Penerimaan Peserta Didik Baru (PPDB)</h2>
@@ -408,8 +394,8 @@
         </div>
     </section>
 
-    <!-- ======== 11. FAQ ======== -->
-    <section id="faq" class="section alt">
+    <!-- ======== 11. FAQ (DISEMBUNYIKAN) ======== -->
+    <section id="faq" class="section alt" hidden>
         <div class="container narrow">
             <h2 class="section-title" data-aos="fade-up">Pertanyaan yang Sering Diajukan</h2>
             <div class="faq-list" data-aos="fade-up">
@@ -434,7 +420,7 @@
         </div>
     </section>
 
-    <!-- ======== 12. LOKASI & KONTAK ======== -->
+    <!-- ======== 12. LOKASI & KONTAK (TAMPIL, PETA LEAFLET) ======== -->
     <section id="kontak" class="section">
         <div class="container">
             <h2 class="section-title" data-aos="fade-up">Lokasi dan Kontak</h2>
@@ -455,18 +441,16 @@
                     </ul>
                 </div>
                 <div class="kontak-map" data-aos="fade-left">
-                    <!-- ISI: ganti blok .map-placeholder dengan embed Google Maps:
-                         <iframe src="URL_EMBED" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" title="Peta lokasi sekolah"></iframe> -->
-                    <div class="map-placeholder">
-                        <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
-                        <span>Peta lokasi sekolah akan ditampilkan di sini.</span>
-                    </div>
+                    <!-- Peta Leaflet. Style inline dipakai supaya welcome.css tidak perlu diubah.
+                         z-index:0 menjaga peta tidak menimpa navbar saat discroll. -->
+                    <div id="map" role="region" aria-label="Peta lokasi sekolah"
+                         style="width:100%;height:100%;min-height:340px;position:relative;z-index:0;"></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ======== 13. FOOTER ======== -->
+    <!-- ======== 13. FOOTER (TAMPIL) ======== -->
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
@@ -524,6 +508,8 @@
 
     <!-- ======== SCRIPTS ======== -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Leaflet JS (baru, untuk peta) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         AOS.init({ once: true });
         document.getElementById('year').textContent = new Date().getFullYear();
@@ -641,6 +627,38 @@
                 if (e.key === 'ArrowLeft') show(idx - 1);
                 if (e.key === 'ArrowRight') show(idx + 1);
             });
+        })();
+
+        // ===== Peta Leaflet (OpenStreetMap) =====
+        (function () {
+            var el = document.getElementById('map');
+            if (!el || typeof L === 'undefined') return;
+
+            // GANTI dengan koordinat asli sekolah
+            // (Google Maps: klik kanan lokasi -> klik angka koordinat untuk menyalin)
+            var LAT = -0.9267058875927435;
+            var LNG = 119.87149370241973;
+            var NAMA = "Sekolah Al-Qur'an Imam Syafi'i";
+
+            var map = L.map(el, { scrollWheelZoom: false }).setView([LAT, LNG], 16);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
+            }).addTo(map);
+
+            L.marker([LAT, LNG]).addTo(map)
+                .bindPopup('<strong>' + NAMA + '</strong><br><a href="https://www.google.com/maps?q=' + LAT + ',' + LNG + '" target="_blank" rel="noopener">Buka di Google Maps</a>')
+                .openPopup();
+
+            // Scroll-zoom aktif hanya setelah peta diklik, supaya scroll halaman tidak tersangkut
+            map.on('click', function () { map.scrollWheelZoom.enable(); });
+            map.on('mouseout', function () { map.scrollWheelZoom.disable(); });
+
+            // Ukuran peta dihitung ulang setelah animasi AOS / reflow selesai
+            [300, 1200, 2500].forEach(function (d) { setTimeout(function () { map.invalidateSize(); }, d); });
+            window.addEventListener('load', function () { map.invalidateSize(); });
+            window.addEventListener('resize', function () { map.invalidateSize(); });
         })();
     </script>
 </body>

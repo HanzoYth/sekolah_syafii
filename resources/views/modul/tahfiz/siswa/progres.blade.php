@@ -136,63 +136,10 @@
                 </div>
             </div>
 
-            <!-- RINCIAN SURAH DALAM JUZ YANG SEDANG DIHAFAL -->
-            <div class="table-card">
-                <div class="table-header-flex">
-                    <h4>Rincian Surah pada Juz 29 (Sedang Berjalan)</h4>
+            <!-- KOMPONEN BARU: CATATAN GURU / PEMBIMBING -->
+            <div class="detail-box teacher-note-card mb-28">
+                <div class="detail-header-tag gold-tag">
+                    <i class="fa-solid fa-comment-dots"></i> CATATAN & EVALUASI UUSTADZ / UUSTADZAH
                 </div>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama Surah</th>
-                                <th>Jumlah Ayat</th>
-                                <th>Status Setoran</th>
-                                <th>Kelancaran</th>
-                                <th>Tanggal Selesai</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>67</td>
-                                <td><strong>Al-Mulk</strong></td>
-                                <td>30 Ayat</td>
-                                <td><span class="badge success"><i class="fa-solid fa-check"></i> Lunas</span></td>
-                                <td><span class="badge-text green">Lancar</span></td>
-                                <td>10/06/2026</td>
-                            </tr>
-                            <tr>
-                                <td>68</td>
-                                <td><strong>Al-Qalam</strong></td>
-                                <td>52 Ayat</td>
-                                <td><span class="badge success"><i class="fa-solid fa-check"></i> Lunas</span></td>
-                                <td><span class="badge-text green">Lancar</span></td>
-                                <td>18/06/2026</td>
-                            </tr>
-                            <tr>
-                                <td>69</td>
-                                <td><strong>Al-Haqqah</strong></td>
-                                <td>52 Ayat</td>
-                                <td><span class="badge warning"><i class="fa-solid fa-spinner"></i> Proses (Ayat 1-24)</span></td>
-                                <td><span class="badge-text yellow">Cukup</span></td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td>70</td>
-                                <td><strong>Al-Ma'arij</strong></td>
-                                <td>44 Ayat</td>
-                                <td><span class="badge gray">Belum</span></td>
-                                <td>-</td>
-                                <td>-</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </main>
-    </div>
-
-</body>
-</html>
+                <div class="teacher-note-content">
+                    <div class

@@ -32,57 +32,33 @@
                     <span class="menu-label">ADMINISTRATOR</span>
                     <ul class="menu-list">
                         <li class="menu-item {{ $route == '/tf/das' ? 'active' : '' }}">
-                            <a href="/tf/das">
+                            <a href="/tf/ad/dash">
                                 <i class="fa-solid fa-gauge"></i>
                                 <span>Dashboard</span>
                             </a>
                         </li>
                         <li class="menu-item {{ $route == '/tf/kls' ? 'active' : '' }}">
-                            <a href="/tf/kls">
+                            <a href="/tf/ad/ms">
                                 <i class="fa-solid fa-school"></i>
-                                <span>Kelas &amp; Halaqah</span>
+                                <span>manajemen siswa</span>
                             </a>
                         </li>
                         <li class="menu-item {{ $route == '/tf/ss' ? 'active' : '' }}">
-                            <a href="/tf/ss">
+                            <a href="/tf/ad/mg">
                                 <i class="fa-solid fa-users"></i>
-                                <span>Siswa</span>
+                                <span>manajemen guru</span>
                             </a>
                         </li>
                         <li class="menu-item {{ $route == '/tf/pg' ? 'active' : '' }}">
-                            <a href="/tf/pg">
+                            <a href="/tf/ad/mt">
                                 <i class="fa-solid fa-user-tie"></i>
-                                <span>Pengampu</span>
+                                <span>monitoring</span>
                             </a>
                         </li>
                         <li class="menu-item {{ $route == '/tf/lh' ? 'active' : '' }}">
-                            <a href="/tf/lh">
+                            <a href="/tf/ad/lp">
                                 <i class="fa-solid fa-file-lines"></i>
-                                <span>Laporan Harian</span>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ $route == '/tf/rm' ? 'active' : '' }}">
-                            <a href="/tf/rm">
-                                <i class="fa-solid fa-calendar-week"></i>
-                                <span>Rekap Mingguan</span>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ $route == '/tf/rb' ? 'active' : '' }}">
-                            <a href="/tf/rb">
-                                <i class="fa-solid fa-calendar-days"></i>
-                                <span>Rekap Bulanan</span>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ $route == '/tf/pgm' ? 'active' : '' }}">
-                            <a href="/tf/pgm">
-                                <i class="fa-solid fa-bullhorn"></i>
-                                <span>Pengumuman</span>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ $route == '/tf/nt' ? 'active' : '' }}">
-                            <a href="/tf/nt">
-                                <i class="fa-solid fa-bell"></i>
-                                <span>Notifikasi</span>
+                                <span>Laporan dan rekap</span>
                             </a>
                         </li>
                     </ul>
@@ -102,7 +78,7 @@
                         <li class="menu-item {{ $route == '/tf/hq' ? 'active' : '' }}">
                             <a href="/tf/kls">
                                 <i class="fa-solid fa-people-group"></i>
-                                <span>Halaqah Saya</span>
+                                <span>kelas dan halaqah</span>
                             </a>
                         </li>
                         <li class="menu-item {{ $route == '/tf/hq' ? 'active' : '' }}">
@@ -118,7 +94,7 @@
                             </a>
                         </li>
                         <li class="menu-item {{ $route == '/tf/stor' ? 'active' : '' }}">
-                            <a href="/tf/stor">
+                            <a href="/tf/ins">
                                 <i class="fa-solid fa-book-open-reader"></i>
                                 <span>Input Setoran</span>
                             </a>
@@ -174,36 +150,7 @@
                                 <span>Progres Hafalan</span>
                             </a>
                         </li>
-                        <li class="menu-item {{ $route == '/tf/sw/lh' ? 'active' : '' }}">
-                            <a href="/tf/sw/lh">
-                                <i class="fa-solid fa-file-lines"></i>
-                                <span>Laporan Harian</span>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ $route == '/tf/sw/rm' ? 'active' : '' }}">
-                            <a href="/tf/sw/rm">
-                                <i class="fa-solid fa-calendar-week"></i>
-                                <span>Rekap Mingguan</span>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ $route == '/tf/sw/rb' ? 'active' : '' }}">
-                            <a href="/tf/sw/rb">
-                                <i class="fa-solid fa-calendar-days"></i>
-                                <span>Rekap Bulanan</span>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ $route == '/tf/sw/pgm' ? 'active' : '' }}">
-                            <a href="/tf/sw/pgm">
-                                <i class="fa-solid fa-bullhorn"></i>
-                                <span>Pengumuman</span>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ $route == '/tf/sw/nt' ? 'active' : '' }}">
-                            <a href="/tf/sw/nt">
-                                <i class="fa-solid fa-bell"></i>
-                                <span>Notifikasi</span>
-                            </a>
-                        </li>
+                      
                         <li class="menu-item {{ $route == '/tf/sw/prf' ? 'active' : '' }}">
                             <a href="/tf/sw/prf">
                                 <i class="fa-solid fa-circle-user"></i>

@@ -6,7 +6,24 @@ use Illuminate\Http\Request;
 
 class tahfizController extends Controller
 {
+
     #admin
+    function dash_admin(){
+        return view("modul/tahfiz/admin/dashboard");
+    }
+    function manajemen_siswa(){
+        return view("modul/tahfiz/admin/manajemen");
+    }
+    function manajemen_guru(){
+        return view("modul/tahfiz/admin/manajemen_gr");
+    }
+    function monitoring(){
+        return view("modul/tahfiz/admin/monitoring");
+    }
+    function laporan(){
+        return view("modul/tahfiz/admin/laporan");
+    }
+    #guru
     function pengumuman(){
         return view("modul/tahfiz/pengumuman");
     }
@@ -27,6 +44,9 @@ class tahfizController extends Controller
     function pengampu(){
         return view("modul/tahfiz/pengampu");
     }
+    function input_setoran(){
+        return view("modul/tahfiz/inputsetoran");
+    }
 
     #siswa
     function dashboard_siswa(){
@@ -39,3 +59,4 @@ class tahfizController extends Controller
     
     
 }
+
