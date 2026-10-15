@@ -436,9 +436,9 @@
                 </div>
 
                 {{-- FOOTER CARD / PAGINATION --}}
-                <div class="card-footer pagination-wrap">
+                <div class="card-footer pagination-wrap" style="display: flex; justify-content: center; align-items: center; width: 100%;">
                     {{-- Laravel Pagination Link --}}
-                    <div class="pagination-container">
+                    <div class="pagination-container" style="display: flex; justify-content: center; align-items: center; margin: 0 auto;">
                         {{ $data_slip_ipp->links() }}
                     </div>
                 </div>

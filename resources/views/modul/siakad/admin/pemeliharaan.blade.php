@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -199,8 +199,8 @@
                 </div>
 
                 {{-- PAGINATION --}}
-                <div class="card-footer pagination-wrap">
-                    <div class="pagination-container">
+                <div class="card-footer pagination-wrap" style="display: flex; justify-content: center; align-items: center; width: 100%;">
+                    <div class="pagination-container" style="display: flex; justify-content: center; align-items: center; margin: 0 auto;">
                         <div class="pagination">
                             <span class="page-item disabled">&laquo;</span>
                             <span class="page-item active">1</span>

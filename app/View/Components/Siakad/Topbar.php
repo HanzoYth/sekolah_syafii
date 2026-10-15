@@ -5,6 +5,9 @@ namespace App\View\Components\Siakad;
 use App\Models\admin;
 use App\Models\guru;
 use App\Models\siswa;
+use App\Models\pengumuman;
+use App\Models\wallas;
+use App\Models\jadwal_pelajaran;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
@@ -15,6 +18,14 @@ class Topbar extends Component
     public string $currentPosition;
     public string $currentInitials;
     public ?string $currentPhoto = null;
+    public ?string $profileUrl = null;
+    public ?string $dashboardUrl = null;
+    public ?string $announcementsUrl = null;
+    public ?string $userIdentifier = null;
+    public bool $isWallas = false;
+    public ?string $waliKelasNama = null;
+    public mixed $notifications = [];
+    public int $notificationCount = 0;
 
     public function __construct(
         public ?string $name = null,
@@ -28,31 +39,33 @@ class Topbar extends Component
         $this->currentInitials = $initials ?? 'SK';
 
         $akunId = session('id_akun');
-        $role = session('role');
+        $sessionRole = session('role');
+        $roleId = session('id');
 
-        if ($akunId) {
-            $user = null;
-            $label = null;
+        $this->notifications = collect();
+        $this->notificationCount = 0;
 
-            if ($role === 'g' || $role === 'guru') {
-                $user = guru::where('user_id', $akunId)->first();
-                $isWallas = $user ? \App\Models\wallas::where('guru_id', $user->id)->exists() : false;
-                $isPengajar = $user ? (($user->guru_tetap || $user->guru_honor) || \App\Models\jadwal_pelajaran::where('guru_id', $user->id)->exists()) : false;
+        if ($sessionRole === 'g' || $sessionRole === 'guru') {
+            $user = ($akunId ? guru::where('user_id', $akunId)->first() : null) ?: ($roleId ? guru::find($roleId) : null);
+            
+            $wallasModel = $user ? wallas::with('ruangKelas')->where('guru_id', $user->id)->first() : null;
+            $this->isWallas = (bool)$wallasModel;
+            $this->waliKelasNama = $wallasModel?->ruangKelas?->nama_ruang;
 
-                if ($isWallas && $isPengajar) {
-                    $label = 'Guru & Wali Kelas';
-                } elseif ($isWallas) {
-                    $label = 'Wali Kelas';
-                } else {
-                    $label = 'Guru Pengajar';
-                }
-            } elseif ($role === 'a' || $role === 'admin') {
-                $user = admin::where('user_id', $akunId)->first();
-                $label = 'Administrator';
-            } elseif ($role === 's' || $role === 'siswa') {
-                $user = siswa::where('user_id', $akunId)->first();
-                $label = 'Siswa';
+            $isPengajar = $user ? (($user->guru_tetap || $user->guru_honor) || jadwal_pelajaran::where('guru_id', $user->id)->exists()) : false;
+
+            if ($this->isWallas && $isPengajar) {
+                $label = 'Guru & Wali Kelas';
+            } elseif ($this->isWallas) {
+                $label = 'Wali Kelas';
+            } else {
+                $label = 'Guru Pengajar';
             }
+
+            $this->dashboardUrl = '/sk/dsg';
+            $this->profileUrl = '/sk/pr';
+            $this->announcementsUrl = '/sk/pengumuman-guru';
+            $this->userIdentifier = $user?->nip ? 'NIP: ' . $user->nip : ($user?->nuptk ? 'NUPTK: ' . $user->nuptk : 'Guru Pengajar');
 
             if ($user) {
                 $this->currentName = $user->nama ?: $this->currentName;
@@ -60,6 +73,93 @@ class Topbar extends Component
                 if (!empty($user->url_foto)) {
                     $this->currentPhoto = route('file.show', $user->url_foto) . '?v=' . time();
                 }
+
+                $guru_id = $user->id;
+                $sekolah_id = $user->sekolah_id;
+                $this->notifications = pengumuman::where(function($q) use ($guru_id, $sekolah_id) {
+                        $q->where('target_tipe', 'semua')
+                        ->orWhere(function($sub) use ($sekolah_id) {
+                            $sub->where('target_tipe', 'sekolah');
+                            if ($sekolah_id) $sub->where('sekolah_id', $sekolah_id);
+                        })
+                        ->orWhere(function($sub) {
+                            $sub->where('target_tipe', 'role')->whereIn('target_role', ['g', 'all']);
+                        })
+                        ->orWhere(function($sub) use ($guru_id) {
+                            $sub->where('target_tipe', 'spesifik')->where('guru_id', $guru_id);
+                        });
+                    })
+                    ->orderByDesc('tanggal')
+                    ->orderByDesc('id')
+                    ->take(5)
+                    ->get();
+                $this->notificationCount = $this->notifications->count();
+            }
+
+        } elseif ($sessionRole === 'a' || $sessionRole === 'admin') {
+            $user = ($akunId ? admin::where('user_id', $akunId)->first() : null) ?: ($roleId ? admin::find($roleId) : null);
+            $label = 'Administrator';
+            $this->dashboardUrl = '/sk/das';
+            $this->profileUrl = '/gr/prad';
+            $this->announcementsUrl = '/sk/kelola-pengumuman';
+            $this->userIdentifier = session('username') ?? 'Admin SIAKAD';
+
+            if ($user) {
+                $this->currentName = $user->nama ?: $this->currentName;
+                $this->currentPosition = $label;
+                if (!empty($user->url_foto)) {
+                    $this->currentPhoto = route('file.show', $user->url_foto) . '?v=' . time();
+                }
+            }
+
+            $this->notifications = pengumuman::orderByDesc('tanggal')
+                ->orderByDesc('id')
+                ->take(5)
+                ->get();
+            $this->notificationCount = $this->notifications->count();
+
+        } elseif ($sessionRole === 's' || $sessionRole === 'siswa') {
+            $user = ($akunId ? siswa::with('kelas')->where('user_id', $akunId)->first() : null) ?: ($roleId ? siswa::with('kelas')->find($roleId) : null);
+            $label = 'Siswa';
+            $this->dashboardUrl = '/sk/dbs';
+            $this->profileUrl = '/sk/pfs';
+            $this->announcementsUrl = '/sk/ps';
+            $this->userIdentifier = $user?->nis ? 'NIS: ' . $user->nis . ($user?->kelas?->nama_ruang ? ' • ' . $user->kelas->nama_ruang : '') : 'Siswa';
+
+            if ($user) {
+                $this->currentName = $user->nama ?: $this->currentName;
+                $this->currentPosition = $label;
+                if (!empty($user->url_foto)) {
+                    $this->currentPhoto = route('file.show', $user->url_foto) . '?v=' . time();
+                }
+
+                $siswa_id = $user->id;
+                $sekolah_id = $user->sekolah_id;
+                $kelas_id = $user->kelas_id;
+                $this->notifications = pengumuman::where(function($q) use ($siswa_id, $sekolah_id, $kelas_id) {
+                        $q->where('target_tipe', 'semua')
+                        ->orWhere(function($sub) use ($sekolah_id) {
+                            if ($sekolah_id) {
+                                $sub->where('target_tipe', 'sekolah')->where('sekolah_id', $sekolah_id);
+                            }
+                        })
+                        ->orWhere(function($sub) use ($kelas_id) {
+                            if ($kelas_id) {
+                                $sub->where('target_tipe', 'kelas')->where('kelas_id', $kelas_id);
+                            }
+                        })
+                        ->orWhere(function($sub) {
+                            $sub->where('target_tipe', 'role')->whereIn('target_role', ['s', 'all']);
+                        })
+                        ->orWhere(function($sub) use ($siswa_id) {
+                            $sub->where('target_tipe', 'spesifik')->where('siswa_id', $siswa_id);
+                        });
+                    })
+                    ->orderByDesc('tanggal')
+                    ->orderByDesc('id')
+                    ->take(5)
+                    ->get();
+                $this->notificationCount = $this->notifications->count();
             }
         }
 

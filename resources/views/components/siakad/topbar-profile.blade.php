@@ -16,17 +16,770 @@
         </div>
 
         <div class="siakad-topbar-actions">
-            <div class="siakad-date" aria-label="Tanggal hari ini"><i class="fa-regular fa-calendar-days"></i><span>{{ now()->translatedFormat('l, d F Y') }}</span></div>
-            <button class="siakad-notification" type="button" aria-label="Notifikasi"><i class="fa-regular fa-bell"></i><span></span></button>
-            <div class="siakad-profile" aria-label="Profil {{ $currentName }}">
-                @if($currentPhoto)
-                    <img src="{{ $currentPhoto }}" alt="Foto {{ $currentName }}" class="siakad-profile-avatar" style="object-fit: cover; padding: 0;">
-                @else
-                    <span class="siakad-profile-avatar">{{ $currentInitials }}</span>
-                @endif
-                <span class="siakad-profile-detail"><strong>{{ $currentName }}</strong><small>{{ $currentPosition }}</small></span>
-                <i class="fa-solid fa-chevron-down siakad-profile-chevron" aria-hidden="true"></i>
+            <div class="siakad-date" aria-label="Tanggal hari ini">
+                <i class="fa-regular fa-calendar-days"></i>
+                <span>{{ now()->translatedFormat('l, d F Y') }}</span>
+            </div>
+
+            <!-- ============================================== -->
+            <!-- DROPDOWN NOTIFIKASI & PENGUMUMAN               -->
+            <!-- ============================================== -->
+            <div class="siakad-dropdown-container" id="notifDropdownContainer">
+                <button class="siakad-notification" id="siakadNotifBtn" type="button" aria-label="Notifikasi & Pengumuman" aria-expanded="false" title="Notifikasi & Pengumuman">
+                    <i class="fa-regular fa-bell text-base"></i>
+                    @if($notificationCount > 0)
+                        <span class="siakad-notif-pulse"></span>
+                        <span class="siakad-notif-badge">{{ $notificationCount > 9 ? '9+' : $notificationCount }}</span>
+                    @endif
+                </button>
+
+                <div class="siakad-dropdown-panel notif-panel" id="siakadNotifPanel" style="display: none;" role="menu">
+                    <div class="notif-dropdown-header">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-bell"></i>
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-sm">Notifikasi & Pengumuman</h3>
+                        </div>
+                        @if($notificationCount > 0)
+                            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                {{ $notificationCount }} Baru
+                            </span>
+                        @endif
+                    </div>
+
+                    <div class="notif-dropdown-list">
+                        @forelse($notifications as $notif)
+                            <a href="{{ $announcementsUrl }}" class="notif-list-item" role="menuitem">
+                                <div class="notif-item-icon">
+                                    <i class="fa-solid fa-bullhorn text-xs"></i>
+                                </div>
+                                <div class="notif-item-body">
+                                    <div class="notif-item-header">
+                                        <h4 class="notif-item-title">{{ $notif->judul }}</h4>
+                                        <span class="notif-item-time">
+                                            {{ $notif->tanggal ? \Carbon\Carbon::parse($notif->tanggal)->locale('id')->diffForHumans() : 'Baru' }}
+                                        </span>
+                                    </div>
+                                    <p class="notif-item-snippet">{{ Str::limit(strip_tags($notif->isi), 60) }}</p>
+                                    <div class="notif-item-footer">
+                                        <span class="notif-item-tag">
+                                            {{ ucfirst($notif->target_tipe) }}
+                                        </span>
+                                        @if($notif->lampiran)
+                                            <span class="notif-item-attach">
+                                                <i class="fa-solid fa-paperclip text-[10px]"></i> Lampiran
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </a>
+                        @empty
+                            <div class="notif-empty-state">
+                                <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-lg mx-auto mb-2">
+                                    <i class="fa-regular fa-bell-slash"></i>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-700">Tidak ada pengumuman baru</h4>
+                                <p class="text-xs text-slate-400 mt-0.5">Pengumuman sekolah terbaru akan ditampilkan di sini.</p>
+                            </div>
+                        @endforelse
+                    </div>
+
+                    <div class="notif-dropdown-footer">
+                        <a href="{{ $announcementsUrl }}" class="notif-view-all">
+                            <span>Buka Pusat Pengumuman</span>
+                            <i class="fa-solid fa-arrow-right text-[11px]"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================== -->
+            <!-- DROPDOWN PROFIL PENGGUNA                       -->
+            <!-- ============================================== -->
+            <div class="siakad-dropdown-container" id="profileDropdownContainer">
+                <div class="siakad-profile" id="siakadProfileBtn" role="button" tabindex="0" aria-label="Menu Profil {{ $currentName }}" aria-expanded="false" title="Menu Profil">
+                    @if($currentPhoto)
+                        <img src="{{ $currentPhoto }}" alt="Foto {{ $currentName }}" class="siakad-profile-avatar" style="object-fit: cover; padding: 0;">
+                    @else
+                        <span class="siakad-profile-avatar">{{ $currentInitials }}</span>
+                    @endif
+                    <span class="siakad-profile-detail">
+                        <strong>{{ $currentName }}</strong>
+                        <small>{{ $currentPosition }}</small>
+                    </span>
+                    <i class="fa-solid fa-chevron-down siakad-profile-chevron" id="siakadProfileChevron" aria-hidden="true"></i>
+                </div>
+
+                <div class="siakad-dropdown-panel profile-panel" id="siakadProfilePanel" style="display: none;" role="menu">
+                    <!-- Header Info Pengguna -->
+                    <div class="profile-panel-header">
+                        <div class="profile-panel-avatar-wrap">
+                            @if($currentPhoto)
+                                <img src="{{ $currentPhoto }}" alt="Foto {{ $currentName }}" class="profile-panel-avatar-img">
+                            @else
+                                <div class="profile-panel-avatar-initial">{{ $currentInitials }}</div>
+                            @endif
+                            <span class="profile-online-badge" title="Status Online"></span>
+                        </div>
+                        <div class="profile-panel-user">
+                            <h4 class="profile-panel-name">{{ $currentName }}</h4>
+                            <span class="profile-panel-role">{{ $currentPosition }}</span>
+                            @if($userIdentifier)
+                                <span class="profile-panel-id">{{ $userIdentifier }}</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Daftar Menu Navigasi -->
+                    <div class="profile-panel-menu">
+                        <a href="{{ $dashboardUrl }}" class="profile-menu-link" role="menuitem">
+                            <div class="profile-menu-icon bg-emerald-50 text-emerald-700">
+                                <i class="fa-solid fa-gauge-high"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <span class="profile-menu-text font-semibold text-slate-800">Dashboard</span>
+                                <span class="profile-menu-sub">Halaman utama akademik</span>
+                            </div>
+                        </a>
+
+                        @if($profileUrl)
+                            <a href="{{ $profileUrl }}" class="profile-menu-link" role="menuitem">
+                                <div class="profile-menu-icon bg-blue-50 text-blue-700">
+                                    <i class="fa-regular fa-id-badge"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <span class="profile-menu-text font-semibold text-slate-800">Profil Saya</span>
+                                    <span class="profile-menu-sub">Informasi data diri & akun</span>
+                                </div>
+                            </a>
+                        @endif
+
+                        @if($isWallas)
+                            <a href="/sk/wali-kelas" class="profile-menu-link" role="menuitem">
+                                <div class="profile-menu-icon bg-amber-50 text-amber-700">
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <span class="profile-menu-text font-semibold text-slate-800">Kelola Perwalian</span>
+                                    <span class="profile-menu-sub">{{ $waliKelasNama ? 'Rombel ' . $waliKelasNama : 'Wali Kelas' }}</span>
+                                </div>
+                            </a>
+                        @endif
+
+                        @if(session('role') === 's')
+                            <a href="/sk/jadwal-siswa?tab=jadwal" class="profile-menu-link" role="menuitem">
+                                <div class="profile-menu-icon bg-indigo-50 text-indigo-700">
+                                    <i class="fa-solid fa-calendar-week"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <span class="profile-menu-text font-semibold text-slate-800">Jadwal Pelajaran</span>
+                                    <span class="profile-menu-sub">Agenda kelas & presensi</span>
+                                </div>
+                            </a>
+
+                            <a href="/sk/rapor-siswa?tab=transkrip" class="profile-menu-link" role="menuitem">
+                                <div class="profile-menu-icon bg-teal-50 text-teal-700">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <span class="profile-menu-text font-semibold text-slate-800">Nilai & Rapor</span>
+                                    <span class="profile-menu-sub">Capaian hasil belajar</span>
+                                </div>
+                            </a>
+                        @endif
+
+                        <a href="{{ $announcementsUrl }}" class="profile-menu-link" role="menuitem">
+                            <div class="profile-menu-icon bg-purple-50 text-purple-700">
+                                <i class="fa-solid fa-bullhorn"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <span class="profile-menu-text font-semibold text-slate-800">Pengumuman</span>
+                                <span class="profile-menu-sub">Pusat informasi sekolah</span>
+                            </div>
+                        </a>
+
+                        <div class="profile-menu-hr"></div>
+
+                        <a href="/mod" class="profile-menu-link" role="menuitem">
+                            <div class="profile-menu-icon bg-slate-100 text-slate-600">
+                                <i class="fas fa-cubes"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <span class="profile-menu-text text-slate-700">Pilih Modul</span>
+                                <span class="profile-menu-sub">Kembali ke portal modul</span>
+                            </div>
+                        </a>
+
+                        <div class="profile-menu-hr"></div>
+
+                        <a href="/reg/logout" class="profile-menu-link logout-link" role="menuitem">
+                            <div class="profile-menu-icon bg-rose-50 text-rose-600">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <span class="profile-menu-text font-bold text-rose-600">Keluar Sistem</span>
+                                <span class="profile-menu-sub text-rose-400">Akhiri sesi login ini</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </header>
+
+<style>
+/* =====================================================================
+   SIAKAD TOPBAR DROPDOWNS (NOTIF & PROFILE)
+   ===================================================================== */
+.siakad-dropdown-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.siakad-notification {
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+.siakad-notification:hover,
+.siakad-notification[aria-expanded="true"] {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(216, 185, 74, 0.6);
+}
+.siakad-notification:active {
+    transform: scale(0.96);
+}
+
+.siakad-notif-pulse {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.6);
+    animation: siakadPulse 1.8s infinite;
+}
+
+.siakad-notif-badge {
+    position: absolute;
+    top: -3px;
+    right: -4px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 10px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #0d5c3a;
+    line-height: 1;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+@keyframes siakadPulse {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    70% { transform: scale(1.6); opacity: 0; }
+    100% { transform: scale(0.95); opacity: 0; }
+}
+
+.siakad-topbar-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 13px !important;
+    flex-shrink: 0 !important;
+}
+
+.siakad-dropdown-container {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    flex-shrink: 0 !important;
+}
+
+.siakad-profile {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 5px 14px 5px 6px !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    border-radius: 14px !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    flex-shrink: 0 !important;
+    min-width: max-content !important;
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    transition: background 0.2s ease, border-color 0.2s ease !important;
+}
+.siakad-profile:hover,
+.siakad-profile[aria-expanded="true"] {
+    background: rgba(255, 255, 255, 0.22) !important;
+    border-color: rgba(216, 185, 74, 0.6) !important;
+}
+
+.siakad-profile-avatar {
+    display: inline-grid !important;
+    width: 34px !important;
+    height: 34px !important;
+    place-items: center !important;
+    border: 2px solid #f8d46d !important;
+    border-radius: 50% !important;
+    color: #0d5c3a !important;
+    background: #ecfdf5 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    flex-shrink: 0 !important;
+    overflow: hidden !important;
+}
+
+.siakad-profile-detail {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+    text-align: left !important;
+}
+
+.siakad-profile-detail strong,
+.siakad-profile-detail small {
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.siakad-profile-detail strong {
+    color: #ffffff !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+    max-width: 160px !important;
+}
+
+.siakad-profile-detail small {
+    margin-top: 2px !important;
+    color: #d1fae5 !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    line-height: 1.2 !important;
+    max-width: 160px !important;
+}
+
+.siakad-profile-chevron {
+    color: #d1fae5 !important;
+    font-size: 10px !important;
+    flex-shrink: 0 !important;
+    margin-left: 2px !important;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.siakad-profile-chevron.open {
+    transform: rotate(180deg) !important;
+}
+
+/* Panel Dasar */
+.siakad-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.16), 0 6px 12px -2px rgba(15, 23, 42, 0.06);
+    z-index: 99999;
+    text-align: left;
+    overflow: hidden;
+    animation: siakadDropFade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes siakadDropFade {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Panel Notifikasi */
+.notif-panel {
+    width: 350px;
+    max-width: calc(100vw - 32px);
+}
+
+.notif-dropdown-header {
+    padding: 14px 16px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.notif-dropdown-list {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.notif-list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    text-decoration: none;
+    transition: background 0.15s ease;
+}
+.notif-list-item:hover {
+    background: #f8fafc;
+}
+
+.notif-item-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #ecfdf5;
+    color: #059669;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.notif-item-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.notif-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.notif-item-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+
+.notif-item-time {
+    font-size: 10px;
+    color: #94a3b8;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.notif-item-snippet {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.35;
+    margin: 2px 0 6px 0;
+}
+
+.notif-item-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.notif-item-tag {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    background: #f1f5f9;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.notif-item-attach {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #0284c7;
+}
+
+.notif-empty-state {
+    padding: 32px 20px;
+    text-align: center;
+}
+
+.notif-dropdown-footer {
+    padding: 10px 16px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.notif-view-all {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #10b981;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+.notif-view-all:hover {
+    color: #047857;
+}
+
+/* Panel Profil */
+.profile-panel {
+    width: 290px;
+    max-width: calc(100vw - 32px);
+}
+
+.profile-panel-header {
+    padding: 16px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+    border-bottom: 1px solid #dcfce7;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-panel-avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.profile-panel-avatar-img,
+.profile-panel-avatar-initial {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid #10b981;
+}
+
+.profile-panel-avatar-initial {
+    background: #10b981;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.profile-online-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #22c55e;
+    border: 2px solid #ffffff;
+}
+
+.profile-panel-user {
+    min-width: 0;
+    flex: 1;
+}
+
+.profile-panel-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.profile-panel-role {
+    display: inline-block;
+    padding: 1px 8px;
+    margin-top: 3px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.profile-panel-id {
+    font-size: 11px;
+    color: #64748b;
+    margin: 3px 0 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.profile-panel-menu {
+    padding: 6px 0;
+}
+
+.profile-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background 0.15s ease;
+}
+.profile-menu-link:hover {
+    background: #f8fafc;
+}
+
+.profile-menu-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.profile-menu-text {
+    display: block;
+    font-size: 13px;
+    line-height: 1.25;
+}
+
+.profile-menu-sub {
+    display: block;
+    font-size: 11px;
+    color: #94a3b8;
+    line-height: 1.2;
+    margin-top: 1px;
+}
+
+.profile-menu-hr {
+    height: 1px;
+    background: #f1f5f9;
+    margin: 6px 0;
+}
+
+.profile-menu-link.logout-link:hover {
+    background: #fff1f2;
+}
+.profile-menu-link.logout-link:hover .profile-menu-icon {
+    background: #ffe4e6;
+}
+
+/* Responsif Mobile Dropdown */
+@media (max-width: 700px) {
+    .notif-panel,
+    .profile-panel {
+        position: fixed;
+        top: auto;
+        bottom: auto;
+        right: 12px;
+        left: 12px;
+        width: auto;
+        max-width: none;
+        margin-top: 6px;
+    }
+}
+</style>
+
+<script>
+(function() {
+    function initSiakadTopbars() {
+        const notifBtn = document.getElementById('siakadNotifBtn');
+        const notifPanel = document.getElementById('siakadNotifPanel');
+        const profileBtn = document.getElementById('siakadProfileBtn');
+        const profilePanel = document.getElementById('siakadProfilePanel');
+        const profileChevron = document.getElementById('siakadProfileChevron');
+
+        function closeAllDropdowns() {
+            if (notifPanel) notifPanel.style.display = 'none';
+            if (profilePanel) profilePanel.style.display = 'none';
+            if (notifBtn) notifBtn.setAttribute('aria-expanded', 'false');
+            if (profileBtn) profileBtn.setAttribute('aria-expanded', 'false');
+            if (profileChevron) profileChevron.classList.remove('open');
+        }
+
+        if (notifBtn && notifPanel) {
+            notifBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const isCurrentlyOpen = notifPanel.style.display === 'block';
+                closeAllDropdowns();
+                if (!isCurrentlyOpen) {
+                    notifPanel.style.display = 'block';
+                    notifBtn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        }
+
+        if (profileBtn && profilePanel) {
+            profileBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const isCurrentlyOpen = profilePanel.style.display === 'block';
+                closeAllDropdowns();
+                if (!isCurrentlyOpen) {
+                    profilePanel.style.display = 'block';
+                    profileBtn.setAttribute('aria-expanded', 'true');
+                    if (profileChevron) profileChevron.classList.add('open');
+                }
+            });
+
+            // Aksesibilitas keyboard Enter / Spasi
+            profileBtn.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    profileBtn.click();
+                }
+            });
+        }
+
+        // Tutup saat klik di luar
+        document.addEventListener('click', function(e) {
+            const inNotif = notifPanel && notifPanel.contains(e.target);
+            const inNotifBtn = notifBtn && notifBtn.contains(e.target);
+            const inProfile = profilePanel && profilePanel.contains(e.target);
+            const inProfileBtn = profileBtn && profileBtn.contains(e.target);
+
+            if (!inNotif && !inNotifBtn && !inProfile && !inProfileBtn) {
+                closeAllDropdowns();
+            }
+        });
+
+        // Tutup saat tekan tombol Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeAllDropdowns();
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSiakadTopbars);
+    } else {
+        initSiakadTopbars();
+    }
+})();
+</script>

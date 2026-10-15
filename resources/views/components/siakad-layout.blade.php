@@ -130,6 +130,197 @@
     </div>
     
     {{ $scripts ?? '' }}
+
+    <!-- Universal Centered Table Pagination (Max 5 Data per Table) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            initSiakadUniversalTablePagination();
+        });
+
+        window.refreshSiakadPagination = function() {
+            if (window._siakadPagRenderers) {
+                window._siakadPagRenderers.forEach(fn => fn());
+            }
+        };
+
+        function initSiakadUniversalTablePagination() {
+            window._siakadPagRenderers = [];
+            const tables = document.querySelectorAll('table');
+
+            tables.forEach((table, tableIndex) => {
+                if (table.hasAttribute('data-no-paginate')) return;
+                if (table.closest('.modal-card, .flatpickr-calendar, .dropdown-menu, .modal-overlay, #modalEditPembayaran, #modalPengumuman')) return;
+
+                // Cek jika parent card sudah memiliki pagination server-side (misal: pembayaran IPP links())
+                const parentCard = table.closest('.table-card, .card') || table.parentElement;
+                if (parentCard && parentCard.querySelector('.pagination-wrap, .pagination-container') && !table.hasAttribute('data-force-paginate')) {
+                    const pagWrap = parentCard.querySelector('.pagination-wrap, .pagination-container');
+                    if (pagWrap) {
+                        pagWrap.style.display = 'flex';
+                        pagWrap.style.justifyContent = 'center';
+                        pagWrap.style.alignItems = 'center';
+                    }
+                    return;
+                }
+
+                const tbody = table.querySelector('tbody');
+                if (!tbody) return;
+
+                const PAGE_SIZE = 5;
+                let currentPage = 1;
+                const pagContainerId = 'siakad-pag-table-' + (table.id || tableIndex);
+
+                function isControlRow(tr) {
+                    const td = tr.querySelector('td[colspan]');
+                    return td && tr.children.length === 1 && !tr.querySelector('input.check-siswa, input.siswa-checkbox') && tr.id !== 'filterEmpty';
+                }
+
+                function getActiveRows() {
+                    return Array.from(tbody.querySelectorAll('tr')).filter(tr => {
+                        if (tr.classList.contains('empty-row') || tr.id === 'filterEmpty') return false;
+                        if (isControlRow(tr)) return false;
+                        if (tr.getAttribute('data-filtered-out') === 'true') return false;
+                        return true;
+                    });
+                }
+
+                const initialRows = getActiveRows();
+                if (initialRows.length <= PAGE_SIZE && !table.hasAttribute('data-force-paginate')) {
+                    return;
+                }
+
+                let pagWrapper = document.getElementById(pagContainerId);
+                if (!pagWrapper) {
+                    pagWrapper = document.createElement('div');
+                    pagWrapper.id = pagContainerId;
+                    pagWrapper.className = 'siakad-pagination-wrapper w-full flex flex-col items-center justify-center pt-4 pb-2 my-2 border-t border-slate-100';
+                    const overflowWrapper = table.closest('.overflow-x-auto, [style*="overflow-x: auto"]') || table.parentElement || table;
+                    overflowWrapper.parentNode.insertBefore(pagWrapper, overflowWrapper.nextSibling);
+                }
+
+                function renderTablePagination() {
+                    const allRows = Array.from(tbody.querySelectorAll('tr')).filter(tr => !tr.classList.contains('empty-row') && tr.id !== 'filterEmpty');
+                    const activeRows = getActiveRows();
+                    const totalRows = activeRows.length;
+                    const totalPages = Math.ceil(totalRows / PAGE_SIZE) || 1;
+
+                    if (currentPage > totalPages) currentPage = totalPages;
+                    if (currentPage < 1) currentPage = 1;
+
+                    const startIdx = (currentPage - 1) * PAGE_SIZE;
+                    const endIdx = startIdx + PAGE_SIZE;
+
+                    // Pastikan baris kontrol/header khusus (seperti Pilih Semua) tetap terlihat
+                    Array.from(tbody.querySelectorAll('tr')).forEach(tr => {
+                        if (isControlRow(tr)) tr.style.display = '';
+                    });
+
+                    // Sembunyikan semua row yang filtered out
+                    allRows.forEach(row => {
+                        if (row.getAttribute('data-filtered-out') === 'true') {
+                            row.style.display = 'none';
+                        }
+                    });
+
+                    // Tampilkan row aktif sesuai halaman saat ini
+                    activeRows.forEach((row, idx) => {
+                        if (idx >= startIdx && idx < endIdx) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+
+                    if (totalRows <= PAGE_SIZE) {
+                        pagWrapper.innerHTML = `
+                            <div class="text-xs text-slate-500 font-medium my-1 text-center">
+                                Menampilkan <span class="font-bold text-slate-700">${totalRows}</span> data
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    const showingStart = totalRows === 0 ? 0 : startIdx + 1;
+                    const showingEnd = Math.min(endIdx, totalRows);
+
+                    let buttonsHtml = '';
+                    buttonsHtml += `
+                        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                            <button type="button" class="page-link" ${currentPage === 1 ? 'disabled' : ''} data-target-page="${currentPage - 1}" title="Halaman Sebelumnya">
+                                <i class="fa-solid fa-chevron-left text-[11px]"></i>
+                            </button>
+                        </li>
+                    `;
+
+                    let startPage = Math.max(1, currentPage - 2);
+                    let endPage = Math.min(totalPages, currentPage + 2);
+
+                    if (startPage > 1) {
+                        buttonsHtml += `<li class="page-item"><button type="button" class="page-link" data-target-page="1">1</button></li>`;
+                        if (startPage > 2) buttonsHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                    }
+
+                    for (let p = startPage; p <= endPage; p++) {
+                        buttonsHtml += `
+                            <li class="page-item ${p === currentPage ? 'active' : ''}">
+                                <button type="button" class="page-link ${p === currentPage ? 'active' : ''}" data-target-page="${p}">${p}</button>
+                            </li>
+                        `;
+                    }
+
+                    if (endPage < totalPages) {
+                        if (endPage < totalPages - 1) buttonsHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                        buttonsHtml += `<li class="page-item"><button type="button" class="page-link" data-target-page="${totalPages}">${totalPages}</button></li>`;
+                    }
+
+                    buttonsHtml += `
+                        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                            <button type="button" class="page-link" ${currentPage === totalPages ? 'disabled' : ''} data-target-page="${currentPage + 1}" title="Halaman Selanjutnya">
+                                <i class="fa-solid fa-chevron-right text-[11px]"></i>
+                            </button>
+                        </li>
+                    `;
+
+                    pagWrapper.innerHTML = `
+                        <div class="text-xs text-slate-500 mb-2 font-medium text-center">
+                            Menampilkan <span class="font-bold text-slate-700">${showingStart}</span> - <span class="font-bold text-slate-700">${showingEnd}</span> dari <span class="font-bold text-slate-700">${totalRows}</span> data
+                        </div>
+                        <nav class="flex justify-center items-center">
+                            <ul class="pagination">
+                                ${buttonsHtml}
+                            </ul>
+                        </nav>
+                    `;
+
+                    pagWrapper.querySelectorAll('button[data-target-page]').forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            currentPage = parseInt(this.getAttribute('data-target-page'));
+                            renderTablePagination();
+                        });
+                    });
+                }
+
+                renderTablePagination();
+                window._siakadPagRenderers.push(() => {
+                    currentPage = 1;
+                    renderTablePagination();
+                });
+            });
+        }
+        
+        // Auto refresh pagination on search/filter input or select change
+        document.addEventListener('input', function(e) {
+            if (e.target && (e.target.matches('input[type="text"], input[type="search"]') || (e.target.id && e.target.id.toLowerCase().includes('search')))) {
+                setTimeout(window.refreshSiakadPagination, 50);
+            }
+        });
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.matches('select')) {
+                setTimeout(window.refreshSiakadPagination, 50);
+            }
+        });
+    </script>
 </body>
 </html>
 

@@ -263,14 +263,60 @@ class siswaController extends Controller
         $data_siswa = siswa::with(['kelas', 'sekolah'])->where("id", $siswa_id)->first();
         $data_kelas = $data_siswa ? ruang_kelas::where("id", $data_siswa->kelas_id)->first() : null;
 
-        $pengumuman_db = pengumuman::orderByDesc('tanggal')->orderByDesc('id')->get();
+        $pengumuman_db = pengumuman::with(['sekolah', 'ruangKelas'])
+            ->where(function($q) use ($siswa_id, $data_siswa) {
+                // 1. Target Semua
+                $q->where('target_tipe', 'semua')
+                // 2. Target Tingkat Sekolah Siswa
+                ->orWhere(function($sub) use ($data_siswa) {
+                    if ($data_siswa && $data_siswa->sekolah_id) {
+                        $sub->where('target_tipe', 'sekolah')
+                            ->where('sekolah_id', $data_siswa->sekolah_id);
+                    }
+                })
+                // 3. Target Kelas Siswa
+                ->orWhere(function($sub) use ($data_siswa) {
+                    if ($data_siswa && $data_siswa->kelas_id) {
+                        $sub->where('target_tipe', 'kelas')
+                            ->where('kelas_id', $data_siswa->kelas_id);
+                    }
+                })
+                // 4. Target Role Siswa
+                ->orWhere(function($sub) {
+                    $sub->where('target_tipe', 'role')
+                        ->whereIn('target_role', ['s', 'all']);
+                })
+                // 5. Target Personal Siswa
+                ->orWhere(function($sub) use ($siswa_id) {
+                    $sub->where('target_tipe', 'spesifik')
+                        ->where('siswa_id', $siswa_id);
+                });
+            })
+            ->orderByDesc('tanggal')
+            ->orderByDesc('id')
+            ->get();
+
         $list_pengumuman = $pengumuman_db->map(function ($p) {
+            $ditujukan = 'Seluruh Siswa & Wali Murid';
+            if ($p->target_tipe === 'sekolah') {
+                $ditujukan = 'Jenjang ' . ($p->sekolah->jenis ?? 'Sekolah');
+            } elseif ($p->target_tipe === 'kelas') {
+                $ditujukan = 'Kelas ' . ($p->ruangKelas->nama_ruang ?? '-');
+            } elseif ($p->target_tipe === 'role') {
+                $ditujukan = 'Seluruh Siswa & Orang Tua';
+            } elseif ($p->target_tipe === 'spesifik') {
+                $ditujukan = 'Pribadi / Khusus Anda';
+            }
+
             return (object)[
-                'tanggal' => $p->tanggal ? Carbon::parse($p->tanggal)->locale('id')->isoFormat('D MMM Y') : now()->isoFormat('D MMM Y'),
+                'id' => $p->id,
+                'tanggal' => $p->tanggal ? Carbon::parse($p->tanggal)->locale('id')->isoFormat('D MMMM Y') : now()->isoFormat('D MMMM Y'),
                 'judul' => $p->judul,
+                'penulis' => $p->penulis ?? 'Admin SIAKAD',
                 'ringkasan' => \Illuminate\Support\Str::limit(strip_tags($p->isi), 140),
                 'isi' => $p->isi,
-                'ditujukan' => 'Seluruh Siswa & Wali Murid',
+                'lampiran' => $p->lampiran,
+                'ditujukan' => $ditujukan,
             ];
         });
 

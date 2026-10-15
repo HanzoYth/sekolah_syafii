@@ -209,7 +209,7 @@
                 const matchesGender = !gender || row.dataset.gender === gender;
                 const show = matchesKeyword && matchesGender;
                 
-                row.style.display = show ? '' : 'none';
+                row.setAttribute('data-filtered-out', show ? 'false' : 'true');
                 if (show) visible++;
             });
 
@@ -219,6 +219,7 @@
             } else {
                 filterEmpty.style.display = 'none';
             }
+            if (window.refreshSiakadPagination) window.refreshSiakadPagination();
         }
 
         searchInput?.addEventListener('input', filterStudents);

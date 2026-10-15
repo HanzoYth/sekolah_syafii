@@ -106,6 +106,12 @@
                                 <span>Kehadiran Guru</span>
                             </a>
                         </li>
+                        <li class="menu-item <?php echo e(request()->is('sk/kelola-pengumuman') ? 'active' : ''); ?>">
+                            <a href="/sk/kelola-pengumuman">
+                                <i class="fa-solid fa-bullhorn"></i>
+                                <span>Kelola Pengumuman</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
@@ -212,6 +218,12 @@
                             <a href="/sk/pr">
                                 <i class="fa-solid fa-id-card"></i>
                                 <span>Profil</span>
+                            </a>
+                        </li>
+                        <li class="menu-item <?php echo e(request()->is('sk/pengumuman-guru') ? 'active' : ''); ?>">
+                            <a href="/sk/pengumuman-guru">
+                                <i class="fa-solid fa-bullhorn"></i>
+                                <span>Pengumuman</span>
                             </a>
                         </li>
                     </ul>

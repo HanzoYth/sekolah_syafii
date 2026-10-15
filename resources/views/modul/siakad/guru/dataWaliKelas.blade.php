@@ -16,47 +16,47 @@
 
     @if($wallas)
         <!-- Top Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-start space-x-4">
-                <div class="p-3 bg-violet-50 text-violet-600 rounded-lg">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 flex items-start space-x-4 min-w-0">
+                <div class="p-3 bg-violet-50 text-violet-600 rounded-lg flex-shrink-0">
                     <i class="fa-solid fa-school text-xl"></i>
                 </div>
-                <div>
-                    <p class="text-sm font-medium text-slate-500">Rombongan Belajar</p>
-                    <h3 class="text-2xl font-bold text-slate-800">{{ $wallas->ruangKelas->nama_ruang ?? '-' }}</h3>
-                    <p class="text-xs text-slate-400 mt-1">Kelas perwalian binaan</p>
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium text-slate-500 truncate">Rombongan Belajar</p>
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-800 break-words leading-snug mt-0.5">{{ $wallas->ruangKelas->nama_ruang ?? '-' }}</h3>
+                    <p class="text-xs text-slate-400 mt-1 truncate">Kelas perwalian binaan</p>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-start space-x-4">
-                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 flex items-start space-x-4 min-w-0">
+                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg flex-shrink-0">
                     <i class="fa-solid fa-users text-xl"></i>
                 </div>
-                <div>
-                    <p class="text-sm font-medium text-slate-500">Total Siswa Binaan</p>
-                    <h3 class="text-2xl font-bold text-slate-800">{{ count($siswa) }}</h3>
-                    <p class="text-xs text-slate-400 mt-1">
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium text-slate-500 truncate">Total Siswa Binaan</p>
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mt-0.5 truncate">{{ count($siswa) }}</h3>
+                    <p class="text-xs text-slate-400 mt-1 truncate">
                         {{ $siswa->where('gender', 'l')->count() }} Laki-laki • {{ $siswa->where('gender', 'p')->count() }} Perempuan
                     </p>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 flex flex-col justify-between sm:col-span-2 lg:col-span-1">
                 <div>
                     <p class="text-sm font-medium text-slate-500 mb-2">Aksi Singkat Walas</p>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <a href="/sk/absensi-walas" class="flex-1 inline-flex items-center justify-center px-2.5 py-2 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 text-xs font-semibold transition-colors whitespace-nowrap">
-                            <i class="fa-solid fa-clipboard-user mr-1.5"></i> Absen Kelas
+                    <div class="grid grid-cols-3 gap-2">
+                        <a href="/sk/absensi-walas" class="inline-flex items-center justify-center px-2 py-2 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 text-xs font-semibold transition-colors text-center truncate">
+                            <i class="fa-solid fa-clipboard-user mr-1.5 flex-shrink-0"></i> <span class="truncate">Absen</span>
                         </a>
-                        <a href="/sk/rapor-walas?tab=nilai" class="flex-1 inline-flex items-center justify-center px-2.5 py-2 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 text-xs font-semibold transition-colors whitespace-nowrap">
-                            <i class="fa-solid fa-sliders mr-1.5"></i> Kelola Nilai
+                        <a href="/sk/rapor-walas?tab=nilai" class="inline-flex items-center justify-center px-2 py-2 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 text-xs font-semibold transition-colors text-center truncate">
+                            <i class="fa-solid fa-sliders mr-1.5 flex-shrink-0"></i> <span class="truncate">Nilai</span>
                         </a>
-                        <a href="/sk/rapor-walas" class="flex-1 inline-flex items-center justify-center px-2.5 py-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-xs font-semibold transition-colors whitespace-nowrap">
-                            <i class="fa-solid fa-file-contract mr-1.5"></i> Rapor
+                        <a href="/sk/rapor-walas" class="inline-flex items-center justify-center px-2 py-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-xs font-semibold transition-colors text-center truncate">
+                            <i class="fa-solid fa-file-contract mr-1.5 flex-shrink-0"></i> <span class="truncate">Rapor</span>
                         </a>
                     </div>
                 </div>
-                <p class="text-[11px] text-slate-400 mt-2">Kelola kehadiran, nilai mapel, dan rapor rombel</p>
+                <p class="text-[11px] text-slate-400 mt-2 truncate">Kelola kehadiran, nilai mapel, dan rapor rombel</p>
             </div>
         </div>
 
