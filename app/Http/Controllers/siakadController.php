@@ -527,6 +527,16 @@ class siakadController extends Controller
             ->groupBy('jadwal_pelajaran_id');
             
         $jadwal_id = $request->input('jadwal_id');
+        if (!$jadwal_id && $jadwal_hari_ini->isNotEmpty()) {
+            $sekarang_time = now()->format('H:i:s');
+            $sesi_aktif = $jadwal_hari_ini->first(function($j) use ($sekarang_time) {
+                $mulai = $j->jam_pelajaran->jam_mulai ?? '00:00:00';
+                $selesai = $j->jam_pelajaran->jam_selesai ?? '23:59:59';
+                return $sekarang_time >= $mulai && $sekarang_time <= $selesai;
+            });
+            $jadwal_id = $sesi_aktif ? $sesi_aktif->id : $jadwal_hari_ini->first()->id;
+        }
+
         $siswa = collect();
         $absensi_db = collect();
         $jadwal_terpilih = null;
@@ -610,6 +620,7 @@ class siakadController extends Controller
         $absensi = $request->input('absensi', []);
         $materi = $request->input('materi') ?: 'Pertemuan Pembelajaran Rutin';
         $catatan = $request->input('catatan') ?? $request->input('catatan_jurnal');
+        $aksi = $request->input('aksi', 'simpan_semua');
         
         if ($tanggal > date('Y-m-d')) {
             return redirect()->back()->with('error', 'Tidak dapat melakukan absensi untuk tanggal di masa depan.');
@@ -621,7 +632,6 @@ class siakadController extends Controller
         }
 
         // Cek & Rekam Kehadiran Guru Mengajar
-        // Toleransi masuk kelas: jam_pelajaran->jam_mulai + 5 menit
         $absen_guru = \App\Models\absensi_mengajar_guru::where('jadwal_pelajaran_id', $jadwal_id)
             ->where('tanggal', $tanggal)
             ->first();
@@ -632,74 +642,94 @@ class siakadController extends Controller
         $jam_batas = $jam_mulai->copy()->addMinutes(5); // batas toleransi 5 menit setelah jam mulai
         $sekarang = now();
 
-        // Validasi Anti-Kecurangan Absen Terlalu Dini
-        if (!$absen_guru && $tanggal === date('Y-m-d')) {
-            if ($sekarang->format('H:i:s') < $jam_buka->format('H:i:s')) {
-                return redirect()->back()->with('error', 'Presensi belum dapat dilakukan. Sesi ini baru dapat dibuka mulai pukul ' . $jam_buka->format('H:i') . ' WIB (5 menit sebelum jam mulai).');
+        // 1. TAHAP 1: PRESENSI MASUK GURU & JURNAL MATERI
+        if ($aksi === 'presensi_guru') {
+            // Validasi Anti-Kecurangan Absen Terlalu Dini
+            if (!$absen_guru && $tanggal === date('Y-m-d')) {
+                if ($sekarang->format('H:i:s') < $jam_buka->format('H:i:s')) {
+                    return redirect()->back()->with('error', 'Presensi belum dapat dilakukan. Sesi ini baru dapat dibuka mulai pukul ' . $jam_buka->format('H:i') . ' WIB (5 menit sebelum jam mulai).');
+                }
             }
-        }
 
-        // Sinkronisasi kelas jadwal ke ruang_kelas (foreign key absensi_siswa.kelas_id -> ruang_kelas.id)
-        $nama_kelas = $jadwal->kelas->nama_kelas ?? ($jadwal->kelas->nama_ruang ?? '');
-        $ruang_kelas = \App\Models\ruang_kelas::where('nama_ruang', $nama_kelas)->first();
-        $ruang_kelas_id = $jadwal->kelas->ruang_kelas_id ?? ($ruang_kelas ? $ruang_kelas->id : null);
+            if (!$absen_guru) {
+                if ($tanggal === date('Y-m-d')) {
+                    $jam_masuk = $sekarang->format('H:i:s');
+                    $status_guru = ($jam_masuk <= $jam_batas->format('H:i:s')) ? 'tepat_waktu' : 'terlambat';
+                } else if ($tanggal < date('Y-m-d')) {
+                    // Input susulan setelah hari H dianggap terlambat
+                    $status_guru = 'terlambat';
+                    $jam_masuk = $jam_batas->copy()->addMinutes(15)->format('H:i:s');
+                } else {
+                    $status_guru = 'tepat_waktu';
+                    $jam_masuk = $jam_mulai->format('H:i:s');
+                }
 
-        // Simpan Absensi Siswa
-        foreach ($absensi as $siswa_id => $data) {
-            $siswa_obj = \App\Models\siswa::find($siswa_id);
-            $kelas_id_to_save = $ruang_kelas_id ?? ($siswa_obj ? $siswa_obj->kelas_id : $jadwal->kelas_id);
-
-            \App\Models\absensi_siswa::updateOrCreate(
-                [
+                \App\Models\absensi_mengajar_guru::create([
                     'jadwal_pelajaran_id' => $jadwal_id,
-                    'siswa_id' => $siswa_id,
-                    'tanggal' => $tanggal
-                ],
-                [
-                    'kelas_id' => $kelas_id_to_save,
                     'guru_id' => $guru_id,
-                    'status' => $data['status'] ?? 'h',
-                    'keterangan' => $data['keterangan'] ?? null
-                ]
-            );
+                    'tanggal' => $tanggal,
+                    'jam_masuk' => $jam_masuk,
+                    'status' => $status_guru,
+                    'materi' => $materi,
+                    'catatan' => $catatan
+                ]);
+
+                $status_badge = ($status_guru === 'tepat_waktu') ? 'Tepat Waktu' : 'Terlambat';
+                return redirect("/sk/ass?tanggal={$tanggal}&jadwal_id={$jadwal_id}#tahap-siswa")->with('success', "Presensi masuk kelas Anda berhasil dicatat ({$status_badge} pukul " . substr($jam_masuk, 0, 5) . " WIB)! Silakan lanjutkan pengisian absensi siswa di bawah.");
+            } else {
+                // Perbarui materi atau catatan jurnal jika sudah presensi sebelumnya
+                $absen_guru->update([
+                    'materi' => $materi,
+                    'catatan' => $catatan
+                ]);
+                return redirect("/sk/ass?tanggal={$tanggal}&jadwal_id={$jadwal_id}")->with('success', "Materi & catatan jurnal mengajar berhasil diperbarui.");
+            }
         }
 
-        $info_status = '';
-        if (!$absen_guru) {
-            if ($tanggal === date('Y-m-d')) {
-                $jam_masuk = $sekarang->format('H:i:s');
-                $status_guru = ($jam_masuk <= $jam_batas->format('H:i:s')) ? 'tepat_waktu' : 'terlambat';
-            } else if ($tanggal < date('Y-m-d')) {
-                // Input susulan setelah hari H dianggap terlambat
-                $status_guru = 'terlambat';
-                $jam_masuk = $jam_batas->copy()->addMinutes(15)->format('H:i:s');
-            } else {
-                $status_guru = 'tepat_waktu';
-                $jam_masuk = $jam_mulai->format('H:i:s');
+        // 2. TAHAP 2: SIMPAN PRESENSI SISWA
+        if ($aksi === 'absensi_siswa' || !empty($absensi)) {
+            // Pastikan guru telah melakukan presensi masuk terlebih dahulu
+            if (!$absen_guru) {
+                return redirect("/sk/ass?tanggal={$tanggal}&jadwal_id={$jadwal_id}")->with('error', 'Harap lakukan presensi masuk kelas dan isi materi pembelajaran terlebih dahulu sebelum mengisi absensi siswa.');
             }
 
-            $absen_baru = \App\Models\absensi_mengajar_guru::create([
-                'jadwal_pelajaran_id' => $jadwal_id,
-                'guru_id' => $guru_id,
-                'tanggal' => $tanggal,
-                'jam_masuk' => $jam_masuk,
-                'status' => $status_guru,
-                'materi' => $materi,
-                'catatan' => $catatan
-            ]);
+            // Sinkronisasi kelas jadwal ke ruang_kelas
+            $nama_kelas = $jadwal->kelas->nama_kelas ?? ($jadwal->kelas->nama_ruang ?? '');
+            $ruang_kelas = \App\Models\ruang_kelas::where('nama_ruang', $nama_kelas)->first();
+            $ruang_kelas_id = $jadwal->kelas->ruang_kelas_id ?? ($ruang_kelas ? $ruang_kelas->id : null);
 
-            $status_badge = ($status_guru === 'tepat_waktu') ? 'Tepat Waktu' : 'Terlambat';
-            $info_status = "Presensi kehadiran & jurnal materi Anda berhasil dicatat sebagai {$status_badge} (Masuk pukul " . substr($jam_masuk, 0, 5) . " WIB, batas toleransi " . $jam_batas->format('H:i') . " WIB).";
-        } else {
-            $absen_guru->update([
-                'materi' => $materi,
-                'catatan' => $catatan
-            ]);
-            $status_badge = ($absen_guru->status === 'tepat_waktu') ? 'Tepat Waktu' : 'Terlambat';
-            $info_status = "Presensi siswa & jurnal materi diperbarui. Waktu masuk guru tetap tercatat {$status_badge} (Pukul " . substr($absen_guru->jam_masuk, 0, 5) . " WIB).";
+            // Simpan Absensi Siswa
+            foreach ($absensi as $siswa_id => $data) {
+                $siswa_obj = \App\Models\siswa::find($siswa_id);
+                $kelas_id_to_save = $ruang_kelas_id ?? ($siswa_obj ? $siswa_obj->kelas_id : $jadwal->kelas_id);
+
+                \App\Models\absensi_siswa::updateOrCreate(
+                    [
+                        'jadwal_pelajaran_id' => $jadwal_id,
+                        'siswa_id' => $siswa_id,
+                        'tanggal' => $tanggal
+                    ],
+                    [
+                        'kelas_id' => $kelas_id_to_save,
+                        'guru_id' => $guru_id,
+                        'status' => $data['status'] ?? 'h',
+                        'keterangan' => $data['keterangan'] ?? null
+                    ]
+                );
+            }
+
+            // Update catatan materi opsional jika dikirimkan bersamaan
+            if ($request->filled('materi')) {
+                $absen_guru->update([
+                    'materi' => $materi,
+                    'catatan' => $catatan
+                ]);
+            }
+
+            return redirect("/sk/ass?tanggal={$tanggal}&jadwal_id={$jadwal_id}")->with('success', 'Data absensi siswa (' . count($absensi) . ' siswa) berhasil disimpan!');
         }
 
-        return redirect()->back()->with('success', 'Data absensi mapel berhasil disimpan! ' . $info_status);
+        return redirect()->back()->with('info', 'Tidak ada data presensi yang diperbarui.');
     }
 
     function profilGuru(){
@@ -977,13 +1007,30 @@ class siakadController extends Controller
         if ($check) return $check;
 
         $sekolah_id = $request->query('sekolah_id');
+        $status_rombel = $request->query('status_rombel');
+
         $query = siswa::with(['kelas', 'sekolah']);
         if ($sekolah_id) {
             $query->where('sekolah_id', $sekolah_id);
         }
+
+        // Hitung jumlah siswa belum punya kelas
+        $tanpa_kelas_query = siswa::whereNull('kelas_id');
+        if ($sekolah_id) {
+            $tanpa_kelas_query->where('sekolah_id', $sekolah_id);
+        }
+        $jumlahTanpaKelas = $tanpa_kelas_query->count();
+
+        // Terapkan filter status rombel jika ada
+        if ($status_rombel === 'tanpa_kelas') {
+            $query->whereNull('kelas_id');
+        } elseif ($status_rombel === 'ada_kelas') {
+            $query->whereNotNull('kelas_id');
+        }
+
         $data_siswa = $query->get();
         $data_sekolah = \App\Models\jenis_sekolah::all();
-        return view ('/modul/siakad/admin/daftar_siswa',compact("data_siswa", "data_sekolah", "sekolah_id"));
+        return view('/modul/siakad/admin/daftar_siswa', compact("data_siswa", "data_sekolah", "sekolah_id", "status_rombel", "jumlahTanpaKelas"));
     }
 
     function tampilan_detailSiswa($id){
@@ -1116,7 +1163,35 @@ class siakadController extends Controller
         $mapel_guru = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran', 'tahun_ajaran'])
             ->where('guru_id', $guru_id)
             ->get();
-        return view('/modul/siakad/guru/inputNilai', compact('mapel_guru'));
+
+        // Hitung progres kelengkapan nilai per jadwal
+        foreach ($mapel_guru as $mapel) {
+            $nama_kelas = $mapel->kelas->nama_kelas ?? '';
+            $ruang = \App\Models\ruang_kelas::where('nama_ruang', $nama_kelas)->first();
+            $ruang_id = $ruang ? $ruang->id : $mapel->kelas_id;
+
+            $siswa_ids = \App\Models\siswa::where('kelas_id', $ruang_id)->pluck('id');
+            $total_siswa = $siswa_ids->count();
+
+            $siswa_dinilai = 0;
+            if ($total_siswa > 0) {
+                $siswa_dinilai = \App\Models\nilai::where('mapel_id', $mapel->mapel_id)
+                    ->whereIn('siswa_id', $siswa_ids)
+                    ->distinct('siswa_id')
+                    ->count('siswa_id');
+            }
+
+            $mapel->total_siswa = $total_siswa;
+            $mapel->siswa_dinilai = $siswa_dinilai;
+            $mapel->persentase_selesai = $total_siswa > 0 ? (int) round(($siswa_dinilai / $total_siswa) * 100) : 0;
+            $mapel->is_tuntas = ($total_siswa > 0 && $siswa_dinilai >= $total_siswa);
+        }
+
+        $total_kelas = count($mapel_guru);
+        $kelas_tuntas = $mapel_guru->filter(fn($m) => $m->is_tuntas)->count();
+        $kelas_belum = $total_kelas - $kelas_tuntas;
+
+        return view('/modul/siakad/guru/inputNilai', compact('mapel_guru', 'total_kelas', 'kelas_tuntas', 'kelas_belum'));
     }
 
     function dataWaliKelas(Request $request) {
@@ -1796,7 +1871,8 @@ class siakadController extends Controller
         $request->validate(['nama_mapel' => 'required', 'sekolah_id' => 'required']);
         \App\Models\mata_pelajaran::create([
             'nama_mapel' => $request->nama_mapel,
-            'sekolah_id' => $request->sekolah_id
+            'sekolah_id' => $request->sekolah_id,
+            'kkm' => $request->input('kkm', 75)
         ]);
         return back()->with('success', 'Mata Pelajaran berhasil ditambahkan.');
     }
@@ -1830,11 +1906,91 @@ class siakadController extends Controller
         if ($check) return $check;
 
         $request->validate(['nama_mapel' => 'required', 'sekolah_id' => 'required']);
-        \App\Models\mata_pelajaran::findOrFail($id)->update([
+        $update_data = [
             'nama_mapel' => $request->nama_mapel,
             'sekolah_id' => $request->sekolah_id
-        ]);
+        ];
+        if ($request->has('kkm')) {
+            $update_data['kkm'] = $request->input('kkm', 75);
+        }
+        \App\Models\mata_pelajaran::findOrFail($id)->update($update_data);
         return redirect('/sk/kelola-mapel')->with('success', 'Mata Pelajaran berhasil diperbarui.');
+    }
+
+    // ==========================================
+    // MANAJEMEN ATURAN PENILAIAN & KKM (ADMIN SIAKAD)
+    // ==========================================
+    public function kelolaBobotPenilaian(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
+        $jenis_penilaian = \App\Models\jenis_penilaian::all();
+        if ($jenis_penilaian->isEmpty()) {
+            \App\Models\jenis_penilaian::insert([
+                ['nama_jenis' => 'Tugas', 'bobot' => 20],
+                ['nama_jenis' => 'Ulangan Harian', 'bobot' => 30],
+                ['nama_jenis' => 'UTS', 'bobot' => 20],
+                ['nama_jenis' => 'UAS', 'bobot' => 30]
+            ]);
+            $jenis_penilaian = \App\Models\jenis_penilaian::all();
+        }
+
+        $sekolah_id = $request->query('sekolah_id');
+        $query_mapel = \App\Models\mata_pelajaran::with('sekolah');
+        if ($sekolah_id) {
+            $query_mapel->where('sekolah_id', $sekolah_id);
+        }
+        $data_mapel = $query_mapel->orderBy('sekolah_id')->orderBy('nama_mapel')->get();
+        $data_sekolah = \App\Models\jenis_sekolah::all();
+
+        $total_bobot = $jenis_penilaian->sum('bobot');
+        $avg_kkm = $data_mapel->avg('kkm') ? round($data_mapel->avg('kkm'), 1) : 75;
+
+        return view('modul.siakad.admin.kelolaPenilaian', compact(
+            'jenis_penilaian', 'data_mapel', 'data_sekolah', 'sekolah_id', 'total_bobot', 'avg_kkm'
+        ));
+    }
+
+    public function simpanBobotPenilaian(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
+        $bobot_input = $request->input('bobot', []);
+        $total = 0;
+
+        foreach ($bobot_input as $id => $val) {
+            $val = max(0, min(100, intval($val)));
+            $total += $val;
+            \App\Models\jenis_penilaian::where('id', $id)->update(['bobot' => $val]);
+        }
+
+        if ($total != 100) {
+            return redirect()->back()->with('error', "Bobot penilaian berhasil diperbarui, namun total saat ini adalah {$total}% (disarankan tepat 100% agar perhitungan nilai akhir akurat).");
+        }
+
+        return redirect()->back()->with('success', 'Persentase bobot penilaian (Tugas, Ulangan Harian, UTS, UAS) berhasil diperbarui (Total: 100%).');
+    }
+
+    public function simpanKkmMapel(Request $request) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
+        if ($request->has('kkm') && is_array($request->input('kkm'))) {
+            $kkm_input = $request->input('kkm');
+            foreach ($kkm_input as $mapel_id => $val) {
+                if ($val !== null && $val !== '') {
+                    $kkm_val = max(0, min(100, intval($val)));
+                    \App\Models\mata_pelajaran::where('id', $mapel_id)->update(['kkm' => $kkm_val]);
+                }
+            }
+            return redirect()->back()->with('success', 'Nilai KKM mata pelajaran berhasil diperbarui.');
+        } elseif ($request->filled('mapel_id') && $request->filled('kkm_tunggal')) {
+            $kkm_val = max(0, min(100, intval($request->kkm_tunggal)));
+            \App\Models\mata_pelajaran::where('id', $request->mapel_id)->update(['kkm' => $kkm_val]);
+            return redirect()->back()->with('success', 'Nilai KKM mata pelajaran berhasil diperbarui.');
+        }
+
+        return redirect()->back()->with('info', 'Tidak ada data KKM yang diperbarui.');
     }
 
     function hapusJadwal($id) {

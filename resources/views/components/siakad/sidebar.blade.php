@@ -57,6 +57,12 @@
                                 <span>Mata Pelajaran</span>
                             </a>
                         </li>
+                        <li class="menu-item {{ request()->is('sk/bobot-penilaian') ? 'active' : '' }}">
+                            <a href="/sk/bobot-penilaian">
+                                <i class="fa-solid fa-sliders"></i>
+                                <span>Bobot & KKM Nilai</span>
+                            </a>
+                        </li>
                         <li class="menu-item {{ request()->is('sk/kelola-jadwal') ? 'active' : '' }}">
                             <a href="/sk/kelola-jadwal">
                                 <i class="fa-solid fa-calendar-alt"></i>

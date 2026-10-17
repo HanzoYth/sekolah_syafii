@@ -259,6 +259,15 @@ Route::post('/sk/proses-kenaikan-kelas', [siakadController::class, 'prosesKenaik
 Route::post('/sk/simpan-absensi-mapel', [App\Http\Controllers\siakadController::class, 'simpanAbsensiMapel']);
 Route::get('/sk/laporan-absensi-guru', [App\Http\Controllers\siakadController::class, 'laporanAbsensiGuru']);
 
+// PENGATURAN BOBOT PENILAIAN & KKM (Admin SIAKAD)
+Route::get('/sk/bobot-penilaian', [App\Http\Controllers\siakadController::class, 'kelolaBobotPenilaian']);
+Route::post('/sk/simpan-bobot-penilaian', [App\Http\Controllers\siakadController::class, 'simpanBobotPenilaian']);
+Route::post('/sk/simpan-kkm-mapel', [App\Http\Controllers\siakadController::class, 'simpanKkmMapel']);
+
+
+
+
+
 //siswa
 Route::get("/sk/frss",[siswaController::class,"tampilan_formulirSiswa"]);
 Route::post("/sk/tbss",[siswaController::class,"tambah_siswa"]);

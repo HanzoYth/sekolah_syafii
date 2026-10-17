@@ -9,4 +9,9 @@ class mata_pelajaran extends Model
     protected $table = 'mata_pelajaran';
     public $timestamps = true;
     protected $guarded = [];
+
+    public function sekolah()
+    {
+        return $this->belongsTo(jenis_sekolah::class, 'sekolah_id');
+    }
 }

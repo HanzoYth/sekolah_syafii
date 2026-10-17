@@ -34,6 +34,28 @@
         </div>
     @endif
 
+    @if(count($siswa_belum_ada_kelas) > 0)
+        <!-- Alert Banner Siswa Belum Ada Kelas -->
+        <div class="mb-6 p-4 sm:p-5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+            <div class="flex items-start gap-3.5">
+                <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-lg flex-shrink-0 mt-0.5">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-amber-800">
+                        Terdapat {{ count($siswa_belum_ada_kelas) }} Peserta Didik Belum Memiliki Ruang Kelas
+                    </h3>
+                    <p class="text-xs text-amber-700 mt-0.5">
+                        Pilih ruang kelas tujuan pada formulir di bawah ini untuk mendistribusikan siswa baru ke dalam rombel.
+                    </p>
+                </div>
+            </div>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-amber-300 text-xs font-bold text-amber-800 shadow-sm self-start sm:self-auto">
+                <i class="fa-solid fa-user-clock text-amber-600"></i> {{ count($siswa_belum_ada_kelas) }} Menunggu Penempatan
+            </div>
+        </div>
+    @endif
+
     <!-- Card Filter & Pemilihan Kelas -->
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-slate-100">
@@ -381,15 +403,76 @@
         </div>
     @else
         <!-- State Awal: Belum Memilih Kelas -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center text-slate-500">
-            <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
-                <i class="fa-solid fa-chalkboard-user text-2xl"></i>
+        @if(count($siswa_belum_ada_kelas) > 0)
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+                <div class="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-user-clock text-amber-600"></i>
+                            Daftar Siswa Belum Memiliki Ruang Kelas ({{ count($siswa_belum_ada_kelas) }} Siswa)
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">
+                            Siswa di bawah ini perlu dimasukkan ke dalam rombel. Pilih nama ruang kelas pada form di atas untuk mulai memasukkan siswa.
+                        </p>
+                    </div>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 self-start sm:self-auto">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Menunggu Penempatan
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                <th class="py-3 px-4 w-12 text-center">No</th>
+                                <th class="py-3 px-4">Nama Siswa</th>
+                                <th class="py-3 px-4">NIS</th>
+                                <th class="py-3 px-4">Jenis Kelamin</th>
+                                <th class="py-3 px-4">Jenjang</th>
+                                <th class="py-3 px-4 text-center">Status Rombel</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @foreach($siswa_belum_ada_kelas->take(10) as $idx => $s)
+                                <tr class="hover:bg-slate-50/80 transition-colors">
+                                    <td class="py-2.5 px-4 text-center text-slate-400 font-mono">{{ $idx + 1 }}</td>
+                                    <td class="py-2.5 px-4 font-bold text-slate-800">{{ $s->nama }}</td>
+                                    <td class="py-2.5 px-4 font-mono text-slate-600">{{ $s->nis ?? '-' }}</td>
+                                    <td class="py-2.5 px-4">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold {{ ($s->gender ?? '') === 'p' ? 'bg-pink-50 text-pink-700' : 'bg-blue-50 text-blue-700' }}">
+                                            {{ ($s->gender ?? '') === 'p' ? 'Perempuan' : 'Laki-laki' }}
+                                        </span>
+                                    </td>
+                                    <td class="py-2.5 px-4 text-slate-600">{{ $s->sekolah->jenis ?? '-' }}</td>
+                                    <td class="py-2.5 px-4 text-center">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                            <i class="fa-solid fa-clock"></i> Belum Masuk Kelas
+                                        </span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            @if(count($siswa_belum_ada_kelas) > 10)
+                                <tr>
+                                    <td colspan="6" class="py-3 px-4 text-center text-slate-500 bg-slate-50/50 italic">
+                                        ...dan {{ count($siswa_belum_ada_kelas) - 10 }} siswa lainnya. Silakan pilih ruang kelas di form atas untuk membagi siswa ke dalam rombel.
+                                    </td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <h4 class="text-base font-semibold text-slate-800">Silakan Pilih Ruang Kelas Terlebih Dahulu</h4>
-            <p class="text-xs text-slate-400 mt-1 max-w-md mx-auto">
-                Pilih jenjang sekolah dan nama ruang kelas melalui form filter di atas untuk melihat daftar anggota kelas serta menambahkan siswa baru ke dalamnya.
-            </p>
-        </div>
+        @else
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center text-slate-500">
+                <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                    <i class="fa-solid fa-chalkboard-user text-2xl"></i>
+                </div>
+                <h4 class="text-base font-semibold text-slate-800">Silakan Pilih Ruang Kelas Terlebih Dahulu</h4>
+                <p class="text-xs text-slate-400 mt-1 max-w-md mx-auto">
+                    Pilih jenjang sekolah dan nama ruang kelas melalui form filter di atas untuk melihat daftar anggota kelas serta menambahkan siswa baru ke dalamnya.
+                </p>
+            </div>
+        @endif
     @endif
 
     <script>

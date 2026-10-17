@@ -1,6 +1,7 @@
 @php
     $totalSiswa = count($data_siswa);
     $siswaAktif = collect($data_siswa)->filter(fn ($siswa) => !isset($siswa->aktif) || (int) $siswa->aktif === 1)->count();
+    $tanpaKelas = $jumlahTanpaKelas ?? collect($data_siswa)->filter(fn ($siswa) => empty($siswa->kelas_id))->count();
     $jumlahKelas = collect($data_siswa)->pluck('kelas_id')->filter()->unique()->count();
 @endphp
 <x-siakad-layout title="Data Siswa" description="Kelola dan pantau data siswa yang terdaftar pada SIAKAD." position="Administrator SIAKAD" initials="AD">
@@ -26,7 +27,7 @@
                 </form>
             </div>
             <div style="color: #64748b; font-size: 14px; margin-top: 4px;">
-                Temukan informasi siswa berdasarkan nama, NIS, jenis kelamin, atau kelas.
+                Temukan informasi siswa berdasarkan nama, NIS, jenis kelamin, atau status penempatan kelas.
             </div>
         </div>
         <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
@@ -38,44 +39,82 @@
                 <span>{{ $totalSiswa }} siswa terdaftar</span>
             </div>
         </div>
-
     </div>
 
     <!-- Metrics Section -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 24px;">
-        <div style="background: white; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: #e9f2ff; color: #3875c5; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div style="background: white; border-radius: 12px; padding: 18px 20px; display: flex; align-items: center; gap: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: #e9f2ff; color: #3875c5; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
                 <i class="fa-solid fa-user-graduate"></i>
             </div>
             <div>
-                <div style="font-size: 13px; color: #64748b; font-weight: 600;">Total Siswa</div>
+                <div style="font-size: 12px; color: #64748b; font-weight: 600;">Total Siswa</div>
                 <div style="font-size: 20px; font-weight: bold; color: #1e293b;">{{ $totalSiswa }}</div>
-                <div style="font-size: 12px; color: #94a3b8;">Data siswa terdaftar</div>
+                <div style="font-size: 11px; color: #94a3b8;">Data siswa terdaftar</div>
             </div>
         </div>
 
-        <div style="background: white; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+        <div style="background: white; border-radius: 12px; padding: 18px 20px; display: flex; align-items: center; gap: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
             <div>
-                <div style="font-size: 13px; color: #64748b; font-weight: 600;">Siswa Aktif</div>
+                <div style="font-size: 12px; color: #64748b; font-weight: 600;">Siswa Aktif</div>
                 <div style="font-size: 20px; font-weight: bold; color: #1e293b;">{{ $siswaAktif }}</div>
-                <div style="font-size: 12px; color: #94a3b8;">Siap mengikuti kegiatan</div>
+                <div style="font-size: 11px; color: #94a3b8;">Status aktif belajar</div>
             </div>
         </div>
 
-        <div style="background: white; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: #f3e8ff; color: #9333ea; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+        <div style="background: {{ $tanpaKelas > 0 ? '#fffbeb' : 'white' }}; border-radius: 12px; padding: 18px 20px; display: flex; align-items: center; gap: 14px; border: 1px solid {{ $tanpaKelas > 0 ? '#fde68a' : '#e2e8f0' }}; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: {{ $tanpaKelas > 0 ? '#fef3c7' : '#f1f5f9' }}; color: {{ $tanpaKelas > 0 ? '#d97706' : '#64748b' }}; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div style="flex: 1;">
+                <div style="font-size: 12px; color: {{ $tanpaKelas > 0 ? '#92400e' : '#64748b' }}; font-weight: 700;">Belum Ada Kelas</div>
+                <div style="font-size: 20px; font-weight: bold; color: {{ $tanpaKelas > 0 ? '#b45309' : '#1e293b' }};">{{ $tanpaKelas }}</div>
+                <div style="font-size: 11px; color: {{ $tanpaKelas > 0 ? '#d97706' : '#94a3b8' }};">
+                    @if($tanpaKelas > 0)
+                        <a href="/sk/pembagian-kelas" style="color: #b45309; font-weight: 700; text-decoration: underline;">Bagi Kelas Sekarang &rarr;</a>
+                    @else
+                        Semua punya rombel
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div style="background: white; border-radius: 12px; padding: 18px 20px; display: flex; align-items: center; gap: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: #f3e8ff; color: #9333ea; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
                 <i class="fa-solid fa-school"></i>
             </div>
             <div>
-                <div style="font-size: 13px; color: #64748b; font-weight: 600;">Kelas Terisi</div>
+                <div style="font-size: 12px; color: #64748b; font-weight: 600;">Kelas Terisi</div>
                 <div style="font-size: 20px; font-weight: bold; color: #1e293b;">{{ $jumlahKelas }}</div>
-                <div style="font-size: 12px; color: #94a3b8;">Kelas dengan data siswa</div>
+                <div style="font-size: 11px; color: #94a3b8;">Rombel aktif berpenghuni</div>
             </div>
         </div>
     </div>
+
+    @if($tanpaKelas > 0)
+        <!-- Alert Banner Siswa Belum Ada Kelas -->
+        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 14px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 36px; height: 36px; border-radius: 8px; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <div style="font-size: 14px; font-weight: 700; color: #92400e;">
+                        Perhatian: Terdapat {{ $tanpaKelas }} Siswa Belum Masuk Ruang Kelas
+                    </div>
+                    <div style="font-size: 12px; color: #b45309; margin-top: 2px;">
+                        Peserta didik yang mendaftar mandiri perlu dimasukkan ke dalam rombel kelas agar terjadwal dalam kegiatan belajar mengajar.
+                    </div>
+                </div>
+            </div>
+            <a href="/sk/pembagian-kelas{{ $sekolah_id ? '?sekolah_id='.$sekolah_id : '' }}" style="display: inline-flex; align-items: center; gap: 8px; background: #d97706; color: white; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; box-shadow: 0 2px 4px rgba(217, 119, 6, 0.2); transition: all 0.2s;" onmouseover="this.style.background='#b45309'" onmouseout="this.style.background='#d97706'">
+                <i class="fa-solid fa-users-gear"></i> Tempatkan ke Kelas Sekarang
+            </a>
+        </div>
+    @endif
 
     <!-- Table Section -->
     <div style="background: white; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
@@ -98,6 +137,14 @@
                         <option value="p">Perempuan</option>
                     </select>
                 </div>
+                <div style="position: relative;">
+                    <i class="fa-solid fa-chalkboard-user" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 13px;"></i>
+                    <select id="rombelFilter" style="padding: 8px 12px 8px 32px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; background: white; cursor: pointer; appearance: none;">
+                        <option value="">Semua Status Rombel</option>
+                        <option value="tanpa_kelas" {{ ($status_rombel ?? '') == 'tanpa_kelas' ? 'selected' : '' }}>⚠️ Belum Ada Kelas ({{ $tanpaKelas }})</option>
+                        <option value="ada_kelas" {{ ($status_rombel ?? '') == 'ada_kelas' ? 'selected' : '' }}>Sudah Masuk Kelas</option>
+                    </select>
+                </div>
                 <span id="resultCounter" style="font-size: 13px; font-weight: 600; color: #64748b; background: #f1f5f9; padding: 6px 12px; border-radius: 20px;">{{ $totalSiswa }} data</span>
             </div>
         </div>
@@ -118,12 +165,12 @@
                     @foreach ($data_siswa as $index => $siswa)
                         @php
                             $kelas = $siswa->kelas;
-
+                            $hasKelas = !empty($siswa->kelas_id) && $kelas;
                             $isPerempuan = ($siswa->gender ?? '') === 'p';
                             $isAktif = !isset($siswa->aktif) || (int) $siswa->aktif === 1;
-                            $kelasNama = $kelas->nama_ruang ?? '-';
+                            $kelasNama = $kelas->nama_ruang ?? 'Belum Ada Kelas';
                         @endphp
-                        <tr data-student-row data-gender="{{ $siswa->gender ?? '' }}" data-search="{{ strtolower($siswa->nis . ' ' . $siswa->nama . ' ' . $kelasNama) }}">
+                        <tr data-student-row data-gender="{{ $siswa->gender ?? '' }}" data-has-kelas="{{ $hasKelas ? '1' : '0' }}" data-search="{{ strtolower($siswa->nis . ' ' . $siswa->nama . ' ' . ($hasKelas ? $kelasNama : 'belum ada kelas tanpa rombel')) }}">
                             <td style="text-align: center;">{{ $index + 1 }}</td>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 12px;">
@@ -136,7 +183,7 @@
                                     @endif
                                     <div>
                                         <div style="font-weight: 600; color: #1e293b; font-size: 14px;">{{ $siswa->nama }}</div>
-                                        <div style="font-size: 12px; color: #64748b;">NIS: {{ $siswa->nis }}</div>
+                                        <div style="font-size: 12px; color: #64748b;">NIS: {{ $siswa->nis ?? '-' }}</div>
                                     </div>
                                 </div>
                             </td>
@@ -152,9 +199,15 @@
                                 @endif
                             </td>
                             <td>
-                                <span style="display: inline-block; padding: 4px 10px; background: #f1f5f9; color: #475569; border-radius: 6px; font-size: 12px; font-weight: 600;">
-                                    {{ $kelasNama }}
-                                </span>
+                                @if($hasKelas)
+                                    <span style="display: inline-block; padding: 4px 10px; background: #f1f5f9; color: #475569; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                                        {{ $kelasNama }}
+                                    </span>
+                                @else
+                                    <span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; background: #fef3c7; color: #b45309; border: 1px solid #fde68a; border-radius: 6px; font-size: 12px; font-weight: 700;">
+                                        <i class="fa-solid fa-triangle-exclamation" style="color: #d97706; font-size: 11px;"></i> Belum Ada Kelas
+                                    </span>
+                                @endif
                             </td>
                             <td style="text-align: center;">
                                 @if($isAktif)
@@ -195,34 +248,44 @@
     <script>
         const searchInput = document.getElementById('studentSearch');
         const genderFilter = document.getElementById('genderFilter');
+        const rombelFilter = document.getElementById('rombelFilter');
         const studentRows = [...document.querySelectorAll('[data-student-row]')];
         const resultCounter = document.getElementById('resultCounter');
         const filterEmpty = document.getElementById('filterEmpty');
 
         function filterStudents() {
-            const keyword = searchInput.value.trim().toLowerCase();
-            const gender = genderFilter.value;
+            const keyword = searchInput ? searchInput.value.trim().toLowerCase() : '';
+            const gender = genderFilter ? genderFilter.value : '';
+            const rombel = rombelFilter ? rombelFilter.value : '';
             let visible = 0;
 
             studentRows.forEach((row) => {
                 const matchesKeyword = row.dataset.search.includes(keyword);
                 const matchesGender = !gender || row.dataset.gender === gender;
-                const show = matchesKeyword && matchesGender;
+                const hasKelas = row.dataset.hasKelas;
+                const matchesRombel = !rombel || (rombel === 'tanpa_kelas' && hasKelas === '0') || (rombel === 'ada_kelas' && hasKelas === '1');
+                const show = matchesKeyword && matchesGender && matchesRombel;
                 
                 row.setAttribute('data-filtered-out', show ? 'false' : 'true');
                 if (show) visible++;
             });
 
-            resultCounter.textContent = `${visible} data`;
+            if (resultCounter) resultCounter.textContent = `${visible} data`;
             if (visible === 0 && studentRows.length > 0) {
-                filterEmpty.style.display = '';
+                if (filterEmpty) filterEmpty.style.display = '';
             } else {
-                filterEmpty.style.display = 'none';
+                if (filterEmpty) filterEmpty.style.display = 'none';
             }
             if (window.refreshSiakadPagination) window.refreshSiakadPagination();
         }
 
         searchInput?.addEventListener('input', filterStudents);
         genderFilter?.addEventListener('change', filterStudents);
+        rombelFilter?.addEventListener('change', filterStudents);
+
+        // Initial filter check if value preselected
+        if (rombelFilter && rombelFilter.value) {
+            filterStudents();
+        }
     </script>
 </x-siakad-layout>
