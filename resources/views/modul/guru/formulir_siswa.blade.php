@@ -23,9 +23,15 @@
                 <h2>Tambah Data Siswa</h2>
                 <p>Input data pribadi dan akademik siswa</p>
             </div>
-            <a href="/sk/ds" class="btn-back">
-                <i class="fa-solid fa-arrow-left"></i> Kembali
-            </a>
+            @if(session('role') === 'a')
+                <a href="/sk/ds" class="btn-back">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Data Siswa
+                </a>
+            @else
+                <a href="/reg/logout" class="btn-back">
+                    <i class="fa-solid fa-arrow-left"></i> Keluar
+                </a>
+            @endif
 
         </header>
 
@@ -45,7 +51,7 @@
                             <label for="namaSiswa">Nama Lengkap <span class="required">*</span></label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-user"></i>
-                                <input type="text" id="namaSiswa" name="nama" placeholder="Contoh: Abdullah Ahmad" required autocomplete="off">
+                                <input type="text" id="namaSiswa" name="nama" value="{{ old('nama') }}" placeholder="Contoh: Abdullah Ahmad" required autocomplete="off">
                             </div>
                         </div>
 
@@ -54,7 +60,7 @@
                             <label for="nis">Nomor Induk Siswa (NIS) <span class="required">*</span></label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-id-badge"></i>
-                                <input type="text" id="nis" name="nis" placeholder="Contoh: 23241001" required autocomplete="off">
+                                <input type="text" id="nis" name="nis" value="{{ old('nis') }}" placeholder="Contoh: 23241001" required autocomplete="off">
                             </div>
                         </div>
 
@@ -63,7 +69,7 @@
                             <label for="tempatLahir">Tempat Lahir</label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-location-dot"></i>
-                                <input type="text" id="tempatLahir" name="tempat_lahir" placeholder="Contoh: Jakarta" autocomplete="off">
+                                <input type="text" id="tempatLahir" name="tempat_lahir" value="{{ old('tempat_lahir') }}" placeholder="Contoh: Jakarta" autocomplete="off">
                             </div>
                         </div>
 
@@ -72,14 +78,14 @@
                             <label for="tanggalLahir">Tanggal Lahir</label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-calendar-days"></i>
-                                <input type="date" id="tanggalLahir" name="tanggal_lahir">
+                                <input type="date" id="tanggalLahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="tanggalLahir">Agama</label>
+                            <label for="agama">Agama</label>
                             <div class="input-wrapper">
-                                <i class="fa-solid fa-calendar-days"></i>
-                                <input type="text" id="agama" name="agama" class="form-control" required placeholder="Agama">
+                                <i class="fa-solid fa-mosque"></i>
+                                <input type="text" id="agama" name="agama" value="{{ old('agama', 'Islam') }}" class="form-control" placeholder="Agama">
                             </div>
                         </div>
 
@@ -139,7 +145,7 @@
 
                         <!-- 9. UPLOAD FOTO / URL FOTO ($table->string('url_foto')->nullable()) -->
                         <div class="form-group full-width">
-                            <label for="inputFoto">Foto Profil Siswa</label>
+                            <label for="inputFoto">Foto Profil Siswa <span style="font-size: 11px; font-weight: normal; color: #64748b;">(Opsional, format JPG/PNG maks. 2MB)</span></label>
                             <div class="photo-preview-container">
                                 <div class="avatar-preview" id="avatarPreview">
                                     <i class="fa-solid fa-user"></i>

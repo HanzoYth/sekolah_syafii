@@ -253,12 +253,27 @@ Route::post('/sk/simpan-mapel', [siakadController::class, 'simpanMapel']);
 Route::get('/sk/kelola-jadwal', [siakadController::class, 'kelolaJadwalAdmin']);
 Route::post('/sk/simpan-jadwal', [siakadController::class, 'simpanJadwalAdmin']);
 
+// SIAKAD Pengumuman Admin & Guru
+Route::get('/sk/kelola-pengumuman', [App\Http\Controllers\siakadController::class, 'kelolaPengumumanAdmin']);
+Route::post('/sk/simpan-pengumuman', [App\Http\Controllers\siakadController::class, 'simpanPengumumanAdmin']);
+Route::get('/sk/hapus-pengumuman/{id}', [App\Http\Controllers\siakadController::class, 'hapusPengumumanAdmin']);
+Route::get('/sk/pengumuman-guru', [App\Http\Controllers\siakadController::class, 'pengumumanGuru']);
+
 // KENAIKAN & KELULUSAN
 Route::get('/sk/kenaikan-kelas', [siakadController::class, 'kenaikanKelasAdmin']);
 Route::post('/sk/proses-kenaikan-kelas', [siakadController::class, 'prosesKenaikanKelas']);
 
 Route::post('/sk/simpan-absensi-mapel', [App\Http\Controllers\siakadController::class, 'simpanAbsensiMapel']);
 Route::get('/sk/laporan-absensi-guru', [App\Http\Controllers\siakadController::class, 'laporanAbsensiGuru']);
+
+// PENGATURAN BOBOT PENILAIAN & KKM (Admin SIAKAD)
+Route::get('/sk/bobot-penilaian', [App\Http\Controllers\siakadController::class, 'kelolaBobotPenilaian']);
+Route::post('/sk/simpan-bobot-penilaian', [App\Http\Controllers\siakadController::class, 'simpanBobotPenilaian']);
+Route::post('/sk/simpan-kkm-mapel', [App\Http\Controllers\siakadController::class, 'simpanKkmMapel']);
+
+
+
+
 
 //siswa
 Route::get("/sk/frss",[siswaController::class,"tampilan_formulirSiswa"]);

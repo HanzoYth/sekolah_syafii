@@ -983,16 +983,35 @@
     font-weight: 700;
 }
 
+.card-footer.pagination-wrap {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+.pagination-container {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+}
+
 .pagination-container nav {
-    display: flex;
-    align-items: center;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto !important;
 }
 
 .pagination {
-    display: flex;
-    align-items: center;
-    list-style: none;
-    margin: 0;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    list-style: none !important;
+    margin: 0 auto !important;
     padding: 4px;
     gap: 4px;
     flex-wrap: wrap;

@@ -33,48 +33,48 @@
     </div>
 
     <!-- Top KPI Stats -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-start space-x-4">
-            <div class="p-3 bg-violet-50 text-violet-600 rounded-lg">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 flex items-start space-x-4 min-w-0">
+            <div class="p-3 bg-violet-50 text-violet-600 rounded-lg flex-shrink-0">
                 <i class="fa-solid fa-school text-xl"></i>
             </div>
-            <div>
-                <p class="text-sm font-medium text-slate-500">Kelas Perwalian</p>
-                <h3 class="text-xl font-bold text-slate-800">{{ $wallas->ruangKelas->nama_ruang ?? '-' }}</h3>
-                <p class="text-xs text-slate-400 mt-1">{{ count($siswa) }} siswa aktif</p>
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-medium text-slate-500 truncate">Kelas Perwalian</p>
+                <h3 class="text-xl font-bold text-slate-800 break-words leading-snug mt-0.5">{{ $wallas->ruangKelas->nama_ruang ?? '-' }}</h3>
+                <p class="text-xs text-slate-400 mt-1 truncate">{{ count($siswa) }} siswa aktif</p>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-start space-x-4">
-            <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 flex items-start space-x-4 min-w-0">
+            <div class="p-3 bg-blue-50 text-blue-600 rounded-lg flex-shrink-0">
                 <i class="fa-solid fa-book-open text-xl"></i>
             </div>
-            <div>
-                <p class="text-sm font-medium text-slate-500">Progres Input Pengajar</p>
-                <h3 class="text-2xl font-bold text-slate-800">{{ $stats_nilai['mapel_sudah_input'] }} <span class="text-sm font-normal text-slate-400">/ {{ $stats_nilai['total_mapel'] }} Mapel</span></h3>
-                <p class="text-xs text-slate-400 mt-1">{{ $stats_nilai['mapel_lengkap'] }} mapel sudah lengkap 100%</p>
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-medium text-slate-500 truncate">Progres Input Pengajar</p>
+                <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mt-0.5 truncate">{{ $stats_nilai['mapel_sudah_input'] }} <span class="text-xs sm:text-sm font-normal text-slate-400">/ {{ $stats_nilai['total_mapel'] }} Mapel</span></h3>
+                <p class="text-xs text-slate-400 mt-1 truncate">{{ $stats_nilai['mapel_lengkap'] }} mapel sudah lengkap 100%</p>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-start space-x-4">
-            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 flex items-start space-x-4 min-w-0">
+            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg flex-shrink-0">
                 <i class="fa-solid fa-chart-line text-xl"></i>
             </div>
-            <div>
-                <p class="text-sm font-medium text-slate-500">Rata-Rata Kelas</p>
-                <h3 class="text-2xl font-bold text-emerald-600">{{ number_format($stats_nilai['rata_kelas'], 1) }}</h3>
-                <p class="text-xs text-slate-400 mt-1">Akumulasi nilai akhir terbobot</p>
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-medium text-slate-500 truncate">Rata-Rata Kelas</p>
+                <h3 class="text-xl sm:text-2xl font-bold text-emerald-600 mt-0.5 truncate">{{ number_format($stats_nilai['rata_kelas'], 1) }}</h3>
+                <p class="text-xs text-slate-400 mt-1 truncate">Akumulasi nilai akhir terbobot</p>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-start space-x-4">
-            <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 flex items-start space-x-4 min-w-0">
+            <div class="p-3 bg-amber-50 text-amber-600 rounded-lg flex-shrink-0">
                 <i class="fa-solid fa-scale-balanced text-xl"></i>
             </div>
-            <div>
-                <p class="text-sm font-medium text-slate-500">Komponen Evaluasi</p>
-                <h3 class="text-lg font-bold text-slate-800">{{ count($jenis_penilaian) }} Komponen</h3>
-                <p class="text-xs text-slate-400 mt-1">Tugas, UH, UTS, & UAS</p>
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-medium text-slate-500 truncate">Komponen Evaluasi</p>
+                <h3 class="text-lg sm:text-xl font-bold text-slate-800 mt-0.5 truncate">{{ count($jenis_penilaian) }} Komponen</h3>
+                <p class="text-xs text-slate-400 mt-1 truncate">Tugas, UH, UTS, & UAS</p>
             </div>
         </div>
     </div>
@@ -324,8 +324,10 @@
             const q = (document.getElementById('searchLeger').value || '').toLowerCase();
             document.querySelectorAll('.leger-row').forEach(function(row) {
                 const text = row.getAttribute('data-search') || '';
-                row.style.display = text.includes(q) ? '' : 'none';
+                const show = text.includes(q);
+                row.setAttribute('data-filtered-out', show ? 'false' : 'true');
             });
+            if (window.refreshSiakadPagination) window.refreshSiakadPagination();
         }
     </script>
 </x-siakad-layout>

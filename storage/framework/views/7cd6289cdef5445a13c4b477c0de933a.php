@@ -57,6 +57,12 @@
                                 <span>Mata Pelajaran</span>
                             </a>
                         </li>
+                        <li class="menu-item <?php echo e(request()->is('sk/bobot-penilaian') ? 'active' : ''); ?>">
+                            <a href="/sk/bobot-penilaian">
+                                <i class="fa-solid fa-sliders"></i>
+                                <span>Bobot & KKM Nilai</span>
+                            </a>
+                        </li>
                         <li class="menu-item <?php echo e(request()->is('sk/kelola-jadwal') ? 'active' : ''); ?>">
                             <a href="/sk/kelola-jadwal">
                                 <i class="fa-solid fa-calendar-alt"></i>
@@ -104,6 +110,12 @@
                             <a href="/sk/laporan-absensi-guru">
                                 <i class="fa-solid fa-user-clock"></i>
                                 <span>Kehadiran Guru</span>
+                            </a>
+                        </li>
+                        <li class="menu-item <?php echo e(request()->is('sk/kelola-pengumuman') ? 'active' : ''); ?>">
+                            <a href="/sk/kelola-pengumuman">
+                                <i class="fa-solid fa-bullhorn"></i>
+                                <span>Kelola Pengumuman</span>
                             </a>
                         </li>
                     </ul>
@@ -212,6 +224,12 @@
                             <a href="/sk/pr">
                                 <i class="fa-solid fa-id-card"></i>
                                 <span>Profil</span>
+                            </a>
+                        </li>
+                        <li class="menu-item <?php echo e(request()->is('sk/pengumuman-guru') ? 'active' : ''); ?>">
+                            <a href="/sk/pengumuman-guru">
+                                <i class="fa-solid fa-bullhorn"></i>
+                                <span>Pengumuman</span>
                             </a>
                         </li>
                     </ul>

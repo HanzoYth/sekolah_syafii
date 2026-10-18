@@ -256,9 +256,15 @@
                 </button>
             </div>
 
-            <div style="position: relative; width: 100%; max-width: 280px;">
-                <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 13px;"></i>
-                <input type="text" id="searchSiswa" placeholder="Cari nama atau NIS siswa..." onkeyup="filterTable()" style="width: 100%; padding: 8px 12px 8px 34px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; transition: border-color 0.2s; box-sizing: border-box;" onfocus="this.style.borderColor='#166534';" onblur="this.style.borderColor='#cbd5e1';">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <button type="button" onclick="quickFillBlank({{ $kkm }})" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; border: 1px solid #bbf7d0; background: #f0fdf4; color: #166534; cursor: pointer; transition: all 0.2s;" title="Isi kotak nilai yang masih kosong dengan nilai KKM ({{ $kkm }})">
+                    <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> Set KKM ({{ $kkm }}) ke Nilai Kosong
+                </button>
+
+                <div style="position: relative; width: 100%; max-width: 260px;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 13px;"></i>
+                    <input type="text" id="searchSiswa" placeholder="Cari nama atau NIS siswa..." onkeyup="filterTable()" style="width: 100%; padding: 8px 12px 8px 34px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; transition: border-color 0.2s; box-sizing: border-box;" onfocus="this.style.borderColor='#166534';" onblur="this.style.borderColor='#cbd5e1';">
+                </div>
             </div>
         </div>
 
@@ -688,6 +694,23 @@
                     row.style.display = 'none';
                 }
             });
+        }
+
+        // Quick Fill Blank Inputs with KKM
+        function quickFillBlank(val) {
+            if (!confirm(`Isi semua kotak nilai yang masih KOSONG dengan nilai KKM (${val})?\nNilai yang sudah pernah diisi tidak akan ditimpa.`)) {
+                return;
+            }
+            const inputs = document.querySelectorAll('.input-score-cell');
+            let filledCount = 0;
+            inputs.forEach(inp => {
+                if (!inp.value || inp.value.trim() === '') {
+                    inp.value = val;
+                    inp.dispatchEvent(new Event('input', { bubbles: true }));
+                    filledCount++;
+                }
+            });
+            alert(`Berhasil mengisi ${filledCount} kotak nilai dengan angka ${val}.\nSilakan periksa kembali dan klik tombol 'Simpan Nilai' di bawah.`);
         }
 
         // Initialize on load

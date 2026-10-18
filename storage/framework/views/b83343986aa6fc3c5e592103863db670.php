@@ -1552,7 +1552,97 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
 .overview-table-wrap { width: 100%; overflow-x: auto; }.overview-table { width: 100%; min-width: 700px; border-collapse: collapse; }.overview-table th { padding: 10px 12px; border-bottom: 1px solid #dfe9e3; color: #718096; text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }.overview-table td { padding: 13px 12px; border-bottom: 1px solid #edf2ee; color: #52635a; font-size: 12px; }.overview-table tbody tr:last-child td { border-bottom: 0; }.overview-table td strong { color: #274237; }.level-pill, .status-pill { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; font-size: 10px; font-weight: 600; }.level-pill { padding: 4px 8px; color: #2563eb; background: #eff6ff; }.attendance-value { font-weight: 700; }.attendance-value.good { color: #15803d; }.attendance-value.caution { color: #b45309; }.status-pill { padding: 5px 8px; }.status-pill.complete { color: #15803d; background: #f0fdf4; }.status-pill.attention { color: #b45309; background: #fffbeb; }.status-pill.pending { color: #64748b; background: #f1f5f9; }
 .quick-action-grid { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 12px; }.quick-action { display: flex; min-height: 101px; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 14px 8px; border: 1px solid #e7eee9; border-radius: 13px; color: #405349; background: #fff; text-align: center; font-size: 11px; font-weight: 600; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }.quick-action:hover { border-color: #a7d8bf; box-shadow: 0 8px 18px rgba(15,80,54,.09); color: #047857; transform: translateY(-2px); }.quick-icon { width: 38px; height: 38px; border-radius: 11px; font-size: 15px; }
 @media (max-width: 1100px) { .overview-stat-grid { grid-template-columns: repeat(2,1fr); }.quick-action-grid { grid-template-columns: repeat(3,1fr); } }
-@media (max-width: 760px) { .overview-hero { padding: 22px 20px; border-radius: 14px; }.overview-hero-content { flex-direction: column; align-items: stretch; }.overview-main-grid, .school-info-grid { grid-template-columns: 1fr; }.academic-period { min-width: 0; }.overview-stat-grid { grid-template-columns: 1fr; }.dashboard-panel { padding: 17px; }.attendance-breakdown { grid-template-columns: repeat(2,1fr); row-gap: 14px; }.follow-up-list li { grid-template-columns: 34px minmax(0,1fr); }.follow-up-list a { grid-column: 2; }.quick-action-grid { grid-template-columns: repeat(2,1fr); }.section-heading { align-items: flex-start; }.updated-label { padding-top: 4px; text-align: right; }.overview-hero h1 { font-size: 22px; } }
+/* ==========================================================================
+   PAGINATION STYLES (UNIVERSAL SIAKAD)
+   Centered circular pill pagination matching Pembayaran IPP
+   ========================================================================== */
+.pagination-container,
+.pagination-wrap,
+.siakad-pagination-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    text-align: center !important;
+    margin: 12px auto 6px auto !important;
+}
 
+.pagination-container nav,
+.pagination-wrap nav,
+.siakad-pagination-wrapper nav {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto !important;
+}
+
+.pagination {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    list-style: none !important;
+    margin: 0 auto !important;
+    padding: 4px !important;
+    gap: 4px !important;
+    flex-wrap: wrap !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 999px !important;
+}
+
+.pagination .page-item {
+    display: inline-flex !important;
+    margin: 0 !important;
+}
+
+.pagination .page-link,
+.pagination .page-item a,
+.pagination .page-item span,
+.pagination button.page-link {
+    min-width: 36px !important;
+    height: 36px !important;
+    padding: 0 13px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 999px !important;
+    border: none !important;
+    background: transparent !important;
+    color: #64748b !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.825rem !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    line-height: 1 !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.pagination .page-item.active .page-link,
+.pagination .page-item.active span,
+.pagination .page-link.active,
+.pagination button.page-link.active {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25) !important;
+    font-weight: 700 !important;
+}
+
+.pagination .page-link:hover:not(.active):not(:disabled),
+.pagination button.page-link:hover:not(.active):not(:disabled) {
+    background: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+
+.pagination .page-item.disabled .page-link,
+.pagination .page-item.disabled span,
+.pagination button.page-link:disabled {
+    opacity: 0.4 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
 </style>
 <?php /**PATH D:\laragon\www\sekolahsyafii\resources\views/components/siakad/styles.blade.php ENDPATH**/ ?>

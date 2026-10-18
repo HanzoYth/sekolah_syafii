@@ -73,6 +73,15 @@
                                 </summary>
                                 <div class="p-4 text-sm text-slate-700 leading-relaxed border-t border-slate-200 bg-white">
                                     {!! nl2br(e($item->isi)) !!}
+
+                                    @if(!empty($item->lampiran))
+                                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                                            <span class="text-xs text-slate-500 font-medium">Dokumen / Berkas Lampiran:</span>
+                                            <a href="{{ asset($item->lampiran) }}" target="_blank" download class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold border border-emerald-200 transition-colors">
+                                                <i class="fa-solid fa-file-arrow-down"></i> Unduh Lampiran
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
                             </details>
                         </div>

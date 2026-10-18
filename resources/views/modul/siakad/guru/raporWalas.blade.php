@@ -31,37 +31,37 @@
     </div>
 
     <!-- Top Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-start space-x-4">
-            <div class="p-3 bg-violet-50 text-violet-600 rounded-lg">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 flex items-start space-x-4 min-w-0">
+            <div class="p-3 bg-violet-50 text-violet-600 rounded-lg flex-shrink-0">
                 <i class="fa-solid fa-school text-xl"></i>
             </div>
-            <div>
-                <p class="text-sm font-medium text-slate-500">Kelas Perwalian</p>
-                <h3 class="text-2xl font-bold text-slate-800">{{ $wallas->ruangKelas->nama_ruang ?? 'Kelas' }}</h3>
-                <p class="text-xs text-slate-400 mt-1">Rombongan belajar binaan</p>
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-medium text-slate-500 truncate">Kelas Perwalian</p>
+                <h3 class="text-xl sm:text-2xl font-bold text-slate-800 break-words leading-snug mt-0.5">{{ $wallas->ruangKelas->nama_ruang ?? 'Kelas' }}</h3>
+                <p class="text-xs text-slate-400 mt-1 truncate">Rombongan belajar binaan</p>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-start space-x-4">
-            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 flex items-start space-x-4 min-w-0">
+            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg flex-shrink-0">
                 <i class="fa-solid fa-file-circle-check text-xl"></i>
             </div>
-            <div>
-                <p class="text-sm font-medium text-slate-500">Total Siswa Terdaftar</p>
-                <h3 class="text-2xl font-bold text-slate-800">{{ count($siswa) }}</h3>
-                <p class="text-xs text-slate-400 mt-1">Berkas rapor siswa siap cetak</p>
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-medium text-slate-500 truncate">Total Siswa Terdaftar</p>
+                <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mt-0.5 truncate">{{ count($siswa) }}</h3>
+                <p class="text-xs text-slate-400 mt-1 truncate">Berkas rapor siswa siap cetak</p>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-start space-x-4">
-            <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 flex items-start space-x-4 min-w-0 sm:col-span-2 lg:col-span-1">
+            <div class="p-3 bg-blue-50 text-blue-600 rounded-lg flex-shrink-0">
                 <i class="fa-solid fa-print text-xl"></i>
             </div>
-            <div>
-                <p class="text-sm font-medium text-slate-500">Progres Nilai Mapel</p>
-                <h3 class="text-xl font-bold text-slate-800">{{ $stats_nilai['mapel_sudah_input'] ?? 0 }} / {{ $stats_nilai['total_mapel'] ?? 0 }} Mapel</h3>
-                <p class="text-xs text-emerald-600 font-medium mt-1"><i class="fa-solid fa-circle-check text-[10px] mr-1"></i>Rata-rata Kelas: {{ number_format($stats_nilai['rata_kelas'] ?? 0, 1) }}</p>
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-medium text-slate-500 truncate">Progres Nilai Mapel</p>
+                <h3 class="text-xl font-bold text-slate-800 mt-0.5 truncate">{{ $stats_nilai['mapel_sudah_input'] ?? 0 }} / {{ $stats_nilai['total_mapel'] ?? 0 }} Mapel</h3>
+                <p class="text-xs text-emerald-600 font-medium mt-1 truncate"><i class="fa-solid fa-circle-check text-[10px] mr-1"></i>Rata-rata Kelas: {{ number_format($stats_nilai['rata_kelas'] ?? 0, 1) }}</p>
             </div>
         </div>
     </div>

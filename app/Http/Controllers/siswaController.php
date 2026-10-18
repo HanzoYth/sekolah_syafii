@@ -263,14 +263,60 @@ class siswaController extends Controller
         $data_siswa = siswa::with(['kelas', 'sekolah'])->where("id", $siswa_id)->first();
         $data_kelas = $data_siswa ? ruang_kelas::where("id", $data_siswa->kelas_id)->first() : null;
 
-        $pengumuman_db = pengumuman::orderByDesc('tanggal')->orderByDesc('id')->get();
+        $pengumuman_db = pengumuman::with(['sekolah', 'ruangKelas'])
+            ->where(function($q) use ($siswa_id, $data_siswa) {
+                // 1. Target Semua
+                $q->where('target_tipe', 'semua')
+                // 2. Target Tingkat Sekolah Siswa
+                ->orWhere(function($sub) use ($data_siswa) {
+                    if ($data_siswa && $data_siswa->sekolah_id) {
+                        $sub->where('target_tipe', 'sekolah')
+                            ->where('sekolah_id', $data_siswa->sekolah_id);
+                    }
+                })
+                // 3. Target Kelas Siswa
+                ->orWhere(function($sub) use ($data_siswa) {
+                    if ($data_siswa && $data_siswa->kelas_id) {
+                        $sub->where('target_tipe', 'kelas')
+                            ->where('kelas_id', $data_siswa->kelas_id);
+                    }
+                })
+                // 4. Target Role Siswa
+                ->orWhere(function($sub) {
+                    $sub->where('target_tipe', 'role')
+                        ->whereIn('target_role', ['s', 'all']);
+                })
+                // 5. Target Personal Siswa
+                ->orWhere(function($sub) use ($siswa_id) {
+                    $sub->where('target_tipe', 'spesifik')
+                        ->where('siswa_id', $siswa_id);
+                });
+            })
+            ->orderByDesc('tanggal')
+            ->orderByDesc('id')
+            ->get();
+
         $list_pengumuman = $pengumuman_db->map(function ($p) {
+            $ditujukan = 'Seluruh Siswa & Wali Murid';
+            if ($p->target_tipe === 'sekolah') {
+                $ditujukan = 'Jenjang ' . ($p->sekolah->jenis ?? 'Sekolah');
+            } elseif ($p->target_tipe === 'kelas') {
+                $ditujukan = 'Kelas ' . ($p->ruangKelas->nama_ruang ?? '-');
+            } elseif ($p->target_tipe === 'role') {
+                $ditujukan = 'Seluruh Siswa & Orang Tua';
+            } elseif ($p->target_tipe === 'spesifik') {
+                $ditujukan = 'Pribadi / Khusus Anda';
+            }
+
             return (object)[
-                'tanggal' => $p->tanggal ? Carbon::parse($p->tanggal)->locale('id')->isoFormat('D MMM Y') : now()->isoFormat('D MMM Y'),
+                'id' => $p->id,
+                'tanggal' => $p->tanggal ? Carbon::parse($p->tanggal)->locale('id')->isoFormat('D MMMM Y') : now()->isoFormat('D MMMM Y'),
                 'judul' => $p->judul,
+                'penulis' => $p->penulis ?? 'Admin SIAKAD',
                 'ringkasan' => \Illuminate\Support\Str::limit(strip_tags($p->isi), 140),
                 'isi' => $p->isi,
-                'ditujukan' => 'Seluruh Siswa & Wali Murid',
+                'lampiran' => $p->lampiran,
+                'ditujukan' => $ditujukan,
             ];
         });
 
@@ -294,33 +340,73 @@ class siswaController extends Controller
     function tambah_Siswa(Request $request)
     {
         $request->validate([
-            "url_foto" => 'required|file|mimes:jpg,jpeg,png|max:2048'
+            "nama" => 'required|string|max:255',
+            "nis" => 'required|string|max:50',
+            "sekolah_id" => 'required',
+            "jenis_kelamin" => 'required|in:l,p',
+            "url_foto" => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            "tanggal_lahir" => 'nullable|date'
+        ], [
+            "nama.required" => "Nama lengkap wajib diisi.",
+            "nis.required" => "Nomor Induk Siswa (NIS) wajib diisi.",
+            "sekolah_id.required" => "Jenjang sekolah wajib dipilih.",
+            "jenis_kelamin.required" => "Jenis kelamin wajib dipilih.",
+            "url_foto.mimes" => "Format foto profil harus JPG, JPEG, atau PNG.",
+            "url_foto.max" => "Ukuran file foto maksimal 2MB."
         ]);
 
-        $path_foto = $request->file("url_foto")->store('uploads');
+        $cekNis = siswa::where('nis', $request->nis)->first();
+        if ($cekNis) {
+            return back()->with('error', 'Nomor Induk Siswa (NIS) tersebut sudah terdaftar dalam sistem. Silakan gunakan NIS lain.')->withInput();
+        }
 
-        siswa::create([
+        $path_foto = null;
+        if ($request->hasFile("url_foto")) {
+            $path_foto = $request->file("url_foto")->store('uploads');
+        }
+
+        $tanggal_lahir = null;
+        if ($request->filled('tanggal_lahir')) {
+            try {
+                $tanggal_lahir = Carbon::parse($request->tanggal_lahir)->format("Y-m-d");
+            } catch (\Exception $e) {
+                $tanggal_lahir = null;
+            }
+        }
+
+        // Tentukan Tahun Ajaran Aktif jika kosong
+        $tahun_ajaran_id = $request->tahun_ajaran_id;
+        if (!$tahun_ajaran_id) {
+            $tahunAktif = tahun_ajaran::where('aktif', 1)->first() ?? tahun_ajaran::orderByDesc('id')->first();
+            $tahun_ajaran_id = $tahunAktif ? $tahunAktif->id : null;
+        }
+
+        $userId = session("id_akun");
+        if (session('role') === 'a') {
+            $userId = null;
+        }
+
+        $siswa = siswa::create([
             "nama" => $request->nama,
             "nis" => $request->nis,
             "tempat_lahir" => $request->tempat_lahir,
-            "tanggal_lahir" => Carbon::parse($request->tanggal_lahir)->translatedFormat("Y-m-d"),
-            "agama" => "islam",
+            "tanggal_lahir" => $tanggal_lahir,
+            "gender" => $request->jenis_kelamin ?? 'l',
             "alamat" => $request->alamat,
             "url_foto" => $path_foto,
             "aktif" => 1,
-            "kelas_id" => $request->kelas_id,
-            "tahun_ajaran" => $request->tahun_ajaran_id,
+            "kelas_id" => $request->kelas_id ?: null,
+            "tahun_ajaran_id" => $tahun_ajaran_id,
             "sekolah_id" => $request->sekolah_id,
-            "user_id" => (int) session("id_akun")
+            "user_id" => $userId
         ]);
+
         if (session('role') === 'a') {
-            return redirect('/sk/ds')->with('success', 'Data siswa baru berhasil ditambahkan.');
+            return redirect('/sk/ds')->with('success', 'Data siswa baru berhasil ditambahkan dan langsung tercatat.');
         }
 
-        $data_siswa = siswa::where("nis", $request->nis)->first();
-        session()->put("id", $data_siswa->id);
-        session()->put("nama", $data_siswa->nama);
-        return redirect("/mod");
-
+        session()->put("id", $siswa->id);
+        session()->put("nama", $siswa->nama);
+        return redirect("/mod")->with('success', 'Pendaftaran biodata siswa berhasil! Data Anda otomatis tercatat di SIAKAD.');
     }
 }
