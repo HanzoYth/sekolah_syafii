@@ -153,11 +153,11 @@ Route::get("/sk/ssp",[file_surat::class,"suratSlipPembayaran"]);
 
 
 //ini route untuk dasboard tahfiz
-Route::get('/tf/ad/dash',[tahfizController::class,"dash_admin"]);
-Route::get('/tf/ad/ms',[tahfizController::class,"manajemen_siswa"]);
-Route::get('/tf/ad/mg',[tahfizController::class,"manajemen_guru"]);
-Route::get('/tf/ad/mt',[tahfizController::class,"monitoring"]);
-Route::get('/tf/ad/lp',[tahfizController::class,"laporan"]);
+Route::get('/tf/gr/dash',[tahfizController::class,"dash_guru"]);
+Route::get('/tf/gr/rp',[tahfizController::class,"riwayat_laporan"]);
+Route::get('/tf/gr/hs',[tahfizController::class,"Halaqah_saya"]);
+Route::get('/tf/gr/ps',[tahfizController::class,"profil_siswa"]);
+Route::get('/tf/gr/lp',[tahfizController::class,"laporan"]);
 Route::get('/tf/das',[modulTahfidzController::class,"dashboard_tahfidz"]);
 Route::get('/tf/kls',[kelasHalaqahController::class,"kelas_halaqah"]);
 Route::get('/tf/ss',[tahfizController::class,"siswa_tahfiz"]);

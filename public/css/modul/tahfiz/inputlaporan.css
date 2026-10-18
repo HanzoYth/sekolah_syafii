@@ -1,0 +1,162 @@
+/* ================================================================
+   HALAMAN INPUT LAPORAN HARIAN TAHFIZ
+   (Ekstensi dari CSS referensi utama dashboard.css)
+   ================================================================ */
+
+@import url('dashboard.css');
+
+/* ======== FORM CONTAINER & CARDS ======== */
+.form-laporan-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.form-card {
+    margin-bottom: 0 !important;
+}
+
+.card-header-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.card-header-title h4 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0;
+}
+
+.card-header-title h4 i {
+    color: var(--primary-color);
+}
+
+.card-header-title .detail-header-tag {
+    margin-bottom: 0;
+}
+
+/* ======== FORM LAYOUT GRIDS (MENGGUNAKAN FILTER-BOX) ======== */
+.filter-box.form-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+
+.filter-box.form-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+
+.filter-box.form-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    padding: 20px;
+}
+
+/* ======== FORM INPUT EXTENSIONS ======== */
+.filter-group textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    font-family: var(--font-main);
+    outline: none;
+    background-color: #fbfbf8;
+    color: var(--text-dark);
+    transition: all 0.2s ease;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.filter-group textarea:focus {
+    border-color: var(--primary-color);
+    background-color: var(--white);
+    box-shadow: 0 0 0 3px rgba(27, 107, 79, 0.12);
+}
+
+.text-danger {
+    color: var(--red-text);
+}
+
+.style-gold {
+    color: var(--gold);
+}
+
+/* ======== ACTION BUTTONS ROW ======== */
+.form-actions-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 14px;
+    margin-top: 10px;
+}
+
+.btn-reset {
+    background-color: var(--white);
+    color: var(--text-muted);
+    padding: 10px 22px;
+}
+
+.btn-reset:hover {
+    background-color: var(--red-bg);
+    color: var(--red-text);
+    border-color: var(--border-color);
+}
+
+.btn-submit {
+    background: var(--primary-gradient);
+    color: var(--white);
+    border-color: var(--primary-color);
+    padding: 10px 28px;
+    box-shadow: 0 4px 12px rgba(27, 107, 79, 0.25);
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(27, 107, 79, 0.35);
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 1024px) {
+    .filter-box.form-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .filter-box.form-grid-3,
+    .filter-box.form-grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .card-header-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .form-actions-row {
+        flex-direction: column-reverse;
+        width: 100%;
+    }
+
+    .btn-reset, .btn-submit {
+        width: 100%;
+        justify-content: center;
+    }
+}

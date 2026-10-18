@@ -8,20 +8,20 @@ class tahfizController extends Controller
 {
 
     #admin
-    function dash_admin(){
-        return view("modul/tahfiz/admin/dashboard");
+    function dash_guru(){
+        return view("modul/tahfiz/guru/dashboard");
     }
-    function manajemen_siswa(){
-        return view("modul/tahfiz/admin/manajemen");
+    function riwayat_laporan(){
+        return view("modul/tahfiz/guru/riwayat");
     }
-    function manajemen_guru(){
-        return view("modul/tahfiz/admin/manajemen_gr");
+    function Halaqah_saya(){
+        return view("modul/tahfiz/guru/Halaqah_saya");
     }
-    function monitoring(){
-        return view("modul/tahfiz/admin/monitoring");
+    function profil_siswa(){
+        return view("modul/tahfiz/guru/siswa");
     }
     function laporan(){
-        return view("modul/tahfiz/admin/laporan");
+        return view("modul/tahfiz/guru/inputlaporan");
     }
     #guru
     function pengumuman(){

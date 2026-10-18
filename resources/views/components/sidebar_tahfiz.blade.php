@@ -27,45 +27,45 @@
         <div class="sidebar-menu-wrapper">
 
             {{-- ================= MENU ADMIN ================= --}}
-            @if(session('role') == "a")
+            @if(session('role') == "g")
                 <div class="menu-section" id="section-admin">
                     <span class="menu-label">ADMINISTRATOR</span>
                     <ul class="menu-list">
                         <li class="menu-item {{ $route == '/tf/das' ? 'active' : '' }}">
-                            <a href="/tf/ad/dash">
+                            <a href="/tf/gr/dash">
                                 <i class="fa-solid fa-gauge"></i>
                                 <span>Dashboard</span>
                             </a>
                         </li>
                         <li class="menu-item {{ $route == '/tf/kls' ? 'active' : '' }}">
-                            <a href="/tf/ad/ms">
+                            <a href="/tf/gr/hs">
                                 <i class="fa-solid fa-school"></i>
-                                <span>manajemen siswa</span>
+                                <span>Halaqah saya</span>
                             </a>
                         </li>
                         <li class="menu-item {{ $route == '/tf/ss' ? 'active' : '' }}">
-                            <a href="/tf/ad/mg">
+                            <a href="/tf/gr/lp">
                                 <i class="fa-solid fa-users"></i>
-                                <span>manajemen guru</span>
+                                <span>input laporan</span>
                             </a>
                         </li>
                         <li class="menu-item {{ $route == '/tf/pg' ? 'active' : '' }}">
-                            <a href="/tf/ad/mt">
+                            <a href="/tf/gr/rp">
                                 <i class="fa-solid fa-user-tie"></i>
-                                <span>monitoring</span>
+                                <span>riwayat laporan</span>
                             </a>
                         </li>
                         <li class="menu-item {{ $route == '/tf/lh' ? 'active' : '' }}">
-                            <a href="/tf/ad/lp">
+                            <a href="/tf/gr/ps">
                                 <i class="fa-solid fa-file-lines"></i>
-                                <span>Laporan dan rekap</span>
+                                <span>siswa</span>
                             </a>
                         </li>
                     </ul>
                 </div>
 
             {{-- ================= MENU GURU / PENGAMPU ================= --}}
-            @elseif(session('role') == "g")
+            @elseif(session('role') == "a")
                 <div class="menu-section" id="section-guru">
                     <span class="menu-label">MODUL PENGAMPU</span>
                     <ul class="menu-list">

@@ -1607,7 +1607,4 @@ class modulGuruController extends Controller
         }
         return back()->with("eror","ruang kelas sudah tersedia");
     }   
-
-
-
 }

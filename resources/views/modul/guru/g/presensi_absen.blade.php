@@ -95,7 +95,7 @@
                     <input type="hidden" name="longitude" id="input-lng">
                     <input type="hidden" name="id" value="{{ session('id') }}" id="input-id">
 
-                    <button class="btn-absen btn-masuk" id="absen">
+                    <button class="btn-absen btn-masuk" id="absen" disabled>
                         <i class="fa-solid fa-right-to-bracket"></i> ABSEN MASUK
                     </button>
                 </form>
