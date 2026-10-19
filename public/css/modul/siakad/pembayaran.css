@@ -433,38 +433,55 @@
 }
 
 .btn-action {
-    width: 34px;
-    height: 34px;
-    border-radius: var(--pay-radius-sm);
-    border: 1px solid var(--pay-border);
-    background-color: #ffffff;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 6px 10px;
+    border-radius: 6px;
     cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    transition: all 0.2s ease;
     font-size: 0.875rem;
+    text-decoration: none;
+    gap: 6px;
 }
 
 .btn-action.view {
-    color: var(--pay-primary);
+    background-color: #e0f2fe;
+    color: #0284c7;
 }
-
 .btn-action.view:hover {
-    background-color: var(--pay-primary-light);
-    border-color: #ccfbf1;
-    transform: translateY(-2px);
+    background-color: #0284c7;
+    color: #ffffff;
 }
 
 .btn-action.edit {
-    color: var(--pay-accent-gold);
+    background-color: #fef3c7;
+    color: #d97706;
+}
+.btn-action.edit:hover {
+    background-color: #d97706;
+    color: #ffffff;
 }
 
-.btn-action.edit:hover {
-    background-color: var(--pay-accent-gold-light);
-    border-color: #fde68a;
-    transform: translateY(-2px);
+.btn-action.publish {
+    background-color: #e0e7ff;
+    color: #4338ca;
+}
+.btn-action.publish:hover {
+    background-color: #4338ca;
+    color: #ffffff;
+}
+
+.btn-action.delete {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+.btn-action.delete:hover {
+    background-color: #dc2626;
+    color: #ffffff;
 }
 
 /* Button Outline Bottom */
