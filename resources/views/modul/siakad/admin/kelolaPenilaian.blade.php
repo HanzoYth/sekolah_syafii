@@ -212,7 +212,7 @@
     </div>
 
     <!-- ======================================================== -->
-    <!-- BAGIAN 2: PENGATURAN KKM MATA PELAJARAN                  -->
+    <!-- BAGIAN 2: PENGATURAN KKM PER TINGKATAN KELAS             -->
     <!-- ======================================================== -->
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
         <div class="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -221,8 +221,8 @@
                     <i class="fa-solid fa-award"></i>
                 </div>
                 <div class="min-w-0">
-                    <h3 class="text-base font-bold text-slate-800">Standar KKM Mata Pelajaran</h3>
-                    <p class="text-xs text-slate-500">Kriteria Ketuntasan Minimal (KKM) sebagai batas tuntas kelulusan kompetensi per mata pelajaran.</p>
+                    <h3 class="text-base font-bold text-slate-800">Standar KKM Per Tingkatan Kelas</h3>
+                    <p class="text-xs text-slate-500">Kriteria Ketuntasan Minimal (KKM) diatur secara detail untuk tiap tingkatan (Kelas 1 s/d 6 SD, Kelas 7 s/d 9 SMP, dsb.).</p>
                 </div>
             </div>
 
@@ -241,118 +241,151 @@
         </div>
 
         <div class="p-6">
-            <!-- Filter Bar & Search -->
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-5">
-                <form method="GET" action="/sk/bobot-penilaian" class="flex items-center gap-2">
-                    <div class="relative">
-                        <i class="fa-solid fa-school absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                        <select name="sekolah_id" onchange="this.form.submit()"
-                                class="pl-8 pr-8 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-semibold focus:outline-none focus:border-emerald-500 transition-colors">
-                            <option value="">Semua Jenjang Sekolah</option>
-                            @foreach($data_sekolah as $s)
-                                <option value="{{ $s->id }}" {{ ($sekolah_id ?? '') == $s->id ? 'selected' : '' }}>
-                                    Jenjang {{ strtoupper($s->jenis) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </form>
+            <!-- Navigasi Tab Jenjang Sekolah -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-100">
+                <!-- Tab Buttons -->
+                <div class="flex items-center gap-2 flex-wrap">
+                    @foreach($data_sekolah as $index => $s)
+                        @php
+                            $jenjangKey = strtolower($s->jenis);
+                            $count_mapel_jenjang = $data_mapel->where('sekolah_id', $s->id)->count();
+                            $is_active = ($loop->first && !$sekolah_id) || ($sekolah_id == $s->id);
+                        @endphp
+                        <button type="button" 
+                                onclick="switchJenjangTab('{{ $jenjangKey }}')"
+                                id="tab-btn-{{ $jenjangKey }}"
+                                class="tab-jenjang-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer {{ $is_active ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                            <i class="fa-solid fa-school text-[11px]"></i>
+                            <span>{{ strtoupper($s->jenis) }}</span>
+                            @if($jenjangKey === 'sd')
+                                <span class="text-[10px] opacity-80">(Kelas 1 - 6)</span>
+                            @elseif($jenjangKey === 'smp')
+                                <span class="text-[10px] opacity-80">(Kelas 7 - 9 / 1 - 3 SMP)</span>
+                            @elseif($jenjangKey === 'sma')
+                                <span class="text-[10px] opacity-80">(Kelas 10 - 12)</span>
+                            @elseif($jenjangKey === 'tk')
+                                <span class="text-[10px] opacity-80">(TK A & B)</span>
+                            @endif
+                            <span class="px-1.5 py-0.2 rounded-full text-[10px] font-mono {{ $is_active ? 'bg-emerald-700 text-white' : 'bg-white text-slate-600 border border-slate-200' }}">
+                                {{ $count_mapel_jenjang }}
+                            </span>
+                        </button>
+                    @endforeach
+                </div>
 
-                <div class="relative w-full sm:w-64">
+                <!-- Search Input -->
+                <div class="relative w-full sm:w-64 flex-shrink-0">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                     <input type="text" id="cariMapelInput" onkeyup="filterMapelTable()" placeholder="Cari nama mata pelajaran..."
                            class="w-full pl-8 pr-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-colors">
                 </div>
             </div>
 
-            <!-- Form Simpan KKM Mapel -->
+            <!-- Form Simpan KKM Mapel Per Tingkatan -->
             <form action="/sk/simpan-kkm-mapel" method="POST" id="formKkmMapel">
                 @csrf
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse min-w-[620px]" id="tabelKkmMapel">
-                        <thead>
-                            <tr class="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                                <th class="px-5 py-3 w-12 text-center">No</th>
-                                <th class="px-5 py-3 w-36">Jenjang</th>
-                                <th class="px-5 py-3">Nama Mata Pelajaran</th>
-                                <th class="px-5 py-3 w-48 text-center">Nilai KKM (0-100)</th>
-                                <th class="px-5 py-3 w-40 text-center">Interval Predikat</th>
-                                <th class="px-5 py-3 w-28 text-center">Aksi Cepat</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 text-sm" id="tbodyKkmMapel">
-                            @if(count($data_mapel) > 0)
-                                @foreach($data_mapel as $index => $m)
-                                    @php
-                                        $kkm_val = $m->kkm ?? 75;
-                                        $jenjang_nama = $m->sekolah ? strtoupper($m->sekolah->jenis) : 'UMUM';
-                                    @endphp
-                                    <tr class="hover:bg-slate-50/60 transition-colors mapel-row" data-nama="{{ strtolower($m->nama_mapel) }}">
-                                        <td class="px-5 py-3.5 text-center text-slate-400 font-medium text-xs">{{ $index + 1 }}</td>
-                                        <td class="px-5 py-3.5">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-700">
-                                                {{ $jenjang_nama }}
-                                            </span>
-                                        </td>
-                                        <td class="px-5 py-3.5">
-                                            <div class="flex items-center gap-2.5">
-                                                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
-                                                    <i class="fa-solid fa-book"></i>
-                                                </div>
-                                                <div>
-                                                    <strong class="font-bold text-slate-800 text-xs sm:text-sm block">{{ $m->nama_mapel }}</strong>
-                                                    <span class="text-[11px] text-slate-400 font-mono">ID: MAPEL-{{ str_pad($m->id, 3, '0', STR_PAD_LEFT) }}</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-5 py-3.5 text-center">
-                                            <div class="inline-flex items-center justify-center gap-2">
-                                                <input type="number" 
-                                                       name="kkm[{{ $m->id }}]" 
-                                                       id="kkm-input-{{ $m->id }}"
-                                                       value="{{ $kkm_val }}" 
-                                                       min="0" max="100" required
-                                                       oninput="updatePredikatPreview({{ $m->id }}, this.value)"
-                                                       class="input-kkm-row w-20 px-2.5 py-1.5 text-sm font-bold text-center text-slate-800 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors">
-                                                <span class="text-xs font-bold text-slate-400">/ 100</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-5 py-3.5 text-center">
-                                            <div id="predikat-box-{{ $m->id }}" class="text-[11px] text-slate-600 font-medium">
-                                                <span class="text-emerald-700 font-bold">A: &ge;{{ min(100, round($kkm_val + (100 - $kkm_val)*2/3)) }}</span> &bull; 
-                                                <span class="text-amber-700 font-bold">B: &ge;{{ $kkm_val }}</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-5 py-3.5 text-center">
-                                            <button type="button" onclick="setKkmRow({{ $m->id }}, 75)" 
-                                                    class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold transition-colors"
-                                                    title="Set KKM ke 75 (Standar)">
-                                                Set 75
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @else
-                                <tr>
-                                    <td colspan="6" class="px-6 py-10 text-center text-slate-400 text-xs">
-                                        Tidak ada data mata pelajaran yang ditemukan.
-                                    </td>
-                                </tr>
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
 
-                @if(count($data_mapel) > 0)
-                    <div class="px-6 py-4 bg-slate-50/80 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-                        <span class="text-xs text-slate-500">
-                            Total <strong>{{ count($data_mapel) }}</strong> mata pelajaran dikonfigurasi.
-                        </span>
-                        <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs sm:text-sm font-bold shadow-sm transition-colors flex items-center justify-center gap-2 w-full sm:w-auto">
-                            <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Seluruh KKM Mata Pelajaran
-                        </button>
+                @foreach($data_sekolah as $index => $s)
+                    @php
+                        $jenjangKey = strtolower($s->jenis);
+                        $tingkats = $tingkat_options[$jenjangKey] ?? [];
+                        $mapel_jenjang = $data_mapel->where('sekolah_id', $s->id);
+                        $is_active = ($loop->first && !$sekolah_id) || ($sekolah_id == $s->id);
+                    @endphp
+
+                    <div id="pane-jenjang-{{ $jenjangKey }}" class="tab-pane-jenjang {{ $is_active ? '' : 'hidden' }}">
+                        <div class="mb-3 px-3 py-2 bg-emerald-50/70 border border-emerald-100 rounded-lg flex items-center justify-between text-xs text-emerald-800">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-circle-info text-emerald-600"></i>
+                                <span>Mengatur KKM untuk <strong>Jenjang {{ strtoupper($s->jenis) }}</strong>. Setiap tingkatan kelas dapat memiliki nilai KKM yang berbeda sesuai beban kompetensi.</span>
+                            </div>
+                            <span class="font-bold hidden md:inline text-emerald-700">Skala Penilaian: 0 - 100</span>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse min-w-[700px] tabel-kkm-jenjang" id="tabel-{{ $jenjangKey }}">
+                                <thead>
+                                    <tr class="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                                        <th class="px-4 py-3 w-10 text-center">No</th>
+                                        <th class="px-4 py-3 min-w-[200px]">Nama Mata Pelajaran</th>
+                                        @foreach($tingkats as $t)
+                                            <th class="px-3 py-3 text-center min-w-[100px]">
+                                                <div class="flex flex-col items-center">
+                                                    <span class="text-slate-700 font-bold text-xs">{{ $t['label'] }}</span>
+                                                    <span class="text-[10px] text-slate-400 font-normal lowercase">kkm</span>
+                                                </div>
+                                            </th>
+                                        @endforeach
+                                        <th class="px-4 py-3 w-32 text-center">Aksi Cepat</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-sm">
+                                    @if($mapel_jenjang->count() > 0)
+                                        @foreach($mapel_jenjang as $mIndex => $m)
+                                            <tr class="hover:bg-slate-50/60 transition-colors mapel-row" data-nama="{{ strtolower($m->nama_mapel) }}">
+                                                <td class="px-4 py-3.5 text-center text-slate-400 font-medium text-xs">{{ $loop->iteration }}</td>
+                                                <td class="px-4 py-3.5">
+                                                    <div class="flex items-center gap-2.5">
+                                                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                                                            <i class="fa-solid fa-book"></i>
+                                                        </div>
+                                                        <div>
+                                                            <strong class="font-bold text-slate-800 text-xs sm:text-sm block">{{ $m->nama_mapel }}</strong>
+                                                            <span class="text-[11px] text-slate-400 font-mono">ID: MAPEL-{{ str_pad($m->id, 3, '0', STR_PAD_LEFT) }}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                @foreach($tingkats as $t)
+                                                    @php
+                                                        $val_kkm = $m->getKkmTingkat($t['tingkat']);
+                                                    @endphp
+                                                    <td class="px-3 py-3 text-center">
+                                                        <div class="inline-flex flex-col items-center">
+                                                            <input type="number" 
+                                                                   name="kkm_tingkat[{{ $m->id }}][{{ $t['tingkat'] }}]" 
+                                                                   id="kkm-{{ $m->id }}-{{ $t['tingkat'] }}"
+                                                                   value="{{ $val_kkm }}" 
+                                                                   min="0" max="100" required
+                                                                   class="input-kkm-row kkm-input-{{ $jenjangKey }} kkm-row-{{ $m->id }} w-16 px-2 py-1.5 text-xs font-bold text-center text-slate-800 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors">
+                                                            <span class="text-[10px] text-slate-400 mt-0.5">/ 100</span>
+                                                        </div>
+                                                    </td>
+                                                @endforeach
+                                                <td class="px-4 py-3.5 text-center">
+                                                    @if(count($tingkats) > 0)
+                                                        <button type="button" 
+                                                                onclick="samakanKkmRow({{ $m->id }}, '{{ $tingkats[0]['tingkat'] }}')"
+                                                                class="px-2.5 py-1 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold transition-colors inline-flex items-center gap-1 cursor-pointer"
+                                                                title="Salin KKM {{ $tingkats[0]['label'] }} ke seluruh tingkatan mapel ini">
+                                                            <i class="fa-solid fa-arrows-left-right-to-line text-[10px]"></i> Samakan
+                                                        </button>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="{{ count($tingkats) + 3 }}" class="px-6 py-10 text-center text-slate-400 text-xs">
+                                                Tidak ada data mata pelajaran untuk jenjang {{ strtoupper($s->jenis) }}.
+                                            </td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                @endif
+                @endforeach
+
+                <!-- Footer Bar -->
+                <div class="mt-6 px-6 py-4 bg-slate-50/80 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-b-xl">
+                    <span class="text-xs text-slate-500 flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+                        <span>KKM yang disimpan langsung berlaku pada rekap rapor dan leger penilaian siswa di masing-masing tingkatan kelas.</span>
+                    </span>
+                    <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs sm:text-sm font-bold shadow-sm transition-colors flex items-center justify-center gap-2 w-full sm:w-auto cursor-pointer">
+                        <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Seluruh KKM Per Tingkatan
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -431,14 +464,58 @@
             recalculateBobot();
         }
 
-        // 2. KKM Massal & Filter Mapel
+        // 2. Tab Navigation & KKM Per Tingkatan
+        window.currentActiveJenjang = '{{ strtolower($data_sekolah->first()->jenis ?? "sd") }}';
+
+        function switchJenjangTab(jenjangKey) {
+            window.currentActiveJenjang = jenjangKey;
+
+            // Update Tab Button Styles
+            document.querySelectorAll('.tab-jenjang-btn').forEach(btn => {
+                btn.className = 'tab-jenjang-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-200 cursor-pointer';
+                const countBadge = btn.querySelector('span:last-child');
+                if (countBadge) {
+                    countBadge.className = 'px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-white text-slate-600 border border-slate-200';
+                }
+            });
+
+            const activeBtn = document.getElementById('tab-btn-' + jenjangKey);
+            if (activeBtn) {
+                activeBtn.className = 'tab-jenjang-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 bg-emerald-600 text-white shadow-sm cursor-pointer';
+                const countBadge = activeBtn.querySelector('span:last-child');
+                if (countBadge) {
+                    countBadge.className = 'px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-emerald-700 text-white';
+                }
+            }
+
+            // Show / Hide Tab Panes
+            document.querySelectorAll('.tab-pane-jenjang').forEach(pane => {
+                pane.classList.add('hidden');
+            });
+
+            const activePane = document.getElementById('pane-jenjang-' + jenjangKey);
+            if (activePane) {
+                activePane.classList.remove('hidden');
+            }
+        }
+
+        // KKM Massal pada Tab Aktif
         function terapkanKkmMassal() {
             const massalVal = parseInt(document.getElementById('kkmMassalInput').value) || 75;
-            document.querySelectorAll('.input-kkm-row').forEach(input => {
-                input.value = massalVal;
-                const match = input.id.match(/\d+/);
-                if (match) updatePredikatPreview(match[0], massalVal);
-            });
+            const activeJenjang = window.currentActiveJenjang;
+            
+            // Set ke semua input KKM di tab yang aktif (atau semua tab jika tidak spesifik)
+            const inputs = document.querySelectorAll('.kkm-input-' + activeJenjang);
+            if (inputs.length > 0) {
+                inputs.forEach(input => {
+                    input.value = massalVal;
+                });
+            } else {
+                document.querySelectorAll('.input-kkm-row').forEach(input => {
+                    input.value = massalVal;
+                });
+            }
+
             const form = document.getElementById('formKkmMapel');
             if (form) {
                 if (form.requestSubmit) {
@@ -449,23 +526,18 @@
             }
         }
 
-        function setKkmRow(id, val) {
-            const input = document.getElementById('kkm-input-' + id);
-            if (input) {
+        // Salin KKM kolom pertama ke seluruh kolom tingkatan pada baris mapel tersebut
+        function samakanKkmRow(mapelId, firstTingkat) {
+            const firstInput = document.getElementById('kkm-' + mapelId + '-' + firstTingkat);
+            if (!firstInput) return;
+
+            const val = parseInt(firstInput.value) || 75;
+            document.querySelectorAll('.kkm-row-' + mapelId).forEach(input => {
                 input.value = val;
-                updatePredikatPreview(id, val);
-            }
+            });
         }
 
-        function updatePredikatPreview(id, val) {
-            val = parseInt(val) || 75;
-            const box = document.getElementById('predikat-box-' + id);
-            if (box) {
-                const aMin = Math.min(100, Math.round(val + (100 - val) * 2 / 3));
-                box.innerHTML = `<span class="text-emerald-700 font-bold">A: &ge;${aMin}</span> &bull; <span class="text-amber-700 font-bold">B: &ge;${val}</span>`;
-            }
-        }
-
+        // Filter pencarian nama mapel
         function filterMapelTable() {
             const keyword = document.getElementById('cariMapelInput').value.toLowerCase();
             const rows = document.querySelectorAll('.mapel-row');
@@ -479,11 +551,6 @@
                     row.style.display = 'none';
                 }
             });
-
-            // Trigger re-render pagination jika ada event pagination universal
-            if (typeof renderAllSiakadTablesPagination === 'function') {
-                renderAllSiakadTablesPagination();
-            }
         }
     </script>
 </x-siakad-layout>

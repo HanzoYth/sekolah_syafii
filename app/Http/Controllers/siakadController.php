@@ -1536,7 +1536,7 @@ class siakadController extends Controller
         $rekap_mapel = collect();
         foreach ($daftar_jadwal_mapel as $j) {
             $mapel_id = $j->mapel_id;
-            $kkm = $j->mata_pelajaran->kkm ?? 75;
+            $kkm = $j->getKkm();
             $siswa_dinilai = 0;
             $siswa_lengkap = 0;
             $siswa_tuntas = 0;
@@ -1596,7 +1596,7 @@ class siakadController extends Controller
 
             foreach ($daftar_jadwal_mapel as $j) {
                 $m_id = $j->mapel_id;
-                $kkm = $j->mata_pelajaran->kkm ?? 75;
+                $kkm = $j->getKkm();
                 $komponen_siswa = $map_nilai[$s->id][$m_id] ?? [];
 
                 if (count($komponen_siswa) > 0) {
@@ -1713,11 +1713,13 @@ class siakadController extends Controller
 
         // Rekap Nilai per Mata Pelajaran
         $rekap_nilai = [];
+        $tingkat_siswa = \App\Models\mata_pelajaran::extractTingkat($siswa->kelas->nama_ruang ?? $siswa->kelas->nama_kelas ?? '');
+
         // Inisialisasi dari jadwal kelas agar semua mapel kelas tampil lengkap di lembar rapor
         foreach ($jadwal_kelas as $jk) {
             if (!$jk->mata_pelajaran) continue;
             $rekap_nilai[$jk->mata_pelajaran->nama_mapel] = [
-                'kkm' => $jk->mata_pelajaran->kkm ?? 75,
+                'kkm' => $jk->getKkm(),
                 'rincian' => [],
                 'nilai_akhir' => 0,
                 'ada_nilai' => false
@@ -1729,7 +1731,7 @@ class siakadController extends Controller
             $mapel = $n->mata_pelajaran->nama_mapel;
             if (!isset($rekap_nilai[$mapel])) {
                 $rekap_nilai[$mapel] = [
-                    'kkm' => $n->mata_pelajaran->kkm ?? 75,
+                    'kkm' => $n->mata_pelajaran->getKkmTingkat($tingkat_siswa),
                     'rincian' => [],
                     'nilai_akhir' => 0,
                     'ada_nilai' => false
@@ -1936,18 +1938,46 @@ class siakadController extends Controller
         }
 
         $sekolah_id = $request->query('sekolah_id');
-        $query_mapel = \App\Models\mata_pelajaran::with('sekolah');
+        $query_mapel = \App\Models\mata_pelajaran::with(['sekolah', 'kkm_tingkat']);
         if ($sekolah_id) {
             $query_mapel->where('sekolah_id', $sekolah_id);
         }
         $data_mapel = $query_mapel->orderBy('sekolah_id')->orderBy('nama_mapel')->get();
         $data_sekolah = \App\Models\jenis_sekolah::all();
 
+        // Konfigurasi daftar tingkatan kelas per jenjang sekolah
+        $tingkat_options = [
+            'sd' => [
+                ['tingkat' => '1', 'label' => 'Kelas 1'],
+                ['tingkat' => '2', 'label' => 'Kelas 2'],
+                ['tingkat' => '3', 'label' => 'Kelas 3'],
+                ['tingkat' => '4', 'label' => 'Kelas 4'],
+                ['tingkat' => '5', 'label' => 'Kelas 5'],
+                ['tingkat' => '6', 'label' => 'Kelas 6'],
+            ],
+            'smp' => [
+                ['tingkat' => '7', 'label' => 'Kelas 7 (1 SMP)'],
+                ['tingkat' => '8', 'label' => 'Kelas 8 (2 SMP)'],
+                ['tingkat' => '9', 'label' => 'Kelas 9 (3 SMP)'],
+            ],
+            'sma' => [
+                ['tingkat' => '10', 'label' => 'Kelas 10 (1 SMA)'],
+                ['tingkat' => '11', 'label' => 'Kelas 11 (2 SMA)'],
+                ['tingkat' => '12', 'label' => 'Kelas 12 (3 SMA)'],
+            ],
+            'tk' => [
+                ['tingkat' => 'A', 'label' => 'TK A'],
+                ['tingkat' => 'B', 'label' => 'TK B'],
+            ],
+        ];
+
+        $filter_tingkat = $request->query('tingkat');
+
         $total_bobot = $jenis_penilaian->sum('bobot');
         $avg_kkm = $data_mapel->avg('kkm') ? round($data_mapel->avg('kkm'), 1) : 75;
 
         return view('modul.siakad.admin.kelolaPenilaian', compact(
-            'jenis_penilaian', 'data_mapel', 'data_sekolah', 'sekolah_id', 'total_bobot', 'avg_kkm'
+            'jenis_penilaian', 'data_mapel', 'data_sekolah', 'sekolah_id', 'total_bobot', 'avg_kkm', 'tingkat_options', 'filter_tingkat'
         ));
     }
 
@@ -1975,19 +2005,51 @@ class siakadController extends Controller
         $check = $this->guardRoles(['a']);
         if ($check) return $check;
 
+        $updated_count = 0;
+
+        // 1. Simpan KKM per Tingkatan (kkm_tingkat[mapel_id][tingkat] = val)
+        if ($request->has('kkm_tingkat') && is_array($request->input('kkm_tingkat'))) {
+            $kkm_tingkat = $request->input('kkm_tingkat');
+            foreach ($kkm_tingkat as $mapel_id => $tingkats) {
+                if (is_array($tingkats)) {
+                    $vals = [];
+                    foreach ($tingkats as $tingkat => $val) {
+                        if ($val !== null && $val !== '') {
+                            $kkm_val = max(0, min(100, intval($val)));
+                            \App\Models\kkm_mapel_tingkat::updateOrCreate(
+                                ['mapel_id' => $mapel_id, 'tingkat' => (string)$tingkat],
+                                ['kkm' => $kkm_val]
+                            );
+                            $vals[] = $kkm_val;
+                            $updated_count++;
+                        }
+                    }
+                    if (!empty($vals)) {
+                        $avg = round(array_sum($vals) / count($vals));
+                        \App\Models\mata_pelajaran::where('id', $mapel_id)->update(['kkm' => $avg]);
+                    }
+                }
+            }
+        }
+
+        // 2. Simpan KKM massal/keseluruhan (kkm[mapel_id] = val) jika dikirim secara flat
         if ($request->has('kkm') && is_array($request->input('kkm'))) {
             $kkm_input = $request->input('kkm');
             foreach ($kkm_input as $mapel_id => $val) {
                 if ($val !== null && $val !== '') {
                     $kkm_val = max(0, min(100, intval($val)));
                     \App\Models\mata_pelajaran::where('id', $mapel_id)->update(['kkm' => $kkm_val]);
+                    $updated_count++;
                 }
             }
-            return redirect()->back()->with('success', 'Nilai KKM mata pelajaran berhasil diperbarui.');
         } elseif ($request->filled('mapel_id') && $request->filled('kkm_tunggal')) {
             $kkm_val = max(0, min(100, intval($request->kkm_tunggal)));
             \App\Models\mata_pelajaran::where('id', $request->mapel_id)->update(['kkm' => $kkm_val]);
-            return redirect()->back()->with('success', 'Nilai KKM mata pelajaran berhasil diperbarui.');
+            $updated_count++;
+        }
+
+        if ($updated_count > 0) {
+            return redirect()->back()->with('success', 'Nilai KKM per tingkatan kelas berhasil diperbarui.');
         }
 
         return redirect()->back()->with('info', 'Tidak ada data KKM yang diperbarui.');
@@ -2420,13 +2482,15 @@ class siakadController extends Controller
 
         $rekap_nilai = [];
 
+        $tingkat_siswa = \App\Models\mata_pelajaran::extractTingkat($siswa->kelas->nama_ruang ?? '');
+
         // Inisialisasi daftar mapel dari jadwal kelas agar semua mapel kelas terlihat
         foreach ($jadwal_kelas as $jk) {
             if (!$jk->mata_pelajaran) continue;
             $rekap_nilai[$jk->mapel_id] = [
                 'mata_pelajaran' => $jk->mata_pelajaran,
                 'guru_nama' => $jk->guru->nama ?? '-',
-                'kkm' => $jk->mata_pelajaran->kkm ?? 75,
+                'kkm' => $jk->getKkm(),
                 'nilai_detail' => [],
                 'ada_nilai' => false,
                 'nilai_akhir' => 0,
@@ -2441,7 +2505,7 @@ class siakadController extends Controller
                 $rekap_nilai[$mapel_id] = [
                     'mata_pelajaran' => $n->mata_pelajaran,
                     'guru_nama' => $n->guru->nama ?? '-',
-                    'kkm' => $n->mata_pelajaran->kkm ?? 75,
+                    'kkm' => $n->mata_pelajaran->getKkmTingkat($tingkat_siswa),
                     'nilai_detail' => [],
                     'ada_nilai' => false,
                     'nilai_akhir' => 0,

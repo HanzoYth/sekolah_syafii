@@ -386,6 +386,7 @@
     top: calc(100% + 10px);
     right: 0;
     background: #ffffff;
+    color: #1e293b;
     border-radius: 14px;
     border: 1px solid #e2e8f0;
     box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.16), 0 6px 12px -2px rgba(15, 23, 42, 0.06);
@@ -419,6 +420,17 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.notif-dropdown-header h3 {
+    margin: 0 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+}
+
+.notif-dropdown-header span {
+    color: #065f46 !important;
 }
 
 .notif-dropdown-list {
@@ -519,6 +531,19 @@
 .notif-empty-state {
     padding: 32px 20px;
     text-align: center;
+}
+
+.notif-empty-state h4 {
+    margin: 0 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #334155 !important;
+}
+
+.notif-empty-state p {
+    margin: 4px 0 0 0 !important;
+    font-size: 12px !important;
+    color: #64748b !important;
 }
 
 .notif-dropdown-footer {
@@ -700,14 +725,30 @@
 @media (max-width: 700px) {
     .notif-panel,
     .profile-panel {
-        position: fixed;
-        top: auto;
-        bottom: auto;
-        right: 12px;
-        left: 12px;
-        width: auto;
-        max-width: none;
-        margin-top: 6px;
+        position: fixed !important;
+        top: 130px;
+        bottom: auto !important;
+        right: 12px !important;
+        left: 12px !important;
+        width: auto !important;
+        max-width: calc(100vw - 24px) !important;
+        margin-top: 0 !important;
+        max-height: calc(100vh - 150px) !important;
+        box-sizing: border-box !important;
+        border-radius: 16px !important;
+        box-shadow: 0 20px 40px -6px rgba(15, 23, 42, 0.25) !important;
+    }
+
+    .notif-dropdown-list {
+        max-height: calc(100vh - 250px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .profile-panel-menu {
+        max-height: calc(100vh - 250px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
     }
 }
 </style>
@@ -720,6 +761,67 @@
         const profileBtn = document.getElementById('siakadProfileBtn');
         const profilePanel = document.getElementById('siakadProfilePanel');
         const profileChevron = document.getElementById('siakadProfileChevron');
+
+        function updateDropdownPosition(btn, panel) {
+            if (!btn || !panel) return;
+            if (window.innerWidth <= 700) {
+                const rect = btn.getBoundingClientRect();
+                // Hitung posisi top tepat di bawah tombol (rect.bottom + 8px).
+                // Beri batas minimal (16px) agar tidak pernah berada di area notch / status bar HP
+                let topPos = Math.round(rect.bottom + 8);
+                if (topPos < 16) topPos = 16;
+                if (topPos > window.innerHeight - 150) {
+                    topPos = Math.max(16, window.innerHeight - 150);
+                }
+
+                panel.style.position = 'fixed';
+                panel.style.top = topPos + 'px';
+                panel.style.left = '12px';
+                panel.style.right = '12px';
+                panel.style.width = 'auto';
+                panel.style.maxWidth = 'calc(100vw - 24px)';
+                panel.style.bottom = 'auto';
+
+                // Hitung tinggi maksimal agar panel tidak terpotong di bagian bawah layar
+                const availableHeight = window.innerHeight - topPos - 16;
+                panel.style.maxHeight = availableHeight + 'px';
+
+                const list = panel.querySelector('.notif-dropdown-list');
+                if (list) {
+                    const listMaxH = Math.max(120, availableHeight - 100);
+                    list.style.maxHeight = listMaxH + 'px';
+                    list.style.overflowY = 'auto';
+                    list.style.webkitOverflowScrolling = 'touch';
+                }
+
+                const profileMenu = panel.querySelector('.profile-panel-menu');
+                if (profileMenu) {
+                    const menuMaxH = Math.max(120, availableHeight - 90);
+                    profileMenu.style.maxHeight = menuMaxH + 'px';
+                    profileMenu.style.overflowY = 'auto';
+                    profileMenu.style.webkitOverflowScrolling = 'touch';
+                }
+            } else {
+                panel.style.position = '';
+                panel.style.top = '';
+                panel.style.left = '';
+                panel.style.right = '';
+                panel.style.width = '';
+                panel.style.maxWidth = '';
+                panel.style.bottom = '';
+                panel.style.maxHeight = '';
+                const list = panel.querySelector('.notif-dropdown-list');
+                if (list) {
+                    list.style.maxHeight = '';
+                    list.style.overflowY = '';
+                }
+                const profileMenu = panel.querySelector('.profile-panel-menu');
+                if (profileMenu) {
+                    profileMenu.style.maxHeight = '';
+                    profileMenu.style.overflowY = '';
+                }
+            }
+        }
 
         function closeAllDropdowns() {
             if (notifPanel) notifPanel.style.display = 'none';
@@ -738,6 +840,7 @@
                 if (!isCurrentlyOpen) {
                     notifPanel.style.display = 'block';
                     notifBtn.setAttribute('aria-expanded', 'true');
+                    updateDropdownPosition(notifBtn, notifPanel);
                 }
             });
         }
@@ -752,6 +855,7 @@
                     profilePanel.style.display = 'block';
                     profileBtn.setAttribute('aria-expanded', 'true');
                     if (profileChevron) profileChevron.classList.add('open');
+                    updateDropdownPosition(profileBtn, profilePanel);
                 }
             });
 
@@ -763,6 +867,26 @@
                 }
             });
         }
+
+        // Reposisi saat resize window atau orientasi HP berubah
+        window.addEventListener('resize', function() {
+            if (notifPanel && notifPanel.style.display === 'block') {
+                updateDropdownPosition(notifBtn, notifPanel);
+            }
+            if (profilePanel && profilePanel.style.display === 'block') {
+                updateDropdownPosition(profileBtn, profilePanel);
+            }
+        });
+
+        // Reposisi saat scroll layar
+        window.addEventListener('scroll', function() {
+            if (notifPanel && notifPanel.style.display === 'block') {
+                updateDropdownPosition(notifBtn, notifPanel);
+            }
+            if (profilePanel && profilePanel.style.display === 'block') {
+                updateDropdownPosition(profileBtn, profilePanel);
+            }
+        }, { passive: true });
 
         // Tutup saat klik di luar
         document.addEventListener('click', function(e) {

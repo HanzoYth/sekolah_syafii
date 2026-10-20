@@ -29,4 +29,13 @@ class jadwal_pelajaran extends Model
     public function tahun_ajaran() {
         return $this->belongsTo(tahun_ajaran::class, 'tahun_ajaran_id');
     }
+
+    public function getKkm() {
+        if (!$this->mata_pelajaran) {
+            return 75;
+        }
+        $nama_kelas = $this->kelas ? ($this->kelas->nama_kelas ?? $this->kelas->nama_ruang ?? '') : '';
+        $tingkat = mata_pelajaran::extractTingkat($nama_kelas);
+        return $this->mata_pelajaran->getKkmTingkat($tingkat);
+    }
 }
