@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string("kode_mapel")->nullable();
             $table->integer("kkm")->nullable();
             $table->timestamps();
+            $table->foreignId("sekolah_id")->nullable()->constrained("jenis_sekolah")->nullOnDelete();
         });
     }
 

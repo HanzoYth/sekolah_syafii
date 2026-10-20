@@ -11,7 +11,14 @@ return new class extends Migration
     {
         // Ubah nullability kolom yang sebelumnya mandatory
         DB::statement("ALTER TABLE `pengumuman` MODIFY `sekolah_id` BIGINT UNSIGNED NULL");
-        DB::statement("ALTER TABLE `pengumuman` MODIFY `guru_id` BIGINT UNSIGNED NULL");
+        DB::statement("
+            ALTER TABLE `pengumuman`
+            ADD COLUMN `guru_id` BIGINT UNSIGNED NULL,
+            ADD CONSTRAINT `pengumuman_guru_id_foreign`
+            FOREIGN KEY (`guru_id`)
+            REFERENCES `guru` (`id`)
+            ON DELETE SET NULL
+        ");
 
         Schema::table('pengumuman', function (Blueprint $table) {
             if (!Schema::hasColumn('pengumuman', 'target_tipe')) {
@@ -32,27 +39,61 @@ return new class extends Migration
             if (!Schema::hasColumn('pengumuman', 'penulis')) {
                 $table->string('penulis', 100)->nullable()->default('Admin')->after('judul');
             }
+
         });
     }
 
-    public function down(): void
-    {
-        Schema::table('pengumuman', function (Blueprint $table) {
-            if (Schema::hasColumn('pengumuman', 'kelas_id')) {
-                $table->dropForeign(['kelas_id']);
-                $table->dropColumn('kelas_id');
+
+public function down(): void
+{
+    // Hapus foreign key hanya jika benar-benar ada.
+    foreach (['kelas_id', 'siswa_id', 'guru_id'] as $column) {
+        if (!Schema::hasColumn('pengumuman', $column)) {
+            continue;
+        }
+
+        $foreignKeyExists = DB::table('information_schema.KEY_COLUMN_USAGE')
+            ->where('TABLE_SCHEMA', DB::raw('DATABASE()'))
+            ->where('TABLE_NAME', 'pengumuman')
+            ->where('COLUMN_NAME', $column)
+            ->whereNotNull('REFERENCED_TABLE_NAME')
+            ->exists();
+
+        if ($foreignKeyExists) {
+            $constraint = DB::table('information_schema.KEY_COLUMN_USAGE')
+                ->where('TABLE_SCHEMA', DB::raw('DATABASE()'))
+                ->where('TABLE_NAME', 'pengumuman')
+                ->where('COLUMN_NAME', $column)
+                ->whereNotNull('REFERENCED_TABLE_NAME')
+                ->value('CONSTRAINT_NAME');
+
+            if ($constraint) {
+                DB::statement(
+                    'ALTER TABLE `pengumuman` DROP FOREIGN KEY `' .
+                    str_replace('`', '``', $constraint) . '`'
+                );
             }
-            if (Schema::hasColumn('pengumuman', 'siswa_id')) {
-                $table->dropForeign(['siswa_id']);
-                $table->dropColumn('siswa_id');
-            }
-            $dropCols = array_filter(['target_tipe', 'target_role', 'lampiran', 'penulis'], function($col) {
-                return Schema::hasColumn('pengumuman', $col);
-            });
-            if (!empty($dropCols)) {
-                $table->dropColumn($dropCols);
-            }
-        });
+        }
     }
+
+    Schema::table('pengumuman', function (Blueprint $table) {
+        $columns = [];
+
+        foreach (
+            ['kelas_id', 'siswa_id', 'guru_id',
+             'target_tipe', 'target_role', 'lampiran', 'penulis']
+            as $column
+        ) {
+            if (Schema::hasColumn('pengumuman', $column)) {
+                $columns[] = $column;
+            }
+        }
+
+        if (!empty($columns)) {
+            $table->dropColumn($columns);
+        }
+    });
+}
+
 };
 

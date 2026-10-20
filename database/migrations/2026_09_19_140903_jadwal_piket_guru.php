@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string("nama");
             $table->time("jam");
             $table->foreignId("id_guru")->constrained("guru")->cascadeOnDelete();
-            $table->string("nama");
         });
     }
 
