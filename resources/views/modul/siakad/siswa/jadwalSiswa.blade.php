@@ -308,11 +308,27 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-sm">
+                            @php $prevSelesaiHariIni = null; @endphp
                             @foreach($jadwal_hari_ini as $j)
                                 @php
                                     $ag = $absensi_guru_hari_ini[$j->id] ?? null;
                                     $as = $absensi_siswa_hari_ini[$j->id] ?? null;
+                                    $mulaiCur = $j->jam_pelajaran->jam_mulai ?? null;
+                                    $selesaiCur = $j->jam_pelajaran->jam_selesai ?? null;
+                                    $jedaIstirahat = $prevSelesaiHariIni ? \App\Models\jam_pelajaran::deteksiJedaIstirahat($prevSelesaiHariIni, $mulaiCur) : null;
+                                    $prevSelesaiHariIni = $selesaiCur;
                                 @endphp
+                                @if($jedaIstirahat)
+                                    <tr class="bg-amber-50/70">
+                                        <td class="px-5 py-2.5 text-center text-amber-600"><i class="fa-solid fa-mug-hot"></i></td>
+                                        <td class="px-5 py-2.5 font-mono text-xs font-bold text-amber-800 whitespace-nowrap">
+                                            {{ $jedaIstirahat['mulai'] }} - {{ $jedaIstirahat['selesai'] }} WIB
+                                        </td>
+                                        <td colspan="5" class="px-5 py-2.5 text-xs font-bold text-amber-800">
+                                            <i class="fa-solid fa-mug-saucer mr-1"></i> JAM ISTIRAHAT ({{ $jedaIstirahat['durasi'] }} Menit)
+                                        </td>
+                                    </tr>
+                                @endif
                                 <tr class="hover:bg-slate-50/60">
                                     <td class="px-5 py-3.5 text-center text-slate-400 font-medium">{{ $loop->iteration }}</td>
                                     <td class="px-5 py-3.5 font-mono text-xs font-bold text-slate-700 whitespace-nowrap">
@@ -389,7 +405,21 @@
                                         <span class="text-[11px] font-semibold text-slate-500">{{ $list_hari->count() }} Mapel</span>
                                     </div>
                                     <div class="divide-y divide-slate-100">
+                                        @php $prevSelesaiMingguan = null; @endphp
                                         @foreach($list_hari as $j)
+                                            @php
+                                                $mulaiM = $j->jam_pelajaran->jam_mulai ?? null;
+                                                $selesaiM = $j->jam_pelajaran->jam_selesai ?? null;
+                                                $jedaM = $prevSelesaiMingguan ? \App\Models\jam_pelajaran::deteksiJedaIstirahat($prevSelesaiMingguan, $mulaiM) : null;
+                                                $prevSelesaiMingguan = $selesaiM;
+                                                $jmlJpItem = $j->getJumlahJp();
+                                            @endphp
+                                            @if($jedaM)
+                                                <div class="px-4 py-2.5 bg-amber-50/80 flex items-center justify-between text-xs font-bold text-amber-800">
+                                                    <span><i class="fa-solid fa-mug-hot mr-1.5 text-amber-600"></i> JAM ISTIRAHAT</span>
+                                                    <span class="font-mono">{{ $jedaM['mulai'] }} - {{ $jedaM['selesai'] }} ({{ $jedaM['durasi'] }} Menit)</span>
+                                                </div>
+                                            @endif
                                             <div class="p-4 hover:bg-slate-50/60 transition-colors flex items-center justify-between gap-3">
                                                 <div>
                                                     <h4 class="text-sm font-bold text-slate-800">{{ $j->mata_pelajaran->nama_mapel ?? '-' }}</h4>
@@ -397,10 +427,13 @@
                                                         <i class="fa-solid fa-chalkboard-user text-[10px] mr-1 text-slate-400"></i> {{ $j->guru->nama ?? '-' }}
                                                     </p>
                                                 </div>
-                                                <div class="text-right flex-shrink-0">
+                                                <div class="text-right flex-shrink-0 flex flex-col items-end gap-1">
                                                     <span class="inline-block px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono text-xs font-bold">
                                                         {{ substr($j->jam_pelajaran->jam_mulai ?? '-', 0, 5) }} - {{ substr($j->jam_pelajaran->jam_selesai ?? '-', 0, 5) }}
                                                     </span>
+                                                    @if($jmlJpItem > 0)
+                                                        <span class="text-[10px] font-semibold text-slate-400">{{ $jmlJpItem }} JP</span>
+                                                    @endif
                                                 </div>
                                             </div>
                                         @endforeach

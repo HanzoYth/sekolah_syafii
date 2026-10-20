@@ -283,10 +283,12 @@
                             </thead>
                             <tbody id="jamTableBody">
                                 @if(count($data_jam) > 0)
+                                    @php $prevJamByJenjang = []; @endphp
                                     @foreach($data_jam as $index => $j)
                                         @php
                                             $kode = $j->kode_jenjang;
                                             $pakaiJpRow = $j->is_pakai_jp;
+                                            $isIstirahatRow = $j->is_istirahat;
                                             $badgeClass = match(strtolower($kode)) {
                                                 'sd' => 'badge-sd',
                                                 'smp' => 'badge-smp',
@@ -298,8 +300,45 @@
                                             $jmlJp = $j->hitung_jp;
                                             $perJp = $j->menit_per_jp;
                                             $labelSesi = $j->jam_ke ?: ('Sesi ' . ($index + 1));
+
+                                            // Cek apakah ada jeda istirahat otomatis dari sesi sebelumnya pada jenjang yang sama
+                                            $jedaOtomatis = null;
+                                            if (isset($prevJamByJenjang[$kode]) && !$isIstirahatRow && !$prevJamByJenjang[$kode]->is_istirahat) {
+                                                $jedaOtomatis = \App\Models\jam_pelajaran::deteksiJedaIstirahat(
+                                                    $prevJamByJenjang[$kode]->jam_selesai,
+                                                    $j->jam_mulai
+                                                );
+                                            }
+                                            $prevJamByJenjang[$kode] = $j;
                                         @endphp
-                                        <tr class="jam-row" data-jenjang="{{ $kode }}">
+
+                                        @if($jedaOtomatis)
+                                            <tr class="jam-row jam-break-row" data-jenjang="{{ $kode }}" style="background: #fffbeb;">
+                                                <td class="number-column" style="color: #d97706;"><i class="fa-solid fa-mug-hot"></i></td>
+                                                <td>
+                                                    <span class="badge-jenjang {{ $badgeClass }}">{{ $kode }}</span>
+                                                </td>
+                                                <td>
+                                                    <strong style="color: #b45309;"><i class="fa-solid fa-mug-saucer" style="margin-right:4px;"></i> JAM ISTIRAHAT</strong>
+                                                </td>
+                                                <td>
+                                                    <span style="display:inline-flex; align-items:center; gap:6px; font-weight:700; color:#b45309;">
+                                                        <i class="fa-regular fa-clock"></i>
+                                                        {{ $jedaOtomatis['mulai'] }} - {{ $jedaOtomatis['selesai'] }} WIB
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span style="background:#fef3c7; color:#b45309; border:1px solid #fde68a; padding:4px 10px; border-radius:6px; font-size:0.76rem; font-weight:700;">
+                                                        Jeda Istirahat ({{ $jedaOtomatis['durasi'] }} Menit)
+                                                    </span>
+                                                </td>
+                                                <td class="action-column" style="font-size:0.75rem; color:#92400e; text-align:center;">
+                                                    <em>Otomatis</em>
+                                                </td>
+                                            </tr>
+                                        @endif
+
+                                        <tr class="jam-row" data-jenjang="{{ $kode }}" @if($isIstirahatRow) style="background: #fffbeb;" @endif>
                                             <td class="number-column jam-row-num">{{ $index + 1 }}</td>
                                             <td>
                                                 <span class="badge-jenjang {{ $badgeClass }}">
@@ -307,16 +346,24 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <strong>{{ $labelSesi }}</strong>
+                                                @if($isIstirahatRow)
+                                                    <strong style="color: #b45309;"><i class="fa-solid fa-mug-hot" style="margin-right:4px;"></i> {{ $labelSesi }}</strong>
+                                                @else
+                                                    <strong>{{ $labelSesi }}</strong>
+                                                @endif
                                             </td>
                                             <td>
-                                                <span style="display:inline-flex; align-items:center; gap:6px; font-weight:600; color:#1e293b;">
-                                                    <i class="fa-regular fa-clock" style="color:var(--student-primary)"></i>
+                                                <span style="display:inline-flex; align-items:center; gap:6px; font-weight:600; color:{{ $isIstirahatRow ? '#b45309' : '#1e293b' }};">
+                                                    <i class="fa-regular fa-clock" style="color:{{ $isIstirahatRow ? '#d97706' : 'var(--student-primary)' }}"></i>
                                                     {{ substr($j->jam_mulai, 0, 5) }} - {{ substr($j->jam_selesai, 0, 5) }} WIB
                                                 </span>
                                             </td>
                                             <td>
-                                                @if($pakaiJpRow)
+                                                @if($isIstirahatRow)
+                                                    <span style="background:#fef3c7; color:#b45309; border:1px solid #fde68a; padding:4px 10px; border-radius:6px; font-size:0.78rem; font-weight:700;">
+                                                        <i class="fa-solid fa-mug-hot"></i> Istirahat ({{ $durasiTotal }} Menit)
+                                                    </span>
+                                                @elseif($pakaiJpRow)
                                                     <span style="background:#ecfdf5; color:#047857; padding:4px 10px; border-radius:6px; font-size:0.78rem; font-weight:700;">
                                                         {{ $jmlJp }} JP
                                                     </span>

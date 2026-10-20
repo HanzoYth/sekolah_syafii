@@ -102,9 +102,9 @@
                             <td>{{ $j->guru->nama ?? '-' }}</td>
                             <td style="text-align: center;">
                                 <div style="display: flex; gap: 8px; justify-content: center;">
-                                    <a href="/sk/edit-jadwal/{{ $j->id }}" style="background: #e9f2ff; color: #3875c5; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Edit Jadwal">
+                                    <button type="button" onclick="bukaModalEditJadwal({{ json_encode($j) }})" style="background: #e9f2ff; color: #3875c5; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Edit Jadwal">
                                         <i class="fa-solid fa-pen-to-square"></i>
-                                    </a>
+                                    </button>
                                     <button onclick="deleteJadwal({{ $j->id }})" style="background: #f8e9e9; color: #b34d4d; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Hapus Jadwal">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
@@ -234,6 +234,119 @@
         </form>
     </x-siakad.ui.modal>
 
+    <!-- Modal Edit Jadwal -->
+    <x-siakad.ui.modal id="editModal" title="Edit Jadwal Pelajaran" icon="fa-pen-to-square" iconColor="#3875c5" iconBg="#e9f2ff">
+        <form id="formEditJadwal" action="" method="POST">
+            @csrf
+
+            <!-- 1. Kelas -->
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">1. Kelas (Jenjang & Tingkatan)</label>
+                <select name="kelas_id" id="modalEditKelasSelect" required onchange="onModalEditKelasChange()" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
+                    <option value="" data-jenjang="">-- Pilih Kelas --</option>
+                    @foreach($data_kelas as $kelas)
+                        @php
+                            $namaKls = $kelas->nama_kelas ?? ($kelas->nama_ruang ?? '-');
+                            $prefixKelas = strtoupper(explode(' ', trim($namaKls))[0] ?? '');
+                        @endphp
+                        <option value="{{ $kelas->id }}" data-jenjang="{{ $prefixKelas }}">{{ $namaKls }}</option>
+                    @endforeach
+                </select>
+                <div id="jenjangDetectBadgeEdit" style="display: none; margin-top: 6px; padding: 7px 11px; border-radius: 7px; background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 12px; font-weight: 500;">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-3.5">
+                <!-- 2. Hari -->
+                <div>
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">2. Hari</label>
+                    <select name="hari" id="modalEditHariSelect" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
+                        <option value="">-- Pilih Hari --</option>
+                        <option value="senin">Senin</option>
+                        <option value="selasa">Selasa</option>
+                        <option value="rabu">Rabu</option>
+                        <option value="kamis">Kamis</option>
+                        <option value="jumat">Jumat</option>
+                        <option value="sabtu">Sabtu</option>
+                    </select>
+                </div>
+                
+                <!-- 3. Jam Pelajaran (JP) -->
+                <div>
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">3. Jam Pelajaran (JP)</label>
+                    <select name="jam_pelajaran_id" id="modalEditJamSelect" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
+                        <option value="">-- Pilih Jam Pelajaran --</option>
+                        @foreach($data_jam as $jam)
+                            @php
+                                $kodeJam = $jam->kode_jenjang;
+                                $mulai = substr($jam->jam_mulai, 0, 5);
+                                $selesai = substr($jam->jam_selesai, 0, 5);
+                                $jmlJp = $jam->hitung_jp;
+                                $durasi = $jam->durasi_menit;
+                                $sesiLabel = $jam->jam_ke ?: ('Jam ke-' . $loop->iteration);
+                            @endphp
+                            <option value="{{ $jam->id }}" data-jenjang="{{ $kodeJam }}">
+                                [{{ $kodeJam }}] {{ $sesiLabel }} ({{ $mulai }} - {{ $selesai }} • {{ $jmlJp > 0 ? $jmlJp . ' JP / ' . $durasi . 'm' : 'Non-JP / ' . $durasi . 'm' }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <!-- 4. Mata Pelajaran -->
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">4. Mata Pelajaran</label>
+                <select name="mapel_id" id="modalEditMapelSelect" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
+                    <option value="">-- Pilih Mata Pelajaran --</option>
+                    @foreach($data_mapel as $mapel)
+                        @php
+                            $kodeMapel = $mapel->sekolah ? strtoupper(trim($mapel->sekolah->jenis)) : 'UMUM';
+                        @endphp
+                        <option value="{{ $mapel->id }}" data-jenjang="{{ $kodeMapel }}">
+                            [{{ $kodeMapel }}] {{ $mapel->nama_mapel }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- 5. Guru Pengajar -->
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">5. Guru Pengajar</label>
+                <select name="guru_id" id="modalEditGuruSelect" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
+                    <option value="">-- Pilih Guru --</option>
+                    @foreach($data_guru as $guru)
+                        @php
+                            $tags = [];
+                            if ($guru->guru_tetap) $tags[] = 'Guru Tetap';
+                            elseif ($guru->guru_honor) $tags[] = 'Guru Honor';
+                            if (\App\Models\wallas::where('guru_id', $guru->id)->exists()) $tags[] = 'Wali Kelas';
+                            $tagLabel = count($tags) > 0 ? ' (' . implode(', ', $tags) . ')' : '';
+                        @endphp
+                        <option value="{{ $guru->id }}">{{ $guru->nama }}{{ $tagLabel }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- 6. Tahun Ajaran -->
+            <div style="margin-bottom: 22px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">6. Tahun Ajaran</label>
+                <select name="tahun_ajaran_id" id="modalEditTahunSelect" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
+                    <option value="">-- Pilih Tahun Ajaran --</option>
+                    @foreach($data_tahun as $tahun)
+                        <option value="{{ $tahun->id }}">{{ $tahun->nama }}{{ $tahun->aktif ? ' (Aktif)' : '' }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="closeModal('editModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
+                <button type="submit" style="padding: 10px 16px; border: none; background: #3875c5; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-save"></i> Simpan Perubahan
+                </button>
+            </div>
+        </form>
+    </x-siakad.ui.modal>
+
     <!-- Modal Delete -->
     <x-siakad.ui.modal id="deleteModal" title="Konfirmasi Hapus" icon="fa-triangle-exclamation" iconColor="#b34d4d" iconBg="#f8e9e9">
         <p style="margin-bottom: 20px; color: #475569; line-height: 1.5;">Anda yakin ingin menghapus jadwal ini? Jadwal yang dihapus tidak dapat dipulihkan.</p>
@@ -316,6 +429,81 @@
                 o.hidden = (jenjang && mKode !== jenjang && mKode !== 'UMUM');
             });
             if (mapelSel.selectedIndex > 0 && mapelSel.options[mapelSel.selectedIndex].hidden) {
+                mapelSel.value = '';
+            }
+        }
+
+        // Modal Edit Jadwal Handler
+        function bukaModalEditJadwal(j) {
+            document.getElementById('formEditJadwal').action = '/sk/update-jadwal/' + j.id;
+            
+            const kelasSel = document.getElementById('modalEditKelasSelect');
+            kelasSel.value = j.kelas_id;
+            
+            onModalEditKelasChange(j.jam_pelajaran_id, j.mapel_id);
+
+            document.getElementById('modalEditHariSelect').value = j.hari;
+            document.getElementById('modalEditGuruSelect').value = j.guru_id;
+            document.getElementById('modalEditTahunSelect').value = j.tahun_ajaran_id;
+
+            openModal('editModal');
+        }
+
+        function onModalEditKelasChange(preserveJamId = null, preserveMapelId = null) {
+            const kelasSel = document.getElementById('modalEditKelasSelect');
+            const opt = kelasSel.options[kelasSel.selectedIndex];
+            const jenjang = opt ? (opt.getAttribute('data-jenjang') || '') : '';
+            const badge = document.getElementById('jenjangDetectBadgeEdit');
+
+            const jamSel = document.getElementById('modalEditJamSelect');
+            const mapelSel = document.getElementById('modalEditMapelSelect');
+
+            if (jenjang) {
+                if (jenjang === 'TK' || jenjang === 'PAUD') {
+                    badge.style.display = 'block';
+                    badge.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Jenjang <strong>${jenjang}</strong> terdeteksi (<strong>Non-JP / Sesi Bebas</strong>). Pilihan Jam & Mata Pelajaran telah disesuaikan.`;
+                } else {
+                    const standarMenit = (jenjang === 'SD') ? 35 : 45;
+                    badge.style.display = 'block';
+                    badge.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Jenjang <strong>${jenjang}</strong> terdeteksi (Standar: <strong>1 JP = ${standarMenit} Menit</strong>). Pilihan Jam & Mata Pelajaran telah disesuaikan.`;
+                }
+            } else {
+                badge.style.display = 'none';
+            }
+
+            let adaJamJenjangSpesifik = false;
+            Array.from(jamSel.options).forEach(o => {
+                if (!o.value) return;
+                if (o.getAttribute('data-jenjang') === jenjang) adaJamJenjangSpesifik = true;
+            });
+
+            Array.from(jamSel.options).forEach(o => {
+                if (!o.value) return;
+                const jKode = o.getAttribute('data-jenjang');
+                if (!jenjang) {
+                    o.hidden = false;
+                } else if (adaJamJenjangSpesifik) {
+                    o.hidden = (jKode !== jenjang && jKode !== 'UMUM');
+                } else {
+                    o.hidden = false;
+                }
+            });
+
+            if (preserveJamId) {
+                jamSel.value = preserveJamId;
+            } else if (jamSel.selectedIndex > 0 && jamSel.options[jamSel.selectedIndex].hidden) {
+                jamSel.value = '';
+            }
+
+            Array.from(mapelSel.options).forEach(o => {
+                if (!o.value) return;
+                const mKode = o.getAttribute('data-jenjang');
+                o.hidden = (jenjang && mKode !== jenjang && mKode !== 'UMUM');
+            });
+
+            if (preserveMapelId) {
+                mapelSel.value = preserveMapelId;
+            } else if (mapelSel.selectedIndex > 0 && mapelSel.options[mapelSel.selectedIndex].hidden) {
                 mapelSel.value = '';
             }
         }

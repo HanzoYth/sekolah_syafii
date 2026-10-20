@@ -277,10 +277,10 @@
                                 </td>
                                 <td class="px-5 py-3.5 text-center">
                                     <div class="flex items-center justify-center gap-1.5">
-                                        <!-- Tombol Edit -->
-                                        <a href="/sk/edit-kelas/{{ $k->id }}" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 flex items-center justify-center text-xs transition-colors" title="Ubah Nama Kelas">
+                                        <!-- Tombol Edit (Modal) -->
+                                        <button type="button" onclick="bukaModalEditKelas({{ $k->id }}, '{{ addslashes($k->nama_kelas) }}')" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 flex items-center justify-center text-xs transition-colors" title="Ubah Nama Kelas">
                                             <i class="fa-solid fa-pen-to-square"></i>
-                                        </a>
+                                        </button>
                                         <!-- Tombol Hapus -->
                                         <button type="button" onclick="konfirmasiHapusKelas({{ $k->id }}, '{{ addslashes($k->nama_kelas) }}')" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 flex items-center justify-center text-xs transition-colors" title="Hapus Ruang Kelas">
                                             <i class="fa-solid fa-trash-can"></i>
@@ -304,6 +304,40 @@
             </table>
         </div>
     </div>
+
+    <!-- Modal Edit Ruang Kelas -->
+    <x-siakad.ui.modal id="modalEditKelas" title="Edit Ruang Kelas" icon="fa-pen-to-square" iconColor="#2563eb" iconBg="#dbeafe">
+        <form id="formEditKelas" method="POST">
+            @csrf
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 13px; color: #334155;">
+                    Nama Ruang Kelas <span style="color: #ef4444;">*</span>
+                </label>
+                <div style="position: relative;">
+                    <i class="fa-solid fa-chalkboard-user" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 13px;"></i>
+                    <input type="text" name="nama_kelas" id="inputEditNamaKelas" required 
+                           placeholder="Contoh: SD Kelas 1 A" 
+                           style="width: 100%; padding: 10px 12px 10px 36px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px; box-sizing: border-box; outline: none; transition: border-color 0.2s;"
+                           onfocus="this.style.borderColor='#10b981'" onblur="this.style.borderColor='#cbd5e1'"
+                           autocomplete="off">
+                </div>
+                <small style="color: #64748b; font-size: 11.5px; margin-top: 6px; display: block; line-height: 1.4;">
+                    Format standar: <strong>[Jenjang] Kelas [Tingkat] [Tipe]</strong> (contoh: <code>SD Kelas 1 A</code>, <code>SMP Kelas 7 REGULER</code>, <code>TK Kelas A 1</code>).
+                </small>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+                <button type="button" onclick="closeModal('modalEditKelas')" 
+                        style="padding: 10px 18px; border: 1px solid #e2e8f0; background: #f8fafc; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s;">
+                    Batal
+                </button>
+                <button type="submit" 
+                        style="padding: 10px 20px; border: none; background: #177455; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(23,116,85,0.2); transition: all 0.2s;">
+                    <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Perubahan
+                </button>
+            </div>
+        </form>
+    </x-siakad.ui.modal>
 
     <!-- Modal Konfirmasi Hapus Kelas -->
     <div id="modalHapusKelas" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
@@ -396,6 +430,25 @@
             });
 
             applyKelasFilters();
+        }
+
+        // Helper Modal Edit Kelas
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.style.display = 'none';
+        }
+
+        function bukaModalEditKelas(id, nama) {
+            document.getElementById('formEditKelas').action = '/sk/update-kelas/' + id;
+            const input = document.getElementById('inputEditNamaKelas');
+            input.value = nama;
+            openModal('modalEditKelas');
+            setTimeout(() => input.focus(), 100);
         }
 
         // Modal Konfirmasi Hapus

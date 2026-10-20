@@ -128,4 +128,37 @@ class jam_pelajaran extends Model
         $selesai = $this->jam_selesai ? substr($this->jam_selesai, 0, 5) : '-';
         return "{$mulai} - {$selesai}";
     }
+
+    /**
+     * Cek apakah baris jam ini adalah sesi Istirahat eksplisit
+     */
+    public function getIsIstirahatAttribute(): bool
+    {
+        return stripos((string) $this->jam_ke, 'istirahat') !== false;
+    }
+
+    /**
+     * Deteksi otomatis jeda waktu istirahat di antara dua sesi berurutan (5 s/d 120 menit)
+     */
+    public static function deteksiJedaIstirahat($jamSelesaiSebelumnya, $jamMulaiBerikutnya): ?array
+    {
+        if (!$jamSelesaiSebelumnya || !$jamMulaiBerikutnya) {
+            return null;
+        }
+        try {
+            $selesaiPrev = Carbon::parse($jamSelesaiSebelumnya);
+            $mulaiNext = Carbon::parse($jamMulaiBerikutnya);
+            $diff = $selesaiPrev->diffInMinutes($mulaiNext, false);
+            if ($diff >= 5 && $diff <= 120) {
+                return [
+                    'mulai' => $selesaiPrev->format('H:i'),
+                    'selesai' => $mulaiNext->format('H:i'),
+                    'durasi' => (int) $diff,
+                ];
+            }
+        } catch (\Throwable $e) {
+            return null;
+        }
+        return null;
+    }
 }

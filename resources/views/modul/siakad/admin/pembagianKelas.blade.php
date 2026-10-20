@@ -231,12 +231,12 @@
                                         </span>
                                     </td>
                                     <td class="px-5 py-3.5 text-center">
-                                        <a href="/sk/hapus-anggota-kelas/{{ $s->id }}" 
-                                           onclick="return confirm('Apakah Anda yakin ingin mengeluarkan siswa \'{{ addslashes($s->nama) }}\' dari kelas {{ addslashes($kelas_terpilih->nama_ruang) }}? Siswa akan berstatus belum memiliki kelas.')" 
-                                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition-colors"
+                                        <button type="button" 
+                                           onclick="bukaModalKeluarkanSiswa({{ $s->id }}, '{{ addslashes($s->nama) }}', '{{ addslashes($kelas_terpilih->nama_ruang) }}')" 
+                                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition-colors cursor-pointer"
                                            title="Keluarkan dari rombel ini">
                                             <i class="fa-solid fa-user-minus text-[11px]"></i> Keluarkan
-                                        </a>
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -475,7 +475,46 @@
         @endif
     @endif
 
+    <!-- MODAL KONFIRMASI KELUARKAN SISWA DARI KELAS -->
+    <div id="modalKeluarkanSiswa" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl transform transition-all text-center">
+            <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-user-minus"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Keluarkan Siswa dari Rombel?</h3>
+            <p class="text-xs text-slate-500 mb-3 leading-relaxed">
+                Apakah Anda yakin ingin mengeluarkan siswa berikut dari kelas <strong id="keluarkanNamaKelas" class="text-slate-700"></strong>?
+            </p>
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 mb-4 text-left">
+                <span class="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider">Nama Siswa</span>
+                <strong id="keluarkanNamaSiswa" class="text-sm text-slate-800"></strong>
+            </div>
+            <p class="text-[11px] text-amber-700 mb-6 bg-amber-50 p-2.5 rounded-lg border border-amber-200 leading-normal">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i> Siswa akan berstatus <strong>belum memiliki kelas</strong> dan dapat dialokasikan kembali ke kelas lainnya nanti.
+            </p>
+            <div class="flex items-center justify-center gap-3">
+                <button type="button" onclick="tutupModalKeluarkanSiswa()" class="w-1/2 py-2.5 px-4 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
+                    Batal
+                </button>
+                <a id="btnEksekusiKeluarkanSiswa" href="#" class="w-1/2 py-2.5 px-4 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 shadow-sm shadow-rose-200">
+                    <i class="fa-solid fa-user-minus"></i> Ya, Keluarkan
+                </a>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function bukaModalKeluarkanSiswa(id, nama, namaKelas) {
+            document.getElementById('keluarkanNamaSiswa').innerText = nama;
+            document.getElementById('keluarkanNamaKelas').innerText = namaKelas;
+            document.getElementById('btnEksekusiKeluarkanSiswa').href = '/sk/hapus-anggota-kelas/' + id;
+            document.getElementById('modalKeluarkanSiswa').classList.remove('hidden');
+        }
+
+        function tutupModalKeluarkanSiswa() {
+            document.getElementById('modalKeluarkanSiswa').classList.add('hidden');
+        }
+
         // Check All toggle
         function toggleSelectAll(master) {
             const checkboxes = document.querySelectorAll('.siswa-checkbox');

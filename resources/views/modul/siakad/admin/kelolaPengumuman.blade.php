@@ -159,13 +159,11 @@
                                                 class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition-colors" title="Lihat Isi">
                                             <i class="fa-solid fa-eye text-xs"></i>
                                         </button>
-                                        <form action="/sk/hapus-pengumuman/{{ $item->id }}" method="GET" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengumuman ini?');">
-                                            @csrf
-                                            <button type="submit" 
-                                                    class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition-colors" title="Hapus">
-                                                <i class="fa-solid fa-trash-can text-xs"></i>
-                                            </button>
-                                        </form>
+                                        <button type="button" 
+                                                onclick="bukaModalHapusPengumuman({{ $item->id }}, '{{ addslashes($item->judul) }}')" 
+                                                class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition-colors" title="Hapus">
+                                            <i class="fa-solid fa-trash-can text-xs"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -385,7 +383,42 @@
         </div>
     </div>
 
+    <!-- MODAL HAPUS PENGUMUMAN -->
+    <div id="modalHapusPengumuman" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl transform transition-all text-center">
+            <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Hapus Pengumuman?</h3>
+            <p class="text-xs text-slate-500 mb-2 leading-relaxed">
+                Anda yakin ingin menghapus pengumuman berikut:
+            </p>
+            <p id="hapusJudulPengumuman" class="text-sm font-semibold text-slate-800 bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4 break-words"></p>
+            <p class="text-xs text-rose-600 mb-6">
+                <i class="fa-solid fa-circle-exclamation mr-1"></i> Data dan berkas lampiran yang dihapus tidak dapat dipulihkan kembali.
+            </p>
+            <div class="flex items-center justify-center gap-3">
+                <button type="button" onclick="tutupModalHapusPengumuman()" class="w-1/2 py-2.5 px-4 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
+                    Batal
+                </button>
+                <a id="btnEksekusiHapusPengumuman" href="#" class="w-1/2 py-2.5 px-4 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 shadow-sm shadow-rose-200">
+                    <i class="fa-solid fa-trash-can"></i> Ya, Hapus
+                </a>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function bukaModalHapusPengumuman(id, judul) {
+            document.getElementById('hapusJudulPengumuman').innerText = `"${judul}"`;
+            document.getElementById('btnEksekusiHapusPengumuman').href = '/sk/hapus-pengumuman/' + id;
+            document.getElementById('modalHapusPengumuman').classList.remove('hidden');
+        }
+
+        function tutupModalHapusPengumuman() {
+            document.getElementById('modalHapusPengumuman').classList.add('hidden');
+        }
+
         function openModalPengumuman() {
             document.getElementById('modalPengumuman').classList.remove('hidden');
         }
