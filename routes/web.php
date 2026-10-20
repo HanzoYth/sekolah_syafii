@@ -169,6 +169,9 @@ Route::get('/tf/pg',[tahfizController::class,"pengampu"]);
 Route::get('/tf/pgm',[tahfizController::class,"pengumuman"]);
 Route::get('/tf/sw/dass',[tahfizController::class,"dashboard_siswa"]);
 Route::get('/tf/sw/pgh',[tahfizController::class,"progres_hafalan"]);
+Route::get('/tf/sw/ls',[tahfizController::class,"laporan_siswa"]);
+Route::get('/tf/sw/pf',[tahfizController::class,"profil"]);
+Route::get('/tf/sw/pgs',[tahfizController::class,"pengumuman_siswa"]);
 
 
 //ini dasboard siakad

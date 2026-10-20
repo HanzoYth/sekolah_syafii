@@ -24,7 +24,7 @@
             <!-- TOPBAR / HEADER -->
             <header class="topbar">
                 <div>
-                    <h2>Assalamu'alaikum, Ali! 👋</h2>
+                    <h2>Assalamu'alaikum, hafiz! 👋</h2>
                     <p class="subtitle-text">Tetap semangat menambah dan menjaga hafalan Al-Qur'an hari ini.</p>
                 </div>
                 <div class="topbar-icons">
@@ -69,14 +69,68 @@
                 </div>
             </div>
 
+            <!-- SECTION PESAN & INFORMASI DARI USTADZ / USTADZAH -->
+            <div class="info-card-section mb-20">
+                <div class="card-header-flex">
+                    <h4><i class="fa-solid fa-bullhorn icon-title"></i> Pesan & Informasi dari Ustadz/Ustadzah</h4>
+                    <span class="badge-count">2 Baru</span>
+                </div>
+                <div class="info-list">
+                    <div class="info-item unread">
+                        <div class="info-icon bg-green">
+                            <i class="fa-solid fa-comment-dots"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-meta">
+                                <span class="sender-name">Ustadz Ahmad</span>
+                                <span class="info-date">Hari ini, 08:30 WITA</span>
+                            </div>
+                            <p class="info-message">MasyaAllah Ali, kelancaran di Surah An-Naba' sudah baik. Jangan lupa nanti malam diulang kembali ayat 1-10 untuk persiapan mutqin esok hari.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon bg-blue">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-meta">
+                                <span class="sender-name">Ustadzah Nurul (Koordinator Tahfiz)</span>
+                                <span class="info-date">21/06/2026</span>
+                            </div>
+                            <p class="info-message">Diberitahukan kepada seluruh siswa Halaqah 1 bahwa evaluasi bulanan (Tasmi') akan dilaksanakan pada hari Sabtu pekan depan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- ROW GRAPH & STATUS HARI INI -->
             <div class="summary-filter-row">
                 
-                <!-- PROGRESS GRAFIK -->
+                <!-- PROGRESS GRAFIK DENGAN FILTER TIPE & RENTANG WAKTU -->
                 <div class="summary-box" style="flex: 2;">
-                    <h4>Grafik Perkembangan Hafalan (7 Hari Terakhir)</h4>
+                    <div class="chart-header-flex">
+                        <h4>Grafik Perkembangan Hafalan</h4>
+                        
+                        <div class="chart-controls">
+                            <!-- Toggle Jenis Hafalan -->
+                            <div class="type-toggle">
+                                <button type="button" class="btn-toggle active" data-type="ziyadah">Ziyadah</button>
+                                <button type="button" class="btn-toggle" data-type="murojaah">Murojaah</button>
+                            </div>
+                            
+                            <!-- Filter Rentang Waktu -->
+                            <select class="select-range-sm" id="timeRangeSelect">
+                                <option value="7">7 Hari Terakhir</option>
+                                <option value="14">14 Hari Terakhir</option>
+                                <option value="30">30 Hari Terakhir</option>
+                                <option value="90">3 Bulan Terakhir</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="chart-box">
-                        <div class="dummy-chart">
+                        <div class="dummy-chart" id="chartBars">
                             <div class="bar" style="height: 40%;" title="17/06: 2 Baris"></div>
                             <div class="bar" style="height: 60%;" title="18/06: 3 Baris"></div>
                             <div class="bar" style="height: 80%;" title="19/06: 4 Baris"></div>
@@ -85,7 +139,7 @@
                             <div class="bar" style="height: 90%;" title="22/06: 4.5 Baris"></div>
                             <div class="bar" style="height: 100%;" title="23/06: 5 Baris"></div>
                         </div>
-                        <div class="chart-labels">
+                        <div class="chart-labels" id="chartLabels">
                             <span>17/06</span><span>18/06</span><span>19/06</span><span>20/06</span><span>21/06</span><span>22/06</span><span>23/06</span>
                         </div>
                     </div>
@@ -181,5 +235,33 @@
         </main>
     </div>
 
+    <!-- SCRIPT INTERAKSI GRAPH & TOGGLE -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtns = document.querySelectorAll('.type-toggle .btn-toggle');
+            const timeRangeSelect = document.getElementById('timeRangeSelect');
+
+            toggleBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    toggleBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const selectedType = this.getAttribute('data-type');
+                    const selectedRange = timeRangeSelect.value;
+                    
+                    // Di sini Anda dapat menambahkan fetch AJAX / update Chart JS sesuai parameter
+                    console.log(`Fetch data untuk tipe: ${selectedType}, rentang: ${selectedRange} hari`);
+                });
+            });
+
+            timeRangeSelect.addEventListener('change', function() {
+                const activeType = document.querySelector('.type-toggle .btn-toggle.active').getAttribute('data-type');
+                const selectedRange = this.value;
+                
+                // Di sini Anda dapat menambahkan fetch AJAX / update Chart JS sesuai parameter
+                console.log(`Fetch data untuk tipe: ${activeType}, rentang: ${selectedRange} hari`);
+            });
+        });
+    </script>
 </body>
 </html>

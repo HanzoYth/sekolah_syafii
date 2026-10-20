@@ -55,6 +55,15 @@ class tahfizController extends Controller
     function progres_hafalan(){
         return view("modul/tahfiz/siswa/progres");
     }
+    function laporan_siswa(){
+        return view("modul/tahfiz/siswa/riwayatlaporan");
+    }
+    function profil(){
+        return view("modul/tahfiz/siswa/profilsiswa");
+    }
+    function pengumuman_siswa(){
+        return view("modul/tahfiz/siswa/pengumumansiswa");
+    }
 
     
     

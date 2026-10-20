@@ -5,17 +5,17 @@
 
 /* ======== ROOT VARIABLES & RESET ======== */
 :root {
-    --primary-color: #1B6B4F;      /* Emerald 700 */
-    --primary-dark: #0B3B2E;       /* Emerald 900 */
-    --primary-darker: #07241C;     /* Emerald 950 */
-    --primary-light: #E8F2EC;      /* Tint terang emerald */
+    --primary-color: #1B6B4F;       /* Emerald 700 */
+    --primary-dark: #0B3B2E;        /* Emerald 900 */
+    --primary-darker: #07241C;      /* Emerald 950 */
+    --primary-light: #E8F2EC;       /* Tint terang emerald */
     --primary-gradient: linear-gradient(135deg, #24805F 0%, #0B3B2E 100%);
 
-    --gold: #C9A227;               /* Gold 500 */
-    --gold-light: #F4EAC8;         /* Gold 100 */
+    --gold: #C9A227;                /* Gold 500 */
+    --gold-light: #F4EAC8;          /* Gold 100 */
     --gold-gradient: linear-gradient(135deg, #D8B94A 0%, #C9A227 100%);
 
-    --bg-light: #F7F4EC;           /* Cream background */
+    --bg-light: #F7F4EC;            /* Cream background */
     --white: #ffffff;
     --text-dark: #16241f;
     --text-muted: #6b7d74;
@@ -28,6 +28,8 @@
     --yellow-text: #a5760f;
     --red-bg: #fdecec;
     --red-text: #b3261e;
+    --blue-bg: #eef2ff;
+    --blue-text: #1d4ed8;
 
     --font-heading: 'Amiri', serif;
     --font-main: 'Poppins', sans-serif;
@@ -213,30 +215,61 @@ html, body {
     color: var(--text-dark);
 }
 
+/* ======== PERBAIKAN TARGET HARI INI / CAPAIAN BADGE ======== */
 .target-today-badge {
-    background-color: var(--primary-light);
-    border: 1px dashed var(--primary-color);
-    padding: 12px 20px;
+    background: linear-gradient(135deg, #E8F2EC 0%, #F4EAC8 100%);
+    border: 1px solid var(--border-hover);
+    padding: 14px 22px;
     border-radius: var(--radius-md);
     text-align: right;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    box-shadow: 0 4px 12px rgba(11, 59, 46, 0.05);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.target-today-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--gold-gradient);
+}
+
+.target-today-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(27, 107, 79, 0.12);
 }
 
 .target-today-badge span {
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: var(--primary-dark);
     text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-bottom: 2px;
+}
+
+.target-today-badge span i {
+    color: var(--gold);
+    font-size: 0.85rem;
 }
 
 .target-today-badge strong {
     font-family: var(--font-heading);
-    font-size: 1.15rem;
-    color: var(--primary-color);
+    font-size: 1.25rem;
+    color: var(--primary-dark);
     font-weight: 700;
+    line-height: 1.2;
 }
 
 /* ======== STAT CARDS SISWA ======== */
@@ -281,6 +314,122 @@ html, body {
     letter-spacing: 0.5px;
 }
 
+/* ======== SECTION PESAN & INFORMASI USTADZ / USTADZAH ======== */
+.info-card-section {
+    background-color: var(--white);
+    padding: 24px 26px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-color);
+    margin-bottom: 28px;
+}
+
+.card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.card-header-flex h4 {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.icon-title {
+    color: var(--gold);
+}
+
+.badge-count {
+    background-color: var(--red-text);
+    color: var(--white);
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.info-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    background-color: #FAF9F5;
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--border-hover);
+    transition: all 0.2s ease;
+}
+
+.info-item.unread {
+    background-color: var(--primary-light);
+    border-color: var(--border-hover);
+    border-left-color: var(--primary-color);
+}
+
+.info-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+.bg-green {
+    background: var(--primary-gradient);
+}
+
+.bg-blue {
+    background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+}
+
+.info-content {
+    flex: 1;
+}
+
+.info-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.sender-name {
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--primary-dark);
+}
+
+.info-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.info-message {
+    margin: 0;
+    font-size: 0.84rem;
+    color: var(--text-dark);
+    line-height: 1.5;
+}
+
 /* ======== SUMMARY & FILTER ROW ======== */
 .summary-filter-row {
     display: grid;
@@ -303,9 +452,80 @@ html, body {
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--primary-dark);
+    margin: 0;
+}
+
+.filter-box h4 {
     margin-bottom: 18px;
     padding-bottom: 12px;
     border-bottom: 1px dashed var(--border-color);
+}
+
+/* ======== CHART HEADER & CONTROLS ======== */
+.chart-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.chart-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Toggle Buttons (Ziyadah / Murojaah) */
+.type-toggle {
+    display: inline-flex;
+    background-color: var(--primary-light);
+    padding: 3px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+.type-toggle .btn-toggle {
+    border: none;
+    background: transparent;
+    padding: 6px 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: var(--font-main);
+    transition: all 0.2s ease;
+}
+
+.type-toggle .btn-toggle.active {
+    background-color: var(--white);
+    color: var(--primary-color);
+    box-shadow: var(--shadow-xs);
+    font-weight: 700;
+}
+
+/* Select Dropdown Rentang Waktu */
+.select-range-sm {
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    font-size: 0.78rem;
+    font-family: var(--font-main);
+    color: var(--text-dark);
+    outline: none;
+    background-color: #FBFBF8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.select-range-sm:focus {
+    border-color: var(--primary-color);
+    background-color: var(--white);
+    box-shadow: 0 0 0 3px rgba(27, 107, 79, 0.12);
 }
 
 /* ======== CHART BOX ======== */
@@ -315,7 +535,7 @@ html, body {
 }
 
 .dummy-chart {
-    height: 140px;
+    height: 150px;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
@@ -487,6 +707,7 @@ table tbody tr:hover { background-color: var(--primary-light); }
 }
 
 .mt-15 { margin-top: 15px; }
+.mb-20 { margin-bottom: 20px; }
 .text-center { text-align: center; }
 
 /* ================================================================
@@ -499,7 +720,11 @@ table tbody tr:hover { background-color: var(--primary-light); }
 }
 
 @media (max-width: 900px) {
-    .main-content { padding: 20px; }
+    .main-content { 
+        margin-left: 0; 
+        width: 100%; 
+        padding: 20px; 
+    }
     .student-profile-banner { flex-direction: column; align-items: flex-start; }
     .target-today-badge { width: 100%; text-align: left; margin-top: 10px; }
 }
@@ -514,7 +739,10 @@ table tbody tr:hover { background-color: var(--primary-light); }
     .stat-card { padding: 18px 14px; }
     .stat-card h3 { font-size: 1.5rem; }
 
-    .summary-box, .filter-box, .table-card { padding: 18px; }
+    .info-card-section, .summary-box, .filter-box, .table-card { padding: 18px; }
+
+    .chart-header-flex { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .chart-controls { width: 100%; justify-content: space-between; }
 
     .table-header-flex { flex-direction: column; align-items: flex-start; gap: 10px; }
     .input-date-sm { width: 100%; }
@@ -522,4 +750,6 @@ table tbody tr:hover { background-color: var(--primary-light); }
 
 @media (max-width: 380px) {
     .stats-grid { grid-template-columns: 1fr; }
+    .chart-controls { flex-direction: column; align-items: stretch; }
+    .select-range-sm { width: 100%; }
 }

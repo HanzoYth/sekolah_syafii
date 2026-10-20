@@ -150,11 +150,23 @@
                                 <span>Progres Hafalan</span>
                             </a>
                         </li>
+                        <li class="menu-item <?php echo e($route == '/tf/sw/hgh' ? 'active' : ''); ?>">
+                            <a href="/tf/sw/ls">
+                                <i class="fa-solid fa-book-quran"></i>
+                                <span>riwayat laporan</span>
+                            </a>
+                        </li>
                       
                         <li class="menu-item <?php echo e($route == '/tf/sw/prf' ? 'active' : ''); ?>">
-                            <a href="/tf/sw/prf">
+                            <a href="/tf/sw/pf">
                                 <i class="fa-solid fa-circle-user"></i>
                                 <span>Profile</span>
+                            </a>
+                        </li>
+                        <li class="menu-item <?php echo e($route == '/tf/sw/prf' ? 'active' : ''); ?>">
+                            <a href="/tf/sw/pgs">
+                                <i class="fa-solid fa-circle-user"></i>
+                                <span>Pengumuman</span>
                             </a>
                         </li>
                     </ul>
