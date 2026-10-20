@@ -135,8 +135,38 @@
 
                     <!-- Daftar Menu Navigasi -->
                     <div class="profile-panel-menu">
+                        <?php if($profileUrl): ?>
+                            <a href="<?php echo e($profileUrl); ?>" class="profile-menu-link <?php echo e(request()->is('sk/pr', 'sk/pfs', 'gr/prad') ? 'active-profile' : ''); ?>" role="menuitem">
+                                <div class="profile-menu-icon bg-emerald-50 text-emerald-700">
+                                    <i class="fa-solid fa-id-card"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <span class="profile-menu-text font-bold text-slate-800">
+                                        <?php if(session('role') === 'g'): ?>
+                                            Profil Guru
+                                        <?php elseif(session('role') === 's'): ?>
+                                            Profil Siswa
+                                        <?php else: ?>
+                                            Profil Saya
+                                        <?php endif; ?>
+                                    </span>
+                                    <span class="profile-menu-sub">
+                                        <?php if(session('role') === 'g'): ?>
+                                            Informasi kepegawaian & data diri
+                                        <?php elseif(session('role') === 's'): ?>
+                                            Biodata diri & informasi akademik
+                                        <?php else: ?>
+                                            Informasi profil & akun
+                                        <?php endif; ?>
+                                    </span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+                            </a>
+                            <div class="profile-menu-hr"></div>
+                        <?php endif; ?>
+
                         <a href="<?php echo e($dashboardUrl); ?>" class="profile-menu-link" role="menuitem">
-                            <div class="profile-menu-icon bg-emerald-50 text-emerald-700">
+                            <div class="profile-menu-icon bg-blue-50 text-blue-700">
                                 <i class="fa-solid fa-gauge-high"></i>
                             </div>
                             <div class="flex-1 min-w-0">
@@ -144,18 +174,6 @@
                                 <span class="profile-menu-sub">Halaman utama akademik</span>
                             </div>
                         </a>
-
-                        <?php if($profileUrl): ?>
-                            <a href="<?php echo e($profileUrl); ?>" class="profile-menu-link" role="menuitem">
-                                <div class="profile-menu-icon bg-blue-50 text-blue-700">
-                                    <i class="fa-regular fa-id-badge"></i>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <span class="profile-menu-text font-semibold text-slate-800">Profil Saya</span>
-                                    <span class="profile-menu-sub">Informasi data diri & akun</span>
-                                </div>
-                            </a>
-                        <?php endif; ?>
 
                         <?php if($isWallas): ?>
                             <a href="/sk/wali-kelas" class="profile-menu-link" role="menuitem">
@@ -165,28 +183,6 @@
                                 <div class="flex-1 min-w-0">
                                     <span class="profile-menu-text font-semibold text-slate-800">Kelola Perwalian</span>
                                     <span class="profile-menu-sub"><?php echo e($waliKelasNama ? 'Rombel ' . $waliKelasNama : 'Wali Kelas'); ?></span>
-                                </div>
-                            </a>
-                        <?php endif; ?>
-
-                        <?php if(session('role') === 's'): ?>
-                            <a href="/sk/jadwal-siswa?tab=jadwal" class="profile-menu-link" role="menuitem">
-                                <div class="profile-menu-icon bg-indigo-50 text-indigo-700">
-                                    <i class="fa-solid fa-calendar-week"></i>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <span class="profile-menu-text font-semibold text-slate-800">Jadwal Pelajaran</span>
-                                    <span class="profile-menu-sub">Agenda kelas & presensi</span>
-                                </div>
-                            </a>
-
-                            <a href="/sk/rapor-siswa?tab=transkrip" class="profile-menu-link" role="menuitem">
-                                <div class="profile-menu-icon bg-teal-50 text-teal-700">
-                                    <i class="fa-solid fa-graduation-cap"></i>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <span class="profile-menu-text font-semibold text-slate-800">Nilai & Rapor</span>
-                                    <span class="profile-menu-sub">Capaian hasil belajar</span>
                                 </div>
                             </a>
                         <?php endif; ?>
@@ -208,7 +204,7 @@
                                 <i class="fas fa-cubes"></i>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <span class="profile-menu-text text-slate-700">Pilih Modul</span>
+                                <span class="profile-menu-text font-medium text-slate-700">Pilih Modul</span>
                                 <span class="profile-menu-sub">Kembali ke portal modul</span>
                             </div>
                         </a>
@@ -650,6 +646,18 @@
 }
 .profile-menu-link:hover {
     background: #f8fafc;
+}
+.profile-menu-link.active-profile {
+    background: #f0fdf4 !important;
+    border-left: 3px solid #166534 !important;
+}
+.profile-menu-link.active-profile .profile-menu-text {
+    color: #166534 !important;
+    font-weight: 800 !important;
+}
+.profile-menu-link.active-profile .profile-menu-icon {
+    background: #166534 !important;
+    color: #ffffff !important;
 }
 
 .profile-menu-icon {

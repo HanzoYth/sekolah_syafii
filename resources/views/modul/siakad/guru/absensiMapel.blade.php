@@ -207,22 +207,6 @@
                         </p>
                     </div>
                 @elseif(!$absen_guru)
-                    <!-- KONDISI A: GURU BELUM MELAKUKAN PRESENSI MASUK -->
-                    <div class="mb-4 p-3.5 rounded-lg bg-emerald-50/60 border border-emerald-100 text-xs text-emerald-900 flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-circle-info text-emerald-600 text-sm"></i>
-                            <span>Lakukan presensi masuk sekarang dengan mengisi materi di bawah agar jam masuk Anda langsung tercatat akurat.</span>
-                        </div>
-                        @if($toleransi_info['estimasi_status'] === 'tepat_waktu')
-                            <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold whitespace-nowrap text-[11px]">
-                                <i class="fa-solid fa-circle-check text-[10px] mr-1"></i> Jika masuk sekarang: Tepat Waktu
-                            </span>
-                        @else
-                            <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-bold whitespace-nowrap text-[11px]">
-                                <i class="fa-solid fa-clock text-[10px] mr-1"></i> Jika masuk sekarang: Terlambat
-                            </span>
-                        @endif
-                    </div>
 
                     <form action="/sk/simpan-absensi-mapel" method="POST" class="space-y-4">
                         @csrf

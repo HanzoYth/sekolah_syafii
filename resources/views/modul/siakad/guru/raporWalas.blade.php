@@ -132,9 +132,9 @@
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <a href="/sk/detail-rapor-walas/{{ $s->id }}" class="inline-flex items-center px-3.5 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-xs font-semibold transition-colors shadow-sm">
-                                        <i class="fa-solid fa-print mr-1.5"></i> Lihat & Cetak Rapor
+                                        <i class="fa-solid fa-print mr-1.5"></i> Cetak Rapor
                                     </a>
-                                </td>
+                                </td>   
                             </tr>
                         @endforeach
                     @else

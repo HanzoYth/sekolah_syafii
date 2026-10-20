@@ -220,12 +220,6 @@
                                 <span>Slip Pembayaran</span>
                             </a>
                         </li>
-                        <li class="menu-item <?php echo e(request()->is('sk/pr') ? 'active' : ''); ?>">
-                            <a href="/sk/pr">
-                                <i class="fa-solid fa-id-card"></i>
-                                <span>Profil</span>
-                            </a>
-                        </li>
                         <li class="menu-item <?php echo e(request()->is('sk/pengumuman-guru') ? 'active' : ''); ?>">
                             <a href="/sk/pengumuman-guru">
                                 <i class="fa-solid fa-bullhorn"></i>
@@ -280,12 +274,6 @@
                             <a href="/sk/ps">
                                 <i class="fa-solid fa-bullhorn"></i>
                                 <span>Pengumuman</span>
-                            </a>
-                        </li>
-                        <li class="menu-item <?php echo e(request()->is('sk/pfs') ? 'active' : ''); ?>">
-                            <a href="/sk/pfs">
-                                <i class="fa-solid fa-id-card"></i>
-                                <span>Profil Siswa</span>
                             </a>
                         </li>
                     </ul>
