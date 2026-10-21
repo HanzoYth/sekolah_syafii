@@ -1108,7 +1108,8 @@ class siakadController extends Controller
 
         $data_siswa = $query->get();
         $data_sekolah = \App\Models\jenis_sekolah::all();
-        return view('/modul/siakad/admin/daftar_siswa', compact("data_siswa", "data_sekolah", "sekolah_id", "status_rombel", "jumlahTanpaKelas"));
+        $data_kelas = \App\Models\ruang_kelas::all();
+        return view('/modul/siakad/admin/daftar_siswa', compact("data_siswa", "data_sekolah", "data_kelas", "sekolah_id", "status_rombel", "jumlahTanpaKelas"));
     }
 
     function tampilan_detailSiswa($id){
@@ -1120,7 +1121,73 @@ class siakadController extends Controller
             return redirect('/sk/ds')->with('error', 'Data siswa tidak ditemukan.');
         }
         $data_kelas = $data_siswa->kelas;
-        return view ('/modul/siakad/admin/detailSiswa',compact("data_siswa","data_kelas"));
+        $semua_kelas = \App\Models\ruang_kelas::all();
+        $data_sekolah = \App\Models\jenis_sekolah::all();
+        return view ('/modul/siakad/admin/detailSiswa',compact("data_siswa","data_kelas", "semua_kelas", "data_sekolah"));
+    }
+
+    public function updateSiswa(Request $request, $id) {
+        $check = $this->guardRoles(['a']);
+        if ($check) return $check;
+
+        $siswa = \App\Models\siswa::find($id);
+        if (!$siswa) {
+            return redirect()->back()->with('error', 'Data siswa tidak ditemukan.');
+        }
+
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'nis' => 'required|string|max:50',
+            'sekolah_id' => 'required',
+            'gender' => 'required|in:l,p',
+            'tempat_lahir' => 'nullable|string|max:100',
+            'tanggal_lahir' => 'nullable|date',
+            'alamat' => 'nullable|string|max:500',
+            'url_foto' => 'nullable|file|mimes:jpg,jpeg,png|max:2048'
+        ], [
+            'nama.required' => 'Nama lengkap wajib diisi.',
+            'nis.required' => 'Nomor Induk Siswa (NIS) wajib diisi.',
+            'sekolah_id.required' => 'Jenjang sekolah wajib dipilih.',
+            'gender.required' => 'Jenis kelamin wajib dipilih.',
+            'url_foto.mimes' => 'Format foto profil harus JPG, JPEG, atau PNG.',
+            'url_foto.max' => 'Ukuran file foto maksimal 2MB.'
+        ]);
+
+        // Cek keunikan NIS (kecuali milik siswa ini sendiri)
+        $cekNis = \App\Models\siswa::where('nis', $request->nis)->where('id', '!=', $id)->first();
+        if ($cekNis) {
+            return redirect()->back()->with('error', "NIS '{$request->nis}' sudah digunakan oleh siswa '{$cekNis->nama}'.")->withInput();
+        }
+
+        // Upload foto baru jika ada
+        $path_foto = $siswa->url_foto;
+        if ($request->hasFile('url_foto')) {
+            $path_foto = $request->file('url_foto')->store('uploads');
+        }
+
+        $tanggal_lahir = null;
+        if ($request->filled('tanggal_lahir')) {
+            try {
+                $tanggal_lahir = \Carbon\Carbon::parse($request->tanggal_lahir)->format('Y-m-d');
+            } catch (\Exception $e) {
+                $tanggal_lahir = null;
+            }
+        }
+
+        $siswa->update([
+            'nama' => $request->nama,
+            'nis' => $request->nis,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_lahir' => $tanggal_lahir,
+            'gender' => $request->gender ?? 'l',
+            'alamat' => $request->alamat,
+            'aktif' => $request->has('aktif') ? (int)$request->aktif : 1,
+            'kelas_id' => $request->filled('kelas_id') ? $request->kelas_id : null,
+            'sekolah_id' => $request->sekolah_id,
+            'url_foto' => $path_foto
+        ]);
+
+        return redirect()->back()->with('success', "Data siswa '{$siswa->nama}' berhasil diperbarui!");
     }
 
     function simpan_kelas(Request $request){
@@ -2324,6 +2391,30 @@ class siakadController extends Controller
         $check = $this->guardRoles(['a']);
         if ($check) return $check;
 
+        // MODE 0: Tambah / Atur Jam Istirahat Khusus
+        if ($request->input('mode') === 'istirahat' || $request->has('is_istirahat')) {
+            $request->validate([
+                'jam_mulai' => 'required',
+                'jam_selesai' => 'required'
+            ]);
+
+            $sekolah_id = $request->input('sekolah_id') ?: null;
+            $nama_istirahat = trim($request->input('jam_ke') ?: 'Istirahat');
+            $sekolah = $sekolah_id ? \App\Models\jenis_sekolah::find($sekolah_id) : null;
+            $namaJenjang = $sekolah ? strtoupper($sekolah->jenis) : 'Umum';
+
+            \App\Models\jam_pelajaran::create([
+                'sekolah_id' => $sekolah_id,
+                'jam_ke' => $nama_istirahat,
+                'jumlah_jp' => 0,
+                'durasi_per_jp' => null,
+                'jam_mulai' => $request->jam_mulai,
+                'jam_selesai' => $request->jam_selesai
+            ]);
+
+            return redirect()->back()->with('success', "Jam Istirahat ({$nama_istirahat}) berhasil ditambahkan untuk jenjang {$namaJenjang}.");
+        }
+
         // MODE 1: Generate Paket Jam Pelajaran Otomatis Berdasarkan Sistem JP (SD = 35m, SMP = 45m)
         if ($request->input('mode') === 'generate_paket') {
             $request->validate([
@@ -2377,15 +2468,34 @@ class siakadController extends Controller
                 $jp_sebelum = $jp_ke;
                 $jp_ke += $ambil_jp;
 
-                // Tambahkan jeda istirahat jika melewati titik istirahat
+                // Tambahkan slot jam istirahat eksplisit jika melewati titik istirahat
                 if ($istirahat_setelah_jp > 0 && $durasi_istirahat > 0) {
                     if ($jp_sebelum <= $istirahat_setelah_jp && $jp_ke > $istirahat_setelah_jp && $jp_ke <= $total_jp_harian) {
+                        $ist_mulai = $jam_selesai;
                         $waktu_berjalan->addMinutes($durasi_istirahat);
+                        $ist_selesai = $waktu_berjalan->format('H:i');
+
+                        $sudahAdaIst = \App\Models\jam_pelajaran::where('sekolah_id', $sekolah->id)
+                            ->where('jam_mulai', $ist_mulai)
+                            ->where('jam_selesai', $ist_selesai)
+                            ->exists();
+
+                        if (!$sudahAdaIst) {
+                            \App\Models\jam_pelajaran::create([
+                                'sekolah_id' => $sekolah->id,
+                                'jam_ke' => 'Istirahat',
+                                'jumlah_jp' => 0,
+                                'durasi_per_jp' => null,
+                                'jam_mulai' => $ist_mulai,
+                                'jam_selesai' => $ist_selesai,
+                            ]);
+                            $created++;
+                        }
                     }
                 }
             }
 
-            return redirect()->back()->with('success', "Berhasil men-generate {$created} slot Jam Pelajaran otomatis untuk jenjang " . strtoupper($sekolah->jenis) . " (1 JP = {$durasi_per_jp} menit).");
+            return redirect()->back()->with('success', "Berhasil men-generate {$created} slot Jam Pelajaran & Istirahat untuk jenjang " . strtoupper($sekolah->jenis) . " (1 JP = {$durasi_per_jp} menit).");
         }
 
         // MODE 2: Tambah Satuan Jam Pelajaran dengan Kalkulator JP
@@ -2396,16 +2506,23 @@ class siakadController extends Controller
 
         $sekolah_id = $request->input('sekolah_id') ?: null;
         $sekolah = $sekolah_id ? \App\Models\jenis_sekolah::find($sekolah_id) : null;
-        $pakaiJp = $sekolah ? \App\Models\jam_pelajaran::pakaiSistemJp($sekolah->jenis) : true;
+        $label_sesi = $request->input('jam_ke') ?: null;
+        $isIstirahat = stripos((string) $label_sesi, 'istirahat') !== false;
 
-        $durasi_per_jp = $pakaiJp
-            ? ($request->filled('durasi_per_jp') ? intval($request->durasi_per_jp) : ($sekolah ? \App\Models\jam_pelajaran::standarMenitPerJp($sekolah->jenis) : 35))
-            : null;
-        $jumlah_jp = $pakaiJp ? max(1, intval($request->input('jumlah_jp', 1))) : 0;
+        if ($isIstirahat) {
+            $durasi_per_jp = null;
+            $jumlah_jp = 0;
+        } else {
+            $pakaiJp = $sekolah ? \App\Models\jam_pelajaran::pakaiSistemJp($sekolah->jenis) : true;
+            $durasi_per_jp = $pakaiJp
+                ? ($request->filled('durasi_per_jp') ? intval($request->durasi_per_jp) : ($sekolah ? \App\Models\jam_pelajaran::standarMenitPerJp($sekolah->jenis) : 35))
+                : null;
+            $jumlah_jp = $pakaiJp ? max(1, intval($request->input('jumlah_jp', 1))) : 0;
+        }
 
         \App\Models\jam_pelajaran::create([
             'sekolah_id' => $sekolah_id,
-            'jam_ke' => $request->input('jam_ke') ?: null,
+            'jam_ke' => $label_sesi,
             'jumlah_jp' => $jumlah_jp,
             'durasi_per_jp' => $durasi_per_jp,
             'jam_mulai' => $request->jam_mulai,
@@ -2425,22 +2542,30 @@ class siakadController extends Controller
 
         $sekolah_id = $request->input('sekolah_id') ?: null;
         $sekolah = $sekolah_id ? \App\Models\jenis_sekolah::find($sekolah_id) : null;
-        $pakaiJp = $sekolah ? \App\Models\jam_pelajaran::pakaiSistemJp($sekolah->jenis) : true;
+        $label_sesi = $request->input('jam_ke') ?: null;
+        $isIstirahat = $request->input('mode') === 'istirahat' || stripos((string) $label_sesi, 'istirahat') !== false;
 
-        $durasi_per_jp = $pakaiJp
-            ? ($request->filled('durasi_per_jp') ? intval($request->durasi_per_jp) : ($sekolah ? \App\Models\jam_pelajaran::standarMenitPerJp($sekolah->jenis) : 35))
-            : null;
-        $jumlah_jp = $pakaiJp ? max(1, intval($request->input('jumlah_jp', 1))) : 0;
+        if ($isIstirahat) {
+            $durasi_per_jp = null;
+            $jumlah_jp = 0;
+            if (!$label_sesi) $label_sesi = 'Istirahat';
+        } else {
+            $pakaiJp = $sekolah ? \App\Models\jam_pelajaran::pakaiSistemJp($sekolah->jenis) : true;
+            $durasi_per_jp = $pakaiJp
+                ? ($request->filled('durasi_per_jp') ? intval($request->durasi_per_jp) : ($sekolah ? \App\Models\jam_pelajaran::standarMenitPerJp($sekolah->jenis) : 35))
+                : null;
+            $jumlah_jp = $pakaiJp ? max(1, intval($request->input('jumlah_jp', 1))) : 0;
+        }
 
         \App\Models\jam_pelajaran::findOrFail($id)->update([
             'sekolah_id' => $sekolah_id,
-            'jam_ke' => $request->input('jam_ke') ?: null,
+            'jam_ke' => $label_sesi,
             'jumlah_jp' => $jumlah_jp,
             'durasi_per_jp' => $durasi_per_jp,
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai
         ]);
-        return redirect()->back()->with('success', 'Jam Pelajaran berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Jam Pelajaran / Istirahat berhasil diperbarui.');
     }
 
     public function hapusJamPelajaran($id) {

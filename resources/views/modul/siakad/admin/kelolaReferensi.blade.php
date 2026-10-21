@@ -27,6 +27,41 @@
         }
         .btn-gen-jp:hover { background: #dbeafe; transform: translateY(-2px); }
 
+        .btn-add-break {
+            display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px;
+            background: #fffbeb; color: #b45309; border: 1px solid #fde68a; border-radius: 10px;
+            font-family: 'Poppins', sans-serif; font-size: .84rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-add-break:hover { background: #fef3c7; border-color: #f59e0b; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(245, 158, 11, .15); }
+
+        .btn-save-gap {
+            display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px;
+            background: #fef08a; color: #854d0e; border: 1px solid #facc15; border-radius: 6px;
+            font-family: 'Poppins', sans-serif; font-size: .75rem; font-weight: 600; cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .btn-save-gap:hover { background: #fde047; color: #713f12; }
+
+        .btn-chip {
+            padding: 5px 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px;
+            font-family: 'Poppins', sans-serif; font-size: 0.75rem; font-weight: 500; color: #475569;
+            cursor: pointer; transition: all 0.15s ease;
+        }
+        .btn-chip:hover { background: #e2e8f0; color: #1e293b; }
+        .btn-chip.active { background: #b45309; color: #fff; border-color: #b45309; }
+
+        .break-preview-card {
+            background: #fffbeb; border: 1px solid #fde68a; color: #b45309;
+            padding: 11px 14px; border-radius: 10px; font-size: 0.82rem; margin-top: 14px;
+            display: flex; align-items: center; gap: 10px; line-height: 1.4;
+        }
+
+        .jam-break-saved {
+            background: #fffdf5 !important;
+            border-left: 3px solid #f59e0b;
+        }
+
         .action-btns { display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-action-icon {
             display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px;
@@ -202,14 +237,17 @@
                 <section class="students-card">
                     <div class="card-header" style="flex-wrap: wrap; gap: 12px;">
                         <div>
-                            <h2>Jam Pelajaran (Sistem JP Per Jenjang)</h2>
-                            <p>Pemetaan blok waktu pelajaran berdasarkan standar durasi JP masing-masing jenjang.</p>
+                            <h2>Jam Pelajaran & Jam Istirahat</h2>
+                            <p>Pemetaan blok waktu pelajaran dan istirahat berdasarkan jenjang sekolah terpilih.</p>
                         </div>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <button class="btn-gen-jp" onclick="openModal('generateJpModal')">
+                            <button class="btn-gen-jp" onclick="openGenerateJpModal()">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Paket JP Otomatis
                             </button>
-                            <button class="btn-add-ref" onclick="openModal('addJamModal')">
+                            <button class="btn-add-break" onclick="openAddIstirahatModal()">
+                                <i class="fa-solid fa-mug-hot"></i> Atur Jam Istirahat
+                            </button>
+                            <button class="btn-add-ref" onclick="openAddJamModal()">
                                 <i class="fa-solid fa-plus"></i> Tambah Jam Satuan
                             </button>
                         </div>
@@ -240,31 +278,36 @@
                         </div>
                     </div>
 
-                    <!-- Filter Tab per Jenjang -->
+                    <!-- Filter Tab per Jenjang (Tanpa Tab Campuran Semua Jenjang) -->
                     <div class="jp-tab-bar">
-                        <button type="button" class="jp-tab-btn active" onclick="filterJamJenjang('ALL', this)">
-                            <i class="fa-solid fa-layer-group"></i> Semua Jenjang ({{ count($data_jam) }})
-                        </button>
                         @foreach($data_sekolah ?? [] as $s)
                             @php
                                 $kode = strtoupper(trim($s->jenis));
                                 $pakaiJp = \App\Models\jam_pelajaran::pakaiSistemJp($kode);
                                 $standarMenit = \App\Models\jam_pelajaran::standarMenitPerJp($kode);
                                 $jmlJam = $data_jam->where('sekolah_id', $s->id)->count();
+                                $badgeClass = match(strtolower($kode)) {
+                                    'sd' => 'badge-sd',
+                                    'smp' => 'badge-smp',
+                                    'sma', 'smk' => 'badge-sma',
+                                    'tk', 'paud' => 'badge-tk',
+                                    default => 'badge-umum'
+                                };
                             @endphp
-                            <button type="button" class="jp-tab-btn" onclick="filterJamJenjang('{{ $kode }}', this)">
-                                <span>{{ $kode }}</span>
+                            <button type="button" class="jp-tab-btn {{ $loop->first ? 'active' : '' }}" onclick="filterJamJenjang('{{ $kode }}', this, '{{ $s->id }}')">
+                                <span class="badge-jenjang {{ $badgeClass }}" style="font-size:0.75rem; padding:2px 7px;">{{ $kode }}</span>
+                                <span style="font-weight:600;">{{ $kode }}</span>
                                 @if($pakaiJp)
-                                    <span style="font-size: 0.72rem; opacity: 0.85;">(1 JP = {{ $standarMenit }}m • {{ $jmlJam }})</span>
+                                    <span style="font-size: 0.72rem; opacity: 0.85;">(1 JP = {{ $standarMenit }}m • {{ $jmlJam }} Slot)</span>
                                 @else
-                                    <span style="font-size: 0.72rem; opacity: 0.85;">(Non-JP • {{ $jmlJam }})</span>
+                                    <span style="font-size: 0.72rem; opacity: 0.85;">(Non-JP • {{ $jmlJam }} Slot)</span>
                                 @endif
                             </button>
                         @endforeach
                         @php $jmlUmum = $data_jam->whereNull('sekolah_id')->count(); @endphp
                         @if($jmlUmum > 0)
-                            <button type="button" class="jp-tab-btn" onclick="filterJamJenjang('UMUM', this)">
-                                <span>Umum / Lintas Jenjang ({{ $jmlUmum }})</span>
+                            <button type="button" class="jp-tab-btn" onclick="filterJamJenjang('UMUM', this, '')">
+                                <span>Umum / Lintas Jenjang ({{ $jmlUmum }} Slot)</span>
                             </button>
                         @endif
                     </div>
@@ -301,9 +344,9 @@
                                             $perJp = $j->menit_per_jp;
                                             $labelSesi = $j->jam_ke ?: ('Sesi ' . ($index + 1));
 
-                                            // Cek apakah ada jeda istirahat otomatis dari sesi sebelumnya pada jenjang yang sama
+                                            // Cek jika ada jeda istirahat otomatis dari sesi sebelumnya pada jenjang yang sama yang belum tersimpan
                                             $jedaOtomatis = null;
-                                            if (isset($prevJamByJenjang[$kode]) && !$isIstirahatRow && !$prevJamByJenjang[$kode]->is_istirahat) {
+                                            if (isset($prevJamByJenjang[$kode])) {
                                                 $jedaOtomatis = \App\Models\jam_pelajaran::deteksiJedaIstirahat(
                                                     $prevJamByJenjang[$kode]->jam_selesai,
                                                     $j->jam_mulai
@@ -313,32 +356,34 @@
                                         @endphp
 
                                         @if($jedaOtomatis)
-                                            <tr class="jam-row jam-break-row" data-jenjang="{{ $kode }}" style="background: #fffbeb;">
-                                                <td class="number-column" style="color: #d97706;"><i class="fa-solid fa-mug-hot"></i></td>
+                                            <tr class="jam-row jam-gap-row" data-jenjang="{{ $kode }}" style="background: #fefce8; border-left: 3px dashed #eab308;">
+                                                <td class="number-column" style="color: #ca8a04;"><i class="fa-solid fa-hourglass-half"></i></td>
                                                 <td>
                                                     <span class="badge-jenjang {{ $badgeClass }}">{{ $kode }}</span>
                                                 </td>
                                                 <td>
-                                                    <strong style="color: #b45309;"><i class="fa-solid fa-mug-saucer" style="margin-right:4px;"></i> JAM ISTIRAHAT</strong>
+                                                    <span style="color: #854d0e; font-weight: 600;"><i class="fa-regular fa-clock" style="margin-right:4px;"></i> Jeda Belum Tersimpan</span>
                                                 </td>
                                                 <td>
-                                                    <span style="display:inline-flex; align-items:center; gap:6px; font-weight:700; color:#b45309;">
+                                                    <span style="display:inline-flex; align-items:center; gap:6px; font-weight:600; color:#854d0e;">
                                                         <i class="fa-regular fa-clock"></i>
                                                         {{ $jedaOtomatis['mulai'] }} - {{ $jedaOtomatis['selesai'] }} WIB
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span style="background:#fef3c7; color:#b45309; border:1px solid #fde68a; padding:4px 10px; border-radius:6px; font-size:0.76rem; font-weight:700;">
-                                                        Jeda Istirahat ({{ $jedaOtomatis['durasi'] }} Menit)
+                                                    <span style="background:#fef9c3; color:#854d0e; border:1px solid #fde047; padding:4px 10px; border-radius:6px; font-size:0.76rem; font-weight:600;">
+                                                        Jeda Waktu ({{ $jedaOtomatis['durasi'] }} Menit)
                                                     </span>
                                                 </td>
-                                                <td class="action-column" style="font-size:0.75rem; color:#92400e; text-align:center;">
-                                                    <em>Otomatis</em>
+                                                <td class="action-column" style="text-align:center;">
+                                                    <button type="button" class="btn-save-gap" onclick="openAddIstirahatQuick('{{ $j->sekolah_id }}', '{{ $jedaOtomatis['mulai'] }}', '{{ $jedaOtomatis['selesai'] }}', {{ $jedaOtomatis['durasi'] }})">
+                                                        <i class="fa-solid fa-plus"></i> Simpan Sbg Istirahat
+                                                    </button>
                                                 </td>
                                             </tr>
                                         @endif
 
-                                        <tr class="jam-row" data-jenjang="{{ $kode }}" @if($isIstirahatRow) style="background: #fffbeb;" @endif>
+                                        <tr class="jam-row {{ $isIstirahatRow ? 'jam-break-saved' : '' }}" data-jenjang="{{ $kode }}" style="{{ $isIstirahatRow ? 'background: #fffdf5; border-left: 3px solid #f59e0b;' : '' }}">
                                             <td class="number-column jam-row-num">{{ $index + 1 }}</td>
                                             <td>
                                                 <span class="badge-jenjang {{ $badgeClass }}">
@@ -381,13 +426,25 @@
                                             </td>
                                             <td class="action-column">
                                                 <div class="action-btns">
-                                                    <button class="btn-action-icon btn-action-edit" 
-                                                        onclick="openEditJam({{ $j->id }}, '{{ $j->sekolah_id ?? '' }}', '{{ addslashes($j->jam_ke ?? '') }}', {{ $jmlJp ?: 1 }}, {{ $perJp }}, '{{ substr($j->jam_mulai, 0, 5) }}', '{{ substr($j->jam_selesai, 0, 5) }}')">
-                                                        <i class="fa-solid fa-pen-to-square"></i>
-                                                    </button>
-                                                    <button class="btn-action-icon btn-action-delete" onclick="openDeleteJam({{ $j->id }}, '{{ $kode }} - {{ $labelSesi }} ({{ substr($j->jam_mulai, 0, 5) }} - {{ substr($j->jam_selesai, 0, 5) }})')">
-                                                        <i class="fa-solid fa-trash-can"></i>
-                                                    </button>
+                                                    @if($isIstirahatRow)
+                                                        <button class="btn-action-icon btn-action-edit" title="Edit Jam Istirahat"
+                                                            onclick="openEditIstirahat({{ $j->id }}, '{{ $j->sekolah_id ?? '' }}', '{{ addslashes($labelSesi) }}', '{{ substr($j->jam_mulai, 0, 5) }}', '{{ substr($j->jam_selesai, 0, 5) }}')">
+                                                            <i class="fa-solid fa-pen-to-square"></i>
+                                                        </button>
+                                                        <button class="btn-action-icon btn-action-delete" title="Hapus Jam Istirahat"
+                                                            onclick="openDeleteJam({{ $j->id }}, 'Jam Istirahat: {{ $kode }} - {{ addslashes($labelSesi) }} ({{ substr($j->jam_mulai, 0, 5) }} - {{ substr($j->jam_selesai, 0, 5) }})')">
+                                                            <i class="fa-solid fa-trash-can"></i>
+                                                        </button>
+                                                    @else
+                                                        <button class="btn-action-icon btn-action-edit" title="Edit Jam Pelajaran"
+                                                            onclick="openEditJam({{ $j->id }}, '{{ $j->sekolah_id ?? '' }}', '{{ addslashes($j->jam_ke ?? '') }}', {{ $jmlJp ?: 1 }}, {{ $perJp }}, '{{ substr($j->jam_mulai, 0, 5) }}', '{{ substr($j->jam_selesai, 0, 5) }}')">
+                                                            <i class="fa-solid fa-pen-to-square"></i>
+                                                        </button>
+                                                        <button class="btn-action-icon btn-action-delete" title="Hapus Jam Pelajaran"
+                                                            onclick="openDeleteJam({{ $j->id }}, 'Jam Pelajaran: {{ $kode }} - {{ addslashes($labelSesi) }} ({{ substr($j->jam_mulai, 0, 5) }} - {{ substr($j->jam_selesai, 0, 5) }})')">
+                                                            <i class="fa-solid fa-trash-can"></i>
+                                                        </button>
+                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>
@@ -395,6 +452,13 @@
                                 @else
                                     <tr class="empty-row"><td colspan="6"><i class="fa-solid fa-folder-open"></i> Belum ada data Jam Pelajaran. Gunakan tombol <strong>Generate Paket JP Otomatis</strong> untuk membuat jadwal jam dengan cepat.</td></tr>
                                 @endif
+                                <tr id="jamEmptyRow" style="display:none;" class="empty-row">
+                                    <td colspan="6" style="padding: 32px 16px; text-align: center; color: var(--student-muted);">
+                                        <i class="fa-solid fa-calendar-xmark" style="font-size: 2rem; margin-bottom: 10px; color: #94a3b8; display: block;"></i>
+                                        <div>Belum ada data Jam Pelajaran atau Jam Istirahat untuk jenjang <strong id="jamEmptyJenjangText"></strong>.</div>
+                                        <div style="font-size: 0.8rem; margin-top: 6px; color: #94a3b8;">Gunakan tombol <strong>Generate Paket JP Otomatis</strong>, <strong>Tambah Jam Satuan</strong>, atau <strong>Atur Jam Istirahat</strong>.</div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -624,6 +688,140 @@
         </div>
     </div>
 
+    <!-- MODAL ATUR / TAMBAH JAM ISTIRAHAT -->
+    <div class="custom-modal-overlay" id="addIstirahatModal">
+        <div class="custom-modal-card">
+            <div class="modal-header-icon" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-mug-hot"></i></div>
+            <h3>Atur Jam Istirahat</h3>
+            <p>Tentukan slot waktu istirahat (misal: istirahat pagi, istirahat sholat & makan) untuk jenjang sekolah terpilih.</p>
+            <form action="/sk/simpan-jam-pelajaran" method="POST">
+                @csrf
+                <input type="hidden" name="mode" value="istirahat">
+
+                <div class="form-group">
+                    <label>Jenjang Sekolah</label>
+                    <select name="sekolah_id" id="addIstSekolahId" class="custom-input" required>
+                        @foreach($data_sekolah ?? [] as $s)
+                            @php $kode = strtoupper(trim($s->jenis)); @endphp
+                            <option value="{{ $s->id }}">{{ $kode }} - Sekolah Syafi'i</option>
+                        @endforeach
+                        <option value="">Umum / Semua Jenjang</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Nama / Sesi Istirahat</label>
+                    <input type="text" name="jam_ke" id="addIstNama" class="custom-input" value="Istirahat" required oninput="recalcIstSummary()">
+                    <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+                        <button type="button" class="btn-chip" onclick="setIstNama('Istirahat')">Istirahat</button>
+                        <button type="button" class="btn-chip" onclick="setIstNama('Istirahat Pagi')">Istirahat Pagi</button>
+                        <button type="button" class="btn-chip" onclick="setIstNama('Istirahat Siang / Dhuhur')">Istirahat Siang / Dhuhur</button>
+                        <button type="button" class="btn-chip" onclick="setIstNama('Istirahat Sholat & Makan')">Istirahat Sholat & Makan</button>
+                    </div>
+                </div>
+
+                <div class="form-group" style="display:flex; gap:10px;">
+                    <div style="flex:1;">
+                        <label>Jam Mulai</label>
+                        <input type="time" name="jam_mulai" id="addIstMulai" class="custom-input" value="09:45" required oninput="recalcIstSelesai()">
+                    </div>
+                    <div style="flex:1;">
+                        <label>Jam Selesai</label>
+                        <input type="time" name="jam_selesai" id="addIstSelesai" class="custom-input" value="10:15" required oninput="recalcIstDurasiManual()">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="margin-bottom:6px;">Pilihan Cepat Durasi Istirahat</label>
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <button type="button" class="btn-chip durasi-chip-add" data-menit="15" onclick="setIstDurasi(15, this)">15 Menit</button>
+                        <button type="button" class="btn-chip durasi-chip-add" data-menit="20" onclick="setIstDurasi(20, this)">20 Menit</button>
+                        <button type="button" class="btn-chip durasi-chip-add active" data-menit="30" onclick="setIstDurasi(30, this)">30 Menit</button>
+                        <button type="button" class="btn-chip durasi-chip-add" data-menit="45" onclick="setIstDurasi(45, this)">45 Menit</button>
+                        <button type="button" class="btn-chip durasi-chip-add" data-menit="60" onclick="setIstDurasi(60, this)">60 Menit</button>
+                    </div>
+                </div>
+
+                <div class="break-preview-card" id="addIstPreviewBox">
+                    <i class="fa-solid fa-circle-info" style="font-size:1.1rem; flex-shrink:0;"></i>
+                    <span id="addIstSummaryText">Label: <strong>Istirahat</strong> &bull; Waktu: <strong>09:45 - 10:15 WIB</strong> (Durasi: <strong>30 Menit</strong>)</span>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal btn-cancel" onclick="closeAllModals()">Batal</button>
+                    <button type="submit" class="btn-modal" style="background:#b45309; color:#fff;"><i class="fa-solid fa-mug-hot"></i> Simpan Jam Istirahat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT JAM ISTIRAHAT -->
+    <div class="custom-modal-overlay" id="editIstirahatModal">
+        <div class="custom-modal-card">
+            <div class="modal-header-icon" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-pen-to-square"></i></div>
+            <h3>Edit Jam Istirahat</h3>
+            <p>Perbarui jenjang, label, atau waktu istirahat.</p>
+            <form id="editIstForm" method="POST">
+                @csrf
+                <input type="hidden" name="mode" value="istirahat">
+
+                <div class="form-group">
+                    <label>Jenjang Sekolah</label>
+                    <select name="sekolah_id" id="editIstSekolahId" class="custom-input" required>
+                        @foreach($data_sekolah ?? [] as $s)
+                            @php $kode = strtoupper(trim($s->jenis)); @endphp
+                            <option value="{{ $s->id }}">{{ $kode }} - Sekolah Syafi'i</option>
+                        @endforeach
+                        <option value="">Umum / Semua Jenjang</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Nama / Sesi Istirahat</label>
+                    <input type="text" name="jam_ke" id="editIstNama" class="custom-input" required oninput="recalcEditIstSummary()">
+                    <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+                        <button type="button" class="btn-chip" onclick="setEditIstNama('Istirahat')">Istirahat</button>
+                        <button type="button" class="btn-chip" onclick="setEditIstNama('Istirahat Pagi')">Istirahat Pagi</button>
+                        <button type="button" class="btn-chip" onclick="setEditIstNama('Istirahat Siang / Dhuhur')">Istirahat Siang / Dhuhur</button>
+                        <button type="button" class="btn-chip" onclick="setEditIstNama('Istirahat Sholat & Makan')">Istirahat Sholat & Makan</button>
+                    </div>
+                </div>
+
+                <div class="form-group" style="display:flex; gap:10px;">
+                    <div style="flex:1;">
+                        <label>Jam Mulai</label>
+                        <input type="time" name="jam_mulai" id="editIstMulai" class="custom-input" required oninput="recalcEditIstSelesai()">
+                    </div>
+                    <div style="flex:1;">
+                        <label>Jam Selesai</label>
+                        <input type="time" name="jam_selesai" id="editIstSelesai" class="custom-input" required oninput="recalcEditIstDurasiManual()">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="margin-bottom:6px;">Pilihan Cepat Durasi Istirahat</label>
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <button type="button" class="btn-chip durasi-chip-edit" data-menit="15" onclick="setEditIstDurasi(15, this)">15 Menit</button>
+                        <button type="button" class="btn-chip durasi-chip-edit" data-menit="20" onclick="setEditIstDurasi(20, this)">20 Menit</button>
+                        <button type="button" class="btn-chip durasi-chip-edit" data-menit="30" onclick="setEditIstDurasi(30, this)">30 Menit</button>
+                        <button type="button" class="btn-chip durasi-chip-edit" data-menit="45" onclick="setEditIstDurasi(45, this)">45 Menit</button>
+                        <button type="button" class="btn-chip durasi-chip-edit" data-menit="60" onclick="setEditIstDurasi(60, this)">60 Menit</button>
+                    </div>
+                </div>
+
+                <div class="break-preview-card" id="editIstPreviewBox">
+                    <i class="fa-solid fa-circle-info" style="font-size:1.1rem; flex-shrink:0;"></i>
+                    <span id="editIstSummaryText">Durasi: 30 Menit</span>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal btn-cancel" onclick="closeAllModals()">Batal</button>
+                    <button type="submit" class="btn-modal" style="background:#b45309; color:#fff;"><i class="fa-solid fa-check"></i> Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL TAMBAH TAHUN -->
     <div class="custom-modal-overlay" id="addTahunModal">
         <div class="custom-modal-card">
@@ -706,6 +904,8 @@
     <script>
         const modals = document.querySelectorAll('.custom-modal-overlay');
         let deleteTargetUrl = '';
+        let currentJenjang = '';
+        let currentSekolahId = '';
 
         function closeAllModals() {
             modals.forEach(m => m.classList.remove('active'));
@@ -713,25 +913,15 @@
 
         function openModal(id) {
             closeAllModals();
-            document.getElementById(id).classList.add('active');
+            const el = document.getElementById(id);
+            if (el) el.classList.add('active');
         }
 
-        // Filter Tab Jenjang pada Tabel Jam Pelajaran
-        function filterJamJenjang(kode, btn) {
-            document.querySelectorAll('.jp-tab-btn').forEach(b => b.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-
-            let visibleIndex = 1;
-            document.querySelectorAll('.jam-row').forEach(row => {
-                const rowJenjang = row.getAttribute('data-jenjang');
-                if (kode === 'ALL' || rowJenjang === kode) {
-                    row.style.display = '';
-                    const numCell = row.querySelector('.jam-row-num');
-                    if (numCell) numCell.textContent = visibleIndex++;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
+        // Helper konversi waktu ke menit
+        function timeToMinutes(str) {
+            if (!str || !str.includes(':')) return 0;
+            const p = str.split(':');
+            return parseInt(p[0], 10) * 60 + parseInt(p[1], 10);
         }
 
         // Helper tambah menit ke string "HH:MM"
@@ -743,6 +933,207 @@
             const hh = String(Math.floor(totalMinutes / 60)).padStart(2, '0');
             const mm = String(totalMinutes % 60).padStart(2, '0');
             return `${hh}:${mm}`;
+        }
+
+        // Filter Tab Jenjang pada Tabel Jam Pelajaran (Filter ketat per jenjang)
+        function filterJamJenjang(kode, btn, sekolahId) {
+            currentJenjang = kode;
+            currentSekolahId = sekolahId || '';
+
+            document.querySelectorAll('.jp-tab-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+
+            let visibleIndex = 1;
+            let totalVisible = 0;
+            document.querySelectorAll('.jam-row').forEach(row => {
+                const rowJenjang = row.getAttribute('data-jenjang');
+                if (rowJenjang === kode) {
+                    row.style.display = '';
+                    totalVisible++;
+                    if (!row.classList.contains('jam-gap-row')) {
+                        const numCell = row.querySelector('.jam-row-num');
+                        if (numCell) numCell.textContent = visibleIndex++;
+                    }
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            const emptyRow = document.getElementById('jamEmptyRow');
+            if (emptyRow) {
+                if (totalVisible === 0) {
+                    emptyRow.style.display = '';
+                    const textEl = document.getElementById('jamEmptyJenjangText');
+                    if (textEl) textEl.textContent = kode;
+                } else {
+                    emptyRow.style.display = 'none';
+                }
+            }
+        }
+
+        // Open Modal Handlers dengan Pre-Select Jenjang Aktif
+        function openGenerateJpModal() {
+            if (currentSekolahId) {
+                const sel = document.getElementById('genSekolahId');
+                if (sel) {
+                    sel.value = currentSekolahId;
+                    onGenJenjangChange();
+                }
+            }
+            openModal('generateJpModal');
+        }
+
+        function openAddJamModal() {
+            if (currentSekolahId) {
+                const sel = document.getElementById('addSekolahId');
+                if (sel) {
+                    sel.value = currentSekolahId;
+                    onAddJenjangChange();
+                }
+            }
+            openModal('addJamModal');
+        }
+
+        function openAddIstirahatModal() {
+            if (currentSekolahId) {
+                const sel = document.getElementById('addIstSekolahId');
+                if (sel) sel.value = currentSekolahId;
+            }
+            recalcIstSelesai();
+            openModal('addIstirahatModal');
+        }
+
+        function openAddIstirahatQuick(sekolahId, jamMulai, jamSelesai, durasi) {
+            if (sekolahId) {
+                const sel = document.getElementById('addIstSekolahId');
+                if (sel) sel.value = sekolahId;
+            }
+            document.getElementById('addIstMulai').value = jamMulai;
+            document.getElementById('addIstSelesai').value = jamSelesai;
+            recalcIstDurasiManual();
+            openModal('addIstirahatModal');
+        }
+
+        // FUNGSI LOGIKA JAM ISTIRAHAT (TAMBAH)
+        let currentAddIstDurasi = 30;
+
+        function setIstNama(nama) {
+            document.getElementById('addIstNama').value = nama;
+            recalcIstSummary();
+        }
+
+        function setIstDurasi(menit, btn) {
+            currentAddIstDurasi = menit;
+            document.querySelectorAll('.durasi-chip-add').forEach(c => c.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            recalcIstSelesai();
+        }
+
+        function recalcIstSelesai() {
+            const mulai = document.getElementById('addIstMulai').value || '09:45';
+            const selesai = addMinutesToTime(mulai, currentAddIstDurasi);
+            document.getElementById('addIstSelesai').value = selesai;
+            recalcIstSummary();
+        }
+
+        function recalcIstDurasiManual() {
+            const mulai = document.getElementById('addIstMulai').value;
+            const selesai = document.getElementById('addIstSelesai').value;
+            if (mulai && selesai) {
+                const m = timeToMinutes(mulai);
+                const s = timeToMinutes(selesai);
+                let diff = s - m;
+                if (diff < 0) diff += 1440;
+                currentAddIstDurasi = diff;
+                document.querySelectorAll('.durasi-chip-add').forEach(c => {
+                    if (parseInt(c.getAttribute('data-menit'), 10) === diff) {
+                        c.classList.add('active');
+                    } else {
+                        c.classList.remove('active');
+                    }
+                });
+            }
+            recalcIstSummary();
+        }
+
+        function recalcIstSummary() {
+            const nama = document.getElementById('addIstNama').value || 'Istirahat';
+            const mulai = document.getElementById('addIstMulai').value || '09:45';
+            const selesai = document.getElementById('addIstSelesai').value || '10:15';
+            const m = timeToMinutes(mulai);
+            const s = timeToMinutes(selesai);
+            let diff = s - m;
+            if (diff < 0) diff += 1440;
+            const previewEl = document.getElementById('addIstSummaryText');
+            if (previewEl) {
+                previewEl.innerHTML = `Label: <strong>${nama}</strong> &bull; Waktu: <strong>${mulai} - ${selesai} WIB</strong> (Durasi: <strong>${diff} Menit</strong>)`;
+            }
+        }
+
+        // FUNGSI LOGIKA JAM ISTIRAHAT (EDIT)
+        let currentEditIstDurasi = 30;
+
+        function openEditIstirahat(id, sekolahId, jamKe, mulai, selesai) {
+            document.getElementById('editIstForm').action = "/sk/update-jam-pelajaran/" + id;
+            document.getElementById('editIstSekolahId').value = sekolahId || '';
+            document.getElementById('editIstNama').value = jamKe || 'Istirahat';
+            document.getElementById('editIstMulai').value = mulai;
+            document.getElementById('editIstSelesai').value = selesai;
+            recalcEditIstDurasiManual();
+            openModal('editIstirahatModal');
+        }
+
+        function setEditIstNama(nama) {
+            document.getElementById('editIstNama').value = nama;
+            recalcEditIstSummary();
+        }
+
+        function setEditIstDurasi(menit, btn) {
+            currentEditIstDurasi = menit;
+            document.querySelectorAll('.durasi-chip-edit').forEach(c => c.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            recalcEditIstSelesai();
+        }
+
+        function recalcEditIstSelesai() {
+            const mulai = document.getElementById('editIstMulai').value || '09:45';
+            const selesai = addMinutesToTime(mulai, currentEditIstDurasi);
+            document.getElementById('editIstSelesai').value = selesai;
+            recalcEditIstSummary();
+        }
+
+        function recalcEditIstDurasiManual() {
+            const mulai = document.getElementById('editIstMulai').value;
+            const selesai = document.getElementById('editIstSelesai').value;
+            if (mulai && selesai) {
+                const m = timeToMinutes(mulai);
+                const s = timeToMinutes(selesai);
+                let diff = s - m;
+                if (diff < 0) diff += 1440;
+                currentEditIstDurasi = diff;
+                document.querySelectorAll('.durasi-chip-edit').forEach(c => {
+                    if (parseInt(c.getAttribute('data-menit'), 10) === diff) {
+                        c.classList.add('active');
+                    } else {
+                        c.classList.remove('active');
+                    }
+                });
+            }
+            recalcEditIstSummary();
+        }
+
+        function recalcEditIstSummary() {
+            const nama = document.getElementById('editIstNama').value || 'Istirahat';
+            const mulai = document.getElementById('editIstMulai').value || '09:45';
+            const selesai = document.getElementById('editIstSelesai').value || '10:15';
+            const m = timeToMinutes(mulai);
+            const s = timeToMinutes(selesai);
+            let diff = s - m;
+            if (diff < 0) diff += 1440;
+            const previewEl = document.getElementById('editIstSummaryText');
+            if (previewEl) {
+                previewEl.innerHTML = `Label: <strong>${nama}</strong> &bull; Waktu: <strong>${mulai} - ${selesai} WIB</strong> (Durasi: <strong>${diff} Menit</strong>)`;
+            }
         }
 
         // Kalkulator JP pada Modal Tambah Jam Satuan
@@ -872,7 +1263,7 @@
 
         function openDeleteJam(id, nama) {
             deleteTargetUrl = "/sk/hapus-jam-pelajaran/" + id;
-            document.getElementById('delName').textContent = "Jam Pelajaran: " + nama;
+            document.getElementById('delName').textContent = nama;
             openModal('deleteModal');
         }
 
@@ -884,6 +1275,14 @@
             m.addEventListener('click', function(e) {
                 if(e.target === m) closeAllModals();
             });
+        });
+
+        // Trigger filter pada tab pertama saat pertama kali dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            const activeBtn = document.querySelector('.jp-tab-btn.active') || document.querySelector('.jp-tab-btn');
+            if (activeBtn) {
+                activeBtn.click();
+            }
         });
     </script>
 

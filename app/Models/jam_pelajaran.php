@@ -90,10 +90,13 @@ class jam_pelajaran extends Model
     }
 
     /**
-     * Hitung jumlah JP (Jam Pelajaran). Jika TK (tidak pakai JP), kembalikan 0.
+     * Hitung jumlah JP (Jam Pelajaran). Jika TK (tidak pakai JP) atau sesi Istirahat, kembalikan 0.
      */
     public function getHitungJpAttribute(): int
     {
+        if ($this->is_istirahat) {
+            return 0;
+        }
         if (!$this->is_pakai_jp) {
             return 0;
         }
@@ -134,7 +137,7 @@ class jam_pelajaran extends Model
      */
     public function getIsIstirahatAttribute(): bool
     {
-        return stripos((string) $this->jam_ke, 'istirahat') !== false;
+        return stripos((string) $this->jam_ke, 'istirahat') !== false || ($this->jumlah_jp === 0 && $this->is_pakai_jp);
     }
 
     /**
