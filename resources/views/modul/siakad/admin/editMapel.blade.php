@@ -31,8 +31,22 @@
                 <form action="/sk/update-mapel/{{ $mapel->id }}" method="POST">
                     @csrf
                     <div class="form-group">
+                        <label>Jenjang Sekolah</label>
+                        <select name="sekolah_id" required style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;">
+                            @foreach($data_sekolah as $s)
+                                <option value="{{ $s->id }}" {{ $mapel->sekolah_id == $s->id ? 'selected' : '' }}>
+                                    Jenjang {{ strtoupper($s->jenis) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label>Nama Mata Pelajaran</label>
                         <input type="text" name="nama_mapel" value="{{ $mapel->nama_mapel }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nilai Standar KKM</label>
+                        <input type="number" name="kkm" value="{{ $mapel->kkm ?? 75 }}" min="0" max="100" required>
                     </div>
                     <div class="btn-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button type="submit" class="btn-submit"><i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan</button>

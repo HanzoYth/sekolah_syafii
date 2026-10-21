@@ -21,6 +21,26 @@ class mata_pelajaran extends Model
     }
 
     /**
+     * Kode Jenjang Sekolah (SD, SMP, TK, atau UMUM)
+     */
+    public function getKodeJenjangAttribute(): string
+    {
+        if ($this->sekolah && !empty($this->sekolah->jenis)) {
+            return strtoupper(trim($this->sekolah->jenis));
+        }
+        return 'UMUM';
+    }
+
+    /**
+     * Cek apakah mata pelajaran ini milik Jenjang TK/PAUD (Penilaian deskriptif non-KKM)
+     */
+    public function getIsTkAttribute(): bool
+    {
+        $kode = strtolower($this->kode_jenjang);
+        return str_contains($kode, 'tk') || str_contains($kode, 'paud');
+    }
+
+    /**
      * Dapatkan nilai KKM untuk tingkat kelas tertentu
      */
     public function getKkmTingkat($tingkat = null)

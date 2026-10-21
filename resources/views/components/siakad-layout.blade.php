@@ -170,14 +170,22 @@
                 let currentPage = 1;
                 const pagContainerId = 'siakad-pag-table-' + (table.id || tableIndex);
 
+                function isEmptyStateRow(tr) {
+                    if (tr.classList.contains('empty-row')) return true;
+                    if (tr.hasAttribute('data-empty-state')) return true;
+                    if (tr.id && (tr.id === 'filterEmpty' || tr.id.toLowerCase().includes('empty'))) return true;
+                    return false;
+                }
+
                 function isControlRow(tr) {
+                    if (isEmptyStateRow(tr)) return false;
                     const td = tr.querySelector('td[colspan]');
-                    return td && tr.children.length === 1 && !tr.querySelector('input.check-siswa, input.siswa-checkbox') && tr.id !== 'filterEmpty';
+                    return td && tr.children.length === 1 && !tr.querySelector('input.check-siswa, input.siswa-checkbox');
                 }
 
                 function getActiveRows() {
                     return Array.from(tbody.querySelectorAll('tr')).filter(tr => {
-                        if (tr.classList.contains('empty-row') || tr.id === 'filterEmpty') return false;
+                        if (isEmptyStateRow(tr)) return false;
                         if (isControlRow(tr)) return false;
                         if (tr.getAttribute('data-filtered-out') === 'true') return false;
                         return true;
@@ -199,7 +207,7 @@
                 }
 
                 function renderTablePagination() {
-                    const allRows = Array.from(tbody.querySelectorAll('tr')).filter(tr => !tr.classList.contains('empty-row') && tr.id !== 'filterEmpty');
+                    const allRows = Array.from(tbody.querySelectorAll('tr')).filter(tr => !isEmptyStateRow(tr));
                     const activeRows = getActiveRows();
                     const totalRows = activeRows.length;
                     const totalPages = Math.ceil(totalRows / PAGE_SIZE) || 1;
