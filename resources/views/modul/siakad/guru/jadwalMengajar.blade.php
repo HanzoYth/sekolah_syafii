@@ -86,9 +86,30 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="flex items-center space-x-2 text-sm text-slate-700">
-                                        <i class="fa-regular fa-clock text-slate-400 text-xs"></i>
-                                        <span class="font-medium">{{ substr($j->jam_pelajaran->jam_mulai ?? '-', 0, 5) }} - {{ substr($j->jam_pelajaran->jam_selesai ?? '-', 0, 5) }}</span>
+                                    @php
+                                        $jmlJp = $j->getJumlahJp();
+                                        $durasi = $j->jam_pelajaran ? $j->jam_pelajaran->durasi_menit : 0;
+                                        $jamKe = $j->jam_pelajaran->jam_ke ?? null;
+                                    @endphp
+                                    <div class="flex flex-col gap-1">
+                                        <div class="flex items-center space-x-2 text-sm text-slate-700">
+                                            <i class="fa-regular fa-clock text-emerald-600 text-xs"></i>
+                                            <span class="font-semibold">
+                                                @if($jamKe) {{ $jamKe }} • @endif
+                                                {{ substr($j->jam_pelajaran->jam_mulai ?? '-', 0, 5) }} - {{ substr($j->jam_pelajaran->jam_selesai ?? '-', 0, 5) }}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            @if($jmlJp > 0)
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                    {{ $jmlJp }} JP @if($durasi > 0) ({{ $durasi }} Menit) @endif
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                                    Sesi Non-JP @if($durasi > 0) ({{ $durasi }} Menit) @endif
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">

@@ -163,17 +163,33 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-sm">
                         @if($jadwal_hari_ini->count() > 0)
+                            @php $prevSelesaiWalasHariIni = null; @endphp
                             @foreach($jadwal_hari_ini as $j)
                                 @php
                                     $absen_guru = $absensi_mengajar_hari_ini[$j->id] ?? null;
                                     $siswa_absen = $absensi_siswa_hari_ini[$j->id] ?? null;
                                     
                                     $jam_mulai_str = $j->jam_pelajaran->jam_mulai ?? '07:00:00';
+                                    $jam_selesai_str = $j->jam_pelajaran->jam_selesai ?? null;
+                                    $jedaWalas = $prevSelesaiWalasHariIni ? \App\Models\jam_pelajaran::deteksiJedaIstirahat($prevSelesaiWalasHariIni, $jam_mulai_str) : null;
+                                    $prevSelesaiWalasHariIni = $jam_selesai_str;
+
                                     $jam_mulai = \Carbon\Carbon::parse($jam_mulai_str);
                                     $jam_batas = $jam_mulai->copy()->addMinutes(5);
                                     $sekarang = now();
                                     $lewat_waktu = $sekarang->format('H:i:s') > $jam_batas->format('H:i:s');
                                 @endphp
+                                @if($jedaWalas)
+                                    <tr class="bg-amber-50/70">
+                                        <td class="px-5 py-2.5 text-center text-amber-600"><i class="fa-solid fa-mug-hot"></i></td>
+                                        <td class="px-5 py-2.5 font-mono text-xs font-bold text-amber-800 whitespace-nowrap">
+                                            {{ $jedaWalas['mulai'] }} - {{ $jedaWalas['selesai'] }} WIB
+                                        </td>
+                                        <td colspan="5" class="px-5 py-2.5 text-xs font-bold text-amber-800">
+                                            <i class="fa-solid fa-mug-saucer mr-1"></i> JAM ISTIRAHAT ({{ $jedaWalas['durasi'] }} Menit)
+                                        </td>
+                                    </tr>
+                                @endif
                                 <tr class="hover:bg-slate-50/60 transition-colors">
                                     <td class="px-5 py-4 text-center text-slate-400 font-medium">{{ $loop->iteration }}</td>
                                     <td class="px-5 py-4 font-medium text-slate-700 whitespace-nowrap">
@@ -289,7 +305,21 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100">
+                                        @php $prevSelesaiWalasMingguan = null; @endphp
                                         @foreach($jadwal_mingguan[$hari] as $j)
+                                            @php
+                                                $mulaiWm = $j->jam_pelajaran->jam_mulai ?? null;
+                                                $selesaiWm = $j->jam_pelajaran->jam_selesai ?? null;
+                                                $jedaWm = $prevSelesaiWalasMingguan ? \App\Models\jam_pelajaran::deteksiJedaIstirahat($prevSelesaiWalasMingguan, $mulaiWm) : null;
+                                                $prevSelesaiWalasMingguan = $selesaiWm;
+                                            @endphp
+                                            @if($jedaWm)
+                                                <tr class="bg-amber-50/70 text-xs font-bold text-amber-800">
+                                                    <td class="px-5 py-2 text-center text-amber-600"><i class="fa-solid fa-mug-hot"></i></td>
+                                                    <td class="px-5 py-2 font-mono">{{ $jedaWm['mulai'] }} - {{ $jedaWm['selesai'] }}</td>
+                                                    <td colspan="2" class="px-5 py-2"><i class="fa-solid fa-mug-saucer mr-1"></i> JAM ISTIRAHAT ({{ $jedaWm['durasi'] }} Menit)</td>
+                                                </tr>
+                                            @endif
                                             <tr class="hover:bg-slate-50/50 text-sm">
                                                 <td class="px-5 py-3 text-center text-slate-400 font-medium">{{ $loop->iteration }}</td>
                                                 <td class="px-5 py-3 font-medium text-slate-700">

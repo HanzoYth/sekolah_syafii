@@ -415,6 +415,30 @@
         </form>
     </div>
 
+    <!-- MODAL KONFIRMASI QUICK FILL KKM -->
+    <div id="modalQuickFillKKM" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl transform transition-all text-center">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Set Nilai KKM Otomatis?</h3>
+            <p class="text-xs text-slate-500 mb-3 leading-relaxed">
+                Apakah Anda ingin mengisi seluruh kotak nilai yang masih <strong>KOSONG</strong> dengan nilai standar KKM (<strong class="text-emerald-700" id="qfKkmVal"></strong>)?
+            </p>
+            <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 mb-4 text-xs text-emerald-800 text-left leading-relaxed">
+                <i class="fa-solid fa-circle-check text-emerald-600 mr-1.5"></i> Nilai yang sudah diisi sebelumnya <strong>tidak akan ditimpa</strong>. Anda tetap dapat mengubah angka nilai sebelum menekan tombol Simpan.
+            </div>
+            <div class="flex items-center justify-center gap-3">
+                <button type="button" onclick="tutupModalQuickFill()" class="w-1/2 py-2.5 px-4 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
+                    Batal
+                </button>
+                <button type="button" onclick="eksekusiQuickFill()" class="w-1/2 py-2.5 px-4 text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 shadow-sm shadow-emerald-200">
+                    <i class="fa-solid fa-bolt"></i> Ya, Terapkan
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Client-side Realtime Calculation & Navigation Script -->
     <script>
         const KKM = {{ $kkm }};
@@ -696,21 +720,45 @@
             });
         }
 
-        // Quick Fill Blank Inputs with KKM
+        // Quick Fill Blank Inputs with KKM Modal Handler
+        let quickFillTargetVal = 0;
         function quickFillBlank(val) {
-            if (!confirm(`Isi semua kotak nilai yang masih KOSONG dengan nilai KKM (${val})?\nNilai yang sudah pernah diisi tidak akan ditimpa.`)) {
-                return;
-            }
+            quickFillTargetVal = val;
+            const kkmEl = document.getElementById('qfKkmVal');
+            if (kkmEl) kkmEl.innerText = val;
+            const modal = document.getElementById('modalQuickFillKKM');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function tutupModalQuickFill() {
+            const modal = document.getElementById('modalQuickFillKKM');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function eksekusiQuickFill() {
+            tutupModalQuickFill();
             const inputs = document.querySelectorAll('.input-score-cell');
             let filledCount = 0;
             inputs.forEach(inp => {
                 if (!inp.value || inp.value.trim() === '') {
-                    inp.value = val;
+                    inp.value = quickFillTargetVal;
                     inp.dispatchEvent(new Event('input', { bubbles: true }));
                     filledCount++;
                 }
             });
-            alert(`Berhasil mengisi ${filledCount} kotak nilai dengan angka ${val}.\nSilakan periksa kembali dan klik tombol 'Simpan Nilai' di bawah.`);
+            showQuickFillToast(`Berhasil mengisi ${filledCount} kotak nilai kosong dengan angka KKM (${quickFillTargetVal}). Jangan lupa klik 'Simpan Nilai'.`);
+        }
+
+        function showQuickFillToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 right-6 z-50 bg-emerald-800 text-white px-5 py-3.5 rounded-xl shadow-xl flex items-center gap-3 text-xs font-semibold animate-pulse';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-300 text-base"></i> <span>${msg}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.transition = 'opacity 0.4s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 400);
+            }, 4500);
         }
 
         // Initialize on load

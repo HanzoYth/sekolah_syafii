@@ -201,12 +201,20 @@
                 {{-- PAGINATION --}}
                 <div class="card-footer pagination-wrap" style="display: flex; justify-content: center; align-items: center; width: 100%;">
                     <div class="pagination-container" style="display: flex; justify-content: center; align-items: center; margin: 0 auto;">
-                        <div class="pagination">
-                            <span class="page-item disabled">&laquo;</span>
-                            <span class="page-item active">1</span>
-                            <span class="page-item">2</span>
-                            <span class="page-item">&raquo;</span>
-                        </div>
+                        <ul class="pagination">
+                            <li class="page-item disabled" aria-disabled="true">
+                                <span class="page-link">&laquo;</span>
+                            </li>
+                            <li class="page-item active" aria-current="page">
+                                <span class="page-link">1</span>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">&raquo;</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>

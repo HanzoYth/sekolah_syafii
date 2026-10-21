@@ -743,39 +743,117 @@ class siakadController extends Controller
         return view("/modul/siakad/guru/profilGuru", compact('guru', 'wallas', 'total_jadwal'));
     }
 
-    function slipPembayaranGuru(){
-        $check = $this->guardRoles(['g']);
+    function slipPembayaranGuru(Request $request){
+        $check = $this->guardRoles(['a']);
         if ($check) return $check;
 
-        $guru_id = session('id');
-        $guru = \App\Models\guru::with(['getCabang', 'getSekolah'])->find($guru_id);
-        $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
-        
-        // Ambil riwayat kehadiran mengajar guru untuk rekapitulasi jam mengajar
-        $riwayat_absen = \App\Models\absensi_mengajar_guru::with(['jadwal.mata_pelajaran', 'jadwal.kelas', 'jadwal.jam_pelajaran'])
-            ->where('guru_id', $guru_id)
-            ->orderByDesc('tanggal')
-            ->get();
+        $bulan = $request->query('bulan', date('Y-m'));
+        if (!preg_match('/^\d{4}-\d{2}$/', $bulan)) {
+            $bulan = date('Y-m');
+        }
+        $carbonBulan = \Carbon\Carbon::createFromFormat('Y-m', $bulan)->locale('id');
 
-        $rekap_bulanan = $riwayat_absen->groupBy(function($item) {
-            return \Carbon\Carbon::parse($item->tanggal)->format('Y-m');
-        })->map(function($items, $ym) {
-            $carbon = \Carbon\Carbon::createFromFormat('Y-m', $ym)->locale('id');
-            return [
-                'periode_kode' => $ym,
-                'label_bulan' => $carbon->isoFormat('MMMM Y'),
-                'periode_nama' => $carbon->isoFormat('MMMM Y'),
-                'tanggal_terbit' => $carbon->endOfMonth()->isoFormat('D MMM Y'),
-                'total_sesi' => $items->count(),
-                'tepat_waktu' => $items->where('status', 'tepat_waktu')->count(),
-                'terlambat' => $items->where('status', 'terlambat')->count(),
-                'items' => $items
+        $sekolah_id = $request->query('sekolah_id');
+        $status_pegawai = $request->query('status');
+        $search = $request->query('q');
+
+        // Query Guru
+        $guru_query = \App\Models\guru::with(['getSekolah', 'getCabang', 'getGaji']);
+
+        if ($sekolah_id) {
+            $guru_query->where('sekolah_id', $sekolah_id);
+        }
+
+        if ($status_pegawai === 'tetap') {
+            $guru_query->where('guru_tetap', 1);
+        } elseif ($status_pegawai === 'honor') {
+            $guru_query->where('guru_honor', 1);
+        } elseif ($status_pegawai === 'wallas') {
+            $wallas_guru_ids = \App\Models\wallas::pluck('guru_id')->toArray();
+            $guru_query->whereIn('id', $wallas_guru_ids);
+        }
+
+        if ($search) {
+            $guru_query->where(function($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('nig', 'like', "%{$search}%");
+            });
+        }
+
+        $all_guru = $guru_query->orderBy('nama', 'asc')->get();
+
+        // Ambil semua wali kelas sekaligus
+        $all_wallas = \App\Models\wallas::with('ruangKelas')->get()->keyBy('guru_id');
+
+        // Ambil jadwal mengajar per guru sekaligus
+        $jadwal_counts = \App\Models\jadwal_pelajaran::selectRaw('guru_id, count(*) as total')
+            ->groupBy('guru_id')
+            ->pluck('total', 'guru_id');
+
+        // Ambil presensi mengajar guru pada bulan terpilih
+        $absensi_bulan = \App\Models\absensi_mengajar_guru::with(['jadwal.mata_pelajaran', 'jadwal.kelas', 'jadwal.jam_pelajaran'])
+            ->where('tanggal', 'like', "{$bulan}%")
+            ->orderBy('tanggal', 'desc')
+            ->get()
+            ->groupBy('guru_id');
+
+        // Hitung data dan rekapitulasi per guru
+        $data_guru_rekap = [];
+        $total_seluruh_sesi = 0;
+        $total_seluruh_tepat_waktu = 0;
+        $total_seluruh_terlambat = 0;
+
+        foreach ($all_guru as $g) {
+            $wallas = $all_wallas->get($g->id);
+            $jadwal_mingguan = $jadwal_counts->get($g->id, 0);
+            $absen_list = $absensi_bulan->get($g->id, collect());
+
+            $total_sesi = $absen_list->count();
+            $tepat_waktu = $absen_list->where('status', 'tepat_waktu')->count();
+            $terlambat = $absen_list->where('status', 'terlambat')->count();
+            $indeks = $total_sesi > 0 ? round(($tepat_waktu / $total_sesi) * 100) : 100;
+
+            $total_seluruh_sesi += $total_sesi;
+            $total_seluruh_tepat_waktu += $tepat_waktu;
+            $total_seluruh_terlambat += $terlambat;
+
+            $data_guru_rekap[] = [
+                'guru' => $g,
+                'wallas' => $wallas,
+                'jadwal_mingguan' => $jadwal_mingguan,
+                'total_sesi' => $total_sesi,
+                'tepat_waktu' => $tepat_waktu,
+                'terlambat' => $terlambat,
+                'indeks_disiplin' => $indeks,
+                'gaji' => $g->getGaji,
+                'log_absen' => $absen_list->values()
             ];
-        })->values();
+        }
 
-        $total_jadwal_mingguan = \App\Models\jadwal_pelajaran::where('guru_id', $guru_id)->count();
+        // Hitung KPI Stats
+        $stats = [
+            'total_guru' => \App\Models\guru::count(),
+            'guru_tetap' => \App\Models\guru::where('guru_tetap', 1)->count(),
+            'guru_honor' => \App\Models\guru::where('guru_honor', 1)->count(),
+            'total_wallas' => \App\Models\wallas::count(),
+            'total_sesi_bulan' => $total_seluruh_sesi,
+            'tepat_waktu_bulan' => $total_seluruh_tepat_waktu,
+            'terlambat_bulan' => $total_seluruh_terlambat,
+            'rata_disiplin' => $total_seluruh_sesi > 0 ? round(($total_seluruh_tepat_waktu / $total_seluruh_sesi) * 100) : 100
+        ];
 
-        return view("/modul/siakad/guru/slipPembayaran", compact('guru', 'wallas', 'riwayat_absen', 'rekap_bulanan', 'total_jadwal_mingguan'));
+        $data_sekolah = \App\Models\jenis_sekolah::all();
+
+        return view('modul.siakad.admin.slipPembayaranGuru', compact(
+            'data_guru_rekap',
+            'stats',
+            'bulan',
+            'carbonBulan',
+            'data_sekolah',
+            'sekolah_id',
+            'status_pegawai',
+            'search'
+        ));
     }
     function tampilanPembayaranPemeliharaan(){
         $check = $this->guardRoles(['a']);
@@ -1536,7 +1614,7 @@ class siakadController extends Controller
         $rekap_mapel = collect();
         foreach ($daftar_jadwal_mapel as $j) {
             $mapel_id = $j->mapel_id;
-            $kkm = $j->mata_pelajaran->kkm ?? 75;
+            $kkm = $j->getKkm();
             $siswa_dinilai = 0;
             $siswa_lengkap = 0;
             $siswa_tuntas = 0;
@@ -1596,7 +1674,7 @@ class siakadController extends Controller
 
             foreach ($daftar_jadwal_mapel as $j) {
                 $m_id = $j->mapel_id;
-                $kkm = $j->mata_pelajaran->kkm ?? 75;
+                $kkm = $j->getKkm();
                 $komponen_siswa = $map_nilai[$s->id][$m_id] ?? [];
 
                 if (count($komponen_siswa) > 0) {
@@ -1713,11 +1791,13 @@ class siakadController extends Controller
 
         // Rekap Nilai per Mata Pelajaran
         $rekap_nilai = [];
+        $tingkat_siswa = \App\Models\mata_pelajaran::extractTingkat($siswa->kelas->nama_ruang ?? $siswa->kelas->nama_kelas ?? '');
+
         // Inisialisasi dari jadwal kelas agar semua mapel kelas tampil lengkap di lembar rapor
         foreach ($jadwal_kelas as $jk) {
             if (!$jk->mata_pelajaran) continue;
             $rekap_nilai[$jk->mata_pelajaran->nama_mapel] = [
-                'kkm' => $jk->mata_pelajaran->kkm ?? 75,
+                'kkm' => $jk->getKkm(),
                 'rincian' => [],
                 'nilai_akhir' => 0,
                 'ada_nilai' => false
@@ -1729,7 +1809,7 @@ class siakadController extends Controller
             $mapel = $n->mata_pelajaran->nama_mapel;
             if (!isset($rekap_nilai[$mapel])) {
                 $rekap_nilai[$mapel] = [
-                    'kkm' => $n->mata_pelajaran->kkm ?? 75,
+                    'kkm' => $n->mata_pelajaran->getKkmTingkat($tingkat_siswa),
                     'rincian' => [],
                     'nilai_akhir' => 0,
                     'ada_nilai' => false
@@ -1779,9 +1859,9 @@ class siakadController extends Controller
         $sekolah_id = $request->query('sekolah_id');
         $data_sekolah = \App\Models\jenis_sekolah::all();
 
-        $kelas_query = \App\Models\kelas::query();
-        $mapel_query = \App\Models\mata_pelajaran::query();
-        $jadwal_query = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'guru', 'jam_pelajaran', 'tahun_ajaran'])->orderBy('hari');
+        $kelas_query = \App\Models\kelas::orderBy('nama_kelas');
+        $mapel_query = \App\Models\mata_pelajaran::with('sekolah')->orderBy('nama_mapel');
+        $jadwal_query = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran.sekolah', 'guru', 'jam_pelajaran.sekolah', 'tahun_ajaran'])->orderBy('hari');
 
         if ($sekolah_id) {
             $jenis = \App\Models\jenis_sekolah::find($sekolah_id);
@@ -1800,7 +1880,7 @@ class siakadController extends Controller
         $data_jadwal = $jadwal_query->get();
         
         $data_guru = \App\Models\guru::all();
-        $data_jam = \App\Models\jam_pelajaran::orderBy('jam_mulai')->get();
+        $data_jam = \App\Models\jam_pelajaran::with('sekolah')->orderBy('jam_mulai')->get();
         $data_tahun = \App\Models\tahun_ajaran::all();
         
         return view('/modul/siakad/admin/kelolaJadwal', compact('data_kelas', 'data_guru', 'data_mapel', 'data_jam', 'data_tahun', 'data_jadwal', 'data_sekolah', 'sekolah_id'));
@@ -1819,31 +1899,60 @@ class siakadController extends Controller
             'tahun_ajaran_id' => 'required',
         ]);
 
-        // Validasi Bentrok Jadwal Mengajar Guru
-        $bentrokGuru = \App\Models\jadwal_pelajaran::where('guru_id', $request->guru_id)
-            ->where('hari', strtolower($request->hari))
-            ->where('jam_pelajaran_id', $request->jam_pelajaran_id)
+        $hari = strtolower($request->hari);
+        $jamBaru = \App\Models\jam_pelajaran::find($request->jam_pelajaran_id);
+        $mulaiBaru = $jamBaru ? $jamBaru->jam_mulai : null;
+        $selesaiBaru = $jamBaru ? $jamBaru->jam_selesai : null;
+
+        // Validasi Bentrok Jadwal Mengajar Guru (Cek irisan waktu / time overlap lintas jenjang & kelas)
+        $jadwalGuruBentrok = \App\Models\jadwal_pelajaran::with(['kelas', 'jam_pelajaran'])
+            ->where('guru_id', $request->guru_id)
+            ->where('hari', $hari)
             ->where('tahun_ajaran_id', $request->tahun_ajaran_id)
-            ->exists();
-        if ($bentrokGuru) {
-            return back()->with('error', 'Guru tersebut sudah memiliki jadwal mengajar di kelas lain pada hari dan sesi jam yang sama.');
+            ->where(function($q) use ($request, $mulaiBaru, $selesaiBaru) {
+                $q->where('jam_pelajaran_id', $request->jam_pelajaran_id);
+                if ($mulaiBaru && $selesaiBaru) {
+                    $q->orWhereHas('jam_pelajaran', function($qj) use ($mulaiBaru, $selesaiBaru) {
+                        $qj->where('jam_mulai', '<', $selesaiBaru)
+                           ->where('jam_selesai', '>', $mulaiBaru);
+                    });
+                }
+            })
+            ->first();
+
+        if ($jadwalGuruBentrok) {
+            $infoKelas = $jadwalGuruBentrok->kelas->nama_kelas ?? 'kelas lain';
+            $infoJam = $jadwalGuruBentrok->jam_pelajaran ? $jadwalGuruBentrok->jam_pelajaran->rentang_waktu : '';
+            return back()->with('error', "Jadwal bentrok! Guru tersebut sudah mengajar di {$infoKelas} pada hari " . ucfirst($hari) . " pukul {$infoJam}.");
         }
 
-        // Validasi Bentrok Jadwal Kelas (Ruang Kelas tidak boleh memiliki 2 mapel bersamaan)
-        $bentrokKelas = \App\Models\jadwal_pelajaran::where('kelas_id', $request->kelas_id)
-            ->where('hari', strtolower($request->hari))
-            ->where('jam_pelajaran_id', $request->jam_pelajaran_id)
+        // Validasi Bentrok Jadwal Kelas (Ruang Kelas tidak boleh memiliki 2 mapel yang waktunya beririsan)
+        $jadwalKelasBentrok = \App\Models\jadwal_pelajaran::with(['mata_pelajaran', 'jam_pelajaran'])
+            ->where('kelas_id', $request->kelas_id)
+            ->where('hari', $hari)
             ->where('tahun_ajaran_id', $request->tahun_ajaran_id)
-            ->exists();
-        if ($bentrokKelas) {
-            return back()->with('error', 'Kelas tersebut sudah terisi mata pelajaran lain pada hari dan sesi jam yang sama.');
+            ->where(function($q) use ($request, $mulaiBaru, $selesaiBaru) {
+                $q->where('jam_pelajaran_id', $request->jam_pelajaran_id);
+                if ($mulaiBaru && $selesaiBaru) {
+                    $q->orWhereHas('jam_pelajaran', function($qj) use ($mulaiBaru, $selesaiBaru) {
+                        $qj->where('jam_mulai', '<', $selesaiBaru)
+                           ->where('jam_selesai', '>', $mulaiBaru);
+                    });
+                }
+            })
+            ->first();
+
+        if ($jadwalKelasBentrok) {
+            $infoMapel = $jadwalKelasBentrok->mata_pelajaran->nama_mapel ?? 'mata pelajaran lain';
+            $infoJam = $jadwalKelasBentrok->jam_pelajaran ? $jadwalKelasBentrok->jam_pelajaran->rentang_waktu : '';
+            return back()->with('error', "Jadwal kelas bentrok! Kelas ini sudah terisi mapel {$infoMapel} pada hari " . ucfirst($hari) . " pukul {$infoJam}.");
         }
 
         \App\Models\jadwal_pelajaran::create([
             'kelas_id' => $request->kelas_id,
             'guru_id' => $request->guru_id,
             'mapel_id' => $request->mapel_id,
-            'hari' => strtolower($request->hari),
+            'hari' => $hari,
             'jam_pelajaran_id' => $request->jam_pelajaran_id,
             'tahun_ajaran_id' => $request->tahun_ajaran_id
         ]);
@@ -1936,18 +2045,46 @@ class siakadController extends Controller
         }
 
         $sekolah_id = $request->query('sekolah_id');
-        $query_mapel = \App\Models\mata_pelajaran::with('sekolah');
+        $query_mapel = \App\Models\mata_pelajaran::with(['sekolah', 'kkm_tingkat']);
         if ($sekolah_id) {
             $query_mapel->where('sekolah_id', $sekolah_id);
         }
         $data_mapel = $query_mapel->orderBy('sekolah_id')->orderBy('nama_mapel')->get();
         $data_sekolah = \App\Models\jenis_sekolah::all();
 
+        // Konfigurasi daftar tingkatan kelas per jenjang sekolah
+        $tingkat_options = [
+            'sd' => [
+                ['tingkat' => '1', 'label' => 'Kelas 1'],
+                ['tingkat' => '2', 'label' => 'Kelas 2'],
+                ['tingkat' => '3', 'label' => 'Kelas 3'],
+                ['tingkat' => '4', 'label' => 'Kelas 4'],
+                ['tingkat' => '5', 'label' => 'Kelas 5'],
+                ['tingkat' => '6', 'label' => 'Kelas 6'],
+            ],
+            'smp' => [
+                ['tingkat' => '7', 'label' => 'Kelas 7 (1 SMP)'],
+                ['tingkat' => '8', 'label' => 'Kelas 8 (2 SMP)'],
+                ['tingkat' => '9', 'label' => 'Kelas 9 (3 SMP)'],
+            ],
+            'sma' => [
+                ['tingkat' => '10', 'label' => 'Kelas 10 (1 SMA)'],
+                ['tingkat' => '11', 'label' => 'Kelas 11 (2 SMA)'],
+                ['tingkat' => '12', 'label' => 'Kelas 12 (3 SMA)'],
+            ],
+            'tk' => [
+                ['tingkat' => 'A', 'label' => 'TK A'],
+                ['tingkat' => 'B', 'label' => 'TK B'],
+            ],
+        ];
+
+        $filter_tingkat = $request->query('tingkat');
+
         $total_bobot = $jenis_penilaian->sum('bobot');
         $avg_kkm = $data_mapel->avg('kkm') ? round($data_mapel->avg('kkm'), 1) : 75;
 
         return view('modul.siakad.admin.kelolaPenilaian', compact(
-            'jenis_penilaian', 'data_mapel', 'data_sekolah', 'sekolah_id', 'total_bobot', 'avg_kkm'
+            'jenis_penilaian', 'data_mapel', 'data_sekolah', 'sekolah_id', 'total_bobot', 'avg_kkm', 'tingkat_options', 'filter_tingkat'
         ));
     }
 
@@ -1975,19 +2112,51 @@ class siakadController extends Controller
         $check = $this->guardRoles(['a']);
         if ($check) return $check;
 
+        $updated_count = 0;
+
+        // 1. Simpan KKM per Tingkatan (kkm_tingkat[mapel_id][tingkat] = val)
+        if ($request->has('kkm_tingkat') && is_array($request->input('kkm_tingkat'))) {
+            $kkm_tingkat = $request->input('kkm_tingkat');
+            foreach ($kkm_tingkat as $mapel_id => $tingkats) {
+                if (is_array($tingkats)) {
+                    $vals = [];
+                    foreach ($tingkats as $tingkat => $val) {
+                        if ($val !== null && $val !== '') {
+                            $kkm_val = max(0, min(100, intval($val)));
+                            \App\Models\kkm_mapel_tingkat::updateOrCreate(
+                                ['mapel_id' => $mapel_id, 'tingkat' => (string)$tingkat],
+                                ['kkm' => $kkm_val]
+                            );
+                            $vals[] = $kkm_val;
+                            $updated_count++;
+                        }
+                    }
+                    if (!empty($vals)) {
+                        $avg = round(array_sum($vals) / count($vals));
+                        \App\Models\mata_pelajaran::where('id', $mapel_id)->update(['kkm' => $avg]);
+                    }
+                }
+            }
+        }
+
+        // 2. Simpan KKM massal/keseluruhan (kkm[mapel_id] = val) jika dikirim secara flat
         if ($request->has('kkm') && is_array($request->input('kkm'))) {
             $kkm_input = $request->input('kkm');
             foreach ($kkm_input as $mapel_id => $val) {
                 if ($val !== null && $val !== '') {
                     $kkm_val = max(0, min(100, intval($val)));
                     \App\Models\mata_pelajaran::where('id', $mapel_id)->update(['kkm' => $kkm_val]);
+                    $updated_count++;
                 }
             }
-            return redirect()->back()->with('success', 'Nilai KKM mata pelajaran berhasil diperbarui.');
         } elseif ($request->filled('mapel_id') && $request->filled('kkm_tunggal')) {
             $kkm_val = max(0, min(100, intval($request->kkm_tunggal)));
             \App\Models\mata_pelajaran::where('id', $request->mapel_id)->update(['kkm' => $kkm_val]);
-            return redirect()->back()->with('success', 'Nilai KKM mata pelajaran berhasil diperbarui.');
+            $updated_count++;
+        }
+
+        if ($updated_count > 0) {
+            return redirect()->back()->with('success', 'Nilai KKM per tingkatan kelas berhasil diperbarui.');
         }
 
         return redirect()->back()->with('info', 'Tidak ada data KKM yang diperbarui.');
@@ -2005,11 +2174,11 @@ class siakadController extends Controller
         $check = $this->guardRoles(['a']);
         if ($check) return $check;
 
-        $jadwal = \App\Models\jadwal_pelajaran::findOrFail($id);
-        $data_kelas = \App\Models\kelas::all();
+        $jadwal = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran.sekolah', 'jam_pelajaran.sekolah'])->findOrFail($id);
+        $data_kelas = \App\Models\kelas::orderBy('nama_kelas')->get();
         $data_guru = \App\Models\guru::all();
-        $data_mapel = \App\Models\mata_pelajaran::all();
-        $data_jam = \App\Models\jam_pelajaran::orderBy('jam_mulai')->get();
+        $data_mapel = \App\Models\mata_pelajaran::with('sekolah')->orderBy('nama_mapel')->get();
+        $data_jam = \App\Models\jam_pelajaran::with('sekolah')->orderBy('jam_mulai')->get();
         $data_tahun = \App\Models\tahun_ajaran::all();
         return view('/modul/siakad/admin/editJadwal', compact('jadwal', 'data_kelas', 'data_guru', 'data_mapel', 'data_jam', 'data_tahun'));
     }
@@ -2027,33 +2196,62 @@ class siakadController extends Controller
             'tahun_ajaran_id' => 'required',
         ]);
 
-        // Validasi Bentrok Jadwal Mengajar Guru
-        $bentrokGuru = \App\Models\jadwal_pelajaran::where('guru_id', $request->guru_id)
-            ->where('hari', strtolower($request->hari))
-            ->where('jam_pelajaran_id', $request->jam_pelajaran_id)
+        $hari = strtolower($request->hari);
+        $jamBaru = \App\Models\jam_pelajaran::find($request->jam_pelajaran_id);
+        $mulaiBaru = $jamBaru ? $jamBaru->jam_mulai : null;
+        $selesaiBaru = $jamBaru ? $jamBaru->jam_selesai : null;
+
+        // Validasi Bentrok Jadwal Mengajar Guru (Cek irisan waktu / time overlap)
+        $jadwalGuruBentrok = \App\Models\jadwal_pelajaran::with(['kelas', 'jam_pelajaran'])
+            ->where('guru_id', $request->guru_id)
+            ->where('hari', $hari)
             ->where('tahun_ajaran_id', $request->tahun_ajaran_id)
             ->where('id', '!=', $id)
-            ->exists();
-        if ($bentrokGuru) {
-            return back()->with('error', 'Guru tersebut sudah memiliki jadwal mengajar di kelas lain pada hari dan sesi jam yang sama.');
+            ->where(function($q) use ($request, $mulaiBaru, $selesaiBaru) {
+                $q->where('jam_pelajaran_id', $request->jam_pelajaran_id);
+                if ($mulaiBaru && $selesaiBaru) {
+                    $q->orWhereHas('jam_pelajaran', function($qj) use ($mulaiBaru, $selesaiBaru) {
+                        $qj->where('jam_mulai', '<', $selesaiBaru)
+                           ->where('jam_selesai', '>', $mulaiBaru);
+                    });
+                }
+            })
+            ->first();
+
+        if ($jadwalGuruBentrok) {
+            $infoKelas = $jadwalGuruBentrok->kelas->nama_kelas ?? 'kelas lain';
+            $infoJam = $jadwalGuruBentrok->jam_pelajaran ? $jadwalGuruBentrok->jam_pelajaran->rentang_waktu : '';
+            return back()->with('error', "Jadwal bentrok! Guru tersebut sudah mengajar di {$infoKelas} pada hari " . ucfirst($hari) . " pukul {$infoJam}.");
         }
 
-        // Validasi Bentrok Jadwal Kelas
-        $bentrokKelas = \App\Models\jadwal_pelajaran::where('kelas_id', $request->kelas_id)
-            ->where('hari', strtolower($request->hari))
-            ->where('jam_pelajaran_id', $request->jam_pelajaran_id)
+        // Validasi Bentrok Jadwal Kelas (Cek irisan waktu / time overlap)
+        $jadwalKelasBentrok = \App\Models\jadwal_pelajaran::with(['mata_pelajaran', 'jam_pelajaran'])
+            ->where('kelas_id', $request->kelas_id)
+            ->where('hari', $hari)
             ->where('tahun_ajaran_id', $request->tahun_ajaran_id)
             ->where('id', '!=', $id)
-            ->exists();
-        if ($bentrokKelas) {
-            return back()->with('error', 'Kelas tersebut sudah terisi mata pelajaran lain pada hari dan sesi jam yang sama.');
+            ->where(function($q) use ($request, $mulaiBaru, $selesaiBaru) {
+                $q->where('jam_pelajaran_id', $request->jam_pelajaran_id);
+                if ($mulaiBaru && $selesaiBaru) {
+                    $q->orWhereHas('jam_pelajaran', function($qj) use ($mulaiBaru, $selesaiBaru) {
+                        $qj->where('jam_mulai', '<', $selesaiBaru)
+                           ->where('jam_selesai', '>', $mulaiBaru);
+                    });
+                }
+            })
+            ->first();
+
+        if ($jadwalKelasBentrok) {
+            $infoMapel = $jadwalKelasBentrok->mata_pelajaran->nama_mapel ?? 'mata pelajaran lain';
+            $infoJam = $jadwalKelasBentrok->jam_pelajaran ? $jadwalKelasBentrok->jam_pelajaran->rentang_waktu : '';
+            return back()->with('error', "Jadwal kelas bentrok! Kelas ini sudah terisi mapel {$infoMapel} pada hari " . ucfirst($hari) . " pukul {$infoJam}.");
         }
 
         \App\Models\jadwal_pelajaran::findOrFail($id)->update([
             'kelas_id' => $request->kelas_id,
             'guru_id' => $request->guru_id,
             'mapel_id' => $request->mapel_id,
-            'hari' => strtolower($request->hari),
+            'hari' => $hari,
             'jam_pelajaran_id' => $request->jam_pelajaran_id,
             'tahun_ajaran_id' => $request->tahun_ajaran_id
         ]);
@@ -2069,8 +2267,9 @@ class siakadController extends Controller
         if ($check) return $check;
 
         $data_tahun = \App\Models\tahun_ajaran::orderBy('id', 'desc')->get();
-        $data_jam = \App\Models\jam_pelajaran::orderBy('jam_mulai', 'asc')->get();
-        return view('modul.siakad.admin.kelolaReferensi', compact('data_tahun', 'data_jam'));
+        $data_jam = \App\Models\jam_pelajaran::with('sekolah')->orderBy('sekolah_id', 'asc')->orderBy('jam_mulai', 'asc')->get();
+        $data_sekolah = \App\Models\jenis_sekolah::all();
+        return view('modul.siakad.admin.kelolaReferensi', compact('data_tahun', 'data_jam', 'data_sekolah'));
     }
 
     public function simpanTahunAjaran(Request $request) {
@@ -2125,11 +2324,90 @@ class siakadController extends Controller
         $check = $this->guardRoles(['a']);
         if ($check) return $check;
 
+        // MODE 1: Generate Paket Jam Pelajaran Otomatis Berdasarkan Sistem JP (SD = 35m, SMP = 45m)
+        if ($request->input('mode') === 'generate_paket') {
+            $request->validate([
+                'sekolah_id' => 'required',
+                'jam_awal' => 'required',
+                'total_jp_harian' => 'required|integer|min:1|max:14',
+                'jp_per_sesi' => 'required|integer|min:1|max:4',
+            ]);
+
+            $sekolah = \App\Models\jenis_sekolah::findOrFail($request->sekolah_id);
+            $durasi_per_jp = $request->filled('durasi_per_jp')
+                ? max(15, intval($request->durasi_per_jp))
+                : \App\Models\jam_pelajaran::standarMenitPerJp($sekolah->jenis);
+
+            $total_jp_harian = intval($request->total_jp_harian);
+            $jp_per_sesi = intval($request->jp_per_sesi);
+            $istirahat_setelah_jp = intval($request->input('istirahat_setelah_jp', 0));
+            $durasi_istirahat = intval($request->input('durasi_istirahat', 15));
+
+            $waktu_berjalan = \Carbon\Carbon::parse($request->jam_awal);
+            $jp_ke = 1;
+            $created = 0;
+
+            while ($jp_ke <= $total_jp_harian) {
+                $ambil_jp = min($jp_per_sesi, $total_jp_harian - $jp_ke + 1);
+                $jam_mulai = $waktu_berjalan->format('H:i');
+                $waktu_berjalan->addMinutes($ambil_jp * $durasi_per_jp);
+                $jam_selesai = $waktu_berjalan->format('H:i');
+
+                $label_jam = $ambil_jp > 1
+                    ? 'Jam Ke-' . $jp_ke . ' s/d ' . ($jp_ke + $ambil_jp - 1)
+                    : 'Jam Ke-' . $jp_ke;
+
+                $sudahAda = \App\Models\jam_pelajaran::where('sekolah_id', $sekolah->id)
+                    ->where('jam_mulai', $jam_mulai)
+                    ->where('jam_selesai', $jam_selesai)
+                    ->exists();
+
+                if (!$sudahAda) {
+                    \App\Models\jam_pelajaran::create([
+                        'sekolah_id' => $sekolah->id,
+                        'jam_ke' => $label_jam,
+                        'jumlah_jp' => $ambil_jp,
+                        'durasi_per_jp' => $durasi_per_jp,
+                        'jam_mulai' => $jam_mulai,
+                        'jam_selesai' => $jam_selesai,
+                    ]);
+                    $created++;
+                }
+
+                $jp_sebelum = $jp_ke;
+                $jp_ke += $ambil_jp;
+
+                // Tambahkan jeda istirahat jika melewati titik istirahat
+                if ($istirahat_setelah_jp > 0 && $durasi_istirahat > 0) {
+                    if ($jp_sebelum <= $istirahat_setelah_jp && $jp_ke > $istirahat_setelah_jp && $jp_ke <= $total_jp_harian) {
+                        $waktu_berjalan->addMinutes($durasi_istirahat);
+                    }
+                }
+            }
+
+            return redirect()->back()->with('success', "Berhasil men-generate {$created} slot Jam Pelajaran otomatis untuk jenjang " . strtoupper($sekolah->jenis) . " (1 JP = {$durasi_per_jp} menit).");
+        }
+
+        // MODE 2: Tambah Satuan Jam Pelajaran dengan Kalkulator JP
         $request->validate([
             'jam_mulai' => 'required',
             'jam_selesai' => 'required'
         ]);
+
+        $sekolah_id = $request->input('sekolah_id') ?: null;
+        $sekolah = $sekolah_id ? \App\Models\jenis_sekolah::find($sekolah_id) : null;
+        $pakaiJp = $sekolah ? \App\Models\jam_pelajaran::pakaiSistemJp($sekolah->jenis) : true;
+
+        $durasi_per_jp = $pakaiJp
+            ? ($request->filled('durasi_per_jp') ? intval($request->durasi_per_jp) : ($sekolah ? \App\Models\jam_pelajaran::standarMenitPerJp($sekolah->jenis) : 35))
+            : null;
+        $jumlah_jp = $pakaiJp ? max(1, intval($request->input('jumlah_jp', 1))) : 0;
+
         \App\Models\jam_pelajaran::create([
+            'sekolah_id' => $sekolah_id,
+            'jam_ke' => $request->input('jam_ke') ?: null,
+            'jumlah_jp' => $jumlah_jp,
+            'durasi_per_jp' => $durasi_per_jp,
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai
         ]);
@@ -2144,7 +2422,21 @@ class siakadController extends Controller
             'jam_mulai' => 'required',
             'jam_selesai' => 'required'
         ]);
+
+        $sekolah_id = $request->input('sekolah_id') ?: null;
+        $sekolah = $sekolah_id ? \App\Models\jenis_sekolah::find($sekolah_id) : null;
+        $pakaiJp = $sekolah ? \App\Models\jam_pelajaran::pakaiSistemJp($sekolah->jenis) : true;
+
+        $durasi_per_jp = $pakaiJp
+            ? ($request->filled('durasi_per_jp') ? intval($request->durasi_per_jp) : ($sekolah ? \App\Models\jam_pelajaran::standarMenitPerJp($sekolah->jenis) : 35))
+            : null;
+        $jumlah_jp = $pakaiJp ? max(1, intval($request->input('jumlah_jp', 1))) : 0;
+
         \App\Models\jam_pelajaran::findOrFail($id)->update([
+            'sekolah_id' => $sekolah_id,
+            'jam_ke' => $request->input('jam_ke') ?: null,
+            'jumlah_jp' => $jumlah_jp,
+            'durasi_per_jp' => $durasi_per_jp,
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai
         ]);
@@ -2420,13 +2712,15 @@ class siakadController extends Controller
 
         $rekap_nilai = [];
 
+        $tingkat_siswa = \App\Models\mata_pelajaran::extractTingkat($siswa->kelas->nama_ruang ?? '');
+
         // Inisialisasi daftar mapel dari jadwal kelas agar semua mapel kelas terlihat
         foreach ($jadwal_kelas as $jk) {
             if (!$jk->mata_pelajaran) continue;
             $rekap_nilai[$jk->mapel_id] = [
                 'mata_pelajaran' => $jk->mata_pelajaran,
                 'guru_nama' => $jk->guru->nama ?? '-',
-                'kkm' => $jk->mata_pelajaran->kkm ?? 75,
+                'kkm' => $jk->getKkm(),
                 'nilai_detail' => [],
                 'ada_nilai' => false,
                 'nilai_akhir' => 0,
@@ -2441,7 +2735,7 @@ class siakadController extends Controller
                 $rekap_nilai[$mapel_id] = [
                     'mata_pelajaran' => $n->mata_pelajaran,
                     'guru_nama' => $n->guru->nama ?? '-',
-                    'kkm' => $n->mata_pelajaran->kkm ?? 75,
+                    'kkm' => $n->mata_pelajaran->getKkmTingkat($tingkat_siswa),
                     'nilai_detail' => [],
                     'ada_nilai' => false,
                     'nilai_akhir' => 0,
