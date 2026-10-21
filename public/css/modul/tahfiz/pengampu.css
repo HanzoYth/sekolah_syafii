@@ -819,3 +819,181 @@ table tbody tr.row-pending:hover { background-color: var(--red-bg); }
 @media (max-width: 380px) {
     .quick-stats { grid-template-columns: 1fr; }
 }
+/* ================================================================
+   TAMBAHAN CSS KHUSUS MODAL / POP-UP HALAMAN PENGAMPU
+   ================================================================ */
+
+/* Overlay Modal (Latar belakang gelap transparan) */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 36, 28, 0.48);
+    backdrop-filter: blur(3px);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-overlay.show, .modal-overlay.active {
+    display: flex;
+}
+
+/* Modal Box Standar & Variasi Ukuran */
+.modal-box {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(11, 59, 46, 0.35);
+    border-top: 4px solid var(--gold);
+}
+
+.modal-box.modal-box-lg {
+    max-width: 680px;
+}
+
+.modal-box.modal-confirm {
+    max-width: 380px;
+}
+
+/* Modal Header & Footer */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.modal-header h3 {
+    font-family: var(--font-heading);
+    color: var(--primary-dark);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.modal-header-tag {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.modal-subtitle {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-light);
+    border: none;
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: var(--red-bg);
+    color: var(--red-text);
+}
+
+.modal-body {
+    padding: 22px 24px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 18px 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+.center-footer {
+    justify-content: center !important;
+}
+
+/* Modal Konfirmasi Nonaktif */
+.icon-danger-circle {
+    width: 56px;
+    height: 56px;
+    background: var(--red-bg);
+    color: var(--red-text);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin: 0 auto;
+    border: 1px solid rgba(179, 38, 30, 0.15);
+}
+
+.btn-danger-solid {
+    padding: 10px 22px;
+    border-radius: 10px;
+    border: none;
+    background: var(--red-text);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(179, 38, 30, 0.25);
+}
+
+.btn-danger-solid:hover {
+    background: #961d16;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(179, 38, 30, 0.35);
+}
+
+/* Tabel Riwayat Aktivitas di dalam Modal */
+.table-modal-siswa {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.83rem;
+}
+
+.table-modal-siswa th {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 12px 14px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table-modal-siswa th:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.table-modal-siswa th:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+
+.table-modal-siswa td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-dark);
+    vertical-align: middle;
+}
+
+.table-modal-siswa tbody tr:hover {
+    background-color: var(--bg-light);
+}
+
+.table-modal-siswa tbody tr:last-child td {
+    border-bottom: none;
+}

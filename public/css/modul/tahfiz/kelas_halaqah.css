@@ -1,22 +1,20 @@
 /* ================================================================
-   HALAMAN KELAS & HALAQAH — SATU TEMA DENGAN DASHBOARD
-   (Warna disamakan dengan sidebar tahfiz: emerald + gold,
-   struktur/tata letak TIDAK diubah)
+   HALAMAN KELAS & HALAQAH — TEMA ISLAMI ELEGAN (EMERALD & GOLD)
    ================================================================ */
 @import url('sidebar.css');
 
 :root {
-    --primary-color: #1B6B4F;      /* = --emerald-700 sidebar */
-    --primary-dark: #0B3B2E;       /* = --emerald-900 sidebar */
-    --primary-darker: #07241C;     /* = --emerald-950 sidebar */
-    --primary-light: #E8F2EC;      /* tint terang dari emerald */
-    --primary-gradient: linear-gradient(135deg, #24805F 0%, #0B3B2E 100%); /* emerald-600 -> emerald-900 */
+    --primary-color: #1B6B4F;      /* Emerald 700 */
+    --primary-dark: #0B3B2E;       /* Emerald 900 */
+    --primary-darker: #07241C;     /* Emerald 950 */
+    --primary-light: #E8F2EC;      /* Tint terang emerald */
+    --primary-gradient: linear-gradient(135deg, #24805F 0%, #0B3B2E 100%);
 
-    --gold: #C9A227;               /* = --gold-500 sidebar */
-    --gold-light: #F4EAC8;         /* = --gold-100 sidebar */
-    --gold-gradient: linear-gradient(135deg, #D8B94A 0%, #C9A227 100%);   /* gold-400 -> gold-500 */
+    --gold: #C9A227;               /* Gold 500 */
+    --gold-light: #F4EAC8;         /* Gold 100 */
+    --gold-gradient: linear-gradient(135deg, #D8B94A 0%, #C9A227 100%);
 
-    --bg-light: #F7F4EC;           /* = --cream sidebar */
+    --bg-light: #F7F4EC;           /* Cream background */
     --white: #ffffff;
     --text-dark: #16241f;
     --text-muted: #6b7d74;
@@ -33,17 +31,24 @@
     --font-heading: 'Amiri', serif;
     --font-main: 'Poppins', sans-serif;
 
-    --shadow-xs: 0 1px 2px 0 rgba(11, 59, 46, 0.04);
-    --shadow-card: 0 10px 25px -8px rgba(11, 59, 46, 0.10), 0 4px 10px -6px rgba(11, 59, 46, 0.05);
-    --shadow-hover: 0 20px 30px -12px rgba(27, 107, 79, 0.20), 0 8px 14px -6px rgba(0, 0, 0, 0.05);
+    --shadow-xs: 0 2px 4px 0 rgba(11, 59, 46, 0.04);
+    --shadow-card: 0 10px 25px -8px rgba(11, 59, 46, 0.08), 0 4px 10px -6px rgba(11, 59, 46, 0.04);
+    --shadow-hover: 0 16px 30px -10px rgba(27, 107, 79, 0.18), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
     --radius-lg: 20px;
     --radius-md: 14px;
     --radius-sm: 10px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
 
-html, body { max-width: 100%; overflow-x: hidden; }
+html, body { 
+    max-width: 100%; 
+    overflow-x: hidden; 
+}
 
 body {
     font-family: var(--font-main);
@@ -54,7 +59,12 @@ body {
     background-size: 26px 26px;
 }
 
-.dashboard-container { display: flex; flex-wrap: nowrap; align-items: flex-start; min-height: 100vh; }
+.dashboard-container { 
+    display: flex; 
+    flex-wrap: nowrap; 
+    align-items: flex-start; 
+    min-height: 100vh; 
+}
 
 .main-content {
     flex: 1;
@@ -64,13 +74,13 @@ body {
     width: calc(100% - 260px);
 }
 
-/* ======== 1. PAGE HEADER (setara topbar di dashboard) ======== */
+/* ======== 1. PAGE HEADER ======== */
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     background: var(--primary-gradient);
-    padding: 22px 32px;
+    padding: 24px 32px;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
     margin-bottom: 28px;
@@ -85,27 +95,33 @@ body {
     position: absolute;
     right: -30px;
     top: -30px;
-    width: 140px;
-    height: 140px;
-    background: radial-gradient(circle, rgba(201, 162, 39, 0.22) 0%, transparent 70%);
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(201, 162, 39, 0.25) 0%, transparent 70%);
     pointer-events: none;
 }
 
 .breadcrumb {
     font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.75);
     margin-bottom: 6px;
     position: relative;
     z-index: 1;
 }
 
-.breadcrumb span { color: var(--gold); font-weight: 600; }
+.breadcrumb span { 
+    color: var(--gold); 
+    font-weight: 600; 
+}
 
-.page-header-left { position: relative; z-index: 1; }
+.page-header-left { 
+    position: relative; 
+    z-index: 1; 
+}
 
 .page-header-left h1 {
     font-family: var(--font-heading);
-    font-size: 1.7rem;
+    font-size: 1.75rem;
     font-weight: 700;
     color: var(--white);
     letter-spacing: 0.3px;
@@ -115,23 +131,28 @@ body {
     content: '﷽';
     display: block;
     font-family: 'Amiri', serif;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     color: var(--gold);
-    opacity: 0.85;
+    opacity: 0.9;
     margin-bottom: 4px;
     letter-spacing: 1px;
 }
 
-.page-header-right { display: flex; gap: 12px; position: relative; z-index: 1; }
+.page-header-right { 
+    display: flex; 
+    gap: 12px; 
+    position: relative; 
+    z-index: 1; 
+}
 
 /* ======== BUTTONS ======== */
 .btn-outline {
     padding: 11px 22px;
     border-radius: 12px;
-    border: 1px solid var(--gold);
+    border: 1.5px solid var(--gold);
     background-color: transparent;
     color: var(--gold);
-    font-weight: 700;
+    font-weight: 600;
     font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.25s ease;
@@ -160,10 +181,13 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 6px 14px rgba(201, 162, 39, 0.3);
+    box-shadow: 0 6px 16px rgba(201, 162, 39, 0.3);
 }
 
-.btn-primary-gold:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(201, 162, 39, 0.35); }
+.btn-primary-gold:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 10px 22px rgba(201, 162, 39, 0.4); 
+}
 
 .btn-back {
     display: inline-flex;
@@ -173,7 +197,7 @@ body {
     background: var(--white);
     color: var(--text-dark);
     padding: 9px 18px;
-    border-radius: 12px;
+    border-radius: 10px;
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
@@ -184,7 +208,7 @@ body {
 .btn-back:hover {
     border-color: var(--primary-color);
     color: var(--primary-color);
-    box-shadow: 0 6px 15px -3px rgba(27, 107, 79, 0.15);
+    background: var(--primary-light);
     transform: translateY(-1px);
 }
 
@@ -213,8 +237,8 @@ body {
 .quick-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 18px;
+    margin-bottom: 26px;
 }
 
 .stat-pill {
@@ -222,40 +246,61 @@ body {
     border: 1px solid var(--border-color);
     border-top: 3px solid var(--gold);
     border-radius: var(--radius-md);
-    padding: 16px 20px;
+    padding: 18px 22px;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     box-shadow: var(--shadow-xs);
     transition: all 0.3s ease;
 }
 
 .stat-pill:hover {
-    transform: translateY(-4px);
+    transform: translateY(-3px);
     box-shadow: var(--shadow-hover);
     border-top-color: var(--primary-color);
 }
 
 .stat-pill i {
-    width: 42px;
-    height: 42px;
+    width: 46px;
+    height: 46px;
     border-radius: 12px;
     background: var(--primary-light);
     color: var(--primary-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     flex-shrink: 0;
 }
 
-.stat-pill h4 { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: var(--primary-dark); }
-.stat-pill p { font-size: 0.76rem; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
+.stat-pill h4 { 
+    font-family: var(--font-heading); 
+    font-size: 1.4rem; 
+    font-weight: 700; 
+    color: var(--primary-dark); 
+}
 
-.stat-pill.alert { border-color: rgba(179, 38, 30, 0.2); border-top-color: var(--red-text); background: var(--red-bg); }
-.stat-pill.alert i { background: rgba(179, 38, 30, 0.12); color: var(--red-text); }
-.stat-pill.alert h4 { color: var(--red-text); }
-.stat-pill.alert:hover { border-top-color: var(--red-text); }
+.stat-pill p { 
+    font-size: 0.78rem; 
+    color: var(--text-muted); 
+    font-weight: 500; 
+    margin-top: 2px; 
+}
+
+.stat-pill.alert { 
+    border-color: rgba(179, 38, 30, 0.2); 
+    border-top-color: var(--red-text); 
+    background: var(--red-bg); 
+}
+
+.stat-pill.alert i { 
+    background: rgba(179, 38, 30, 0.12); 
+    color: var(--red-text); 
+}
+
+.stat-pill.alert h4 { 
+    color: var(--red-text); 
+}
 
 /* ======== 3. TOOLBAR: FILTER & PENCARIAN ======== */
 .toolbar-box {
@@ -267,18 +312,21 @@ body {
     justify-content: space-between;
     align-items: center;
     gap: 16px;
-    margin-bottom: 24px;
+    margin-bottom: 26px;
     flex-wrap: wrap;
     box-shadow: var(--shadow-xs);
-    transition: box-shadow 0.25s ease;
+    transition: all 0.25s ease;
 }
 
-.toolbar-box:focus-within { box-shadow: var(--shadow-card); }
+.toolbar-box:focus-within { 
+    box-shadow: var(--shadow-card); 
+    border-color: var(--border-hover);
+}
 
 .search-field {
     position: relative;
     flex: 1;
-    min-width: 220px;
+    min-width: 240px;
 }
 
 .search-field i {
@@ -287,15 +335,15 @@ body {
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-muted);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
 }
 
 .search-field input {
     width: 100%;
-    padding: 10px 14px 10px 38px;
+    padding: 11px 14px 11px 40px;
     border-radius: 10px;
     border: 1px solid var(--border-color);
-    background: var(--bg-light);
+    background: #fbfbf8;
     font-family: var(--font-main);
     font-size: 0.85rem;
     color: var(--text-dark);
@@ -309,18 +357,23 @@ body {
     box-shadow: 0 0 0 3px rgba(27, 107, 79, 0.12);
 }
 
-.toolbar-filters { display: flex; gap: 10px; flex-wrap: wrap; }
+.toolbar-filters { 
+    display: flex; 
+    gap: 12px; 
+    flex-wrap: wrap; 
+}
 
 .toolbar-filters select {
-    padding: 10px 14px;
+    padding: 10px 16px;
     border-radius: 10px;
     border: 1px solid var(--border-color);
-    background: var(--bg-light);
+    background: #fbfbf8;
     font-family: var(--font-main);
     font-size: 0.85rem;
     outline: none;
     color: var(--text-dark);
     transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 .toolbar-filters select:focus {
@@ -329,7 +382,7 @@ body {
     box-shadow: 0 0 0 3px rgba(27, 107, 79, 0.12);
 }
 
-/* ======== 4. TABEL HALAQAH ======== */
+/* ======== 4. TABEL EXPANDABLE KELAS & HALAQAH ======== */
 .table-card {
     background: var(--white);
     border-radius: var(--radius-lg);
@@ -339,39 +392,317 @@ body {
     transition: box-shadow 0.3s ease;
 }
 
-.table-card h4 {
-    font-family: var(--font-heading);
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-    margin-bottom: 18px;
-    padding-bottom: 12px;
-    border-bottom: 1px dashed var(--border-color);
+.table-responsive { 
+    width: 100%; 
+    overflow-x: auto; 
 }
 
-.table-responsive { width: 100%; overflow-x: auto; }
-
-table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 0.88rem; }
+table { 
+    width: 100%; 
+    border-collapse: separate; 
+    border-spacing: 0; 
+    text-align: left; 
+    font-size: 0.88rem; 
+}
 
 table th {
     background-color: var(--primary-light);
     color: var(--primary-dark);
     font-weight: 700;
-    font-size: 0.76rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 14px 16px;
+    letter-spacing: 0.6px;
+    padding: 16px;
     white-space: nowrap;
 }
 
 table th:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
 table th:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
 
-table td { padding: 14px 16px; border-bottom: 1px solid var(--border-color); color: var(--text-dark); }
-table tbody tr { transition: background-color 0.2s ease; }
-table tbody tr:hover { background-color: var(--primary-light); }
-table tbody tr:last-child td { border-bottom: none; }
+table td { 
+    padding: 16px; 
+    border-bottom: 1px solid var(--border-color); 
+    color: var(--text-dark); 
+    vertical-align: middle;
+}
 
+/* Styling Baris Kelas Expandable */
+.table-expandable .row-parent {
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+}
+
+.table-expandable .row-parent:hover {
+    background-color: #f7faf8;
+}
+
+.table-expandable .row-parent.expanded {
+    background-color: var(--primary-light);
+    box-shadow: inset 4px 0 0 0 var(--primary-color);
+}
+
+.toggle-icon {
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    margin-right: 8px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cid-badge {
+    background: #f3e8ff;
+    color: #7e22ce;
+    font-size: 0.73rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.4px;
+    display: inline-block;
+}
+
+.class-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 0.98rem;
+    color: var(--primary-dark);
+}
+
+.class-name-cell .icon-class {
+    color: var(--gold);
+    font-size: 1.15rem;
+}
+
+.count-pill {
+    background-color: #fbfbf8;
+    border: 1px solid var(--border-color);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary-dark);
+    box-shadow: var(--shadow-xs);
+}
+
+.count-pill i {
+    color: var(--primary-color);
+    font-size: 0.85rem;
+}
+
+/* ======== PERBAIKAN UTAMA: KOLOM AKSI PADA TABEL ======== */
+.action-icons-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-action-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: var(--white);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.88rem;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-xs);
+}
+
+/* Tombol Lihat Detail (Merah Soft) */
+.btn-action-icon.danger-icon {
+    color: #e11d48;
+    background: #fff1f2;
+    border-color: #fecdd3;
+}
+
+.btn-action-icon.danger-icon:hover {
+    background: #e11d48;
+    border-color: #e11d48;
+    color: var(--white);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.35);
+}
+
+/* Tombol Edit / Pengampu (Emerald & Gold) */
+.btn-action-icon:hover {
+    background: var(--primary-gradient);
+    border-color: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(27, 107, 79, 0.3);
+}
+
+/* ======== DETAIL ROW (ACCORDION DALAM KELAS) ======== */
+.row-detail {
+    display: none;
+    background-color: var(--bg-light);
+}
+
+.row-detail.active {
+    display: table-row;
+}
+
+.row-detail td {
+    padding: 20px 24px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.class-detail-container {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    box-shadow: var(--shadow-xs);
+}
+
+.class-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.class-detail-header i {
+    font-size: 1.3rem;
+    color: var(--primary-dark);
+    background: var(--primary-light);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.class-detail-header h4 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    color: var(--primary-dark);
+    margin-bottom: 2px;
+}
+
+.class-detail-header p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Grid Kartu Halaqah di dalam Accordion */
+.halaqah-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 18px;
+}
+
+.halaqah-card {
+    background: var(--white);
+    border: 1px solid #f9a8d4;
+    border-radius: var(--radius-md);
+    padding: 20px;
+    position: relative;
+    box-shadow: var(--shadow-xs);
+    transition: all 0.3s ease;
+}
+
+.halaqah-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--gold);
+}
+
+.hid-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: #f3e8ff;
+    color: #7e22ce;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+}
+
+.halaqah-card-header h5 {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 8px;
+}
+
+.student-count-badge {
+    background: var(--green-bg);
+    color: var(--green-text);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid rgba(10, 122, 74, 0.15);
+}
+
+/* Info Guru Pengampu di Kartu */
+.guru-info-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 12px 14px;
+    background: #fdf2f8;
+    border-radius: 12px;
+    border: 1px solid #fbcfe8;
+}
+
+.guru-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid var(--white);
+    box-shadow: var(--shadow-xs);
+}
+
+.guru-avatar.text-avatar {
+    background: #6366f1;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.guru-label {
+    font-size: 0.65rem;
+    color: #9d174d;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    display: block;
+    text-transform: uppercase;
+}
+
+.guru-details h6 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-top: 2px;
+}
+
+/* Badges & Text Helpers */
 .cell-strong { font-weight: 600; color: var(--primary-dark); }
 .cell-empty { color: var(--text-muted); font-style: italic; font-size: 0.82rem; }
 
@@ -388,74 +719,6 @@ table tbody tr:last-child td { border-bottom: none; }
 
 .badge.success { background-color: var(--green-bg); color: var(--green-text); }
 .badge.danger { background-color: var(--red-bg); color: var(--red-text); }
-
-.badge-text.green { color: var(--green-text); font-weight: 600; font-size: 0.82rem; }
-.badge-text.red { color: var(--red-text); font-weight: 600; font-size: 0.82rem; }
-
-/* Mini progress bar capaian halaqah */
-.progress-mini {
-    width: 100px;
-    height: 7px;
-    background: var(--border-color);
-    border-radius: 10px;
-    overflow: hidden;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.progress-mini-fill {
-    height: 100%;
-    background: var(--gold-gradient);
-    border-radius: 10px;
-    transition: width 0.4s ease;
-}
-
-.progress-mini-label {
-    display: inline-block;
-    margin-left: 8px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    vertical-align: middle;
-}
-
-/* Ikon aksi baris */
-.action-icons { display: flex; gap: 6px; }
-
-.action-icons button {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background: var(--white);
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: var(--shadow-xs);
-}
-
-.action-icons button:hover {
-    background: var(--primary-gradient);
-    border-color: var(--primary-color);
-    color: var(--white);
-    box-shadow: 0 4px 12px rgba(27, 107, 79, 0.25);
-    transform: translateY(-1px);
-}
-
-.action-icons button.danger:hover {
-    background: var(--red-text);
-    border-color: var(--red-text);
-    color: var(--white);
-    box-shadow: 0 4px 12px rgba(179, 38, 30, 0.25);
-}
-
-.action-icons button.highlight { border-color: var(--gold); color: var(--gold); }
-.action-icons button.highlight:hover {
-    background: var(--gold-gradient);
-    border-color: var(--gold);
-    color: var(--primary-darker);
-    box-shadow: 0 4px 12px rgba(201, 162, 39, 0.3);
-}
 
 /* ======== 5. EMPTY STATE ======== */
 .empty-state {
@@ -487,25 +750,25 @@ table tbody tr:last-child td { border-bottom: none; }
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(7, 36, 28, 0.45);
-    backdrop-filter: blur(2px);
+    background: rgba(7, 36, 28, 0.48);
+    backdrop-filter: blur(3px);
     align-items: center;
     justify-content: center;
     z-index: 1000;
     padding: 20px;
 }
 
-.modal-overlay.show { display: flex; }
+.modal-overlay.show, .modal-overlay.active { display: flex; }
 
 .modal-box {
     background: var(--white);
     border-radius: var(--radius-lg);
     width: 100%;
-    max-width: 440px;
+    max-width: 450px;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 25px 50px -12px rgba(11, 59, 46, 0.35);
-    border-top: 3px solid var(--gold);
+    border-top: 4px solid var(--gold);
 }
 
 .modal-header {
@@ -516,7 +779,7 @@ table tbody tr:last-child td { border-bottom: none; }
     border-bottom: 1px dashed var(--border-color);
 }
 
-.modal-header h3 { font-family: var(--font-heading); color: var(--primary-dark); font-size: 1.15rem; font-weight: 700; }
+.modal-header h3 { font-family: var(--font-heading); color: var(--primary-dark); font-size: 1.2rem; font-weight: 700; }
 
 .modal-close {
     width: 32px;
@@ -555,7 +818,7 @@ table tbody tr:last-child td { border-bottom: none; }
     padding: 11px 14px;
     border-radius: 10px;
     border: 1px solid var(--border-color);
-    background: var(--bg-light);
+    background: #fbfbf8;
     font-family: var(--font-main);
     font-size: 0.85rem;
     color: var(--text-dark);
@@ -577,7 +840,7 @@ table tbody tr:last-child td { border-bottom: none; }
     border-top: 1px solid var(--border-color);
 }
 
-/* ======== HELPER UTILITIES (selaras dengan dashboard.css) ======== */
+/* ======== HELPER UTILITIES ======== */
 .mt-15 { margin-top: 18px; }
 .mb-10 { margin-bottom: 12px; }
 .text-center { text-align: center; }
@@ -607,4 +870,350 @@ table tbody tr:last-child td { border-bottom: none; }
 
 @media (max-width: 380px) {
     .quick-stats { grid-template-columns: 1fr; }
+}
+/* ================================================================
+   TAMBAHAN CSS KHUSUS MODAL DETAIL & EDIT KELAS
+   ================================================================ */
+.modal-detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.detail-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.detail-item-row:last-child {
+    border-bottom: none;
+}
+
+.detail-item-row .d-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.detail-item-row .d-value {
+    font-size: 0.88rem;
+    color: var(--text-dark);
+    text-align: right;
+}
+
+/* Styling Textarea pada Modal Edit */
+.form-textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: #fbfbf8;
+    font-family: var(--font-main);
+    font-size: 0.85rem;
+    color: var(--text-dark);
+    outline: none;
+    resize: vertical;
+    transition: all 0.2s ease;
+}
+
+.form-textarea:focus {
+    border-color: var(--primary-color);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(27, 107, 79, 0.1);
+}
+/* ================================================================
+   TAMBAHAN CSS KARTU HALAQAH & TOMBOL AKSI HALAQAH
+   ================================================================ */
+.halaqah-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.halaqah-card-top-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.halaqah-action-icons {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-halaqah-action {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--white);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-xs);
+}
+
+.btn-halaqah-action:hover {
+    background: var(--primary-gradient);
+    border-color: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(27, 107, 79, 0.2);
+}
+
+.btn-halaqah-action.danger:hover {
+    background: var(--red-text);
+    border-color: var(--red-text);
+    color: var(--white);
+    box-shadow: 0 4px 10px rgba(179, 38, 30, 0.2);
+}
+/* ================================================================
+   TAMBAHAN CSS KHUSUS MODAL / POP-UP AKSI HALAQAH
+   ================================================================ */
+
+/* Overlay Modal (Latar belakang gelap transparan) */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 36, 28, 0.48);
+    backdrop-filter: blur(3px);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-overlay.active, .modal-overlay.show {
+    display: flex;
+}
+
+/* Modal Box Standar & Variasi Ukuran */
+.modal-box {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 450px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(11, 59, 46, 0.35);
+    border-top: 4px solid var(--gold);
+}
+
+.modal-box.modal-lg {
+    max-width: 620px;
+}
+
+.modal-box.modal-confirm {
+    max-width: 380px;
+}
+
+/* Modal Header & Footer */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.modal-header h3 {
+    font-family: var(--font-heading);
+    color: var(--primary-dark);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-light);
+    border: none;
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: var(--red-bg);
+    color: var(--red-text);
+}
+
+.modal-body {
+    padding: 22px 24px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 18px 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+.center-footer {
+    justify-content: center !important;
+}
+
+/* Modal Konfirmasi Hapus */
+.icon-danger-circle {
+    width: 56px;
+    height: 56px;
+    background: var(--red-bg);
+    color: var(--red-text);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin: 0 auto;
+    border: 1px solid rgba(179, 38, 30, 0.15);
+}
+
+.btn-danger-solid {
+    padding: 10px 22px;
+    border-radius: 10px;
+    border: none;
+    background: var(--red-text);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(179, 38, 30, 0.25);
+}
+
+.btn-danger-solid:hover {
+    background: #961d16;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(179, 38, 30, 0.35);
+}
+
+/* Banner Informasi Pengampu & Statistik Siswa (Modal Lihat Siswa) */
+.halaqah-summary-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    background: #fdf2f8;
+    border: 1px solid #fbcfe8;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+}
+
+.summary-stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--white);
+    padding: 8px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-xs);
+}
+
+.summary-stat-pill i {
+    font-size: 1.15rem;
+    color: var(--primary-color);
+}
+
+.summary-stat-pill strong {
+    display: block;
+    font-size: 0.88rem;
+    color: var(--primary-dark);
+}
+
+.summary-stat-pill span {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* Subtitle Judul Tabel Siswa */
+.section-subtitle {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--primary-dark);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Tabel Daftar Siswa di Dalam Modal */
+.table-modal-siswa {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.83rem;
+}
+
+.table-modal-siswa th {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 12px 14px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table-modal-siswa th:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.table-modal-siswa th:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+
+.table-modal-siswa td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-dark);
+    vertical-align: middle;
+}
+
+.table-modal-siswa tbody tr:hover {
+    background-color: var(--bg-light);
+}
+
+.table-modal-siswa tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Kartu Pengampu Saat Ini (Modal Ganti Pengampu) */
+.guru-current-card {
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+    padding: 14px 16px;
+    border-radius: 12px;
+}
+
+.guru-current-card .guru-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    display: block;
+    margin-bottom: 3px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.guru-current-card h6 {
+    font-size: 0.92rem;
+    color: var(--primary-dark);
+    font-weight: 700;
 }
