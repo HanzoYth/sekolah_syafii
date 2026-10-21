@@ -112,6 +112,12 @@
                                 <span>Kehadiran Guru</span>
                             </a>
                         </li>
+                        <li class="menu-item {{ request()->is('sk/gsp*') ? 'active' : '' }}">
+                            <a href="/sk/gsp">
+                                <i class="fa-solid fa-file-invoice-dollar"></i>
+                                <span>Slip Pembayaran Guru</span>
+                            </a>
+                        </li>
                         <li class="menu-item {{ request()->is('sk/kelola-pengumuman') ? 'active' : '' }}">
                             <a href="/sk/kelola-pengumuman">
                                 <i class="fa-solid fa-bullhorn"></i>
@@ -214,12 +220,6 @@
                 <div class="menu-section" id="section-guru-umum" style="margin-top: 15px;">
                     <span class="menu-label">UMUM</span>
                     <ul class="menu-list">
-                        <li class="menu-item {{ request()->is('sk/gsp') ? 'active' : '' }}">
-                            <a href="/sk/gsp">
-                                <i class="fa-solid fa-file-invoice-dollar"></i>
-                                <span>Slip Pembayaran</span>
-                            </a>
-                        </li>
                         <li class="menu-item {{ request()->is('sk/pengumuman-guru') ? 'active' : '' }}">
                             <a href="/sk/pengumuman-guru">
                                 <i class="fa-solid fa-bullhorn"></i>

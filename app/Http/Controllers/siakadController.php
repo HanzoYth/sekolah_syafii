@@ -743,39 +743,117 @@ class siakadController extends Controller
         return view("/modul/siakad/guru/profilGuru", compact('guru', 'wallas', 'total_jadwal'));
     }
 
-    function slipPembayaranGuru(){
-        $check = $this->guardRoles(['g']);
+    function slipPembayaranGuru(Request $request){
+        $check = $this->guardRoles(['a']);
         if ($check) return $check;
 
-        $guru_id = session('id');
-        $guru = \App\Models\guru::with(['getCabang', 'getSekolah'])->find($guru_id);
-        $wallas = \App\Models\wallas::with('ruangKelas')->where('guru_id', $guru_id)->first();
-        
-        // Ambil riwayat kehadiran mengajar guru untuk rekapitulasi jam mengajar
-        $riwayat_absen = \App\Models\absensi_mengajar_guru::with(['jadwal.mata_pelajaran', 'jadwal.kelas', 'jadwal.jam_pelajaran'])
-            ->where('guru_id', $guru_id)
-            ->orderByDesc('tanggal')
-            ->get();
+        $bulan = $request->query('bulan', date('Y-m'));
+        if (!preg_match('/^\d{4}-\d{2}$/', $bulan)) {
+            $bulan = date('Y-m');
+        }
+        $carbonBulan = \Carbon\Carbon::createFromFormat('Y-m', $bulan)->locale('id');
 
-        $rekap_bulanan = $riwayat_absen->groupBy(function($item) {
-            return \Carbon\Carbon::parse($item->tanggal)->format('Y-m');
-        })->map(function($items, $ym) {
-            $carbon = \Carbon\Carbon::createFromFormat('Y-m', $ym)->locale('id');
-            return [
-                'periode_kode' => $ym,
-                'label_bulan' => $carbon->isoFormat('MMMM Y'),
-                'periode_nama' => $carbon->isoFormat('MMMM Y'),
-                'tanggal_terbit' => $carbon->endOfMonth()->isoFormat('D MMM Y'),
-                'total_sesi' => $items->count(),
-                'tepat_waktu' => $items->where('status', 'tepat_waktu')->count(),
-                'terlambat' => $items->where('status', 'terlambat')->count(),
-                'items' => $items
+        $sekolah_id = $request->query('sekolah_id');
+        $status_pegawai = $request->query('status');
+        $search = $request->query('q');
+
+        // Query Guru
+        $guru_query = \App\Models\guru::with(['getSekolah', 'getCabang', 'getGaji']);
+
+        if ($sekolah_id) {
+            $guru_query->where('sekolah_id', $sekolah_id);
+        }
+
+        if ($status_pegawai === 'tetap') {
+            $guru_query->where('guru_tetap', 1);
+        } elseif ($status_pegawai === 'honor') {
+            $guru_query->where('guru_honor', 1);
+        } elseif ($status_pegawai === 'wallas') {
+            $wallas_guru_ids = \App\Models\wallas::pluck('guru_id')->toArray();
+            $guru_query->whereIn('id', $wallas_guru_ids);
+        }
+
+        if ($search) {
+            $guru_query->where(function($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('nig', 'like', "%{$search}%");
+            });
+        }
+
+        $all_guru = $guru_query->orderBy('nama', 'asc')->get();
+
+        // Ambil semua wali kelas sekaligus
+        $all_wallas = \App\Models\wallas::with('ruangKelas')->get()->keyBy('guru_id');
+
+        // Ambil jadwal mengajar per guru sekaligus
+        $jadwal_counts = \App\Models\jadwal_pelajaran::selectRaw('guru_id, count(*) as total')
+            ->groupBy('guru_id')
+            ->pluck('total', 'guru_id');
+
+        // Ambil presensi mengajar guru pada bulan terpilih
+        $absensi_bulan = \App\Models\absensi_mengajar_guru::with(['jadwal.mata_pelajaran', 'jadwal.kelas', 'jadwal.jam_pelajaran'])
+            ->where('tanggal', 'like', "{$bulan}%")
+            ->orderBy('tanggal', 'desc')
+            ->get()
+            ->groupBy('guru_id');
+
+        // Hitung data dan rekapitulasi per guru
+        $data_guru_rekap = [];
+        $total_seluruh_sesi = 0;
+        $total_seluruh_tepat_waktu = 0;
+        $total_seluruh_terlambat = 0;
+
+        foreach ($all_guru as $g) {
+            $wallas = $all_wallas->get($g->id);
+            $jadwal_mingguan = $jadwal_counts->get($g->id, 0);
+            $absen_list = $absensi_bulan->get($g->id, collect());
+
+            $total_sesi = $absen_list->count();
+            $tepat_waktu = $absen_list->where('status', 'tepat_waktu')->count();
+            $terlambat = $absen_list->where('status', 'terlambat')->count();
+            $indeks = $total_sesi > 0 ? round(($tepat_waktu / $total_sesi) * 100) : 100;
+
+            $total_seluruh_sesi += $total_sesi;
+            $total_seluruh_tepat_waktu += $tepat_waktu;
+            $total_seluruh_terlambat += $terlambat;
+
+            $data_guru_rekap[] = [
+                'guru' => $g,
+                'wallas' => $wallas,
+                'jadwal_mingguan' => $jadwal_mingguan,
+                'total_sesi' => $total_sesi,
+                'tepat_waktu' => $tepat_waktu,
+                'terlambat' => $terlambat,
+                'indeks_disiplin' => $indeks,
+                'gaji' => $g->getGaji,
+                'log_absen' => $absen_list->values()
             ];
-        })->values();
+        }
 
-        $total_jadwal_mingguan = \App\Models\jadwal_pelajaran::where('guru_id', $guru_id)->count();
+        // Hitung KPI Stats
+        $stats = [
+            'total_guru' => \App\Models\guru::count(),
+            'guru_tetap' => \App\Models\guru::where('guru_tetap', 1)->count(),
+            'guru_honor' => \App\Models\guru::where('guru_honor', 1)->count(),
+            'total_wallas' => \App\Models\wallas::count(),
+            'total_sesi_bulan' => $total_seluruh_sesi,
+            'tepat_waktu_bulan' => $total_seluruh_tepat_waktu,
+            'terlambat_bulan' => $total_seluruh_terlambat,
+            'rata_disiplin' => $total_seluruh_sesi > 0 ? round(($total_seluruh_tepat_waktu / $total_seluruh_sesi) * 100) : 100
+        ];
 
-        return view("/modul/siakad/guru/slipPembayaran", compact('guru', 'wallas', 'riwayat_absen', 'rekap_bulanan', 'total_jadwal_mingguan'));
+        $data_sekolah = \App\Models\jenis_sekolah::all();
+
+        return view('modul.siakad.admin.slipPembayaranGuru', compact(
+            'data_guru_rekap',
+            'stats',
+            'bulan',
+            'carbonBulan',
+            'data_sekolah',
+            'sekolah_id',
+            'status_pegawai',
+            'search'
+        ));
     }
     function tampilanPembayaranPemeliharaan(){
         $check = $this->guardRoles(['a']);
