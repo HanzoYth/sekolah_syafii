@@ -100,9 +100,9 @@
             <div class="siakad-dropdown-container" id="profileDropdownContainer">
                 <div class="siakad-profile" id="siakadProfileBtn" role="button" tabindex="0" aria-label="Menu Profil {{ $currentName }}" aria-expanded="false" title="Menu Profil">
                     @if($currentPhoto)
-                        <img src="{{ $currentPhoto }}" alt="Foto {{ $currentName }}" class="siakad-profile-avatar" style="object-fit: cover; padding: 0;">
+                        <img src="{{ $currentPhoto }}" alt="Foto {{ $currentName }}" class="siakad-profile-avatar" style="object-fit: cover; padding: 0; flex-shrink: 0; min-width: 34px; min-height: 34px; aspect-ratio: 1/1;">
                     @else
-                        <span class="siakad-profile-avatar">{{ $currentInitials }}</span>
+                        <span class="siakad-profile-avatar" style="flex-shrink: 0; min-width: 34px; min-height: 34px; aspect-ratio: 1/1;">{{ $currentInitials }}</span>
                     @endif
                     <span class="siakad-profile-detail">
                         <strong>{{ $currentName }}</strong>
@@ -585,15 +585,25 @@
 
 .profile-panel-avatar-wrap {
     position: relative;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
     flex-shrink: 0;
+    aspect-ratio: 1 / 1;
 }
 
 .profile-panel-avatar-img,
 .profile-panel-avatar-initial {
     width: 44px;
     height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
     border-radius: 50%;
     border: 2px solid #10b981;
+    object-fit: cover;
 }
 
 .profile-panel-avatar-initial {

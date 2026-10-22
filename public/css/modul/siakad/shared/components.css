@@ -123,7 +123,11 @@ body:has(.siakad-topbar) #mobile-hamburger-btn { display: none !important; }
     min-width: max-content;
     box-sizing: border-box;
 }
-.siakad-profile-avatar { 
+.siakad-profile-avatar {
+    min-width: 34px;
+    min-height: 34px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover; 
     display: inline-grid; 
     width: 34px; 
     height: 34px; 

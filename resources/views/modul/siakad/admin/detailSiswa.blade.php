@@ -34,15 +34,15 @@
     <!-- Profile Hero -->
     <div style="background: white; border-radius: 16px; padding: 30px; display: flex; align-items: center; gap: 30px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 24px; flex-wrap: wrap;">
         
-        <div style="width: 120px; height: 120px; border-radius: 20px; overflow: hidden; background: #f1f5f9; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 48px; color: #94a3b8;">
+        <div style="width: 120px; height: 120px; min-width: 120px; min-height: 120px; aspect-ratio: 1 / 1; border-radius: 20px; overflow: hidden; background: #f1f5f9; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 48px; color: #94a3b8;">
             @if (!empty($data_siswa->url_foto))
-                <img src="{{ route('file.show', $data_siswa->url_foto) }}" alt="Foto {{ $data_siswa->nama }}" style="width: 100%; height: 100%; object-fit: cover;">
+                <img src="{{ route('file.show', $data_siswa->url_foto) }}" alt="Foto {{ $data_siswa->nama }}" style="width: 100%; height: 100%; object-fit: cover; flex-shrink: 0;">
             @else
                 <i class="fa-solid fa-user"></i>
             @endif
         </div>
         
-        <div style="flex: 1; min-width: 250px;">
+        <div style="flex: 1; min-width: 250px; word-break: break-word;">
             <div style="font-size: 12px; font-weight: 700; color: #177455; letter-spacing: 1px; margin-bottom: 8px;">SISWA TERDAFTAR</div>
             <h2 style="margin: 0 0 8px; font-size: 24px; color: #1e293b;">{{ $data_siswa->nama }}</h2>
             <div style="color: #64748b; font-size: 15px; margin-bottom: 16px;">

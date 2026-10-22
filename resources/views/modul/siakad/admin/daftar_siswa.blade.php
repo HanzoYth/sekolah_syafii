@@ -153,7 +153,7 @@
             <thead>
                 <tr>
                     <th style="width: 50px; text-align: center;">No.</th>
-                    <th>Siswa</th>
+                    <th style="min-width: 220px;">Siswa</th>
                     <th style="width: 150px;">Jenis Kelamin</th>
                     <th style="width: 150px;">Kelas</th>
                     <th style="width: 120px; text-align: center;">Status</th>
@@ -173,17 +173,17 @@
                         <tr data-student-row data-gender="{{ $siswa->gender ?? '' }}" data-has-kelas="{{ $hasKelas ? '1' : '0' }}" data-search="{{ strtolower($siswa->nis . ' ' . $siswa->nama . ' ' . ($hasKelas ? $kelasNama : 'belum ada kelas tanpa rombel')) }}">
                             <td style="text-align: center;">{{ $index + 1 }}</td>
                             <td>
-                                <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
                                     @if ($siswa->url_foto)
-                                        <img src="{{ route('file.show', $siswa->url_foto) }}" alt="Foto {{ $siswa->nama }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0;">
+                                        <img src="{{ route('file.show', $siswa->url_foto) }}" alt="Foto {{ $siswa->nama }}" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; aspect-ratio: 1 / 1; border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0; flex-shrink: 0; display: block;">
                                     @else
-                                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #f1f5f9; color: #94a3b8; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid #e2e8f0;">
+                                        <div style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; aspect-ratio: 1 / 1; border-radius: 50%; background: #f1f5f9; color: #94a3b8; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid #e2e8f0; flex-shrink: 0;">
                                             <i class="fa-solid fa-user"></i>
                                         </div>
                                     @endif
-                                    <div>
-                                        <div style="font-weight: 600; color: #1e293b; font-size: 14px;">{{ $siswa->nama }}</div>
-                                        <div style="font-size: 12px; color: #64748b;">NIS: {{ $siswa->nis ?? '-' }}</div>
+                                    <div style="min-width: 0; flex: 1;">
+                                        <div style="font-weight: 600; color: #1e293b; font-size: 14px; word-break: break-word; line-height: 1.35;">{{ $siswa->nama }}</div>
+                                        <div style="font-size: 12px; color: #64748b; margin-top: 2px;">NIS: {{ $siswa->nis ?? '-' }}</div>
                                     </div>
                                 </div>
                             </td>

@@ -47,8 +47,18 @@ unset($__defined_vars, $__key, $__value); ?>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title><?php echo e($pageTitle ?? ($title ?? 'SIAKAD')); ?></title>
+    
+    <!-- PWA & Mobile Meta Tags -->
+    <meta name="theme-color" content="#0d5c3a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SIAKAD">
+    <link rel="manifest" href="<?php echo e(asset('manifest.json')); ?>">
+    <link rel="apple-touch-icon" href="<?php echo e(asset('img/logo_sklh.png')); ?>">
+    <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>">
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <?php echo $__env->make('components.siakad.styles', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
@@ -199,7 +209,7 @@ unset($__defined_vars, $__key, $__value); ?>
             </div>
         </main>
     </div>
-    
+
     <?php echo e($scripts ?? ''); ?>
 
 

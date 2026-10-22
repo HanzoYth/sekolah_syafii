@@ -16,17 +16,17 @@
 
     <!-- Profile Hero Card -->
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-center sm:items-start gap-6">
-        <div class="w-28 h-28 rounded-2xl overflow-hidden bg-emerald-50 border-4 border-white shadow-md flex-shrink-0 flex items-center justify-center text-emerald-600 text-4xl">
+        <div class="w-28 h-28 min-w-[112px] min-h-[112px] aspect-square rounded-2xl overflow-hidden bg-emerald-50 border-4 border-white shadow-md flex-shrink-0 flex items-center justify-center text-emerald-600 text-4xl">
             @if(!empty($data_siswa->url_foto) && \Illuminate\Support\Facades\Storage::exists($data_siswa->url_foto))
-                <img src="{{ route('file.show', $data_siswa->url_foto) }}" alt="Foto {{ $data_siswa->nama }}" class="w-full h-full object-cover">
+                <img src="{{ route('file.show', $data_siswa->url_foto) }}" alt="Foto {{ $data_siswa->nama }}" class="w-full h-full object-cover flex-shrink-0">
             @else
                 <i class="fa-solid fa-user-graduate"></i>
             @endif
         </div>
 
-        <div class="flex-1 text-center sm:text-left">
+        <div class="flex-1 min-w-0 text-center sm:text-left">
             <span class="text-[11px] font-bold uppercase tracking-widest text-emerald-600 block mb-1">Biodata Peserta Didik</span>
-            <h2 class="text-2xl font-bold text-slate-800">{{ $data_siswa->nama ?? '-' }}</h2>
+            <h2 class="text-2xl font-bold text-slate-800 break-words">{{ $data_siswa->nama ?? '-' }}</h2>
             <p class="text-sm text-slate-500 font-mono mt-1">
                 <i class="fa-solid fa-id-card text-slate-400 mr-1.5"></i> NIS / Nomor Induk: <strong>{{ $data_siswa->nis ?? '-' }}</strong>
             </p>
