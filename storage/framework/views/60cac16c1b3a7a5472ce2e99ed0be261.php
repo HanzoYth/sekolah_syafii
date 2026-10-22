@@ -19,7 +19,8 @@
         CATATAN:
         Section yang diberi atribut "hidden" hanya DISEMBUNYIKAN sementara (kodenya tetap ada).
         Untuk menampilkannya lagi, cukup hapus kata  hidden  dari tag <section> / <footer> tersebut.
-        CSS (welcome.css) tidak diubah sama sekali.
+        Perubahan v2: hanya di bagian <script> paling bawah (AOS diulang saat scroll + partikel emas hero).
+        Isi tulisan dan struktur tag di bawah ini tidak diubah.
     -->
 
     <!-- ======== NAVBAR (TIDAK DIUBAH) ======== -->
@@ -511,8 +512,39 @@
     <!-- Leaflet JS (baru, untuk peta) -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        AOS.init({ once: true });
+        // once:false + mirror:true => animasi AOS diputar ulang setiap elemen masuk/keluar layar,
+        // baik saat scroll ke bawah maupun kembali ke atas.
+        AOS.init({
+            once: false,
+            mirror: true,
+            duration: 900,
+            easing: 'ease-out-cubic',
+            offset: 90
+        });
         document.getElementById('year').textContent = new Date().getFullYear();
+
+        // ===== Partikel emas melayang di hero (dilewati jika pengguna mematikan animasi) =====
+        (function () {
+            var overlay = document.querySelector('.hero-overlay');
+            if (!overlay) return;
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+            var COUNT = window.innerWidth < 768 ? 12 : 22;
+            for (var i = 0; i < COUNT; i++) {
+                var p = document.createElement('span');
+                var size = 3 + Math.random() * 6;
+                p.className = 'particle';
+                p.style.left = (Math.random() * 100) + '%';
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.setProperty('--o', (0.35 + Math.random() * 0.55).toFixed(2));
+                p.style.setProperty('--dx', (Math.random() * 80 - 40).toFixed(0) + 'px');
+                p.style.animationDuration = (10 + Math.random() * 14).toFixed(1) + 's';
+                p.style.animationDelay = (-Math.random() * 24).toFixed(1) + 's';
+                p.setAttribute('aria-hidden', 'true');
+                overlay.appendChild(p);
+            }
+        })();
 
         function forceViewportReflow() {
             var viewportMeta = document.querySelector('meta[name="viewport"]');
