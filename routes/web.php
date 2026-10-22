@@ -276,6 +276,8 @@ Route::get('/sk/bobot-penilaian', [App\Http\Controllers\siakadController::class,
 Route::post('/sk/simpan-bobot-penilaian', [App\Http\Controllers\siakadController::class, 'simpanBobotPenilaian']);
 Route::post('/sk/simpan-kkm-mapel', [App\Http\Controllers\siakadController::class, 'simpanKkmMapel']);
 
+Route::post('/sk/update-siswa/{id}', [App\Http\Controllers\siakadController::class, 'updateSiswa']);
+
 
 
 

@@ -130,18 +130,18 @@
                 <div class="menu-section" id="section-admin-pembayaran">
                     <span class="menu-label">ADMINISTRASI PEMBAYARAN</span>
                     <ul class="menu-list">
-                        <li class="menu-item <?php echo e(request()->is('sk/bt', 'sk/pb', 'sk/pp', 'sk/pd', 'sk/ppl') ? 'active' : ''); ?>">
-                            <details class="submenu-wrapper" <?php echo e(request()->is('sk/bt', 'sk/pb', 'sk/pp', 'sk/pd', 'sk/ppl') ? 'open' : ''); ?>>
+                        <li class="menu-item <?php echo e(request()->is('sk/bt*', 'sk/pb*', 'sk/pp*', 'sk/pd*', 'sk/ppl*', 'sk/dp*') ? 'active' : ''); ?>">
+                            <details class="submenu-wrapper" <?php echo e(request()->is('sk/bt*', 'sk/pb*', 'sk/pp*', 'sk/pd*', 'sk/ppl*', 'sk/dp*') ? 'open' : ''); ?>>
                                 <summary class="menu-link">
                                     <div class="menu-link-content"><i class="fa-solid fa-file-invoice-dollar"></i><span>Pembayaran</span></div>
                                     <i class="fa-solid fa-chevron-down submenu-icon"></i>
                                 </summary>
                                 <ul class="submenu-list">
-                                    <li class="submenu-item <?php echo e(request()->is('sk/bt') ? 'active' : ''); ?>"><a href="/sk/bt"><i class="fa-solid fa-file-circle-plus"></i><span>Buat Tagihan</span></a></li>
-                                    <li class="submenu-item <?php echo e(request()->is('sk/pb') ? 'active' : ''); ?>"><a href="/sk/pb"><i class="fa-solid fa-wallet"></i><span>Pembayaran IPP</span></a></li>
-                                    <li class="submenu-item <?php echo e(request()->is('sk/pp') ? 'active' : ''); ?>"><a href="/sk/pp"><i class="fa-solid fa-money-check-dollar"></i><span>Uang Pangkal</span></a></li>
-                                    <li class="submenu-item <?php echo e(request()->is('sk/pd') ? 'active' : ''); ?>"><a href="/sk/pd"><i class="fa-solid fa-graduation-cap"></i><span>Pendidikan</span></a></li>
-                                    <li class="submenu-item <?php echo e(request()->is('sk/ppl') ? 'active' : ''); ?>"><a href="/sk/ppl"><i class="fa-solid fa-screwdriver-wrench"></i><span>Pemeliharaan</span></a></li>
+                                    <li class="submenu-item <?php echo e(request()->is('sk/bt*') ? 'active' : ''); ?>"><a href="/sk/bt"><i class="fa-solid fa-file-circle-plus"></i><span>Buat Tagihan</span></a></li>
+                                    <li class="submenu-item <?php echo e(request()->is('sk/pb*', 'sk/dp*') ? 'active' : ''); ?>"><a href="/sk/pb"><i class="fa-solid fa-wallet"></i><span>Pembayaran IPP</span></a></li>
+                                    <li class="submenu-item <?php echo e(request()->is('sk/pp*') ? 'active' : ''); ?>"><a href="/sk/pp"><i class="fa-solid fa-money-check-dollar"></i><span>Uang Pangkal</span></a></li>
+                                    <li class="submenu-item <?php echo e(request()->is('sk/pd*') ? 'active' : ''); ?>"><a href="/sk/pd"><i class="fa-solid fa-graduation-cap"></i><span>Pendidikan</span></a></li>
+                                    <li class="submenu-item <?php echo e(request()->is('sk/ppl*') ? 'active' : ''); ?>"><a href="/sk/ppl"><i class="fa-solid fa-screwdriver-wrench"></i><span>Pemeliharaan</span></a></li>
                                 </ul>
                             </details>
                         </li>
@@ -366,5 +366,27 @@
 </script>
 
 <?php echo $__env->make('components.siakad.loader', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+
+<!-- Mobile Bottom Navigation Bar (Otomatis tampil pada semua halaman ber-sidebar SIAKAD) -->
+<?php if (isset($component)) { $__componentOriginalfe288ba64b96804a78af560696fd0c94 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalfe288ba64b96804a78af560696fd0c94 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.bottom-nav','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('siakad.bottom-nav'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalfe288ba64b96804a78af560696fd0c94)): ?>
+<?php $attributes = $__attributesOriginalfe288ba64b96804a78af560696fd0c94; ?>
+<?php unset($__attributesOriginalfe288ba64b96804a78af560696fd0c94); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalfe288ba64b96804a78af560696fd0c94)): ?>
+<?php $component = $__componentOriginalfe288ba64b96804a78af560696fd0c94; ?>
+<?php unset($__componentOriginalfe288ba64b96804a78af560696fd0c94); ?>
+<?php endif; ?>
 
 <?php /**PATH D:\laragon\www\sekolahsyafii\resources\views/components/siakad/sidebar.blade.php ENDPATH**/ ?>

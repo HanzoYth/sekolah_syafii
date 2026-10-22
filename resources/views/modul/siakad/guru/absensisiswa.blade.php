@@ -14,6 +14,65 @@
         </li>
     </x-slot>
 
+    <style>
+        /* Mobile Card View untuk Konsolidasi Absensi Siswa Wali Kelas */
+        @media (max-width: 768px) {
+            .walas-absensi-wrapper {
+                background: #f8fafc;
+                padding: 12px 10px !important;
+            }
+            .walas-absensi-table, 
+            .walas-absensi-table thead, 
+            .walas-absensi-table tbody, 
+            .walas-absensi-table tr, 
+            .walas-absensi-table td {
+                display: block !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            .walas-absensi-table {
+                min-width: 0 !important;
+                border: none !important;
+            }
+            .walas-absensi-table thead {
+                display: none !important;
+            }
+            .walas-absensi-row {
+                background: #ffffff !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 14px !important;
+                margin-bottom: 12px !important;
+                padding: 14px !important;
+                box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+                transition: all 0.2s ease !important;
+            }
+            .walas-absensi-row td {
+                padding: 0 !important;
+                border: none !important;
+            }
+            .walas-absensi-row td.col-no,
+            .walas-absensi-row td.col-nis {
+                display: none !important;
+            }
+            .walas-absensi-row td.col-nama {
+                margin-bottom: 10px !important;
+            }
+            .walas-absensi-row td.col-status-harian {
+                margin-bottom: 10px !important;
+            }
+            .walas-absensi-row td.col-mapel {
+                margin-bottom: 10px !important;
+                background: #f8fafc !important;
+                padding: 10px 12px !important;
+                border-radius: 10px !important;
+                border: 1px solid #f1f5f9 !important;
+            }
+            .walas-absensi-row td.col-catatan {
+                padding-top: 4px !important;
+            }
+        }
+    </style>
+
     @if(session('success'))
         <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-start gap-3 shadow-sm">
             <i class="fa-solid fa-circle-check text-emerald-600 text-lg mt-0.5"></i>
@@ -287,16 +346,33 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+            <!-- Pencarian Cepat Siswa (Mobile & Desktop) -->
+            @if(count($siswa) > 0)
+                <div class="px-4 sm:px-6 py-2.5 bg-white border-b border-slate-200">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="inputCariSiswaWalas" placeholder="Cari nama atau NIS siswa..." oninput="onCariSiswaWalas(this.value)"
+                               class="w-full pl-9 pr-8 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors">
+                        <button type="button" id="btnHapusCariSiswaWalas" onclick="resetCariSiswaWalas()" style="display: none;" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs p-1">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div id="msgSearchEmptyWalas" style="display: none;" class="text-xs text-slate-400 text-center py-4">
+                        Tidak ada siswa dengan nama atau NIS tersebut.
+                    </div>
+                </div>
+            @endif
+
+            <div class="overflow-x-auto walas-absensi-wrapper">
+                    <table class="w-full text-left border-collapse walas-absensi-table">
                         <thead>
                             <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                                <th class="px-5 py-3.5 w-12 text-center">No</th>
-                                <th class="px-5 py-3.5">NIS</th>
-                                <th class="px-5 py-3.5">Nama Peserta Didik</th>
-                                <th class="px-5 py-3.5">Presensi Sesi Mapel Hari Ini</th>
-                                <th class="px-5 py-3.5 text-center">Status Harian Kelas</th>
-                                <th class="px-5 py-3.5">Catatan / Surat Keterangan</th>
+                                <th class="px-5 py-3.5 w-12 text-center col-no">No</th>
+                                <th class="px-5 py-3.5 col-nis">NIS</th>
+                                <th class="px-5 py-3.5 col-nama">Nama Peserta Didik</th>
+                                <th class="px-5 py-3.5 col-mapel">Presensi Sesi Mapel Hari Ini</th>
+                                <th class="px-5 py-3.5 text-center col-status-harian">Status Harian Kelas</th>
+                                <th class="px-5 py-3.5 col-catatan">Catatan / Surat Keterangan</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-sm">
@@ -315,19 +391,51 @@
                                         $sumber = $info['sumber'];
                                         $keterangan = $info['keterangan'];
                                         $mapels = $info['mapel_info'];
+                                        $isFemale = strtolower($s->gender ?? '') === 'p';
                                     @endphp
-                                    <tr class="hover:bg-slate-50/60 transition-colors">
-                                        <td class="px-5 py-3.5 text-center text-slate-400 font-medium">{{ $loop->iteration }}</td>
-                                        <td class="px-5 py-3.5 font-mono text-xs text-slate-500">{{ $s->nis ?? '-' }}</td>
-                                        <td class="px-5 py-3.5">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-7 h-7 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs uppercase flex-shrink-0">
-                                                    {{ substr($s->nama, 0, 2) }}
+                                    <tr class="walas-absensi-row hover:bg-slate-50/60 transition-colors" data-nama="{{ strtolower($s->nama) }}" data-nis="{{ strtolower($s->nis ?? '') }}">
+                                        <td class="px-5 py-3.5 text-center text-slate-400 font-medium col-no">{{ $loop->iteration }}</td>
+                                        <td class="px-5 py-3.5 font-mono text-xs text-slate-500 col-nis">{{ $s->nis ?? '-' }}</td>
+                                        <td class="px-5 py-3.5 col-nama">
+                                            <div class="flex items-center justify-between gap-3">
+                                                <div class="flex items-center space-x-3 min-w-0">
+                                                    <div class="w-8 h-8 rounded-xl {{ $isFemale ? 'bg-pink-100 text-pink-700' : 'bg-emerald-100 text-emerald-700' }} flex items-center justify-center font-bold text-xs uppercase flex-shrink-0">
+                                                        {{ strtoupper(substr($s->nama, 0, 2)) }}
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <span class="font-bold text-slate-800 text-sm block truncate">{{ $s->nama }}</span>
+                                                        <span class="font-mono text-[11px] text-slate-400 md:hidden block">NIS: {{ $s->nis ?? '-' }}</span>
+                                                    </div>
                                                 </div>
-                                                <span class="font-semibold text-slate-800">{{ $s->nama }}</span>
+                                                <div class="md:hidden flex-shrink-0">
+                                                    @if($sumber === 'belum')
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                                                            Belum Diabsen
+                                                        </span>
+                                                    @elseif($status === 'h')
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                                            Hadir
+                                                        </span>
+                                                    @elseif($status === 's')
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                                            Sakit
+                                                        </span>
+                                                    @elseif($status === 'i')
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">
+                                                            Izin
+                                                        </span>
+                                                    @elseif($status === 'a')
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                                                            Alpa
+                                                        </span>
+                                                    @endif
+                                                </div>
                                             </div>
                                         </td>
-                                        <td class="px-5 py-3.5">
+                                        <td class="px-5 py-3.5 col-mapel">
+                                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5 md:hidden">
+                                                <i class="fa-solid fa-book-open mr-1 text-slate-400"></i> Presensi Sesi Mapel Hari Ini:
+                                            </span>
                                             @if(count($mapels) > 0)
                                                 <div class="flex flex-wrap items-center gap-1.5 max-w-sm">
                                                     @foreach($mapels as $mp)
@@ -358,7 +466,7 @@
                                                 <span class="text-xs text-slate-400 italic">Tidak ada jadwal sesi mapel pada hari ini</span>
                                             @endif
                                         </td>
-                                        <td class="px-5 py-3.5 text-center">
+                                        <td class="px-5 py-3.5 text-center col-status-harian hidden md:table-cell">
                                             @if($sumber === 'belum')
                                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
                                                     <i class="fa-regular fa-clock mr-1 text-[10px]"></i> Belum Diabsen
@@ -385,11 +493,13 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="px-5 py-3.5">
+                                        <td class="px-5 py-3.5 col-catatan">
                                             @if(!empty($keterangan))
-                                                <span class="text-xs text-slate-700 font-medium bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-lg inline-block">{{ $keterangan }}</span>
+                                                <span class="text-xs text-slate-700 font-medium bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-lg inline-block">
+                                                    <i class="fa-regular fa-comment-dots text-slate-400 mr-1 md:hidden"></i>{{ $keterangan }}
+                                                </span>
                                             @else
-                                                <span class="text-xs text-slate-400 italic">-</span>
+                                                <span class="text-xs text-slate-400 italic hidden md:inline">-</span>
                                             @endif
                                         </td>
                                     </tr>
@@ -408,4 +518,39 @@
 
         </div>
     @endif
+
+    <script>
+        function onCariSiswaWalas(val) {
+            const query = (val || '').toLowerCase().trim();
+            const btnHapus = document.getElementById('btnHapusCariSiswaWalas');
+            if (btnHapus) {
+                btnHapus.style.display = query.length > 0 ? 'block' : 'none';
+            }
+
+            let matchCount = 0;
+            document.querySelectorAll('.walas-absensi-row').forEach(function(row) {
+                const nama = (row.getAttribute('data-nama') || '').toLowerCase();
+                const nis = (row.getAttribute('data-nis') || '').toLowerCase();
+                if (!query || nama.includes(query) || nis.includes(query)) {
+                    row.style.setProperty('display', '', '');
+                    matchCount++;
+                } else {
+                    row.style.setProperty('display', 'none', 'important');
+                }
+            });
+
+            const msgEmpty = document.getElementById('msgSearchEmptyWalas');
+            if (msgEmpty) {
+                msgEmpty.style.display = (matchCount === 0) ? 'block' : 'none';
+            }
+        }
+
+        function resetCariSiswaWalas() {
+            const input = document.getElementById('inputCariSiswaWalas');
+            if (input) {
+                input.value = '';
+                onCariSiswaWalas('');
+            }
+        }
+    </script>
 </x-siakad-layout>

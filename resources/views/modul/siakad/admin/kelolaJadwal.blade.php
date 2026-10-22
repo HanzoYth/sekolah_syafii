@@ -174,9 +174,15 @@
                                 $durasi = $jam->durasi_menit;
                                 $sesiLabel = $jam->jam_ke ? ($jam->jam_ke . ' • ') : '';
                             @endphp
-                            <option value="{{ $jam->id }}" data-jenjang="{{ $kodeJam }}" data-durasi="{{ $durasi }}">
-                                [{{ $kodeJam }}] {{ $sesiLabel }}{{ $mulai }} - {{ $selesai }} ({{ $jmlJp > 0 ? $jmlJp . ' JP / ' . $durasi . 'm' : 'Non-JP / ' . $durasi . 'm' }})
-                            </option>
+                            @if($jam->is_istirahat)
+                                <option value="{{ $jam->id }}" disabled data-jenjang="{{ $kodeJam }}" style="color: #b45309; background-color: #fefce8; font-style: italic;">
+                                    [{{ $kodeJam }}] ☕ {{ $sesiLabel }}{{ $mulai }} - {{ $selesai }} (JAM ISTIRAHAT - Bebas KBM)
+                                </option>
+                            @else
+                                <option value="{{ $jam->id }}" data-jenjang="{{ $kodeJam }}" data-durasi="{{ $durasi }}">
+                                    [{{ $kodeJam }}] {{ $sesiLabel }}{{ $mulai }} - {{ $selesai }} ({{ $jmlJp > 0 ? $jmlJp . ' JP / ' . $durasi . 'm' : 'Non-JP / ' . $durasi . 'm' }})
+                                </option>
+                            @endif
                         @endforeach
                     </select>
                 </div>
@@ -285,9 +291,15 @@
                                 $durasi = $jam->durasi_menit;
                                 $sesiLabel = $jam->jam_ke ?: ('Jam ke-' . $loop->iteration);
                             @endphp
-                            <option value="{{ $jam->id }}" data-jenjang="{{ $kodeJam }}">
-                                [{{ $kodeJam }}] {{ $sesiLabel }} ({{ $mulai }} - {{ $selesai }} • {{ $jmlJp > 0 ? $jmlJp . ' JP / ' . $durasi . 'm' : 'Non-JP / ' . $durasi . 'm' }})
-                            </option>
+                            @if($jam->is_istirahat)
+                                <option value="{{ $jam->id }}" disabled data-jenjang="{{ $kodeJam }}" style="color: #b45309; background-color: #fefce8; font-style: italic;">
+                                    [{{ $kodeJam }}] ☕ {{ $sesiLabel }} ({{ $mulai }} - {{ $selesai }} • JAM ISTIRAHAT - Bebas KBM)
+                                </option>
+                            @else
+                                <option value="{{ $jam->id }}" data-jenjang="{{ $kodeJam }}">
+                                    [{{ $kodeJam }}] {{ $sesiLabel }} ({{ $mulai }} - {{ $selesai }} • {{ $jmlJp > 0 ? $jmlJp . ' JP / ' . $durasi . 'm' : 'Non-JP / ' . $durasi . 'm' }})
+                                </option>
+                            @endif
                         @endforeach
                     </select>
                 </div>

@@ -34,6 +34,101 @@
         </div>
     @endif
 
+    <style>
+        /* Base Segment Button Styling for Attendance (Desktop) */
+        .status-touch-btn {
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            color: #64748b;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            transition: all 0.15s ease;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        /* Transformasi Menjadi Card-List View di Layar HP (Mobile) */
+        @media (max-width: 768px) {
+            .absensi-table-wrapper {
+                background: #f8fafc;
+                padding: 12px 10px !important;
+            }
+            .absensi-table, 
+            .absensi-table thead, 
+            .absensi-table tbody, 
+            .absensi-table tr, 
+            .absensi-table td {
+                display: block !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            .absensi-table {
+                min-width: 0 !important;
+                border: none !important;
+            }
+            .absensi-table thead {
+                display: none !important;
+            }
+            .absensi-row {
+                background: #ffffff !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 14px !important;
+                margin-bottom: 12px !important;
+                padding: 14px !important;
+                box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+                transition: all 0.2s ease !important;
+            }
+            .absensi-row:focus-within, .absensi-row:hover {
+                border-color: #cbd5e1 !important;
+                box-shadow: 0 4px 12px rgba(15, 23, 42, 0.07) !important;
+            }
+            .absensi-row td {
+                padding: 0 !important;
+                border: none !important;
+            }
+            .absensi-row td.col-no,
+            .absensi-row td.col-nis {
+                display: none !important;
+            }
+            .absensi-row td.col-nama {
+                margin-bottom: 12px !important;
+            }
+            .absensi-row td.col-status {
+                margin-bottom: 10px !important;
+            }
+            .mobile-status-grid {
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 6px !important;
+                width: 100% !important;
+                background: transparent !important;
+                border: none !important;
+                padding: 0 !important;
+            }
+            .status-touch-btn {
+                min-height: 44px !important;
+                padding: 6px 2px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border-radius: 10px !important;
+                font-size: 11px !important;
+                font-weight: 700 !important;
+                gap: 2px !important;
+            }
+            .status-touch-btn i {
+                font-size: 13px !important;
+            }
+        }
+    </style>
+
     <!-- ======================================================== -->
     <!-- 1. BAR FILTER TANGGAL (RINGKAS & BERSIH)                -->
     <!-- ======================================================== -->
@@ -375,21 +470,38 @@
                         <span class="text-slate-400 text-[11px]">Pilih status pada baris setiap siswa di bawah</span>
                     </div>
 
+                    <!-- Pencarian Cepat Siswa (Mobile & Desktop) -->
+                    @if(count($siswa) > 0)
+                        <div class="px-4 sm:px-6 py-2.5 bg-white border-b border-slate-200">
+                            <div class="relative">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" id="inputCariSiswa" placeholder="Cari nama atau NIS siswa..." oninput="onCariSiswaAbsensi(this.value)"
+                                       class="w-full pl-9 pr-8 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors">
+                                <button type="button" id="btnHapusCariSiswa" onclick="resetCariSiswaAbsensi()" style="display: none;" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs p-1">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div id="msgSearchEmpty" style="display: none;" class="text-xs text-slate-400 text-center py-4">
+                                Tidak ada siswa dengan nama atau NIS tersebut.
+                            </div>
+                        </div>
+                    @endif
+
                     <form id="formAbsensiSiswa" action="/sk/simpan-absensi-mapel" method="POST">
                         @csrf
                         <input type="hidden" name="aksi" value="absensi_siswa">
                         <input type="hidden" name="jadwal_id" value="{{ $jadwal_id }}">
                         <input type="hidden" name="tanggal" value="{{ $tanggal }}">
 
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse min-w-[620px]">
+                        <div class="overflow-x-auto absensi-table-wrapper">
+                            <table class="w-full text-left border-collapse min-w-[620px] absensi-table">
                                 <thead>
                                     <tr class="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                                        <th class="px-5 py-3 w-12 text-center">No</th>
-                                        <th class="px-5 py-3 w-28">NIS</th>
-                                        <th class="px-5 py-3">Nama Lengkap Siswa</th>
-                                        <th class="px-5 py-3 text-center w-64">Status Kehadiran</th>
-                                        <th class="px-5 py-3 w-56">Catatan / Keterangan</th>
+                                        <th class="px-5 py-3 w-12 text-center col-no">No</th>
+                                        <th class="px-5 py-3 w-28 col-nis">NIS</th>
+                                        <th class="px-5 py-3 col-nama">Nama Lengkap Siswa</th>
+                                        <th class="px-5 py-3 text-center w-64 col-status">Status Kehadiran</th>
+                                        <th class="px-5 py-3 w-56 col-catatan">Catatan / Keterangan</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 text-sm">
@@ -399,50 +511,74 @@
                                                 $absen_siswa = $absensi_db[$s->id] ?? null;
                                                 $status = $absen_siswa ? $absen_siswa->status : "h"; 
                                                 $keterangan = $absen_siswa ? $absen_siswa->keterangan : "";
+                                                $isFemale = strtolower($s->gender ?? '') === 'p';
                                             @endphp
-                                            <tr class="hover:bg-slate-50/60 transition-colors">
-                                                <td class="px-5 py-3 text-center text-slate-400 font-medium text-xs">{{ $index + 1 }}</td>
-                                                <td class="px-5 py-3 font-mono text-xs text-slate-500">{{ $s->nis ?? '-' }}</td>
-                                                <td class="px-5 py-3">
-                                                    <span class="font-bold text-slate-800 block text-xs sm:text-sm">{{ $s->nama }}</span>
-                                                    <span class="text-[11px] text-slate-400">{{ $s->gender == 'p' ? 'Perempuan' : 'Laki-laki' }}</span>
+                                            <tr class="absensi-row hover:bg-slate-50/60 transition-colors" data-nama="{{ strtolower($s->nama) }}" data-nis="{{ strtolower($s->nis ?? '') }}">
+                                                <td class="px-5 py-3 text-center text-slate-400 font-medium text-xs col-no">{{ $index + 1 }}</td>
+                                                <td class="px-5 py-3 font-mono text-xs text-slate-500 col-nis">{{ $s->nis ?? '-' }}</td>
+                                                <td class="px-5 py-3 col-nama">
+                                                    <div class="flex items-center justify-between gap-3">
+                                                        <div class="flex items-center gap-2.5 min-w-0">
+                                                            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center font-bold text-xs flex-shrink-0 {{ $isFemale ? 'bg-pink-50 text-pink-700 border border-pink-100' : 'bg-emerald-50 text-emerald-700 border border-emerald-100' }}">
+                                                                {{ strtoupper(substr($s->nama, 0, 2)) }}
+                                                            </div>
+                                                            <div class="min-w-0">
+                                                                <span class="font-bold text-slate-800 block text-xs sm:text-sm truncate">{{ $s->nama }}</span>
+                                                                <div class="flex items-center gap-1.5 text-[11px] text-slate-400 mt-0.5">
+                                                                    <span class="font-mono text-slate-500">NIS: {{ $s->nis ?? '-' }}</span>
+                                                                    <span>&bull;</span>
+                                                                    <span>{{ $isFemale ? 'Perempuan' : 'Laki-laki' }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <span class="md:hidden px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200 flex-shrink-0">
+                                                            #{{ $index + 1 }}
+                                                        </span>
+                                                    </div>
                                                 </td>
-                                                <td class="px-5 py-3 text-center">
-                                                    <div class="inline-flex items-center gap-1.5 p-1 bg-slate-100/80 rounded-lg border border-slate-200">
+                                                <td class="px-5 py-3 text-center col-status">
+                                                    <div class="mobile-status-grid inline-flex items-center gap-1.5 p-1 bg-slate-100/80 rounded-lg border border-slate-200">
                                                         <!-- Hadir (H) -->
-                                                        <label class="cursor-pointer">
+                                                        <label class="cursor-pointer flex-1">
                                                             <input type="radio" name="absensi[{{ $s->id }}][status]" value="h" class="peer sr-only radio-hadir" {{ $status == "h" ? "checked" : "" }}>
-                                                            <span class="px-2.5 py-1 rounded text-xs font-bold text-slate-600 peer-checked:bg-emerald-600 peer-checked:text-white transition-all block">
-                                                                Hadir
+                                                            <span class="status-touch-btn peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 peer-checked:shadow-sm">
+                                                                <i class="fa-solid fa-check"></i>
+                                                                <span>Hadir</span>
                                                             </span>
                                                         </label>
                                                         <!-- Sakit (S) -->
-                                                        <label class="cursor-pointer">
+                                                        <label class="cursor-pointer flex-1">
                                                             <input type="radio" name="absensi[{{ $s->id }}][status]" value="s" class="peer sr-only" {{ $status == "s" ? "checked" : "" }}>
-                                                            <span class="px-2.5 py-1 rounded text-xs font-bold text-slate-600 peer-checked:bg-amber-500 peer-checked:text-white transition-all block">
-                                                                Sakit
+                                                            <span class="status-touch-btn peer-checked:bg-amber-500 peer-checked:text-white peer-checked:border-amber-500 peer-checked:shadow-sm">
+                                                                <i class="fa-solid fa-notes-medical"></i>
+                                                                <span>Sakit</span>
                                                             </span>
                                                         </label>
                                                         <!-- Izin (I) -->
-                                                        <label class="cursor-pointer">
+                                                        <label class="cursor-pointer flex-1">
                                                             <input type="radio" name="absensi[{{ $s->id }}][status]" value="i" class="peer sr-only" {{ $status == "i" ? "checked" : "" }}>
-                                                            <span class="px-2.5 py-1 rounded text-xs font-bold text-slate-600 peer-checked:bg-blue-600 peer-checked:text-white transition-all block">
-                                                                Izin
+                                                            <span class="status-touch-btn peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 peer-checked:shadow-sm">
+                                                                <i class="fa-solid fa-envelope-open-text"></i>
+                                                                <span>Izin</span>
                                                             </span>
                                                         </label>
                                                         <!-- Alpa (A) -->
-                                                        <label class="cursor-pointer">
+                                                        <label class="cursor-pointer flex-1">
                                                             <input type="radio" name="absensi[{{ $s->id }}][status]" value="a" class="peer sr-only" {{ $status == "a" ? "checked" : "" }}>
-                                                            <span class="px-2.5 py-1 rounded text-xs font-bold text-slate-600 peer-checked:bg-rose-600 peer-checked:text-white transition-all block">
-                                                                Alpa
+                                                            <span class="status-touch-btn peer-checked:bg-rose-600 peer-checked:text-white peer-checked:border-rose-600 peer-checked:shadow-sm">
+                                                                <i class="fa-solid fa-xmark"></i>
+                                                                <span>Alpa</span>
                                                             </span>
                                                         </label>
                                                     </div>
                                                 </td>
-                                                <td class="px-5 py-3">
-                                                    <input type="text" name="absensi[{{ $s->id }}][keterangan]" value="{{ $keterangan }}" 
-                                                           placeholder="Catatan siswa..." 
-                                                           class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:border-emerald-500 transition-colors">
+                                                <td class="px-5 py-3 col-catatan">
+                                                    <div class="relative">
+                                                        <i class="fa-solid fa-pencil absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[11px] md:hidden"></i>
+                                                        <input type="text" name="absensi[{{ $s->id }}][keterangan]" value="{{ $keterangan }}" 
+                                                               placeholder="Catatan / surat izin..." 
+                                                               class="w-full pl-8 md:pl-2.5 pr-2.5 py-1 text-xs bg-slate-50 md:bg-white border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors">
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -489,6 +625,39 @@
             } else {
                 box.style.display = 'none';
                 if (btnText) btnText.innerText = 'Ubah Materi';
+            }
+        }
+
+        function onCariSiswaAbsensi(val) {
+            const query = (val || '').toLowerCase().trim();
+            const btnHapus = document.getElementById('btnHapusCariSiswa');
+            if (btnHapus) {
+                btnHapus.style.display = query.length > 0 ? 'block' : 'none';
+            }
+
+            let matchCount = 0;
+            document.querySelectorAll('.absensi-row').forEach(function(row) {
+                const nama = (row.getAttribute('data-nama') || '').toLowerCase();
+                const nis = (row.getAttribute('data-nis') || '').toLowerCase();
+                if (!query || nama.includes(query) || nis.includes(query)) {
+                    row.style.setProperty('display', '', '');
+                    matchCount++;
+                } else {
+                    row.style.setProperty('display', 'none', 'important');
+                }
+            });
+
+            const msgEmpty = document.getElementById('msgSearchEmpty');
+            if (msgEmpty) {
+                msgEmpty.style.display = (matchCount === 0) ? 'block' : 'none';
+            }
+        }
+
+        function resetCariSiswaAbsensi() {
+            const input = document.getElementById('inputCariSiswa');
+            if (input) {
+                input.value = '';
+                onCariSiswaAbsensi('');
             }
         }
     </script>

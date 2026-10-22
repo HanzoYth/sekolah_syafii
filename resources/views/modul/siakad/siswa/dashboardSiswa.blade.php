@@ -12,17 +12,17 @@
 
     <!-- Welcome & Student Identity Banner -->
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-        <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center text-2xl font-bold flex-shrink-0 overflow-hidden">
+        <div class="flex items-center gap-4 min-w-0 flex-1">
+            <div class="w-14 h-14 min-w-[56px] min-h-[56px] aspect-square rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center text-2xl font-bold flex-shrink-0 overflow-hidden">
                 @if(!empty($data_siswa->url_foto) && \Illuminate\Support\Facades\Storage::exists($data_siswa->url_foto))
-                    <img src="{{ route('file.show', $data_siswa->url_foto) }}" alt="{{ $data_siswa->nama }}" class="w-full h-full object-cover">
+                    <img src="{{ route('file.show', $data_siswa->url_foto) }}" alt="{{ $data_siswa->nama }}" class="w-full h-full object-cover flex-shrink-0">
                 @else
                     <i class="fa-solid fa-user-graduate"></i>
                 @endif
             </div>
-            <div>
+            <div class="min-w-0 flex-1">
                 <div class="flex flex-wrap items-center gap-2">
-                    <h2 class="text-lg font-bold text-slate-800">{{ $data_siswa->nama ?? 'Siswa SIAKAD' }}</h2>
+                    <h2 class="text-lg font-bold text-slate-800 break-words">{{ $data_siswa->nama ?? 'Siswa SIAKAD' }}</h2>
                     <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
                         Siswa Aktif
                     </span>
@@ -89,15 +89,37 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-start space-x-4">
-            <div class="p-3 bg-violet-50 text-violet-600 rounded-lg">
-                <i class="fa-solid fa-chalkboard-user text-xl"></i>
+        @php
+            $rawWa = $wallas->guru->getUser->noWa ?? null;
+            $cleanWa = $rawWa ? preg_replace('/[^0-9]/', '', $rawWa) : null;
+            if ($cleanWa && str_starts_with($cleanWa, '0')) {
+                $cleanWa = '62' . substr($cleanWa, 1);
+            }
+            $namaWallas = $wallas->guru->nama ?? 'Wali Kelas';
+            $namaSiswa = $data_siswa->nama ?? 'Siswa';
+            $nisSiswa = $data_siswa->nis ?? '-';
+            $ruangKelasNama = $data_kelas->nama_ruang ?? '-';
+            $tanggalHariIni = \Carbon\Carbon::now()->isoFormat('dddd, D MMMM Y');
+        @endphp
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
+            <div class="flex items-start space-x-4">
+                <div class="p-3 bg-violet-50 text-violet-600 rounded-lg flex-shrink-0">
+                    <i class="fa-solid fa-chalkboard-user text-xl"></i>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium text-slate-500">Wali Kelas</p>
+                    <h3 class="text-base font-bold text-slate-800 mt-0.5 line-clamp-1" title="{{ $namaWallas }}">{{ $namaWallas }}</h3>
+                    <p class="text-xs text-slate-400 mt-1">Pembina {{ $ruangKelasNama }}</p>
+                </div>
             </div>
-            <div>
-                <p class="text-sm font-medium text-slate-500">Wali Kelas</p>
-                <h3 class="text-base font-bold text-slate-800 mt-0.5 line-clamp-1">{{ $wallas->guru->nama ?? 'Belum Ditentukan' }}</h3>
-                <p class="text-xs text-slate-400 mt-1">Pembina {{ $data_kelas->nama_ruang ?? 'Kelas' }}</p>
-            </div>
+
+            @if($cleanWa)
+                <div class="mt-4 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="bukaModalIzinWa()" class="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold border border-emerald-200 transition-colors shadow-sm">
+                        <i class="fa-brands fa-whatsapp text-sm text-emerald-600"></i> Kirim Izin / Sakit (WhatsApp)
+                    </button>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -338,4 +360,111 @@
             </div>
         </div>
     </div>
+
+    @if($cleanWa)
+    <!-- Modal WhatsApp Izin/Sakit ke Wali Kelas -->
+    <div id="modalIzinWa" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl transform transition-all text-left">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl flex-shrink-0">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-base font-bold text-slate-800">Kirim Surat Izin / Sakit via WhatsApp</h3>
+                        <p class="text-xs text-slate-500">Pesan otomatis terformat ke Wali Kelas: <strong>{{ $namaWallas }}</strong></p>
+                    </div>
+                </div>
+                <button type="button" onclick="tutupModalIzinWa()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Alasan Ketidakhadiran:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="cursor-pointer border rounded-lg p-2.5 flex items-center gap-2 hover:bg-slate-50 transition-colors border-slate-200" id="labelOptSakit">
+                            <input type="radio" name="opt_alasan" value="Sakit" checked onchange="updateWaPreview()" class="peer text-emerald-600 focus:ring-emerald-500">
+                            <span class="text-xs font-semibold text-slate-700">Sakit</span>
+                        </label>
+                        <label class="cursor-pointer border rounded-lg p-2.5 flex items-center gap-2 hover:bg-slate-50 transition-colors border-slate-200" id="labelOptIzin">
+                            <input type="radio" name="opt_alasan" value="Izin Ada Keperluan Keluarga" onchange="updateWaPreview()" class="peer text-emerald-600 focus:ring-emerald-500">
+                            <span class="text-xs font-semibold text-slate-700">Keperluan Keluarga</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Rincian / Keterangan Tambahan (Opsional):</label>
+                    <input type="text" id="detailKeteranganWa" placeholder="Misal: Demam sejak kemarin / Acara keluarga di luar kota" oninput="updateWaPreview()"
+                           class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors">
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Pratinjau Pesan yang Akan Dikirim:</label>
+                        <span class="text-[10px] text-emerald-600 font-semibold"><i class="fa-solid fa-lock text-[9px] mr-1"></i> Format Resmi Sekolah</span>
+                    </div>
+                    <textarea id="previewPesanWa" rows="6" readonly class="w-full p-3 text-xs bg-slate-50 rounded-xl border border-slate-200 text-slate-700 font-mono leading-relaxed resize-none focus:outline-none"></textarea>
+                </div>
+            </div>
+
+            <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+                <button type="button" onclick="tutupModalIzinWa()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                    Batal
+                </button>
+                <button type="button" onclick="kirimKeWa()" class="px-4 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors shadow-sm inline-flex items-center gap-1.5">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> Buka WhatsApp & Kirim
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const waConfig = {
+            noWa: "{{ $cleanWa }}",
+            guruNama: "{{ addslashes($namaWallas) }}",
+            siswaNama: "{{ addslashes($namaSiswa) }}",
+            siswaNis: "{{ addslashes($nisSiswa) }}",
+            kelasNama: "{{ addslashes($ruangKelasNama) }}",
+            tanggal: "{{ $tanggalHariIni }}"
+        };
+
+        function bukaModalIzinWa() {
+            document.getElementById('modalIzinWa').classList.remove('hidden');
+            updateWaPreview();
+        }
+
+        function tutupModalIzinWa() {
+            document.getElementById('modalIzinWa').classList.add('hidden');
+        }
+
+        function updateWaPreview() {
+            const radio = document.querySelector('input[name="opt_alasan"]:checked');
+            const alasan = radio ? radio.value : 'Sakit';
+            const detailInput = document.getElementById('detailKeteranganWa');
+            const detail = detailInput && detailInput.value.trim() ? ` (${detailInput.value.trim()})` : '';
+
+            const template = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nYth. Bapak/Ibu ${waConfig.guruNama}\n(Wali Kelas ${waConfig.kelasNama})\n\nSaya selaku orang tua/wali dari peserta didik:\n• Nama: ${waConfig.siswaNama}\n• NIS: ${waConfig.siswaNis}\n• Kelas: ${waConfig.kelasNama}\n\nMemberitahukan bahwa anak kami pada hari ini (${waConfig.tanggal}) berhalangan hadir ke sekolah dikarenakan: *${alasan}*${detail}.\n\nMohon kiranya Bapak/Ibu dapat memaklumi. Atas perhatian, doa, dan bimbingannya kami ucapkan terima kasih.\n\nWassalamu'alaikum Warahmatullahi Wabarakatuh.`;
+
+            const previewArea = document.getElementById('previewPesanWa');
+            if (previewArea) {
+                previewArea.value = template;
+            }
+        }
+
+        function kirimKeWa() {
+            const previewArea = document.getElementById('previewPesanWa');
+            const text = previewArea ? previewArea.value : '';
+            if (!waConfig.noWa) {
+                alert('Nomor WhatsApp Wali Kelas belum tercatat.');
+                return;
+            }
+            const url = `https://wa.me/${waConfig.noWa}?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+            tutupModalIzinWa();
+        }
+    </script>
+    @endif
 </x-siakad-layout>

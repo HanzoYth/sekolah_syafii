@@ -106,7 +106,7 @@ class siswaController extends Controller
 
         $data_siswa = siswa::with(['kelas', 'sekolah', 'tahunAjaran'])->where("id", $siswa_id)->first();
         $data_kelas = $data_siswa ? ruang_kelas::where("id", $data_siswa->kelas_id)->first() : null;
-        $wallas = ($data_siswa && $data_siswa->kelas_id) ? wallas::with('guru')->where('kelas_id', $data_siswa->kelas_id)->first() : null;
+        $wallas = ($data_siswa && $data_siswa->kelas_id) ? wallas::with(['guru.getUser'])->where('kelas_id', $data_siswa->kelas_id)->first() : null;
         $tahun_aktif = tahun_ajaran::where('aktif', 1)->first() ?? tahun_ajaran::orderByDesc('id')->first();
         $tahun_nama = $tahun_aktif->nama ?? '2026/2027';
 
@@ -239,7 +239,7 @@ class siswaController extends Controller
         $siswa_id = session("id");
         $data_siswa = siswa::with(['kelas', 'sekolah', 'tahunAjaran'])->where("id", $siswa_id)->first();
         $data_kelas = $data_siswa ? ruang_kelas::where("id", $data_siswa->kelas_id)->first() : null;
-        $wallas = ($data_siswa && $data_siswa->kelas_id) ? wallas::with('guru')->where('kelas_id', $data_siswa->kelas_id)->first() : null;
+        $wallas = ($data_siswa && $data_siswa->kelas_id) ? wallas::with(['guru.getUser'])->where('kelas_id', $data_siswa->kelas_id)->first() : null;
         $tahun_aktif = tahun_ajaran::where('aktif', 1)->first() ?? tahun_ajaran::orderByDesc('id')->first();
 
         return view('/modul/siakad/siswa/profilSiswa', compact(

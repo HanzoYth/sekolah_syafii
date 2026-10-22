@@ -1,0 +1,25 @@
+{
+  "name": "SIAKAD - Sistem Informasi Akademik",
+  "short_name": "SIAKAD",
+  "description": "Sistem Informasi Akademik Sekolah Islam Imam Syafi'i",
+  "start_url": "/sk/dsg",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0d5c3a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/img/logo_sklh.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/img/logo_sklh.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+
