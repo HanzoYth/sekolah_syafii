@@ -11,6 +11,9 @@ class tahfizController extends Controller
     function dash_guru(){
         return view("modul/tahfiz/guru/dashboard");
     }
+    function absensi(){
+        return view("modul/tahfiz/guru/absensipengampu");
+    }
     function riwayat_laporan(){
         return view("modul/tahfiz/guru/riwayat");
     }
@@ -22,6 +25,9 @@ class tahfizController extends Controller
     }
     function laporan(){
         return view("modul/tahfiz/guru/inputlaporan");
+    }
+    function profil_guru(){
+        return view("modul/tahfiz/guru/profilg");
     }
     #guru
     function pengumuman(){

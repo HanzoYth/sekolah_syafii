@@ -1,19 +1,19 @@
 /* ================================================================
-   DASHBOARD SISWA TAHFIZ — TEMA ISLAMI ELEGAN
-   (Warna: Emerald & Gold, disesuaikan dengan Blade Siswa Tahfiz)
+   DASHBOARD SISWA TAHFIZ — TEMA ISLAMI ELEGAN (SEPERTI REFERENSI GAMBAR)
    ================================================================ */
 
-/* ======== ROOT VARIABLES & RESET ======== */
+@import url('sidebar.css');
+
+/* ======== ROOT VARIABLES ======== */
 :root {
-    --primary-color: #1B6B4F;       /* Emerald 700 */
-    --primary-dark: #0B3B2E;        /* Emerald 900 */
-    --primary-darker: #07241C;      /* Emerald 950 */
+    --primary-color: #1B6B4F;       /* Emerald-700 */
+    --primary-dark: #0B3B2E;        /* Emerald-900 */
+    --primary-darker: #07241C;      /* Emerald-950 */
     --primary-light: #E8F2EC;       /* Tint terang emerald */
     --primary-gradient: linear-gradient(135deg, #24805F 0%, #0B3B2E 100%);
 
-    --gold: #C9A227;                /* Gold 500 */
-    --gold-light: #F4EAC8;          /* Gold 100 */
-    --gold-gradient: linear-gradient(135deg, #D8B94A 0%, #C9A227 100%);
+    --gold: #C9A227;                /* Gold-500 */
+    --gold-light: #F4EAC8;          /* Gold-100 */
 
     --bg-light: #F7F4EC;            /* Cream background */
     --white: #ffffff;
@@ -22,14 +22,12 @@
     --border-color: #E7E1D0;
     --border-hover: #D9CDA8;
 
+    --purple-avatar: #5b67f1;       /* Ungu lembut avatar gambar referensi */
+
     --green-bg: #eaf7ef;
     --green-text: #0a7a4a;
-    --yellow-bg: #fdf6e3;
-    --yellow-text: #a5760f;
     --red-bg: #fdecec;
     --red-text: #b3261e;
-    --blue-bg: #eef2ff;
-    --blue-text: #1d4ed8;
 
     --font-heading: 'Amiri', serif;
     --font-main: 'Poppins', sans-serif;
@@ -51,32 +49,22 @@
 body {
     font-family: var(--font-main);
     color: var(--text-dark);
-    -webkit-font-smoothing: antialiased;
     background-color: var(--bg-light);
     background-image: radial-gradient(circle at 1px 1px, rgba(27, 107, 79, 0.06) 1px, transparent 0);
     background-size: 26px 26px;
-}
-
-/* ======== LAYOUT CONTAINER ======== */
-html, body { 
-    max-width: 100%; 
-    overflow-x: hidden; 
+    -webkit-font-smoothing: antialiased;
 }
 
 .dashboard-container {
     display: flex;
     min-height: 100vh;
-    flex-wrap: nowrap;
-    align-items: flex-start;
 }
 
-/* ======== MAIN CONTENT ======== */
 .main-content {
     flex: 1;
     padding: 32px;
-    margin-left: 260px; /* Selebar sidebar fixed */
+    margin-left: 260px;
     width: calc(100% - 260px);
-    min-width: 0;
 }
 
 /* ======== TOPBAR ======== */
@@ -89,514 +77,415 @@ html, body {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
     margin-bottom: 28px;
-    position: relative;
-    overflow: hidden;
-}
-
-.topbar::after {
-    content: '';
-    position: absolute;
-    right: -30px;
-    top: -30px;
-    width: 140px;
-    height: 140px;
-    background: radial-gradient(circle, rgba(201, 162, 39, 0.18) 0%, transparent 70%);
-    pointer-events: none;
+    color: var(--white);
 }
 
 .topbar h2 {
     font-family: var(--font-heading);
     font-size: 1.55rem;
     font-weight: 700;
-    color: var(--white);
-    letter-spacing: 0.3px;
-    position: relative;
-    z-index: 1;
-}
-
-.topbar h2::before {
-    content: '﷽';
-    display: block;
-    font-family: 'Amiri', serif;
-    font-size: 0.9rem;
-    color: var(--gold);
-    opacity: 0.85;
-    margin-bottom: 4px;
-    letter-spacing: 1px;
 }
 
 .subtitle-text {
     font-size: 0.82rem;
-    color: rgba(255, 255, 255, 0.85);
-    margin-top: 4px;
-    position: relative;
-    z-index: 1;
+    opacity: 0.9;
 }
 
 .topbar-icons {
     display: flex;
-    align-items: center;
-    gap: 14px;
-    position: relative;
-    z-index: 1;
+    gap: 12px;
 }
 
 .topbar-icons i {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.12);
-    color: var(--white);
-    border-radius: 12px;
-    font-size: 1rem;
     cursor: pointer;
-    transition: all 0.25s ease;
-    backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
 }
 
 .topbar-icons i:hover {
     background: var(--gold);
     color: var(--primary-darker);
-    transform: translateY(-2px);
 }
 
-/* ======== STUDENT PROFILE BANNER ======== */
+/* ================================================================
+   1. BANNER PROFIL SISWA (PERSIS SESUAI GAMBAR REFERENSI)
+   ================================================================ */
 .student-profile-banner {
-    background-color: var(--white);
-    padding: 22px 26px;
+    background: var(--white);
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-card);
     border: 1px solid var(--border-color);
-    border-left: 5px solid var(--gold);
+    border-top: 4px solid var(--purple-avatar);
+    padding: 26px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 28px;
+}
+
+/* Avatar Inisial Ungu Besar */
+.avatar-large {
+    width: 105px;
+    height: 105px;
+    border-radius: 20px;
+    background: var(--purple-avatar);
+    color: var(--white);
+    font-size: 2.5rem;
+    font-weight: 700;
+    font-family: var(--font-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 6px 18px rgba(91, 103, 241, 0.3);
+}
+
+.student-banner-body {
+    flex-grow: 1;
+}
+
+.student-name-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 28px;
-    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 18px;
 }
 
-.student-profile {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-}
-
-.student-profile .avatar {
-    width: 58px;
-    height: 58px;
-    border-radius: 16px;
-    background: var(--primary-gradient);
-    color: var(--white);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.5rem;
-    box-shadow: 0 4px 12px rgba(27, 107, 79, 0.25);
-    flex-shrink: 0;
-}
-
-.student-info h3 {
-    font-family: var(--font-heading);
-    font-size: 1.3rem;
+.student-name-row h3 {
+    font-size: 1.4rem;
     font-weight: 700;
-    color: var(--primary-dark);
-    margin-bottom: 4px;
-}
-
-.student-info p {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    line-height: 1.4;
-}
-
-.student-info p strong {
     color: var(--text-dark);
-}
-
-/* ======== PERBAIKAN TARGET HARI INI / CAPAIAN BADGE ======== */
-.target-today-badge {
-    background: linear-gradient(135deg, #E8F2EC 0%, #F4EAC8 100%);
-    border: 1px solid var(--border-hover);
-    padding: 14px 22px;
-    border-radius: var(--radius-md);
-    text-align: right;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(11, 59, 46, 0.05);
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.target-today-badge::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--gold-gradient);
-}
-
-.target-today-badge:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(27, 107, 79, 0.12);
-}
-
-.target-today-badge span {
-    font-size: 0.75rem;
-    color: var(--primary-dark);
-    text-transform: uppercase;
-    font-weight: 700;
-    letter-spacing: 0.6px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 6px;
     margin-bottom: 2px;
 }
 
-.target-today-badge span i {
-    color: var(--gold);
-    font-size: 0.85rem;
-}
-
-.target-today-badge strong {
-    font-family: var(--font-heading);
-    font-size: 1.25rem;
-    color: var(--primary-dark);
-    font-weight: 700;
-    line-height: 1.2;
-}
-
-/* ======== STAT CARDS SISWA ======== */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    margin-bottom: 28px;
-}
-
-.stat-card {
-    background-color: var(--white);
-    padding: 24px 20px;
-    border-radius: var(--radius-lg);
-    text-align: center;
-    box-shadow: var(--shadow-card);
-    border: 1px solid var(--border-color);
-    border-top: 3px solid var(--gold);
-    transition: all 0.3s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-hover);
-    border-top-color: var(--primary-color);
-}
-
-.stat-card h3 {
-    font-family: var(--font-heading);
-    font-size: 1.85rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-    line-height: 1.1;
-}
-
-.stat-card p {
-    font-size: 0.8rem;
+.nis-text {
+    font-size: 0.82rem;
     color: var(--text-muted);
-    margin-top: 8px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
-/* ======== SECTION PESAN & INFORMASI USTADZ / USTADZAH ======== */
-.info-card-section {
-    background-color: var(--white);
-    padding: 24px 26px;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-card);
-    border: 1px solid var(--border-color);
-    margin-bottom: 28px;
-}
-
-.card-header-flex {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 18px;
-    padding-bottom: 12px;
-    border-bottom: 1px dashed var(--border-color);
-}
-
-.card-header-flex h4 {
-    font-family: var(--font-heading);
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0;
-}
-
-.icon-title {
-    color: var(--gold);
-}
-
-.badge-count {
-    background-color: var(--red-text);
-    color: var(--white);
-    font-size: 0.72rem;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-}
-
-.info-list {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-.info-item {
-    display: flex;
-    gap: 14px;
-    padding: 14px 16px;
-    border-radius: var(--radius-md);
-    background-color: #FAF9F5;
-    border: 1px solid var(--border-color);
-    border-left: 4px solid var(--border-hover);
-    transition: all 0.2s ease;
-}
-
-.info-item.unread {
-    background-color: var(--primary-light);
-    border-color: var(--border-hover);
-    border-left-color: var(--primary-color);
-}
-
-.info-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
+.btn-toggle-collapse {
+    background: #f1f3f5;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: var(--text-muted);
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--white);
-    font-size: 0.95rem;
+    transition: background 0.2s ease;
+}
+
+.btn-toggle-collapse:hover {
+    background: var(--border-hover);
+    color: var(--text-dark);
+}
+
+/* 4 Grid Kartu Putih di Dalam Banner */
+.profile-info-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.info-card-item {
+    background: #fcfcfd;
+    border: 1px solid #f1f3f5;
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.info-card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #f8f9fa;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
     flex-shrink: 0;
 }
 
-.bg-green {
-    background: var(--primary-gradient);
-}
-
-.bg-blue {
-    background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
-}
-
-.info-content {
-    flex: 1;
-}
-
-.info-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 4px;
-}
-
-.sender-name {
+.info-card-text small {
+    display: block;
+    font-size: 0.68rem;
     font-weight: 700;
+    color: #9aa8a1;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.info-card-text strong {
     font-size: 0.88rem;
-    color: var(--primary-dark);
-}
-
-.info-date {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-}
-
-.info-message {
-    margin: 0;
-    font-size: 0.84rem;
     color: var(--text-dark);
-    line-height: 1.5;
+    font-weight: 600;
 }
 
-/* ======== SUMMARY & FILTER ROW ======== */
-.summary-filter-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 24px;
+/* ================================================================
+   2. CARD PESAN & INFORMASI (SESUAI GAMBAR REFERENSI)
+   ================================================================ */
+.messages-info-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
     margin-bottom: 28px;
 }
 
-.summary-box, .filter-box {
-    background-color: var(--white);
-    padding: 26px;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-card);
-    border: 1px solid var(--border-color);
-    min-width: 0;
+.messages-card-header {
+    padding: 20px 26px 14px 26px;
+    border-bottom: 1px dashed var(--border-color);
 }
 
-.summary-box h4, .filter-box h4 {
-    font-family: var(--font-heading);
-    font-size: 1.15rem;
+.messages-card-header h4 {
+    font-size: 1.1rem;
     font-weight: 700;
-    color: var(--primary-dark);
-    margin: 0;
-}
-
-.filter-box h4 {
-    margin-bottom: 18px;
-    padding-bottom: 12px;
-    border-bottom: 1px dashed var(--border-color);
-}
-
-/* ======== CHART HEADER & CONTROLS ======== */
-.chart-header-flex {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px dashed var(--border-color);
-}
-
-.chart-controls {
+    color: var(--text-dark);
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-/* Toggle Buttons (Ziyadah / Murojaah) */
-.type-toggle {
-    display: inline-flex;
-    background-color: var(--primary-light);
-    padding: 3px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-color);
+.icon-header {
+    color: var(--gold);
 }
 
-.type-toggle .btn-toggle {
-    border: none;
-    background: transparent;
-    padding: 6px 14px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    border-radius: 7px;
-    cursor: pointer;
-    font-family: var(--font-main);
-    transition: all 0.2s ease;
-}
-
-.type-toggle .btn-toggle.active {
-    background-color: var(--white);
-    color: var(--primary-color);
-    box-shadow: var(--shadow-xs);
-    font-weight: 700;
-}
-
-/* Select Dropdown Rentang Waktu */
-.select-range-sm {
-    padding: 6px 12px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-color);
-    font-size: 0.78rem;
-    font-family: var(--font-main);
-    color: var(--text-dark);
-    outline: none;
-    background-color: #FBFBF8;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.select-range-sm:focus {
-    border-color: var(--primary-color);
-    background-color: var(--white);
-    box-shadow: 0 0 0 3px rgba(27, 107, 79, 0.12);
-}
-
-/* ======== CHART BOX ======== */
-.chart-box {
-    padding: 10px 0 0 0;
-    min-width: 0;
-}
-
-.dummy-chart {
-    height: 150px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    border-bottom: 2px dashed var(--border-color);
-    padding-bottom: 5px;
-    gap: 12px;
-}
-
-.dummy-chart .bar {
-    flex: 1;
-    background: var(--gold-gradient);
-    border-radius: 6px 6px 0 0;
-    transition: all 0.3s ease;
-    opacity: 0.9;
-    cursor: pointer;
-}
-
-.dummy-chart .bar:hover {
-    opacity: 1;
-    background: var(--primary-gradient);
-    transform: scaleY(1.04);
-    transform-origin: bottom;
-}
-
-.chart-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-top: 10px;
-}
-
-/* ======== STATUS SETORAN HARI INI ======== */
-.status-card-today {
+.messages-card-body {
+    padding: 24px 26px;
     display: flex;
     flex-direction: column;
+    gap: 18px;
 }
 
-.status-item {
+.message-section-block {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
-.status-item label {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-muted);
+.block-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
 }
 
-/* ======== TABEL RIWAYAT ======== */
-.table-card {
-    background-color: var(--white);
-    padding: 26px;
-    border-radius: var(--radius-lg);
+.announcement-label { color: #d97706; } /* Warna Orange Pengumuman */
+.teacher-note-label { color: var(--text-muted); }
+.homework-label { color: #2563eb; }      /* Warna Biru PR */
+
+.announcement-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-top: 2px;
+}
+
+.announcement-desc {
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.read-more-link {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #d97706;
+    text-decoration: none;
+    margin-top: 4px;
+    display: inline-block;
+}
+
+.read-more-link:hover {
+    text-decoration: underline;
+}
+
+.teacher-note-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+/* Homework Badge & Row */
+.homework-item-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.code-badge {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ziyadah-badge {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.murojaah-badge {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.homework-text {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.section-divider {
+    border: none;
+    border-top: 1px solid #f1f3f5;
+}
+
+/* Footer Tanggal Setoran */
+.messages-card-footer {
+    padding: 12px 26px;
+    background: #fbfbfb;
+    border-top: 1px solid #f1f3f5;
+    text-align: right;
+    font-size: 0.76rem;
+    color: #9aa8a1;
+}
+
+/* ================================================================
+   3. ROW GRAFIK & TARGET
+   ================================================================ */
+.summary-filter-row {
+    display: flex;
+    gap: 22px;
     margin-bottom: 28px;
-    box-shadow: var(--shadow-card);
+}
+
+.summary-box, .filter-box {
+    background: var(--white);
     border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    box-shadow: var(--shadow-card);
+}
+
+.chart-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.chart-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.type-toggle {
+    display: flex;
+    background: var(--bg-light);
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.btn-toggle {
+    background: transparent;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.btn-toggle.active {
+    background: var(--primary-gradient);
+    color: var(--white);
+}
+
+.select-range-sm {
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-size: 0.76rem;
+    outline: none;
+}
+
+.dummy-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 120px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 4px;
+}
+
+.dummy-chart .bar {
+    width: 28px;
+    background: var(--primary-gradient);
+    border-radius: 6px 6px 0 0;
+}
+
+.chart-labels {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 8px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.status-card-today {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.badge.success {
+    background: var(--green-bg);
+    color: var(--green-text);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.badge-text.green {
+    color: var(--green-text);
+    font-weight: 700;
+}
+
+/* ================================================================
+   4. TABEL RIWAYAT SETORAN
+   ================================================================ */
+.table-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    padding: 26px;
+    box-shadow: var(--shadow-card);
 }
 
 .table-header-flex {
@@ -606,150 +495,63 @@ html, body {
     margin-bottom: 18px;
 }
 
-.table-header-flex h4 {
-    font-family: var(--font-heading);
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-}
-
 .input-date-sm {
-    padding: 8px 12px;
+    padding: 6px 12px;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border-color);
-    font-size: 0.82rem;
-    font-family: var(--font-main);
+    font-size: 0.8rem;
     outline: none;
-    background-color: #fbfbf8;
-    color: var(--text-dark);
-    transition: all 0.2s ease;
 }
 
-.input-date-sm:focus {
-    border-color: var(--primary-color);
-    background-color: var(--white);
-    box-shadow: 0 0 0 3px rgba(27, 107, 79, 0.12);
+.table-responsive {
+    overflow-x: auto;
 }
 
-.table-responsive { 
-    width: 100%; 
-    overflow-x: auto; 
-}
-
-table {
+.table-riwayat-siswa {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
+    border-collapse: collapse;
+    font-size: 0.85rem;
     text-align: left;
-    font-size: 0.88rem;
 }
 
-table th {
+.table-riwayat-siswa th {
     background-color: var(--primary-light);
     color: var(--primary-dark);
     font-weight: 700;
-    font-size: 0.76rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 14px 16px;
+    padding: 12px 16px;
+    border-bottom: 2px solid var(--border-color);
 }
 
-table th:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
-table th:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
-
-table td {
+.table-riwayat-siswa td {
     padding: 14px 16px;
     border-bottom: 1px solid var(--border-color);
-    color: var(--text-dark);
-    vertical-align: middle;
-}
-
-table tbody tr { transition: background-color 0.2s ease; }
-table tbody tr:hover { background-color: var(--primary-light); }
-
-/* ======== BADGES & UTILITIES ======== */
-.badge {
-    padding: 6px 12px;
-    border-radius: 30px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.badge.success { background-color: var(--green-bg); color: var(--green-text); }
-.badge.danger { background-color: var(--red-bg); color: var(--red-text); }
-
-.badge-text.green { color: var(--green-text); font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 4px; }
-.badge-text.red { color: var(--red-text); font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 4px; }
-
-.btn-outline {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 11px 24px;
-    border-radius: 12px;
-    border: 1px solid var(--gold);
-    background-color: transparent;
-    color: var(--gold);
-    font-weight: 600;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.25s ease;
-}
-
-.btn-outline:hover {
-    background: var(--gold-gradient);
-    color: var(--primary-darker);
-    box-shadow: 0 8px 20px rgba(201, 162, 39, 0.3);
-    transform: translateY(-2px);
 }
 
 .mt-15 { margin-top: 15px; }
-.mb-20 { margin-bottom: 20px; }
-.text-center { text-align: center; }
+.mt-20 { margin-top: 20px; }
 
-/* ================================================================
-   RESPONSIVE LAYOUT
-   ================================================================ */
-
-@media (max-width: 1200px) {
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .summary-filter-row { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 900px) {
-    .main-content { 
-        margin-left: 0; 
-        width: 100%; 
-        padding: 20px; 
+/* ======== RESPONSIVE ======== */
+@media (max-width: 1024px) {
+    .profile-info-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
-    .student-profile-banner { flex-direction: column; align-items: flex-start; }
-    .target-today-badge { width: 100%; text-align: left; margin-top: 10px; }
+    .summary-filter-row {
+        flex-direction: column;
+    }
 }
 
-@media (max-width: 600px) {
-    .main-content { padding: 14px; }
-
-    .topbar { flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px 20px; }
-    .topbar-icons { align-self: flex-end; }
-
-    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .stat-card { padding: 18px 14px; }
-    .stat-card h3 { font-size: 1.5rem; }
-
-    .info-card-section, .summary-box, .filter-box, .table-card { padding: 18px; }
-
-    .chart-header-flex { flex-direction: column; align-items: flex-start; gap: 10px; }
-    .chart-controls { width: 100%; justify-content: space-between; }
-
-    .table-header-flex { flex-direction: column; align-items: flex-start; gap: 10px; }
-    .input-date-sm { width: 100%; }
-}
-
-@media (max-width: 380px) {
-    .stats-grid { grid-template-columns: 1fr; }
-    .chart-controls { flex-direction: column; align-items: stretch; }
-    .select-range-sm { width: 100%; }
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 16px;
+    }
+    .student-profile-banner {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .profile-info-cards-grid {
+        grid-template-columns: 1fr;
+    }
 }

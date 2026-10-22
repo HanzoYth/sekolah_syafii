@@ -38,6 +38,13 @@
                             </a>
                         </li>
                         <li class="menu-item {{ $route == '/tf/kls' ? 'active' : '' }}">
+                            <a href="/tf/gr/abp">
+                                <i class="fa-solid fa-school"></i>
+                                <span>absensi</span>
+                            </a>
+                        </li>
+                        </li>
+                        <li class="menu-item {{ $route == '/tf/kls' ? 'active' : '' }}">
                             <a href="/tf/gr/hs">
                                 <i class="fa-solid fa-school"></i>
                                 <span>Halaqah saya</span>
@@ -59,6 +66,12 @@
                             <a href="/tf/gr/ps">
                                 <i class="fa-solid fa-file-lines"></i>
                                 <span>siswa</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ $route == '/tf/lh' ? 'active' : '' }}">
+                            <a href="/tf/gr/pr">
+                                <i class="fa-solid fa-file-lines"></i>
+                                <span>profil</span>
                             </a>
                         </li>
                     </ul>
