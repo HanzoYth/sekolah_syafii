@@ -72,18 +72,18 @@
             <a href="/sk/rapor-siswa?tab=transkrip" 
                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all {{ $activeTab !== 'rapor' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-600 hover:text-slate-800' }}">
                 <i class="fa-solid fa-list-check"></i>
-                <span>Transkrip Rincian Nilai Komponen</span>
+                <span>Rincian Nilai</span>
             </a>
             <a href="/sk/rapor-siswa?tab=rapor" 
                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all {{ $activeTab === 'rapor' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-600 hover:text-slate-800' }}">
                 <i class="fa-solid fa-file-contract"></i>
-                <span>Lembar Rapor Semester</span>
+                <span>Lembar Rapor</span>
             </a>
         </div>
 
         @if($activeTab === 'rapor')
             <button type="button" onclick="window.print()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors shadow-sm flex items-center gap-2 self-start sm:self-auto">
-                <i class="fa-solid fa-print"></i> Cetak Dokumen Rapor
+                <i class="fa-solid fa-print"></i> Cetak Rapor
             </button>
         @endif
     </div>

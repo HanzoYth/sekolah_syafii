@@ -185,14 +185,14 @@
             <div class="overflow-x-auto">
                 <?php if (isset($component)) { $__componentOriginalb451ae0a4b2a0f57d42f1e2fea2cf880 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalb451ae0a4b2a0f57d42f1e2fea2cf880 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.table','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.table','data' => ['id' => 'tableTahunAjaran']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('siakad.ui.table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes([]); ?>
+<?php $component->withAttributes(['id' => 'tableTahunAjaran']); ?>
                      <?php $__env->slot('thead', null, []); ?> 
                         <tr>
                             <th style="width: 60px; text-align: center;">No.</th>
@@ -279,13 +279,13 @@
 
             <div class="flex items-center gap-2 flex-wrap">
                 <button type="button" onclick="openModalGenerateJp()" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 9px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Paket JP
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate JP
                 </button>
                 <button type="button" onclick="openModalTambahSatuan()" style="background: #177455; color: white; border: none; padding: 9px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; transition: background 0.2s;">
-                    <i class="fa-solid fa-plus"></i> Tambah Jam Satuan
+                    <i class="fa-solid fa-plus"></i> Tambah Jam
                 </button>
                 <button type="button" onclick="openModalTambahIstirahat()" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; padding: 9px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
-                    <i class="fa-solid fa-mug-hot"></i> Tambah Jam Istirahat
+                    <i class="fa-solid fa-mug-hot"></i> Tambah Istirahat
                 </button>
             </div>
         </div>
@@ -371,14 +371,14 @@
             <div class="overflow-x-auto">
                 <?php if (isset($component)) { $__componentOriginalb451ae0a4b2a0f57d42f1e2fea2cf880 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalb451ae0a4b2a0f57d42f1e2fea2cf880 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.table','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.table','data' => ['id' => 'tableJamPelajaran','dataForcePaginate' => 'true','dataPageSize' => '10']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('siakad.ui.table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes([]); ?>
+<?php $component->withAttributes(['id' => 'tableJamPelajaran','data-force-paginate' => 'true','data-page-size' => '10']); ?>
                      <?php $__env->slot('thead', null, []); ?> 
                         <tr>
                             <th style="width: 50px; text-align: center;">No.</th>
@@ -601,7 +601,7 @@
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
                 <button type="button" onclick="closeModal('addTahunModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
                 <button type="submit" style="padding: 10px 16px; border: none; background: #177455; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-save"></i> Simpan Tahun
+                    <i class="fa-solid fa-save"></i> Simpan
                 </button>
             </div>
         </form>
@@ -650,7 +650,7 @@
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
                 <button type="button" onclick="closeModal('editTahunModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
                 <button type="submit" style="padding: 10px 16px; border: none; background: #3875c5; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-save"></i> Simpan Perubahan
+                    <i class="fa-solid fa-save"></i> Simpan
                 </button>
             </div>
         </form>
@@ -757,7 +757,7 @@
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
                 <button type="button" onclick="closeModal('generateJpModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
                 <button type="submit" style="padding: 10px 16px; border: none; background: #1d4ed8; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-bolt"></i> Generate Sekarang
+                    <i class="fa-solid fa-bolt"></i> Generate
                 </button>
             </div>
         </form>
@@ -845,7 +845,7 @@
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
                 <button type="button" onclick="closeModal('addJamModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
                 <button type="submit" style="padding: 10px 16px; border: none; background: #177455; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-save"></i> Simpan Jam
+                    <i class="fa-solid fa-save"></i> Simpan
                 </button>
             </div>
         </form>
@@ -912,7 +912,7 @@
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
                 <button type="button" onclick="closeModal('addIstirahatModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
                 <button type="submit" style="padding: 10px 16px; border: none; background: #d97706; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-check"></i> Simpan Jam Istirahat
+                    <i class="fa-solid fa-check"></i> Simpan
                 </button>
             </div>
         </form>
@@ -992,7 +992,7 @@
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
                 <button type="button" onclick="closeModal('editJamModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
                 <button type="submit" style="padding: 10px 16px; border: none; background: #3875c5; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: gap: 6px;">
-                    <i class="fa-solid fa-save"></i> Simpan Perubahan
+                    <i class="fa-solid fa-save"></i> Simpan
                 </button>
             </div>
         </form>
@@ -1055,7 +1055,7 @@
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
                 <button type="button" onclick="closeModal('editIstirahatModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
                 <button type="submit" style="padding: 10px 16px; border: none; background: #d97706; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-check"></i> Simpan Perubahan
+                    <i class="fa-solid fa-check"></i> Simpan
                 </button>
             </div>
         </form>
@@ -1163,6 +1163,7 @@
             document.querySelectorAll('.jam-row').forEach(row => {
                 const rowJenjang = row.getAttribute('data-jenjang');
                 if (rowJenjang === kode) {
+                    row.setAttribute('data-filtered-out', 'false');
                     row.style.display = '';
                     visibleCount++;
                     const numCell = row.querySelector('.jam-row-num');
@@ -1174,6 +1175,7 @@
                         jpCount++;
                     }
                 } else {
+                    row.setAttribute('data-filtered-out', 'true');
                     row.style.display = 'none';
                 }
             });
@@ -1186,6 +1188,10 @@
             const statEl = document.getElementById('lblActiveJenjangStat');
             if (statEl) {
                 statEl.innerHTML = `<span style="color:#047857;">${jpCount} Sesi KBM</span> &bull; <span style="color:#b45309;">${istirahatCount} Istirahat</span> (Total: ${visibleCount} Slot)`;
+            }
+
+            if (window.refreshSiakadPagination) {
+                window.refreshSiakadPagination();
             }
         }
 

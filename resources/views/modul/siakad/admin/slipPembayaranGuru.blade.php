@@ -355,7 +355,7 @@
                     Tutup
                 </button>
                 <button type="button" id="btnModalCetak" class="px-4 py-2 text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 rounded-xl transition-colors inline-flex items-center gap-1.5 shadow-sm shadow-emerald-200">
-                    <i class="fa-solid fa-print"></i> Cetak Bukti Slip Pendidik
+                    <i class="fa-solid fa-print"></i> Cetak Slip
                 </button>
             </div>
         </div>

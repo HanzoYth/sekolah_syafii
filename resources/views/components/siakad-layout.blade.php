@@ -176,7 +176,7 @@
                 const tbody = table.querySelector('tbody');
                 if (!tbody) return;
 
-                const PAGE_SIZE = 5;
+                const PAGE_SIZE = parseInt(table.getAttribute('data-page-size') || 5, 10);
                 let currentPage = 1;
                 const pagContainerId = 'siakad-pag-table-' + (table.id || tableIndex);
 
@@ -202,8 +202,8 @@
                     });
                 }
 
-                const initialRows = getActiveRows();
-                if (initialRows.length <= PAGE_SIZE && !table.hasAttribute('data-force-paginate')) {
+                const allDataRows = Array.from(tbody.querySelectorAll('tr')).filter(tr => !isEmptyStateRow(tr) && !isControlRow(tr));
+                if (allDataRows.length <= PAGE_SIZE && !table.hasAttribute('data-force-paginate')) {
                     return;
                 }
 
@@ -250,6 +250,10 @@
                     });
 
                     if (totalRows <= PAGE_SIZE) {
+                        if (totalRows === 0) {
+                            pagWrapper.innerHTML = '';
+                            return;
+                        }
                         pagWrapper.innerHTML = `
                             <div class="text-xs text-slate-500 font-medium my-1 text-center">
                                 Menampilkan <span class="font-bold text-slate-700">${totalRows}</span> data

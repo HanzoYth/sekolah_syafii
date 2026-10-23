@@ -292,13 +292,13 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2.5 pt-2">
                         <a href="/sk/wali-kelas" class="w-full flex items-center justify-center px-3.5 py-2.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors text-center">
-                            <i class="fa-solid fa-users mr-2 text-slate-500 flex-shrink-0"></i> Kelola Data Siswa
+                            <i class="fa-solid fa-users mr-2 text-slate-500 flex-shrink-0"></i> Data Siswa
                         </a>
                         <a href="/sk/absensi-walas" class="w-full flex items-center justify-center px-3.5 py-2.5 rounded-lg bg-emerald-600 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors shadow-sm text-center">
                             <i class="fa-solid fa-clipboard-user mr-2 flex-shrink-0"></i> Rekap Absensi
                         </a>
                         <a href="/sk/rapor-walas" class="w-full flex items-center justify-center px-3.5 py-2.5 rounded-lg bg-blue-600 text-xs font-semibold text-white hover:bg-blue-700 transition-colors shadow-sm text-center">
-                            <i class="fa-solid fa-file-contract mr-2 flex-shrink-0"></i> Cetak Lembar Rapor
+                            <i class="fa-solid fa-file-contract mr-2 flex-shrink-0"></i> Cetak Rapor
                         </a>
                     </div>
                 </div>
@@ -326,7 +326,7 @@
 
                     <div class="pt-4">
                         <a href="/sk/jadwal-guru" class="w-full flex items-center justify-center px-4 py-2.5 rounded-lg bg-emerald-600 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors text-center">
-                            <i class="fa-solid fa-calendar-check mr-2 flex-shrink-0"></i> Buka Jadwal Mengajar
+                            <i class="fa-solid fa-calendar-check mr-2 flex-shrink-0"></i> Jadwal Mengajar
                         </a>
                     </div>
                 </div>

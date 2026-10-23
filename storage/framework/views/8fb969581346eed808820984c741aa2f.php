@@ -29,7 +29,7 @@ foreach ($attributes->all() as $__key => $__value) {
 unset($__defined_vars, $__key, $__value); ?>
 
 <div class="overflow-x-auto" style="overflow-x: auto; background: white; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 15px;">
-    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+    <table <?php echo e($attributes->merge(['style' => 'width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;'])); ?>>
         <thead>
             <?php if(isset($thead)): ?>
                 <?php echo e($thead); ?>

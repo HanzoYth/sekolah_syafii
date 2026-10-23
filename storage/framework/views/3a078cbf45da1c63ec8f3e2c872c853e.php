@@ -366,7 +366,7 @@
             <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 16px;">
                 <button type="button" onclick="closeModal('modalEditSiswa')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
                 <button type="submit" style="padding: 10px 18px; border: none; background: #0d5c3a; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
+                    <i class="fa-solid fa-floppy-disk"></i> Simpan
                 </button>
             </div>
         </form>

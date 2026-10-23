@@ -83,17 +83,17 @@
             <a href="/sk/jadwal-siswa?tab=jadwal" 
                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all <?php echo e($activeTab === 'jadwal' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-600 hover:text-slate-800'); ?>">
                 <i class="fa-solid fa-calendar-week"></i>
-                <span>Jadwal Pelajaran (<?php echo e($jadwal->count()); ?>)</span>
+                <span>Jadwal (<?php echo e($jadwal->count()); ?>)</span>
             </a>
             <a href="/sk/jadwal-siswa?tab=absensi_mapel" 
                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all <?php echo e($activeTab === 'absensi_mapel' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-600 hover:text-slate-800'); ?>">
                 <i class="fa-solid fa-book-open-reader"></i>
-                <span>Absensi Mapel & Jurnal Belajar (<?php echo e(isset($riwayat_absensi_mapel) ? $riwayat_absensi_mapel->count() : 0); ?>)</span>
+                <span>Absensi & Jurnal (<?php echo e(isset($riwayat_absensi_mapel) ? $riwayat_absensi_mapel->count() : 0); ?>)</span>
             </a>
             <a href="/sk/jadwal-siswa?tab=absensi_harian" 
                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all <?php echo e($activeTab === 'absensi_harian' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-600 hover:text-slate-800'); ?>">
                 <i class="fa-solid fa-clipboard-user"></i>
-                <span>Presensi Harian Wali Kelas (<?php echo e(isset($riwayat_absensi_harian) ? $riwayat_absensi_harian->count() : 0); ?>)</span>
+                <span>Presensi Harian (<?php echo e(isset($riwayat_absensi_harian) ? $riwayat_absensi_harian->count() : 0); ?>)</span>
             </a>
         </div>
 

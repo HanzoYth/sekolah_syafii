@@ -38,10 +38,10 @@
 
             <div class="flex items-center gap-2.5">
                 <a href="/sk/rapor-walas?tab=nilai" class="px-4 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold transition-colors flex items-center gap-1.5">
-                    <i class="fa-solid fa-sliders"></i> Edit Nilai Mapel
+                    <i class="fa-solid fa-sliders"></i> Edit Nilai
                 </a>
                 <button type="button" onclick="window.print()" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors shadow-sm flex items-center gap-2">
-                    <i class="fa-solid fa-print"></i> Cetak Dokumen Rapor
+                    <i class="fa-solid fa-print"></i> Cetak Rapor
                 </button>
             </div>
         </div>

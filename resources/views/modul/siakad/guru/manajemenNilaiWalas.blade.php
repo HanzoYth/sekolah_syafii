@@ -18,10 +18,10 @@
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div class="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200">
             <a href="/sk/rapor-walas?tab=nilai" class="px-4 py-2 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-sm border border-slate-200/80 flex items-center gap-2 transition-all">
-                <i class="fa-solid fa-sliders"></i> Manajemen & Leger Nilai Kelas
+                <i class="fa-solid fa-sliders"></i> Leger Nilai
             </a>
             <a href="/sk/rapor-walas" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-2 transition-all">
-                <i class="fa-solid fa-file-contract"></i> Cetak Rapor Siswa
+                <i class="fa-solid fa-file-contract"></i> Cetak Rapor
             </a>
         </div>
 
@@ -178,7 +178,7 @@
                                 <td class="px-5 py-4 text-center">
                                     <a href="/sk/input-nilai-detail/{{ $m->jadwal_id }}?from=walas" 
                                        class="inline-flex items-center px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-sm">
-                                        <i class="fa-solid fa-pen-to-square mr-1.5"></i> Atur / Edit Nilai
+                                        <i class="fa-solid fa-pen-to-square mr-1.5"></i> Edit Nilai
                                     </a>
                                 </td>
                             </tr>

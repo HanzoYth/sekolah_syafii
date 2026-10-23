@@ -172,7 +172,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
         <div style="display: flex; align-items: center; gap: 12px;">
             <a href="{{ !empty($isWalasAccess) ? '/sk/rapor-walas?tab=nilai' : '/sk/nilai-guru' }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; background: white; border: 1px solid #cbd5e1; border-radius: 8px; color: #475569; text-decoration: none; font-size: 14px; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='white'">
-                <i class="fa-solid fa-arrow-left"></i> {{ !empty($isWalasAccess) ? 'Kembali ke Manajemen Nilai Kelas' : 'Kembali' }}
+                <i class="fa-solid fa-arrow-left"></i> {{ !empty($isWalasAccess) ? 'Kembali ke Leger' : 'Kembali' }}
             </a>
             <div>
                 <h1 style="font-size: 20px; font-weight: 800; color: #1e293b; margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
@@ -243,7 +243,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 14px;">
             <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
                 <button type="button" class="filter-btn active" onclick="setFilter('all', this)">
-                    Semua Siswa (<span id="countAll">{{ count($siswa) }}</span>)
+                    Semua (<span id="countAll">{{ count($siswa) }}</span>)
                 </button>
                 <button type="button" class="filter-btn" onclick="setFilter('tuntas', this)">
                     <i class="fa-solid fa-circle-check" style="color: #16a34a;"></i> Tuntas (<span id="countTuntas">0</span>)
@@ -258,7 +258,7 @@
 
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <button type="button" onclick="quickFillBlank({{ $kkm }})" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; border: 1px solid #bbf7d0; background: #f0fdf4; color: #166534; cursor: pointer; transition: all 0.2s;" title="Isi kotak nilai yang masih kosong dengan nilai KKM ({{ $kkm }})">
-                    <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> Set KKM ({{ $kkm }}) ke Nilai Kosong
+                    <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> Set KKM ({{ $kkm }})
                 </button>
 
                 <div style="position: relative; width: 100%; max-width: 260px;">
@@ -407,7 +407,7 @@
                             Batal
                         </a>
                         <button type="submit" id="btnSubmitNilai" style="padding: 10px 24px; border: none; background: #166534; color: white; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 6px -1px rgba(22, 101, 52, 0.3); transition: all 0.2s;" onmouseover="this.style.background='#14532d'" onmouseout="this.style.background='#166534'">
-                            <i class="fa-solid fa-floppy-disk"></i> Simpan Nilai Siswa
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Nilai
                         </button>
                     </div>
                 </div>

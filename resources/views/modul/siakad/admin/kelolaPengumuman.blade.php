@@ -78,7 +78,7 @@
 
                 <button type="button" onclick="openModalPengumuman()" 
                         class="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-sm transition-all">
-                    <i class="fa-solid fa-plus text-xs"></i> Buat Pengumuman Baru
+                    <i class="fa-solid fa-plus text-xs"></i> Buat Pengumuman
                 </button>
             </div>
         </div>
@@ -345,7 +345,7 @@
                         Batal
                     </button>
                     <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-paper-plane text-xs"></i> Terbitkan Pengumuman
+                        <i class="fa-solid fa-paper-plane text-xs"></i> Terbitkan
                     </button>
                 </div>
             </form>

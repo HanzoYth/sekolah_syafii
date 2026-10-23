@@ -286,7 +286,7 @@
                     @if(count($siswa_belum_ada_kelas) > 0)
                         <div class="flex items-center gap-2 self-end md:self-center">
                             <button type="submit" id="btnSubmitTop" disabled class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white text-xs font-bold transition-all shadow-sm">
-                                <i class="fa-solid fa-arrow-down-to-bracket text-xs"></i> Masukkan Siswa Terpilih
+                                <i class="fa-solid fa-arrow-down-to-bracket text-xs"></i> Masukkan Siswa
                             </button>
                         </div>
                     @endif
@@ -395,7 +395,7 @@
                             <span id="bottomSelectedCount" class="font-bold text-emerald-700">0 siswa dipilih</span> untuk dimasukkan ke rombel <strong>{{ $kelas_terpilih->nama_ruang }}</strong>.
                         </div>
                         <button type="submit" id="btnSubmitBottom" disabled class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white text-xs font-bold transition-all shadow-sm">
-                            <i class="fa-solid fa-arrow-down-to-bracket text-xs"></i> Masukkan Siswa Terpilih ke Kelas
+                            <i class="fa-solid fa-arrow-down-to-bracket text-xs"></i> Masukkan Siswa
                         </button>
                     </div>
                 @endif

@@ -9,6 +9,47 @@
 <?php endif; ?>
 <?php $component->withAttributes(['title' => 'Kelola Jadwal Pelajaran','description' => 'Atur dan manajemen jadwal mata pelajaran berbasis Sistem JP (SD = 35 menit, SMP = 45 menit).','position' => 'Administrator','initials' => 'AD']); ?>
 
+    <style>
+        .tab-hari-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            color: #475569;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .tab-hari-btn:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+            border-color: #cbd5e1;
+        }
+        .tab-hari-btn.active {
+            background: #177455;
+            color: #ffffff;
+            border-color: #177455;
+            box-shadow: 0 2px 8px rgba(23, 116, 85, 0.25);
+        }
+        .tab-hari-pill {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: #e2e8f0;
+            color: #475569;
+            font-weight: 700;
+        }
+        .tab-hari-btn.active .tab-hari-pill {
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+        }
+    </style>
+
     <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 2px solid #ecfdf5; padding-bottom: 15px; flex-wrap: wrap; gap: 14px;">
             <div style="font-size: 18px; font-weight: bold; color: #1e293b; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
@@ -35,7 +76,7 @@
             </div>
             <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                 <a href="/sk/referensi" style="background: #f1f5f9; color: #334155; text-decoration: none; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #e2e8f0;">
-                    <i class="fa-regular fa-clock"></i> Atur Slot Jam & JP
+                    <i class="fa-regular fa-clock"></i> Atur Slot Jam
                 </a>
                 <button onclick="openModal('addModal')" style="background: #177455; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s;">
                     <i class="fa-solid fa-plus"></i> Tambah Jadwal
@@ -52,17 +93,63 @@
             <span style="color: #64748b;">• Saat memilih Kelas pada form tambah jadwal, daftar Jam & Mapel akan otomatis menyesuaikan jenjangnya.</span>
         </div>
 
+        <!-- Selector Tab Filter Jadwal by Hari -->
+        <div class="jadwal-tab-bar" style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
+            <?php
+                $daysConfig = [
+                    'semua' => ['label' => 'Semua Hari', 'icon' => 'fa-calendar-days'],
+                    'senin' => ['label' => 'Senin', 'icon' => null],
+                    'selasa' => ['label' => 'Selasa', 'icon' => null],
+                    'rabu' => ['label' => 'Rabu', 'icon' => null],
+                    'kamis' => ['label' => 'Kamis', 'icon' => null],
+                    'jumat' => ['label' => 'Jumat', 'icon' => null],
+                    'sabtu' => ['label' => 'Sabtu', 'icon' => null],
+                ];
+                $hasAhad = $data_jadwal->contains(function($item) {
+                    $h = strtolower(trim($item->hari));
+                    return $h === 'ahad' || $h === 'minggu';
+                });
+                if ($hasAhad) {
+                    $daysConfig['ahad'] = ['label' => 'Ahad', 'icon' => null];
+                }
+            ?>
+
+            <?php $__currentLoopData = $daysConfig; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dayKey => $cfg): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php
+                    if ($dayKey === 'semua') {
+                        $count = count($data_jadwal);
+                    } else {
+                        $count = $data_jadwal->filter(function($item) use ($dayKey) {
+                            $h = strtolower(trim($item->hari));
+                            if ($dayKey === 'ahad') return $h === 'ahad' || $h === 'minggu';
+                            return $h === $dayKey;
+                        })->count();
+                    }
+                ?>
+                <button type="button" 
+                    class="tab-hari-btn <?php echo e($dayKey === 'semua' ? 'active' : ''); ?>" 
+                    data-hari-target="<?php echo e($dayKey); ?>"
+                    onclick="filterJadwalHari('<?php echo e($dayKey); ?>', this)">
+                    <?php if($cfg['icon']): ?>
+                        <i class="fa-solid <?php echo e($cfg['icon']); ?>"></i>
+                    <?php endif; ?>
+                    <span><?php echo e($cfg['label']); ?></span>
+                    <span class="tab-hari-pill"><?php echo e($count); ?></span>
+                </button>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </div>
+
         <div style="overflow-x: auto;">
             <?php if (isset($component)) { $__componentOriginalb451ae0a4b2a0f57d42f1e2fea2cf880 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalb451ae0a4b2a0f57d42f1e2fea2cf880 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.table','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.table','data' => ['id' => 'tableKelolaJadwal','dataForcePaginate' => 'true','dataPageSize' => '10']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('siakad.ui.table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes([]); ?>
+<?php $component->withAttributes(['id' => 'tableKelolaJadwal','data-force-paginate' => 'true','data-page-size' => '10']); ?>
                  <?php $__env->slot('thead', null, []); ?> 
                     <tr>
                         <th style="width: 50px; text-align: center;">No</th>
@@ -75,6 +162,13 @@
                     </tr>
                  <?php $__env->endSlot(); ?>
 
+                <tr id="emptyHariRow" style="display: none;">
+                    <td colspan="7" style="text-align: center; padding: 40px 20px; color: #64748b;">
+                        <i class="fa-solid fa-calendar-xmark" style="font-size: 32px; margin-bottom: 12px; display: block; color: #cbd5e1;"></i>
+                        <span id="emptyHariMessage" style="font-size: 14px; font-weight: 500;">Belum ada jadwal pelajaran untuk hari yang dipilih.</span>
+                    </td>
+                </tr>
+
                 <?php if(count($data_jadwal) > 0): ?>
                     <?php $__currentLoopData = $data_jadwal; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $j): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <?php
@@ -83,11 +177,24 @@
                             $durasiMenit = $j->jam_pelajaran ? $j->jam_pelajaran->durasi_menit : 0;
                             $jmlJp = $j->getJumlahJp();
                             $jamKeLabel = $j->jam_pelajaran->jam_ke ?? null;
+                            $hariClean = strtolower(trim($j->hari));
+
+                            $badgeColors = [
+                                'senin' => ['bg' => '#dcfce7', 'color' => '#15803d'],
+                                'selasa' => ['bg' => '#e0f2fe', 'color' => '#0369a1'],
+                                'rabu' => ['bg' => '#e0e7ff', 'color' => '#4338ca'],
+                                'kamis' => ['bg' => '#fef3c7', 'color' => '#b45309'],
+                                'jumat' => ['bg' => '#ccfbf1', 'color' => '#0f766e'],
+                                'sabtu' => ['bg' => '#ede9fe', 'color' => '#6d28d9'],
+                                'ahad' => ['bg' => '#ffe4e6', 'color' => '#be123c'],
+                                'minggu' => ['bg' => '#ffe4e6', 'color' => '#be123c'],
+                            ];
+                            $c = $badgeColors[$hariClean] ?? ['bg' => '#dcfce7', 'color' => '#15803d'];
                         ?>
-                        <tr>
-                            <td style="text-align: center;"><?php echo e($index + 1); ?></td>
+                        <tr class="jadwal-row" data-hari="<?php echo e($hariClean); ?>">
+                            <td class="jadwal-row-num" style="text-align: center; font-weight: 600;"><?php echo e($index + 1); ?></td>
                             <td>
-                                <span style="background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;">
+                                <span style="background: <?php echo e($c['bg']); ?>; color: <?php echo e($c['color']); ?>; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;">
                                     <?php echo e(ucfirst($j->hari)); ?>
 
                                 </span>
@@ -271,7 +378,7 @@
 
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
                 <button type="button" onclick="closeModal('addModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
-                <button type="submit" style="padding: 10px 16px; border: none; background: #177455; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Simpan Jadwal</button>
+                <button type="submit" style="padding: 10px 16px; border: none; background: #177455; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Simpan</button>
             </div>
         </form>
      <?php echo $__env->renderComponent(); ?>
@@ -408,7 +515,7 @@
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
                 <button type="button" onclick="closeModal('editModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
                 <button type="submit" style="padding: 10px 16px; border: none; background: #3875c5; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-save"></i> Simpan Perubahan
+                    <i class="fa-solid fa-save"></i> Simpan
                 </button>
             </div>
         </form>
@@ -601,6 +708,76 @@
                 mapelSel.value = '';
             }
         }
+
+        // Filter Jadwal by Hari
+        function filterJadwalHari(targetHari, btn) {
+            document.querySelectorAll('.tab-hari-btn').forEach(b => b.classList.remove('active'));
+            if (btn) {
+                btn.classList.add('active');
+            } else {
+                const targetBtn = document.querySelector(`.tab-hari-btn[data-hari-target="${targetHari}"]`);
+                if (targetBtn) targetBtn.classList.add('active');
+            }
+
+            try {
+                localStorage.setItem('siakad_jadwal_active_hari', targetHari);
+            } catch (e) {}
+
+            let visibleCount = 0;
+            document.querySelectorAll('.jadwal-row').forEach(row => {
+                const rowHari = row.getAttribute('data-hari');
+                let match = false;
+                if (targetHari === 'semua') {
+                    match = true;
+                } else if (targetHari === 'ahad') {
+                    match = (rowHari === 'ahad' || rowHari === 'minggu');
+                } else {
+                    match = (rowHari === targetHari);
+                }
+
+                if (match) {
+                    row.setAttribute('data-filtered-out', 'false');
+                    row.style.display = '';
+                    visibleCount++;
+                    const numCell = row.querySelector('.jadwal-row-num');
+                    if (numCell) numCell.textContent = visibleCount;
+                } else {
+                    row.setAttribute('data-filtered-out', 'true');
+                    row.style.display = 'none';
+                }
+            });
+
+            const emptyRow = document.getElementById('emptyHariRow');
+            if (emptyRow) {
+                if (visibleCount === 0) {
+                    emptyRow.style.display = '';
+                    const labelHari = targetHari === 'semua' ? 'Semua Hari' : (targetHari.charAt(0).toUpperCase() + targetHari.slice(1));
+                    document.getElementById('emptyHariMessage').textContent = targetHari === 'semua' 
+                        ? 'Belum ada jadwal pelajaran yang diatur.' 
+                        : `Belum ada jadwal pelajaran untuk hari ${labelHari}.`;
+                } else {
+                    emptyRow.style.display = 'none';
+                }
+            }
+
+            if (window.refreshSiakadPagination) {
+                window.refreshSiakadPagination();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            let savedHari = 'semua';
+            try {
+                savedHari = localStorage.getItem('siakad_jadwal_active_hari') || 'semua';
+            } catch (e) {}
+
+            const targetBtn = document.querySelector(`.tab-hari-btn[data-hari-target="${savedHari}"]`);
+            if (targetBtn) {
+                filterJadwalHari(savedHari, targetBtn);
+            } else {
+                filterJadwalHari('semua', document.querySelector('.tab-hari-btn[data-hari-target="semua"]'));
+            }
+        });
     </script>
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>

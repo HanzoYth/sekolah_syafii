@@ -159,7 +159,7 @@
                     <p class="text-xs text-slate-500">Pantau siswa yang sering izin, sakit, atau tanpa keterangan (alpa) untuk pembinaan lebih lanjut</p>
                 </div>
                 <a href="/sk/rapor-walas" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold transition-colors self-start sm:self-auto">
-                    <i class="fa-solid fa-print mr-1.5"></i> Buka Cetak Rapor
+                    <i class="fa-solid fa-print mr-1.5"></i> Cetak Rapor
                 </a>
             </div>
 

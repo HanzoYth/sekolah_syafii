@@ -340,7 +340,7 @@
                                 <i class="fa-solid fa-lock text-[10px] mr-1"></i> Tabel absensi siswa akan muncul otomatis setelah Anda menekan tombol ini.
                             </span>
                             <button type="submit" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs sm:text-sm font-bold shadow-sm transition-colors flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-right-to-bracket text-xs"></i> Konfirmasi Masuk Kelas & Simpan Materi
+                                <i class="fa-solid fa-right-to-bracket text-xs"></i> Masuk & Simpan Materi
                             </button>
                         </div>
                     </form>
@@ -401,7 +401,7 @@
                             </div>
                             <div class="flex justify-end gap-2">
                                 <button type="button" onclick="toggleEditMateri()" class="px-3 py-1.5 bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg">Batal</button>
-                                <button type="submit" class="px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700">Simpan Perubahan Materi</button>
+                                <button type="submit" class="px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700">Simpan Materi</button>
                             </div>
                         </form>
                     </div>
@@ -436,10 +436,10 @@
                     <!-- Tombol Cepat Aksi -->
                     <div class="flex items-center gap-2 self-start sm:self-auto">
                         <button type="button" onclick="setSemuaHadir()" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold transition-colors">
-                            <i class="fa-solid fa-check-double mr-1.5 text-[11px]"></i> Tandai Semua Hadir
+                            <i class="fa-solid fa-check-double mr-1.5 text-[11px]"></i> Semua Hadir
                         </button>
                         <button type="submit" form="formAbsensiSiswa" class="inline-flex items-center px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-colors gap-1.5">
-                            <i class="fa-solid fa-floppy-disk text-[11px]"></i> Simpan Absensi Siswa
+                            <i class="fa-solid fa-floppy-disk text-[11px]"></i> Simpan Absensi
                         </button>
                     </div>
                 <?php endif; ?>
@@ -608,7 +608,7 @@
                                     Total <strong><?php echo e(count($siswa)); ?></strong> siswa terdaftar di rombel ini.
                                 </span>
                                 <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs sm:text-sm font-bold shadow-sm transition-colors flex items-center gap-1.5 w-full sm:w-auto justify-center">
-                                    <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Absensi Siswa
+                                    <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Absensi
                                 </button>
                             </div>
                         <?php endif; ?>

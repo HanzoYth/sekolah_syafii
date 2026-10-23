@@ -42,7 +42,7 @@
                 <i class="fa-solid fa-book-open-reader text-emerald-600"></i> Jurnal & Absensi
             </a>
             <a href="/sk/rapor-siswa?tab=rapor" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors shadow-sm flex items-center gap-1.5">
-                <i class="fa-solid fa-file-contract"></i> Lihat Rapor Semester
+                <i class="fa-solid fa-file-contract"></i> Lihat Rapor
             </a>
         </div>
     </div>
@@ -116,7 +116,7 @@
             @if($cleanWa)
                 <div class="mt-4 pt-3 border-t border-slate-100">
                     <button type="button" onclick="bukaModalIzinWa()" class="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold border border-emerald-200 transition-colors shadow-sm">
-                        <i class="fa-brands fa-whatsapp text-sm text-emerald-600"></i> Kirim Izin / Sakit (WhatsApp)
+                        <i class="fa-brands fa-whatsapp text-sm text-emerald-600"></i> Kirim Izin (WA)
                     </button>
                 </div>
             @endif
@@ -319,7 +319,7 @@
                 </div>
 
                 <a href="/sk/pbs" class="mt-5 w-full flex items-center justify-center px-4 py-2.5 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl hover:bg-emerald-100 transition-colors">
-                    <i class="fa-solid fa-receipt mr-2"></i> Buka Rincian & Slip Pembayaran
+                    <i class="fa-solid fa-receipt mr-2"></i> Rincian & Slip
                 </a>
             </div>
         </div>
@@ -415,7 +415,7 @@
                     Batal
                 </button>
                 <button type="button" onclick="kirimKeWa()" class="px-4 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors shadow-sm inline-flex items-center gap-1.5">
-                    <i class="fa-brands fa-whatsapp text-sm"></i> Buka WhatsApp & Kirim
+                    <i class="fa-brands fa-whatsapp text-sm"></i> Kirim WhatsApp
                 </button>
             </div>
         </div>

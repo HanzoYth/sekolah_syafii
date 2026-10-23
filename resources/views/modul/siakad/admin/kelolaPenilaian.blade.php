@@ -88,7 +88,7 @@
 
             <div class="flex items-center gap-2">
                 <button type="button" onclick="resetBobotStandar()" class="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors flex items-center gap-1.5">
-                    <i class="fa-solid fa-rotate-left text-[11px]"></i> Reset ke Standar (20-30-20-30)
+                    <i class="fa-solid fa-rotate-left text-[11px]"></i> Reset Standar
                 </button>
             </div>
         </div>
@@ -204,7 +204,7 @@
                     </div>
 
                     <button type="submit" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs sm:text-sm font-bold shadow-sm transition-colors flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Konfigurasi Bobot
+                        <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Bobot
                     </button>
                 </div>
             </form>
@@ -383,7 +383,7 @@
                         <span>KKM yang disimpan langsung berlaku pada rekap rapor dan leger penilaian siswa di masing-masing tingkatan kelas.</span>
                     </span>
                     <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs sm:text-sm font-bold shadow-sm transition-colors flex items-center justify-center gap-2 w-full sm:w-auto cursor-pointer">
-                        <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Seluruh KKM Per Tingkatan
+                        <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan KKM
                     </button>
                 </div>
             </form>

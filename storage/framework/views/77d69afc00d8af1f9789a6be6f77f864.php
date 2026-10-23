@@ -150,7 +150,7 @@
                 <!-- Tombol Submit -->
                 <div>
                     <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-sm transition-all">
-                        <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Ruang Kelas
+                        <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Kelas
                     </button>
                 </div>
             </div>
@@ -348,7 +348,7 @@
                 </button>
                 <button type="submit" 
                         style="padding: 10px 20px; border: none; background: #177455; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(23,116,85,0.2); transition: all 0.2s;">
-                    <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Perubahan
+                    <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan
                 </button>
             </div>
         </form>
