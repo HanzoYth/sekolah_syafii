@@ -82,7 +82,7 @@
                         $user = App\Models\guru::find(session("id"));
                     ?>
                     <?php if(!$user->bendahara && !$user->satpam && !$user->operator ): ?>
-                        <a href='/tf/das' class="module-card tahfidz">
+                        <a href='/tf/gr/dash' class="module-card tahfidz">
                             <div class="icon-wrapper">
                                 <i class="fa-solid fa-quran"></i>
                             </div>
@@ -94,7 +94,19 @@
                             </div>
                         </a>
                     <?php endif; ?>
-                <?php else: ?>
+                <?php elseif(session('role') == "s"): ?>
+                    <a href='/tf/sw/dass' class="module-card tahfidz">
+                        <div class="icon-wrapper">
+                            <i class="fa-solid fa-quran"></i>
+                        </div>
+                        <h3>Modul Tahfidz</h3>
+                        <p>Sistem Monitoring Hafalan Al-Qur'an, setoran mutaba'ah harian, dan rekapitulasi juz santri.</p>
+                        <div class="card-action">
+                            <span>Akses Tahfidz</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </a>
+                @   else
                     <a href='/tf/das' class="module-card tahfidz">
                         <div class="icon-wrapper">
                             <i class="fa-solid fa-quran"></i>

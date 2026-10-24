@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- CSS Utama & CSS Khusus Daftar Siswa -->
-    <link rel="stylesheet" href="<?php echo e(asset('css/modul/tahfiz/dashboard.css')); ?>?v=<?php echo e(time()); ?>">
+   
     <link rel="stylesheet" href="<?php echo e(asset('css/modul/tahfiz/siswag.css')); ?>?v=<?php echo e(time()); ?>">
     
     <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>">

@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="<?php echo e(asset('css/modul/tahfiz/setorran.css')); ?>">
     <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>">
 </head>
@@ -78,148 +79,308 @@
                 </div>
             </div>
 
-            <!-- 3. FORM UTAMA INPUT SETORAN PER SISWA -->
+            <!-- 3. FORM UTAMA INPUT SETORAN -->
             <form action="" method="POST">
                 <?php echo csrf_field(); ?>
-                <div class="table-card">
-                    <div class="table-header-flex">
-                        <div>
-                            <h4>Lembar Input Setoran Halaqah 1</h4>
-                            <p class="table-subtitle">Pengampu: Ustadz Ahmad, S.Pd. | Total Siswa: 4 Orang</p>
+                
+                <!-- KARTU INFORMASI UTAMA SETORAN -->
+                <div class="form-card-main">
+                    <div class="form-row-grid">
+                        <div class="form-group-custom">
+                            <label>Tanggal*</label>
+                            <input type="text" class="input-control" value="Okt 20, 2026" readonly>
                         </div>
-                        <button type="submit" class="btn-primary-gold"><i class="fa-solid fa-floppy-disk"></i> Simpan Semua Setoran</button>
+                        <div class="form-group-custom">
+                            <label>Halaqah</label>
+                            <select class="input-control select-arrow">
+                                <option value="" selected disabled>Pilih salah satu opsi</option>
+                                <option value="1">Halaqah 1</option>
+                                <option value="2">Halaqah 2</option>
+                            </select>
+                        </div>
+                        <div class="form-group-custom">
+                            <label>Nama Siswa*</label>
+                            <select class="input-control select-arrow">
+                                <option value="" selected disabled>Pilih salah satu opsi</option>
+                                <option value="1">Ali</option>
+                                <option value="2">Budi</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <div class="table-responsive">
-                        <table class="table-input-setoran">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama Siswa & Juz</th>
-                                    <th>Target Harian</th>
-                                    <th>Ziyadah (Setoran Baru)</th>
-                                    <th>Murojaah</th>
-                                    <th>PR di Rumah</th>
-                                    <th>Kondisi & Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Siswa 1: Ali -->
-                                <tr>
-                                    <td>1</td>
-                                    <td>
-                                        <div class="student-info-cell">
-                                            <span class="cell-strong">Ali</span>
-                                            <span class="badge-juz">Juz 29</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge-target">5 baris</span>
-                                        <input type="hidden" name="siswa[1][id]" value="1">
-                                    </td>
-                                    <!-- ZIYADAH -->
-                                    <td>
-                                        <div class="input-stack">
-                                            <input type="text" name="siswa[1][ziyadah_surah]" placeholder="Nama Surah (Cth: An-Naba)" value="An-Naba" class="input-control">
-                                            <div class="input-inline-grid">
-                                                <input type="text" name="siswa[1][ziyadah_ayat_dari]" placeholder="Dari Ayat" value="1" class="input-control">
-                                                <input type="text" name="siswa[1][ziyadah_ayat_sampai]" placeholder="Sampai Ayat" value="5" class="input-control">
-                                            </div>
-                                            <input type="number" name="siswa[1][ziyadah_baris]" placeholder="Jumlah Baris" value="5" class="input-control">
-                                        </div>
-                                    </td>
-                                    <!-- MUROJAAH -->
-                                    <td>
-                                        <div class="input-stack">
-                                            <input type="text" name="siswa[1][murojaah_surah]" placeholder="Surah Murojaah" value="An-Naba" class="input-control">
-                                            <input type="text" name="siswa[1][murojaah_ayat]" placeholder="Ayat (Cth: 1-2)" value="1-2" class="input-control">
-                                        </div>
-                                    </td>
-                                    <!-- PR DI RUMAH -->
-                                    <td>
-                                        <div class="input-stack">
-                                            <input type="text" name="siswa[1][pr_ziyadah]" placeholder="PR Ziyadah (Ayat/Baris)" value="An-Naba: 6-10" class="input-control pr-input">
-                                            <input type="text" name="siswa[1][pr_murojaah]" placeholder="PR Murojaah" value="An-Naba: 1-5" class="input-control pr-input">
-                                        </div>
-                                    </td>
-                                    <!-- KONDISI & STATUS -->
-                                    <td>
-                                        <div class="input-stack">
-                                            <select name="siswa[1][kondisi_hafalan]" class="select-control">
-                                                <option value="Lancar" selected>Lancar</option>
-                                                <option value="Kurang Lancar">Kurang Lancar</option>
-                                                <option value="Mengulang">Mengulang</option>
-                                            </select>
-                                            <select name="siswa[1][status_target]" class="select-status green">
-                                                <option value="Tercapai" selected>Tercapai</option>
-                                                <option value="Tidak Tercapai">Tidak Tercapai</option>
-                                            </select>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <!-- Siswa 2: Budi -->
-                                <tr>
-                                    <td>2</td>
-                                    <td>
-                                        <div class="student-info-cell">
-                                            <span class="cell-strong">Budi</span>
-                                            <span class="badge-juz">Juz 29</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge-target">5 baris</span>
-                                        <input type="hidden" name="siswa[2][id]" value="2">
-                                    </td>
-                                    <!-- ZIYADAH -->
-                                    <td>
-                                        <div class="input-stack">
-                                            <input type="text" name="siswa[2][ziyadah_surah]" placeholder="Nama Surah" value="An-Naba" class="input-control">
-                                            <div class="input-inline-grid">
-                                                <input type="text" name="siswa[2][ziyadah_ayat_dari]" placeholder="Dari Ayat" value="1" class="input-control">
-                                                <input type="text" name="siswa[2][ziyadah_ayat_sampai]" placeholder="Sampai Ayat" value="3" class="input-control">
-                                            </div>
-                                            <input type="number" name="siswa[2][ziyadah_baris]" placeholder="Jumlah Baris" value="3" class="input-control">
-                                        </div>
-                                    </td>
-                                    <!-- MUROJAAH -->
-                                    <td>
-                                        <div class="input-stack">
-                                            <input type="text" name="siswa[2][murojaah_surah]" placeholder="Surah Murojaah" value="An-Naba" class="input-control">
-                                            <input type="text" name="siswa[2][murojaah_ayat]" placeholder="Ayat" value="1-2" class="input-control">
-                                        </div>
-                                    </td>
-                                    <!-- PR DI RUMAH -->
-                                    <td>
-                                        <div class="input-stack">
-                                            <input type="text" name="siswa[2][pr_ziyadah]" placeholder="PR Ziyadah" value="An-Naba: 4-8" class="input-control pr-input">
-                                            <input type="text" name="siswa[2][pr_murojaah]" placeholder="PR Murojaah" value="An-Naba: 1-3" class="input-control pr-input">
-                                        </div>
-                                    </td>
-                                    <!-- KONDISI & STATUS -->
-                                    <td>
-                                        <div class="input-stack">
-                                            <select name="siswa[2][kondisi_hafalan]" class="select-control">
-                                                <option value="Lancar">Lancar</option>
-                                                <option value="Kurang Lancar" selected>Kurang Lancar</option>
-                                                <option value="Mengulang">Mengulang</option>
-                                            </select>
-                                            <select name="siswa[2][status_target]" class="select-status red">
-                                                <option value="Tercapai">Tercapai</option>
-                                                <option value="Tidak Tercapai" selected>Tidak Tercapai</option>
-                                            </select>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="table-footer-action">
-                        <button type="submit" class="btn-primary-gold"><i class="fa-solid fa-floppy-disk"></i> Simpan Semua Setoran</button>
+                    <div class="form-row-grid mt-15">
+                        <div class="form-group-custom">
+                            <label>Juz</label>
+                            <div class="input-with-icon">
+                                <input type="text" class="input-control" value="Juz 1">
+                                <span class="input-icons-right"><i class="fa-solid fa-xmark"></i> <i class="fa-solid fa-chevron-down"></i></span>
+                            </div>
+                        </div>
+                        <div class="form-group-custom">
+                            <label>Target Harian (baris)</label>
+                            <input type="text" class="input-control" placeholder="">
+                        </div>
+                        <div class="form-group-custom">
+                            <label>Jumlah Baris</label>
+                            <input type="text" class="input-control" placeholder="">
+                        </div>
+                        <div class="form-group-custom">
+                            <label>Capaian Target*</label>
+                            <select class="input-control select-arrow">
+                                <option value="Tercapai" selected>Tercapai</option>
+                                <option value="Tidak Tercapai">Tidak Tercapai</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
+
+                <!-- 1. SETORAN ZIYADAH (HAFALAN BARU) -->
+                <div class="setoran-section-card">
+                    <div class="section-card-header">
+                        <div class="section-title-left">
+                            <i class="fa-solid fa-book-open"></i>
+                            <h4>1. Setoran Ziyadah (Hafalan Baru)</h4>
+                        </div>
+                    </div>
+
+                    <div class="section-card-body">
+                        <div class="ziyadah-item-box">
+                            <div class="ziyadah-item-toolbar">
+                                <span class="drag-icon"><i class="fa-solid fa-arrows-up-down"></i></span>
+                                <div class="toolbar-actions-right">
+                                    <button type="button" class="btn-icon-action" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
+                                    <button type="button" class="btn-icon-action" title="Tutup"><i class="fa-solid fa-chevron-up"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="form-row-grid">
+                                <div class="form-group-custom">
+                                    <label>Surah</label>
+                                    <select class="input-control select-arrow" name="ziyadah_surah">
+                                        <option value="" selected disabled>Pilih salah satu opsi</option>
+                                        <option value="annaba">An-Naba</option>
+                                        <option value="an-naziat">An-Nazi'at</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-custom">
+                                    <label>Ayat Dari</label>
+                                    <select class="input-control select-arrow" name="ziyadah_ayat_dari">
+                                        <option value="" selected disabled>Pilih salah satu opsi</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-custom">
+                                    <label>Sampai</label>
+                                    <select class="input-control select-arrow" name="ziyadah_ayat_sampai">
+                                        <option value="" selected disabled>Pilih salah satu opsi</option>
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-20">
+                            <button type="button" class="btn-add-ziyadah">+ Tambah Setoran Ziyadah</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. SETORAN MUROJAAH -->
+                <div class="setoran-section-card">
+                    <div class="section-card-header">
+                        <div class="section-title-left">
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <h4>2. Setoran Murojaah (Pengulangan)</h4>
+                        </div>
+                    </div>
+
+                    <div class="section-card-body">
+                        <div class="ziyadah-item-box">
+                            <div class="ziyadah-item-toolbar">
+                                <span class="drag-icon"><i class="fa-solid fa-arrows-up-down"></i></span>
+                                <div class="toolbar-actions-right">
+                                    <button type="button" class="btn-icon-action" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
+                                    <button type="button" class="btn-icon-action" title="Tutup"><i class="fa-solid fa-chevron-up"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="form-row-grid">
+                                <div class="form-group-custom">
+                                    <label>Surah Murojaah</label>
+                                    <select class="input-control select-arrow" name="murojaah_surah">
+                                        <option value="" selected disabled>Pilih salah satu opsi</option>
+                                        <option value="annaba">An-Naba</option>
+                                        <option value="an-naziat">An-Nazi'at</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-custom">
+                                    <label>Ayat Dari</label>
+                                    <select class="input-control select-arrow" name="murojaah_ayat_dari">
+                                        <option value="" selected disabled>Pilih salah satu opsi</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-custom">
+                                    <label>Sampai</label>
+                                    <select class="input-control select-arrow" name="murojaah_ayat_sampai">
+                                        <option value="" selected disabled>Pilih salah satu opsi</option>
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-20">
+                            <button type="button" class="btn-add-ziyadah">+ Tambah Setoran Murojaah</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. PR ZIYADAH (PERSIAPAN DI RUMAH) -->
+                <div class="setoran-section-card">
+                    <div class="section-card-header">
+                        <div class="section-title-left">
+                            <i class="fa-solid fa-house-chimney"></i>
+                            <h4>3. PR Ziyadah (Persiapan di Rumah)</h4>
+                        </div>
+                    </div>
+
+                    <div class="section-card-body">
+                        <div class="ziyadah-item-box">
+                            <div class="ziyadah-item-toolbar">
+                                <span class="drag-icon"><i class="fa-solid fa-arrows-up-down"></i></span>
+                                <div class="toolbar-actions-right">
+                                    <button type="button" class="btn-icon-action" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
+                                    <button type="button" class="btn-icon-action" title="Tutup"><i class="fa-solid fa-chevron-up"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="form-row-grid">
+                                <div class="form-group-custom">
+                                    <label>Surah</label>
+                                    <select class="input-control select-arrow" name="pr_ziyadah_surah">
+                                        <option value="" selected disabled>Pilih salah satu opsi</option>
+                                        <option value="annaba">An-Naba</option>
+                                        <option value="an-naziat">An-Nazi'at</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-custom">
+                                    <label>Ayat Dari</label>
+                                    <select class="input-control select-arrow" name="pr_ziyadah_ayat_dari">
+                                        <option value="" selected disabled>Pilih salah satu opsi</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-custom">
+                                    <label>Sampai</label>
+                                    <select class="input-control select-arrow" name="pr_ziyadah_ayat_sampai">
+                                        <option value="" selected disabled>Pilih salah satu opsi</option>
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-20">
+                            <button type="button" class="btn-add-ziyadah">Tambah PR Ziyadah</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. PR MUROJAAH (PERSIAPAN DI RUMAH) -->
+                <div class="setoran-section-card">
+                    <div class="section-card-header">
+                        <div class="section-title-left">
+                            <i class="fa-solid fa-house-chimney-crack"></i>
+                            <h4>4. PR Murojaah (Persiapan di Rumah)</h4>
+                        </div>
+                    </div>
+
+                    <div class="section-card-body">
+                        <div class="ziyadah-item-box">
+                            <div class="ziyadah-item-toolbar">
+                                <span class="drag-icon"><i class="fa-solid fa-arrows-up-down"></i></span>
+                                <div class="toolbar-actions-right">
+                                    <button type="button" class="btn-icon-action" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
+                                    <button type="button" class="btn-icon-action" title="Tutup"><i class="fa-solid fa-chevron-up"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="form-row-grid">
+                                <div class="form-group-custom">
+                                    <label>Surah</label>
+                                    <select class="input-control select-arrow" name="pr_murojaah_surah">
+                                        <option value="" selected disabled>Pilih salah satu opsi</option>
+                                        <option value="annaba">An-Naba</option>
+                                        <option value="an-naziat">An-Nazi'at</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-custom">
+                                    <label>Ayat Dari</label>
+                                    <select class="input-control select-arrow" name="pr_murojaah_ayat_dari">
+                                        <option value="" selected disabled>Pilih salah satu opsi</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-custom">
+                                    <label>Sampai</label>
+                                    <select class="input-control select-arrow" name="pr_murojaah_ayat_sampai">
+                                        <option value="" selected disabled>Pilih salah satu opsi</option>
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-20">
+                            <button type="button" class="btn-add-ziyadah">Tambah PR Murojaah</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KONDISI HAFALAN & CATATAN -->
+                <div class="form-card-main">
+                    <div class="form-row-split">
+                        <!-- KONDISI HAFALAN (RADIO BUTTON) -->
+                        <div class="kondisi-hafalan-group">
+                            <label class="label-maroon">Kondisi Hafalan*</label>
+                            <div class="radio-inline-options">
+                                <label class="radio-option">
+                                    <input type="radio" name="kondisi_hafalan" value="Lancar" checked>
+                                    <span class="radio-custom"></span>
+                                    Lancar
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="kondisi_hafalan" value="Belum Lancar">
+                                    <span class="radio-custom"></span>
+                                    Belum Lancar
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- CATATAN (TEXTAREA) -->
+                        <div class="catatan-group">
+                            <label class="label-maroon">Catatan (opsional)</label>
+                            <textarea name="catatan" class="input-control textarea-control" placeholder="Tuliskan catatan jika ada..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TOMBOL AKSI BAWAH -->
+                <div class="bottom-action-bar">
+                    <button type="submit" class="btn-action-submit">Buat</button>
+                    <button type="button" class="btn-action-outline">Buat & buat lainnya</button>
+                    <button type="button" class="btn-action-cancel">Batal</button>
+                </div>
+
             </form>
 
         </main>

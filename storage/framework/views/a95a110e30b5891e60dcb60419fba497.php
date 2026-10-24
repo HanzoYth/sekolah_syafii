@@ -1,1 +1,0 @@
-2<?php /**PATH C:\laragon\www\project_sekolah\sekolah_syafii\resources\views/profile_sekolah.blade.php ENDPATH**/ ?>

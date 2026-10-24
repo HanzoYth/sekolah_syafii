@@ -2,32 +2,30 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>Sekolah Islam Al-Qur'an Imam Syafi'i</title>
-    <meta name="description" content="Pendidikan Al-Qur'an terpadu dengan metode modern untuk mencetak generasi rabbani berakhlak Al-Qur'an.">
+    <meta name="description" content="Pendidikan Al-Qur'an terpadu dengan metode modern untuk mencetak generasi rabbani berakhlak Al-Qur'an sesuai pemahaman salafus shalih.">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <!-- Leaflet CSS (baru, untuk peta) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>">
     <link rel="stylesheet" href="<?php echo e(asset('css/welcome.css')); ?>?v=<?php echo e(time()); ?>">
 </head>
 <body>
 
-    <!--
-        CATATAN:
-        Section yang diberi atribut "hidden" hanya DISEMBUNYIKAN sementara (kodenya tetap ada).
-        Untuk menampilkannya lagi, cukup hapus kata  hidden  dari tag <section> / <footer> tersebut.
-        CSS (welcome.css) tidak diubah sama sekali.
-    -->
+    <!-- Indikator Progress Scroll di Atas Layar -->
+    <div class="scroll-progress-bar" id="scrollProgressBar" aria-hidden="true"></div>
 
-    <!-- ======== NAVBAR (TIDAK DIUBAH) ======== -->
+    <!-- ======== NAVBAR (6 MENU RAMPING & FUNGSIONAL) ======== -->
     <nav class="navbar" id="navbar" aria-label="Navigasi utama">
-        <div class="container navbar-container">
+        <div class="container">
             <a href="#home" class="logo">
-                <img src="<?php echo e(asset('img/logo.png')); ?>?v=<?php echo e(time()); ?>" alt="Logo Sekolah">
-                <span>Sekolah Qur'an Imam Syafi'i</span>
+                <img src="<?php echo e(asset('img/logo.png')); ?>?v=<?php echo e(time()); ?>" alt="Logo Sekolah Islam Al-Qur'an Imam Syafi'i">
+                <div>
+                    <span>Sekolah Qur'an Imam Syafi'i</span>
+                    <small class="logo-sub">Pendidikan Islam & Tahfizhul Qur'an</small>
+                </div>
             </a>
 
             <button class="menu-toggle" id="mobile-menu" type="button"
@@ -37,421 +35,635 @@
 
             <div class="nav-menu-wrapper" id="nav-menu-wrapper">
                 <ul class="nav-links">
-                    <li><a href="#home">Beranda</a></li>
-
-                    <li class="has-dropdown">
-                        <a href="/prof">Profil Sekolah <i class="fa-solid" aria-hidden="true"></i></a>
-                    </li>
-
-                    <li class="has-dropdown">
-                        <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-                            Akademik <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="#program">Jenjang Pendidikan</a></li>
-                            <li><a href="#program">Kurikulum</a></li>
-                            <li><a href="#program">Sistem Pembelajaran</a></li>
-                            <li><a href="#berita">Kalender Akademik</a></li>
-                            <li><a href="#ppdb">Informasi Tahun Ajaran</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="has-dropdown">
-                        <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-                            Program <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="#program">Program Tahfiz Al-Qur'an</a></li>
-                            <li><a href="#program">Program Tahsin</a></li>
-                            <li><a href="#program">Pendidikan Karakter dan Adab</a></li>
-                            <li><a href="#program">Ekstrakurikuler</a></li>
-                            <li><a href="#program">Kegiatan Keagamaan</a></li>
-                            <li><a href="#program">Kegiatan Sosial dan Edukasi</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="has-dropdown">
-                        <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-                            Galeri <i class="fa-solid " aria-hidden="true"></i>
-                        </button>
-                    </li>
-
-                    <li class="has-dropdown">
-                        <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-                            Informasi <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="#berita">Berita Sekolah</a></li>
-                            <li><a href="#berita">Pengumuman</a></li>
-                            <li><a href="#berita">Agenda Kegiatan</a></li>
-                        </ul>
-                    </li>
-
-                    <li><a href="#prestasi">Prestasi</a></li>
-                    <li><a href="#ppdb">PPDB</a></li>
-                    <li><a href="#kontak">Kontak</a></li>
+                    <li><a href="/" class="nav-spy active" data-section="#home">Beranda</a></li>
+                    <li><a href="/prof?halaman=profil" class="nav-spy" data-section="#profil">Profil</a></li>
+                    <li><a href="/prof?halaman=program" class="nav-spy" data-section="#program">Pendidikan & Program</a></li>
+                    <li><a href="/prof?halaman=galeri" class="nav-spy" data-section="#galeri">Galeri & Kegiatan</a></li>
+                    <li><a href="/prof?halaman=ppdb" class="nav-spy" data-section="#ppdb">PPDB</a></li>
+                    <li><a href="/prof?halaman=kontak" class="nav-spy" data-section="#kontak">Kontak</a></li>
                 </ul>
                 <div class="auth-buttons">
-                    <a class="btn-started" id="openSignup" href="/reg">Mulai</a>
+                    <a class="btn-started" id="openSignup" href="/reg">
+                        <i class="fa-solid fa-right-to-bracket"></i> Login Sistem
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- ======== 1. HERO (TAMPIL) ======== -->
-    <section id="home" class="hero" style="--hero-bg: url('<?php echo e(asset('img/bg_skl.jpeg')); ?>?v=<?php echo e(time()); ?>');">
+    <!-- ======== 1. HERO SECTION (MULTI-LAYER 3D PARALLAX) ======== -->
+    <section id="home" class="hero parallax-section" style="--hero-bg: url('<?php echo e(asset('img/bg_skl.jpeg')); ?>?v=<?php echo e(time()); ?>');">
+        <!-- Layer 1: Background Image Parallax (bergerak lambat saat scroll) -->
+        <div class="hero-bg-parallax" data-parallax-hero="0.38"></div>
+
+        <!-- Layer 2: Vignette & Drifting Islamic Star Pattern -->
+        <div class="hero-overlay" id="heroParticles"></div>
+        <div class="hero-pattern-parallax" data-parallax-hero="0.22" data-mouse-speed="14"></div>
+
+        <!-- Layer 3 & 4: Konten Utama & Mihrab Showcase -->
         <div class="container">
             <div class="hero-wrapper">
-                <div class="hero-content" data-aos="fade-right" data-aos-duration="1000">
+                <!-- Kolom Kiri: Teks Utama -->
+                <div class="hero-content" data-parallax-hero="-0.08" data-aos="fade-right">
+                    <div class="hero-badge-top">
+                        <i class="fa-solid fa-mosque"></i>
+                        <span>Yayasan Pendidikan Islam & Tahfizhul Qur'an</span>
+                    </div>
                     <p class="basmalah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
-                    <div class="hero-name">Sekolah Islam Al-Qur'an Imam Syafi'i</div>
                     <h1>Mencetak Generasi Rabbani Berakhlak <span class="highlight">Al-Qur'an</span></h1>
-                    <p>Pendidikan Al-Qur'an terpadu dengan metode modern untuk mendidik generasi yang mencintai dan mengamalkan Al-Qur'an sesuai pemahaman salafus shalih.</p>
+                    <p class="hero-desc">
+                        Pendidikan Islam terpadu yang memadukan kurikulum Tahfizhul Qur'an, ilmu syar'i sesuai pemahaman salafus shalih, serta ilmu pengetahuan umum dengan sistem akademik modern.
+                    </p>
                     <div class="hero-btns">
-                        <a href="#profil" class="btn-primary">Profil Sekolah</a>
-                        <a href="#ppdb" class="btn-secondary">Informasi PPDB</a>
-                    </div>
-                </div>
-                <div class="hero-image" data-aos="fade-left" data-aos-duration="1000">
-                    <img src="<?php echo e(asset('img/ft_1.jpeg')); ?>?v=<?php echo e(time()); ?>" alt="Kegiatan belajar di Sekolah Al-Qur'an Imam Syafi'i">
-                </div>
-            </div>
-        </div>
-        <div class="hero-overlay"></div>
-    </section>
-
-    <!-- ======== 2. SAMBUTAN KEPALA SEKOLAH (DISEMBUNYIKAN) ======== -->
-    <section id="sambutan" class="section" hidden>
-        <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Sambutan Kepala Sekolah</h2>
-            <div class="sambutan-wrapper" data-aos="fade-up">
-                <div class="sambutan-foto thumb">
-                    <!-- ISI: ganti dengan foto kepala sekolah, contoh:
-                         <img src="<?php echo e(asset('img/kepsek.jpg')); ?>" alt="Foto Kepala Sekolah" loading="lazy"> -->
-                    <i class="fa-solid fa-user-tie thumb-icon" aria-hidden="true"></i>
-                </div>
-                <div class="sambutan-isi">
-                    <!-- ISI: sambutan singkat kepala sekolah -->
-                    <p class="ph">Sambutan singkat Kepala Sekolah akan ditampilkan di sini.</p>
-                    <div class="sambutan-nama">
-                        <!-- ISI: nama dan jabatan -->
-                        <strong class="ph">Nama Kepala Sekolah</strong>
-                        <span>Kepala Sekolah</span>
-                    </div>
-                    <a href="#sambutan" class="btn-primary">Baca Selengkapnya</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ======== 3. PROFIL SINGKAT (+ KEUNGGULAN) (TAMPIL) ======== -->
-    <section id="profil" class="section alt">
-        <div class="container">
-            <div class="keunggulan-wrapper">
-                <div class="keunggulan-img" data-aos="fade-right">
-                    <img src="<?php echo e(asset('img/ft_2.jpeg')); ?>?v=<?php echo e(time()); ?>" alt="Santri sedang mengaji" loading="lazy">
-                </div>
-                <div class="keunggulan-content" data-aos="fade-left">
-                    <h2 class="section-title left">Profil Singkat Sekolah</h2>
-                    <!-- ISI: deskripsi sekolah -->
-                    <p class="lead-text ph">Deskripsi singkat sekolah akan ditampilkan di sini.</p>
-
-                    <div class="visi-misi">
-                        <h3>Visi</h3>
-                        <!-- ISI: visi sekolah -->
-                        <p class="ph">Visi sekolah akan ditampilkan di sini.</p>
-                        <h3>Misi</h3>
-                        <!-- ISI: misi sekolah (satu <li> per poin) -->
-                        <ul class="misi-list">
-                            <li class="ph">Poin misi sekolah akan ditampilkan di sini.</li>
-                        </ul>
+                        <a href="/reg" class="btn-started">
+                            <i class="fa-solid fa-right-to-bracket"></i> Login Sistem
+                        </a>
+                        <a href="#ppdb" class="btn-secondary">
+                            <i class="fa-solid fa-user-plus"></i> Info PPDB
+                        </a>
+                        <a href="#profil" class="btn-secondary">
+                            <i class="fa-solid fa-compass"></i> Jelajahi Profil
+                        </a>
                     </div>
 
-                    <ul class="check-list">
-                        <li><i class="fa-solid fa-check-circle"></i> Pengajar Bersanad & Kompeten</li>
-                        <li><i class="fa-solid fa-check-circle"></i> Metode Pembelajaran Modern & Efektif</li>
-                        <li><i class="fa-solid fa-check-circle"></i> Lingkungan Islami & Kondusif</li>
-                        <li><i class="fa-solid fa-check-circle"></i> Fasilitas Lengkap & Nyaman</li>
-                    </ul>
-                    <a href="#profil" class="btn-primary">Profil Lengkap</a>
+                    <!-- Ringkasan Keunggulan Singkat -->
+                    <div class="hero-value-strip">
+                        <div class="hero-mini-stat">
+                            <i class="fa-solid fa-book-quran"></i>
+                            <div>
+                                <strong>Tahfizh Mutqin</strong>
+                                <span>Bersanad & Bertajwid</span>
+                            </div>
+                        </div>
+                        <div class="hero-mini-stat">
+                            <i class="fa-solid fa-heart"></i>
+                            <div>
+                                <strong>Beradab & Berilmu</strong>
+                                <span>Manhaj Imam Syafi'i</span>
+                            </div>
+                        </div>
+                        <div class="hero-mini-stat">
+                            <i class="fa-solid fa-laptop-code"></i>
+                            <div>
+                                <strong>SIAKAD Terpadu</strong>
+                                <span>Pantau Nilai & Absensi</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kolom Kanan: Multi-Layer Parallax Arch Stage -->
+                <div class="hero-stage" data-aos="fade-left">
+                    <div class="hero-glow-orb"></div>
+                    <div class="hero-ring-backdrop" data-mouse-speed="-22"></div>
+
+                    <!-- Bingkai Utama Mihrab -->
+                    <div class="hero-arch-main" data-parallax-hero="-0.18" data-mouse-speed="16">
+                        <img src="<?php echo e(asset('img/ft_1.jpeg')); ?>?v=<?php echo e(time()); ?>" alt="Kegiatan belajar santri Sekolah Al-Qur'an Imam Syafi'i" data-parallax-hero="0.14">
+                    </div>
+
+                    <!-- Bingkai Kedua (Floating Frame bergerak dengan kecepatan berbeda) -->
+                    <div class="hero-arch-secondary" data-parallax-hero="-0.34" data-mouse-speed="-26">
+                        <img src="<?php echo e(asset('img/foto_1.jpeg')); ?>?v=<?php echo e(time()); ?>" alt="Suasana halaqah Al-Qur'an">
+                    </div>
+
+                    <!-- Floating Glass Badges -->
+                    <div class="floating-badge badge-top-right" data-parallax-hero="-0.28" data-mouse-speed="28">
+                        <i class="fa-solid fa-book-open-reader"></i>
+                        <div>
+                            <strong>Tahfizhul Qur'an</strong>
+                            <span>Program Unggulan 30 Juz</span>
+                        </div>
+                    </div>
+
+                    <div class="floating-badge badge-bottom-right" data-parallax-hero="-0.14" data-mouse-speed="-18">
+                        <i class="fa-solid fa-award"></i>
+                        <div>
+                            <strong>Kurikulum Terpadu</strong>
+                            <span>Diniyah & Akademik</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ornamental Curve Divider -->
+        <div class="hero-wave-divider">
+            <svg viewBox="0 0 1440 80" preserveAspectRatio="none" fill="#ffffff">
+                <path d="M0,32 C320,90 560,0 720,42 C880,84 1120,10 1440,36 L1440,80 L0,80 Z"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- ======== 2. PROFIL, VISI-MISI & FASILITAS (TERPADU) ======== -->
+    <section id="profil" class="section alt parallax-section">
+        <!-- Ornamen Cincin Bintang Parallax di Latar -->
+        <div class="parallax-ring spin" style="left: -200px; top: 40px;" data-parallax-speed="0.18"></div>
+
+        <div class="container">
+            <div class="profil-grid">
+                <!-- Tumpukan 2 Foto Parallax yang Bergerak Berbeda Kecepatan Saat Scroll -->
+                <div class="profil-visual-stack" data-aos="fade-right">
+                    <div class="profil-exp-badge" data-parallax-speed="-0.16">
+                        <strong>100%</strong>
+                        <span>Pendidikan Berbasis<br>Al-Qur'an & Sunnah</span>
+                    </div>
+
+                    <div class="profil-main-frame" data-parallax-speed="0.06">
+                        <img src="<?php echo e(asset('img/ft_2.jpeg')); ?>?v=<?php echo e(time()); ?>" alt="Santri sedang menghafal Al-Qur'an" loading="lazy" data-parallax-img="0.16">
+                    </div>
+
+                    <div class="profil-sub-frame" data-parallax-speed="-0.18">
+                        <img src="<?php echo e(asset('img/foto_2.jpeg')); ?>?v=<?php echo e(time()); ?>" alt="Kegiatan pembelajaran di kelas" loading="lazy">
+                    </div>
+                </div>
+
+                <!-- Konten Profil, Visi & Misi -->
+                <div class="profil-content" data-aos="fade-left">
+                    <span class="section-eyebrow"><i class="fa-solid fa-kaaba"></i> Tentang Kami</span>
+                    <h2 class="section-title left">Membangun Fondasi Iman, Ilmu & Akhlak Mulia</h2>
+                    <p class="lead-text">
+                        <strong>Sekolah Islam Al-Qur'an Imam Syafi'i</strong> hadir sebagai lembaga pendidikan Islam yang berkomitmen membimbing peserta didik agar mencintai Al-Qur'an, memahami pokok-pokok agama sesuai manhaj Ahlussunnah wal Jama'ah, serta unggul dalam prestasi akademik.
+                    </p>
+
+                    <div class="visi-misi-cards">
+                        <div class="vm-card">
+                            <h3><i class="fa-solid fa-eye"></i> Visi Sekolah</h3>
+                            <p>Terwujudnya generasi Rabbani yang hafizh Al-Qur'an, berakidah lurus, berakhlak mulia, dan unggul dalam ilmu pengetahuan sesuai pemahaman salafus shalih.</p>
+                        </div>
+                        <div class="vm-card">
+                            <h3><i class="fa-solid fa-bullseye"></i> Misi Utama</h3>
+                            <ul>
+                                <li><i class="fa-solid fa-check"></i> Menyelenggarakan pembelajaran Tahsin & Tahfizh Al-Qur'an bersanad.</li>
+                                <li><i class="fa-solid fa-check"></i> Menanamkan adab Islami dan ibadah harian sejak usia dini.</li>
+                                <li><i class="fa-solid fa-check"></i> Mengembangkan potensi akademik & bahasa Arab secara terpadu.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="check-grid">
+                        <div class="check-item"><i class="fa-solid fa-certificate"></i> Pengajar Bersanad & Kompeten</div>
+                        <div class="check-item"><i class="fa-solid fa-book-open"></i> Kurikulum Diniyah & Nasional</div>
+                        <div class="check-item"><i class="fa-solid fa-shield-heart"></i> Lingkungan Islami & Kondusif</div>
+                        <div class="check-item"><i class="fa-solid fa-mobile-screen-button"></i> Sistem SIAKAD Terintegrasi</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub-Section Fasilitas Sekolah (Digabung ke Profil agar ringkas & utuh) -->
+            <div class="fasilitas-subblock" data-aos="fade-up">
+                <div class="fasilitas-subhead">
+                    <div>
+                        <span class="section-eyebrow"><i class="fa-solid fa-building-columns"></i> Sarana & Prasarana</span>
+                        <h3>Fasilitas Penunjang Pembelajaran</h3>
+                    </div>
+                    <p class="section-subtitle">Dirancang untuk menciptakan suasana belajar dan menghafal Al-Qur'an yang tenang, aman, dan nyaman.</p>
+                </div>
+
+                <div class="fasilitas-grid">
+                    <div class="fasilitas-card" data-parallax-speed="-0.04">
+                        <div class="fasilitas-icon"><i class="fa-solid fa-mosque"></i></div>
+                        <h4>Mushalla & Area Halaqah</h4>
+                        <p>Pusat kegiatan sholat berjamaah, setoran hafalan Al-Qur'an (halaqah), dan pembinaan dzikir harian.</p>
+                    </div>
+                    <div class="fasilitas-card" data-parallax-speed="0.04">
+                        <div class="fasilitas-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <h4>Ruang Kelas Kondusif</h4>
+                        <p>Ruang belajar bersih, sirkulasi udara baik, dan rasio siswa terukur agar pendampingan guru lebih fokus.</p>
+                    </div>
+                    <div class="fasilitas-card" data-parallax-speed="-0.04">
+                        <div class="fasilitas-icon"><i class="fa-solid fa-book"></i></div>
+                        <h4>Perpustakaan & Literasi</h4>
+                        <p>Koleksi mushaf, kitab turats, buku kisah teladan Nabi & sahabat, serta ensiklopedia ilmu pengetahuan.</p>
+                    </div>
+                    <div class="fasilitas-card" data-parallax-speed="0.04">
+                        <div class="fasilitas-icon"><i class="fa-solid fa-futbol"></i></div>
+                        <h4>Area Bermain & Olahraga</h4>
+                        <p>Sarana aktivitas fisik, olahraga sunnah, dan kegiatan ekstrakurikuler yang mendukung tumbuh kembang santri.</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 34px;" data-aos="fade-up">
+                    <a href="/prof?halaman=profil" class="btn-started">
+                        <i class="fa-solid fa-compass"></i> Buka Halaman Profil & Nilai Inti Lengkap &rarr;
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ======== 4. STATISTIK (DISEMBUNYIKAN) ======== -->
-    <!-- ISI: ganti tanda "—" dengan angka resmi. Jangan isi angka perkiraan. -->
-    <section id="statistik" class="statistik" aria-label="Statistik sekolah" hidden>
+    <!-- ======== PARALLAX BANNER: HADITS & SOROTAN ANGKA ======== -->
+    <section class="parallax-banner parallax-section" aria-label="Kutipan dan Statistik Sekolah">
+        <div class="parallax-bg-wrap">
+            <div class="parallax-bg-layer" style="background-image: url('<?php echo e(asset('img/bg_skl.jpeg')); ?>?v=<?php echo e(time()); ?>');" data-parallax-bg="0.34"></div>
+        </div>
+        <div class="parallax-ornament-layer" data-parallax-speed="0.16"></div>
+        <div class="parallax-banner-overlay"></div>
+
         <div class="container">
-            <div class="stat-grid">
-                <div class="stat-card" data-aos="zoom-in">
-                    <i class="fa-solid fa-user-graduate" aria-hidden="true"></i>
-                    <strong>—</strong><span>Peserta Didik</span>
+            <div class="quote-box" data-aos="zoom-in">
+                <p class="quote-arabic">« خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ »</p>
+                <p class="quote-translation">"Sebaik-baik kalian adalah orang yang mempelajari Al-Qur'an dan mengajarkannya." (HR. Bukhari)</p>
+            </div>
+
+            <div class="stat-grid" id="statCounterSection">
+                <div class="stat-card" data-aos="fade-up">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <strong><span class="counter-num" data-target="3">3</span> Jenjang</strong>
+                    <span>TK / PAUD, SD & SMP</span>
                 </div>
-                <div class="stat-card" data-aos="zoom-in" data-aos-delay="80">
-                    <i class="fa-solid fa-chalkboard-user" aria-hidden="true"></i>
-                    <strong>—</strong><span>Guru</span>
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="80">
+                    <i class="fa-solid fa-book-quran"></i>
+                    <strong><span class="counter-num" data-target="30">30</span> Juz</strong>
+                    <span>Kurikulum Tahfizh Bertahap</span>
                 </div>
-                <div class="stat-card" data-aos="zoom-in" data-aos-delay="160">
-                    <i class="fa-solid fa-book-quran" aria-hidden="true"></i>
-                    <strong>—</strong><span>Program Pendidikan</span>
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="160">
+                    <i class="fa-solid fa-user-check"></i>
+                    <strong><span class="counter-num" data-target="100">100</span>%</strong>
+                    <span>Pembinaan Adab & Ibadah</span>
                 </div>
-                <div class="stat-card" data-aos="zoom-in" data-aos-delay="240">
-                    <i class="fa-solid fa-trophy" aria-hidden="true"></i>
-                    <strong>—</strong><span>Prestasi</span>
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="240">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <strong><span class="counter-num" data-target="24">24</span>/7</strong>
+                    <span>Akses SIAKAD & Monitoring</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ======== 5. PROGRAM UNGGULAN (TAMPIL) ======== -->
-    <section id="program" class="section">
+    <!-- ======== 3. PENDIDIKAN & PROGRAM UNGGULAN (GABUNGAN AKADEMIK + PROGRAM) ======== -->
+    <section id="program" class="section parallax-section">
+        <div class="parallax-bg-wrap">
+            <div class="parallax-bg-layer" style="background-image: url('<?php echo e(asset('img/ft_2.jpeg')); ?>?v=<?php echo e(time()); ?>');" data-parallax-bg="0.32"></div>
+        </div>
+        <div class="parallax-ornament-layer" data-parallax-speed="-0.15"></div>
+        <div class="program-overlay"></div>
+
         <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Program Unggulan</h2>
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-eyebrow light"><i class="fa-solid fa-graduation-cap"></i> Akademik & Kurikulum</span>
+                <h2 class="section-title">Jenjang Pendidikan & Program Unggulan</h2>
+                <p class="section-subtitle light">
+                    Sinergi pendidikan formal dan diniyah yang berkesinambungan untuk membekali peserta didik dengan hafalan Al-Qur'an, bahasa Arab, dan kompetensi akademik.
+                </p>
+            </div>
+
+            <!-- Jenjang Pendidikan -->
+            <div class="jenjang-strip" data-aos="fade-up">
+                <div class="jenjang-card">
+                    <div class="jenjang-badge">TK</div>
+                    <div>
+                        <h3>TK / PAUD Al-Qur'an</h3>
+                        <p>Pengenalan huruf hijaiyah dengan metode menyenangkan, hafalan surat pendek, doa harian, dan pembiasaan adab Islami.</p>
+                    </div>
+                </div>
+                <div class="jenjang-card">
+                    <div class="jenjang-badge">SD</div>
+                    <div>
+                        <h3>SD Islam Terpadu</h3>
+                        <p>Penguatan bacaan Al-Qur'an bertajwid (Tahsin), target hafalan juz pilihan, dasar akidah-fiqih, dan kurikulum akademik nasional.</p>
+                    </div>
+                </div>
+                <div class="jenjang-card">
+                    <div class="jenjang-badge">SMP</div>
+                    <div>
+                        <h3>SMP Islam Terpadu</h3>
+                        <p>Akselerasi Tahfizh 30 Juz mutqin, pendalaman bahasa Arab aktif, kajian kitab dasar Mazhab Syafi'i, serta sains & teknologi.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 Kartu Mihrab Program Unggulan (dengan 3D Tilt Interaktif) -->
             <div class="program-grid">
-                <div class="program-card" data-aos="fade-up" data-aos-delay="100">
-                    <i class="fa-solid fa-book-open-reader icon-card" aria-hidden="true"></i>
-                    <h3>Tahfizhul Qur'an</h3>
-                    <p>Program menghafal Al-Qur'an 30 juz dengan target mutqin dan tajwid yang benar.</p>
-                    <a href="#program" class="card-link">Lihat detail <i class="fa-solid fa-arrow-right"></i></a>
+                <div class="program-card tilt-card" data-aos="fade-up" data-aos-delay="50">
+                    <div class="icon-card"><i class="fa-solid fa-book-open-reader"></i></div>
+                    <h3>Tahfizhul Qur'an & Tahsin</h3>
+                    <p>Perbaikan makharijul huruf dan sifat huruf secara talaqqi sebelum memasuki setoran hafalan baru (ziyadah) dan muraja'ah terjadwal.</p>
+                    <span class="program-tag">Target Hafalan Mutqin</span>
                 </div>
-                <div class="program-card" data-aos="fade-up" data-aos-delay="200">
-                    <i class="fa-solid fa-graduation-cap icon-card" aria-hidden="true"></i>
+
+                <div class="program-card tilt-card" data-aos="fade-up" data-aos-delay="120">
+                    <div class="icon-card"><i class="fa-solid fa-scale-balanced"></i></div>
                     <h3>Madrasah Diniyah</h3>
-                    <p>Pembelajaran ilmu syar'i dasar (Aqidah, Fiqih, Adab) sesuai pemahaman Imam Syafi'i.</p>
-                    <a href="#program" class="card-link">Lihat detail <i class="fa-solid fa-arrow-right"></i></a>
+                    <p>Pembelajaran ilmu syar'i terstruktur meliputi Aqidah Ahlussunnah, Fiqih Ibadah Mazhab Syafi'i, Hadits Pilihan, dan Sirah Nabawiyah.</p>
+                    <span class="program-tag">Ilmu Syar'i Dasar</span>
                 </div>
-                <div class="program-card" data-aos="fade-up" data-aos-delay="300">
-                    <i class="fa-solid fa-language icon-card" aria-hidden="true"></i>
+
+                <div class="program-card tilt-card" data-aos="fade-up" data-aos-delay="190">
+                    <div class="icon-card"><i class="fa-solid fa-language"></i></div>
                     <h3>Bahasa Arab</h3>
-                    <p>Kuasai bahasa Al-Qur'an aktif dan pasif untuk memahami wahyu lebih dalam.</p>
-                    <a href="#program" class="card-link">Lihat detail <i class="fa-solid fa-arrow-right"></i></a>
+                    <p>Pembiasaan kosakata (mufradat), percakapan harian (muhadatsah), dan kaidah bahasa Arab untuk memahami ayat Al-Qur'an.</p>
+                    <span class="program-tag">Aktif & Pasif</span>
                 </div>
+
+                <div class="program-card tilt-card" data-aos="fade-up" data-aos-delay="260">
+                    <div class="icon-card"><i class="fa-solid fa-hands-praying"></i></div>
+                    <h3>Pendidikan Adab & Karakter</h3>
+                    <p>Pembinaan akhlak terhadap orang tua dan guru, kedisiplinan ibadah harian, serta kegiatan ekstrakurikuler yang positif.</p>
+                    <span class="program-tag">Karakter Rabbani</span>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 38px;" data-aos="fade-up">
+                <a href="/prof?halaman=program" class="btn-started">
+                    <i class="fa-solid fa-graduation-cap"></i> Lihat Detail Kurikulum & Rutinitas Harian &rarr;
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- ======== 6. GALERI KEGIATAN TERBARU (DISEMBUNYIKAN) ======== -->
-    <!-- ISI: ganti src/judul/tanggal/kategori sesuai foto asli. Salin satu <figure> untuk menambah foto. -->
-    <section id="galeri" class="section alt" hidden>
+    <!-- ======== 4. GALERI KEGIATAN & PRESTASI (AKTIF & INTERAKTIF) ======== -->
+    <section id="galeri" class="section parallax-section">
+        <div class="parallax-ring spin" style="right: -220px; top: 80px;" data-parallax-speed="-0.15"></div>
+
         <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Galeri Kegiatan Terbaru</h2>
-            <div class="galeri-grid">
-                <figure class="galeri-item" data-aos="fade-up">
-                    <button type="button" class="galeri-btn thumb" data-lightbox
-                        data-full="<?php echo e(asset('img/ft_1.jpeg')); ?>" data-caption="Judul kegiatan" aria-label="Perbesar foto kegiatan">
-                        <img src="<?php echo e(asset('img/ft_1.jpeg')); ?>" alt="Foto kegiatan sekolah" loading="lazy">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-eyebrow"><i class="fa-solid fa-camera-retro"></i> Dokumentasi & Aktivitas</span>
+                <h2 class="section-title">Galeri Kegiatan & Pembinaan Santri</h2>
+                <p class="section-subtitle">
+                    Potret keseharian santri dalam menghafal Al-Qur'an, mengikuti kegiatan belajar mengajar, serta pembinaan karakter di lingkungan sekolah.
+                </p>
+            </div>
+
+            <!-- Filter Kategori Galeri -->
+            <div class="galeri-filter-bar" data-aos="fade-up">
+                <button type="button" class="galeri-filter-btn active" data-filter="all">Semua Kegiatan</button>
+                <button type="button" class="galeri-filter-btn" data-filter="tahfizh">Halaqah & Tahfizh</button>
+                <button type="button" class="galeri-filter-btn" data-filter="kbm">Kegiatan Belajar</button>
+                <button type="button" class="galeri-filter-btn" data-filter="lingkungan">Lingkungan Sekolah</button>
+            </div>
+
+            <!-- Grid Galeri -->
+            <div class="galeri-grid" id="galeriGrid">
+                <figure class="galeri-item" data-category="tahfizh" data-aos="fade-up">
+                    <button type="button" class="galeri-btn" data-lightbox
+                        data-full="<?php echo e(asset('img/ft_2.jpeg')); ?>" data-caption="Halaqah Tahfizhul Qur'an — Setoran hafalan dan perbaikan tajwid bersama muhaffizh">
+                        <img src="<?php echo e(asset('img/ft_2.jpeg')); ?>" alt="Halaqah Tahfizhul Qur'an" loading="lazy">
+                        <span class="galeri-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
                     </button>
                     <figcaption>
-                        <span class="badge">Kategori</span>
-                        <h3>Judul kegiatan</h3>
-                        <time class="ph">Tanggal kegiatan</time>
+                        <span class="badge"><i class="fa-solid fa-book-quran"></i> Halaqah & Tahfizh</span>
+                        <h3>Talaqqi & Setoran Hafalan</h3>
+                        <p>Bimbingan intensif bacaan dan setoran hafalan Al-Qur'an secara berhadapan langsung dengan pengajar.</p>
                     </figcaption>
                 </figure>
-                <figure class="galeri-item" data-aos="fade-up" data-aos-delay="100">
-                    <button type="button" class="galeri-btn thumb" data-lightbox
-                        data-full="<?php echo e(asset('img/ft_2.jpeg')); ?>" data-caption="Judul kegiatan" aria-label="Perbesar foto kegiatan">
-                        <img src="<?php echo e(asset('img/ft_2.jpeg')); ?>" alt="Foto kegiatan mengaji" loading="lazy">
+
+                <figure class="galeri-item" data-category="kbm" data-aos="fade-up" data-aos-delay="80">
+                    <button type="button" class="galeri-btn" data-lightbox
+                        data-full="<?php echo e(asset('img/ft_1.jpeg')); ?>" data-caption="Kegiatan Belajar Mengajar — Suasana pembelajaran interaktif di kelas">
+                        <img src="<?php echo e(asset('img/ft_1.jpeg')); ?>" alt="Kegiatan Belajar Mengajar" loading="lazy">
+                        <span class="galeri-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
                     </button>
                     <figcaption>
-                        <span class="badge">Kategori</span>
-                        <h3>Judul kegiatan</h3>
-                        <time class="ph">Tanggal kegiatan</time>
+                        <span class="badge"><i class="fa-solid fa-chalkboard-user"></i> Kegiatan Belajar</span>
+                        <h3>Pembelajaran Kelas Terpadu</h3>
+                        <p>Suasana belajar yang aktif, tertib, dan menyenangkan dengan pendampingan penuh dari para ustadz/ustadzah.</p>
                     </figcaption>
                 </figure>
-                <figure class="galeri-item" data-aos="fade-up" data-aos-delay="200">
-                    <button type="button" class="galeri-btn thumb" data-lightbox
-                        data-full="<?php echo e(asset('img/bg_skl.jpeg')); ?>" data-caption="Judul kegiatan" aria-label="Perbesar foto kegiatan">
-                        <img src="<?php echo e(asset('img/bg_skl.jpeg')); ?>" alt="Foto lingkungan sekolah" loading="lazy">
+
+                <figure class="galeri-item" data-category="tahfizh" data-aos="fade-up" data-aos-delay="160">
+                    <button type="button" class="galeri-btn" data-lightbox
+                        data-full="<?php echo e(asset('img/foto_1.jpeg')); ?>" data-caption="Muraja'ah Bersama — Penguatan hafalan rutin setiap pagi sebelum memulai pelajaran">
+                        <img src="<?php echo e(asset('img/foto_1.jpeg')); ?>" alt="Muraja'ah Bersama" loading="lazy">
+                        <span class="galeri-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
                     </button>
                     <figcaption>
-                        <span class="badge">Kategori</span>
-                        <h3>Judul kegiatan</h3>
-                        <time class="ph">Tanggal kegiatan</time>
+                        <span class="badge"><i class="fa-solid fa-repeat"></i> Halaqah & Tahfizh</span>
+                        <h3>Muraja'ah Pagi Terjadwal</h3>
+                        <p>Rutinitas menjaga kualitas hafalan lama agar tetap kokoh (mutqin) di dalam ingatan peserta didik.</p>
+                    </figcaption>
+                </figure>
+
+                <figure class="galeri-item" data-category="kbm" data-aos="fade-up">
+                    <button type="button" class="galeri-btn" data-lightbox
+                        data-full="<?php echo e(asset('img/foto_2.jpeg')); ?>" data-caption="Pembinaan Adab & Praktek Ibadah — Penanaman akhlak mulia sejak dini">
+                        <img src="<?php echo e(asset('img/foto_2.jpeg')); ?>" alt="Pembinaan Adab dan Ibadah" loading="lazy">
+                        <span class="galeri-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+                    </button>
+                    <figcaption>
+                        <span class="badge"><i class="fa-solid fa-hands-holding-child"></i> Kegiatan Belajar</span>
+                        <h3>Pembinaan Adab & Ibadah</h3>
+                        <p>Praktek langsung tata cara wudhu, sholat sesuai sunnah, serta adab pergaulan sehari-hari.</p>
+                    </figcaption>
+                </figure>
+
+                <figure class="galeri-item" data-category="lingkungan" data-aos="fade-up" data-aos-delay="80">
+                    <button type="button" class="galeri-btn" data-lightbox
+                        data-full="<?php echo e(asset('img/bg_skl.jpeg')); ?>" data-caption="Lingkungan Sekolah Islam Al-Qur'an Imam Syafi'i yang asri dan kondusif">
+                        <img src="<?php echo e(asset('img/bg_skl.jpeg')); ?>" alt="Lingkungan Sekolah" loading="lazy">
+                        <span class="galeri-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+                    </button>
+                    <figcaption>
+                        <span class="badge"><i class="fa-solid fa-school"></i> Lingkungan Sekolah</span>
+                        <h3>Suasana Kampus yang Kondusif</h3>
+                        <p>Area sekolah yang tenang dan mendukung konsentrasi santri dalam menuntut ilmu dan menghafal.</p>
+                    </figcaption>
+                </figure>
+
+                <figure class="galeri-item" data-category="lingkungan" data-aos="fade-up" data-aos-delay="160">
+                    <button type="button" class="galeri-btn" data-lightbox
+                        data-full="<?php echo e(asset('img/ft_1.jpeg')); ?>" data-caption="Evaluasi & Tasmi' Hafalan — Uji kelancaran hafalan santri secara berkala">
+                        <img src="<?php echo e(asset('img/ft_1.jpeg')); ?>" alt="Evaluasi dan Tasmi Hafalan" loading="lazy">
+                        <span class="galeri-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+                    </button>
+                    <figcaption>
+                        <span class="badge"><i class="fa-solid fa-award"></i> Capaian Santri</span>
+                        <h3>Ujian Tasmi' & Evaluasi</h3>
+                        <p>Uji publik kelancaran hafalan per juz sebagai tolok ukur ketuntasan sebelum melanjutkan ke juz berikutnya.</p>
                     </figcaption>
                 </figure>
             </div>
-            <div class="section-action">
-                <a href="#galeri" class="btn-primary">Lihat Semua Galeri</a>
-            </div>
-        </div>
-    </section>
 
-    <!-- ======== 7. BERITA & PENGUMUMAN (DISEMBUNYIKAN) ======== -->
-    <section id="berita" class="section" hidden>
-        <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Berita dan Pengumuman</h2>
-            <div class="berita-layout">
-                <div class="berita-list">
-                    <!-- ISI: salin <article> ini untuk setiap berita -->
-                    <article class="berita-card" data-aos="fade-up">
-                        <div class="berita-img thumb">
-                            <i class="fa-regular fa-newspaper thumb-icon" aria-hidden="true"></i>
+            <!-- Sorotan Fokus Prestasi & Kompetensi Santri (Digabung dalam Section Galeri) -->
+            <div class="prestasi-strip" data-aos="fade-up">
+                <div class="prestasi-strip-header">
+                    <h3>Fokus Capaian & Prestasi Peserta Didik</h3>
+                    <p>Setiap peserta didik dibina untuk meraih keunggulan dalam 3 pilar kompetensi utama:</p>
+                </div>
+                <div class="prestasi-grid">
+                    <div class="prestasi-card">
+                        <div class="prestasi-icon"><i class="fa-solid fa-trophy"></i></div>
+                        <div>
+                            <span class="badge" style="background: rgba(212,175,55,0.22); color: var(--accent-light);">Pilar 1</span>
+                            <h4>Musabaqah Hifzhil Qur'an</h4>
+                            <p>Kesiapan mental dan kualitas bacaan santri dalam mengikuti ajang MHQ & ujian tasmi' berkala.</p>
                         </div>
-                        <div class="berita-body">
-                            <time class="ph">Tanggal publikasi</time>
-                            <h3>Judul berita</h3>
-                            <p class="ph">Ringkasan berita akan ditampilkan di sini.</p>
-                            <a class="card-link" href="#berita">Baca selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                    <div class="prestasi-card">
+                        <div class="prestasi-icon"><i class="fa-solid fa-medal"></i></div>
+                        <div>
+                            <span class="badge" style="background: rgba(212,175,55,0.22); color: var(--accent-light);">Pilar 2</span>
+                            <h4>Kompetensi Bahasa & Diniyah</h4>
+                            <p>Penguasaan materi hafalan hadits, doa harian, fiqih ibadah, serta percakapan bahasa Arab.</p>
                         </div>
-                    </article>
-                    <article class="berita-card" data-aos="fade-up" data-aos-delay="100">
-                        <div class="berita-img thumb">
-                            <i class="fa-regular fa-newspaper thumb-icon" aria-hidden="true"></i>
+                    </div>
+                    <div class="prestasi-card">
+                        <div class="prestasi-icon"><i class="fa-solid fa-star"></i></div>
+                        <div>
+                            <span class="badge" style="background: rgba(212,175,55,0.22); color: var(--accent-light);">Pilar 3</span>
+                            <h4>Ketuntasan Akademik & Rapor</h4>
+                            <p>Pemantauan nilai akademik dan kehadiran secara transparan melalui sistem rapor digital SIAKAD.</p>
                         </div>
-                        <div class="berita-body">
-                            <time class="ph">Tanggal publikasi</time>
-                            <h3>Judul berita</h3>
-                            <p class="ph">Ringkasan berita akan ditampilkan di sini.</p>
-                            <a class="card-link" href="#berita">Baca selengkapnya <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 28px;">
+                    <a href="/prof?halaman=galeri" class="btn-started">
+                        <i class="fa-solid fa-camera-retro"></i> Buka Halaman Galeri & Agenda Kegiatan &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======== 5. PPDB & FAQ PENDAFTARAN (TERPADU) ======== -->
+    <section id="ppdb" class="section ppdb-section parallax-section">
+        <div class="container">
+            <!-- Parallax Banner PPDB -->
+            <div class="ppdb-banner" data-aos="zoom-in">
+                <div class="parallax-bg-wrap">
+                    <div class="parallax-bg-layer" style="background-image: url('<?php echo e(asset('img/bg_skl.jpeg')); ?>?v=<?php echo e(time()); ?>');" data-parallax-bg="0.28"></div>
+                </div>
+                <div class="parallax-ornament-layer" data-parallax-speed="0.12"></div>
+                <div class="ppdb-banner-overlay"></div>
+
+                <div class="ppdb-banner-content">
+                    <span class="section-eyebrow light"><i class="fa-solid fa-calendar-check"></i> Penerimaan Peserta Didik Baru</span>
+                    <h2>Mari Bergabung Bersama Keluarga Besar Sekolah Al-Qur'an Imam Syafi'i</h2>
+                    <p>
+                        Siapkan masa depan putra-putri Anda menjadi generasi penghafal Al-Qur'an yang berilmu dan beradab mulia. Berikut tahapan mudah pendaftaran peserta didik baru:
+                    </p>
+
+                    <!-- 4 Langkah Pendaftaran -->
+                    <div class="ppdb-steps-grid">
+                        <div class="ppdb-step">
+                            <span class="ppdb-step-num">1</span>
+                            <h4>Registrasi Akun / Formulir</h4>
+                            <p>Daftar secara daring melalui portal atau datang langsung ke sekretariat PPDB sekolah.</p>
                         </div>
-                    </article>
-                </div>
+                        <div class="ppdb-step">
+                            <span class="ppdb-step-num">2</span>
+                            <h4>Verifikasi Berkas</h4>
+                            <p>Lengkapi dokumen KK, Akta Kelahiran, pas foto, dan dokumen pendukung lainnya.</p>
+                        </div>
+                        <div class="ppdb-step">
+                            <span class="ppdb-step-num">3</span>
+                            <h4>Observasi & Pemetaan</h4>
+                            <p>Observasi kesiapan belajar santri serta wawancara bersama orang tua/wali.</p>
+                        </div>
+                        <div class="ppdb-step">
+                            <span class="ppdb-step-num">4</span>
+                            <h4>Daftar Ulang & Masuk</h4>
+                            <p>Pengumuman hasil seleksi, penyelesaian administrasi, dan pembagian kelas di SIAKAD.</p>
+                        </div>
+                    </div>
 
-                <aside class="pengumuman" data-aos="fade-left">
-                    <h3><i class="fa-solid fa-bullhorn" aria-hidden="true"></i> Pengumuman</h3>
-                    <ul>
-                        <li>
-                            <time class="ph">Tanggal</time>
-                            <a href="#berita">Judul pengumuman</a>
-                        </li>
-                        <li>
-                            <time class="ph">Tanggal</time>
-                            <a href="#berita">Judul pengumuman</a>
-                        </li>
-                    </ul>
-                    <a href="#berita" class="card-link">Semua pengumuman <i class="fa-solid fa-arrow-right"></i></a>
-                </aside>
+                    <div class="ppdb-btns">
+                        <a href="/reg" class="btn-started">
+                            <i class="fa-solid fa-file-signature"></i> Buka Halaman Pendaftaran / Portal
+                        </a>
+                        <a href="/prof?halaman=ppdb" class="btn-secondary">
+                            <i class="fa-solid fa-list-check"></i> Rincian Syarat & Panduan PPDB
+                        </a>
+                        <a href="/prof?halaman=kontak" class="btn-secondary">
+                            <i class="fa-brands fa-whatsapp"></i> Hubungi Panitia PPDB
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Accordion (Tanpa Placeholder Kosong) -->
+            <div class="faq-wrapper" data-aos="fade-up">
+                <div class="faq-head">
+                    <span class="section-eyebrow"><i class="fa-solid fa-circle-question"></i> Tanya Jawab (FAQ)</span>
+                    <h3>Pertanyaan yang Sering Diajukan</h3>
+                </div>
+                <div class="faq-list">
+                    <details open>
+                        <summary>Bagaimana cara mendaftar sebagai santri baru?</summary>
+                        <p>Pendaftaran dapat dilakukan dengan mengunjungi langsung sekretariat Sekolah Islam Al-Qur'an Imam Syafi'i pada jam kerja, atau mengakses tombol <strong>Portal SIAKAD / Pendaftaran</strong> di bagian atas halaman ini untuk registrasi akun awal.</p>
+                    </details>
+                    <details>
+                        <summary>Apa saja dokumen persyaratan pendaftaran yang perlu disiapkan?</summary>
+                        <p>Calon wali santri cukup menyiapkan fotokopi Kartu Keluarga (KK), Akta Kelahiran, KTP kedua orang tua, pas foto terbaru ukuran 3x4, serta surat pindah/ijazah jenjang sebelumnya (untuk jenjang lanjutan).</p>
+                    </details>
+                    <details>
+                        <summary>Apakah calon siswa harus sudah lancar membaca Al-Qur'an saat mendaftar?</summary>
+                        <p>Tidak harus. Setiap siswa baru akan mengikuti pemetaan kemampuan awal (placement test) dan akan dibimbing dari dasar melalui program <strong>Tahsin</strong> sebelum melanjutkan ke tahap <strong>Tahfizhul Qur'an</strong> sesuai kemampuannya.</p>
+                    </details>
+                    <details>
+                        <summary>Bagaimana orang tua memantau perkembangan nilai, jadwal, dan SPP anak?</summary>
+                        <p>Sekolah telah dilengkapi dengan sistem <strong>SIAKAD Digital</strong>. Orang tua dan siswa dapat masuk melalui menu <strong>Portal SIAKAD</strong> menggunakan HP maupun komputer untuk melihat jadwal harian, jurnal materi guru, absensi, nilai rapor, hingga rincian pembayaran.</p>
+                    </details>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- ======== 8. PRESTASI (DISEMBUNYIKAN) ======== -->
-    <section id="prestasi" class="section alt" hidden>
+    <!-- ======== 6. LOKASI & KONTAK (PETA INTERAKTIF LEAFLET) ======== -->
+    <section id="kontak" class="section parallax-section">
+        <div class="parallax-ring spin" style="left: -220px; bottom: -180px;" data-parallax-speed="0.14"></div>
+
         <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Prestasi Sekolah</h2>
-            <div class="prestasi-grid">
-                <!-- ISI: salin <div class="prestasi-card"> untuk setiap prestasi asli -->
-                <div class="prestasi-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="prestasi-icon"><i class="fa-solid fa-trophy" aria-hidden="true"></i></div>
-                    <span class="badge">Tingkat perlombaan</span>
-                    <h3>Nama prestasi</h3>
-                    <p class="ph">Nama penerima · Tahun</p>
-                </div>
-                <div class="prestasi-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="prestasi-icon"><i class="fa-solid fa-medal" aria-hidden="true"></i></div>
-                    <span class="badge">Tingkat perlombaan</span>
-                    <h3>Nama prestasi</h3>
-                    <p class="ph">Nama penerima · Tahun</p>
-                </div>
-                <div class="prestasi-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="prestasi-icon"><i class="fa-solid fa-award" aria-hidden="true"></i></div>
-                    <span class="badge">Tingkat perlombaan</span>
-                    <h3>Nama prestasi</h3>
-                    <p class="ph">Nama penerima · Tahun</p>
-                </div>
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-eyebrow"><i class="fa-solid fa-map-location-dot"></i> Hubungi Kami</span>
+                <h2 class="section-title">Lokasi & Informasi Kontak</h2>
+                <p class="section-subtitle">
+                    Silakan kunjungi kampus kami atau hubungi layanan administrasi sekolah untuk konsultasi pendidikan dan informasi PPDB.
+                </p>
             </div>
-        </div>
-    </section>
 
-    <!-- ======== 9. FASILITAS (DISEMBUNYIKAN) ======== -->
-    <section id="fasilitas" class="section" hidden>
-        <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Fasilitas Sekolah</h2>
-            <div class="fasilitas-grid">
-                <!-- ISI: ganti dengan fasilitas yang benar-benar ada; tambahkan <img> pada .thumb bila ada fotonya -->
-                <div class="fasilitas-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="fasilitas-img thumb"><i class="fa-solid fa-school thumb-icon" aria-hidden="true"></i></div>
-                    <h3>Nama fasilitas</h3>
-                    <p class="ph">Deskripsi fasilitas.</p>
-                </div>
-                <div class="fasilitas-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="fasilitas-img thumb"><i class="fa-solid fa-mosque thumb-icon" aria-hidden="true"></i></div>
-                    <h3>Nama fasilitas</h3>
-                    <p class="ph">Deskripsi fasilitas.</p>
-                </div>
-                <div class="fasilitas-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="fasilitas-img thumb"><i class="fa-solid fa-book thumb-icon" aria-hidden="true"></i></div>
-                    <h3>Nama fasilitas</h3>
-                    <p class="ph">Deskripsi fasilitas.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ======== 10. PPDB (DISEMBUNYIKAN) ======== -->
-    <section id="ppdb" class="ppdb" hidden>
-        <div class="container">
-            <div class="ppdb-box" data-aos="zoom-in">
-                <h2>Penerimaan Peserta Didik Baru (PPDB)</h2>
-                <!-- ISI: ubah teks ini bila status/jadwal pendaftaran sudah pasti -->
-                <p>Dapatkan informasi pendaftaran, persyaratan, dan jadwal terbaru langsung dari panitia sekolah.</p>
-                <div class="ppdb-btns">
-                    <a href="#kontak" class="btn-started">Hubungi Panitia</a>
-                    <a href="/reg" class="btn-secondary">Halaman Pendaftaran</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ======== 11. FAQ (DISEMBUNYIKAN) ======== -->
-    <section id="faq" class="section alt" hidden>
-        <div class="container narrow">
-            <h2 class="section-title" data-aos="fade-up">Pertanyaan yang Sering Diajukan</h2>
-            <div class="faq-list" data-aos="fade-up">
-                <!-- ISI: tulis jawaban resmi di setiap <p> -->
-                <details>
-                    <summary>Bagaimana cara mendaftar?</summary>
-                    <p class="ph">Jawaban akan diisi sesuai informasi resmi sekolah.</p>
-                </details>
-                <details>
-                    <summary>Apa saja persyaratan pendaftaran?</summary>
-                    <p class="ph">Jawaban akan diisi sesuai informasi resmi sekolah.</p>
-                </details>
-                <details>
-                    <summary>Jenjang pendidikan apa yang tersedia?</summary>
-                    <p class="ph">Jawaban akan diisi sesuai informasi resmi sekolah.</p>
-                </details>
-                <details>
-                    <summary>Bagaimana cara menghubungi pihak sekolah?</summary>
-                    <p class="ph">Jawaban akan diisi sesuai informasi resmi sekolah.</p>
-                </details>
-            </div>
-        </div>
-    </section>
-
-    <!-- ======== 12. LOKASI & KONTAK (TAMPIL, PETA LEAFLET) ======== -->
-    <section id="kontak" class="section">
-        <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Lokasi dan Kontak</h2>
             <div class="kontak-grid">
                 <div class="kontak-info" data-aos="fade-right">
-                    <!-- ISI: semua data kontak di bawah ini dengan data asli sekolah -->
                     <ul>
-                        <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i>
-                            <div><strong>Alamat</strong><span class="ph">Alamat sekolah</span></div></li>
-                        <li><i class="fa-solid fa-phone" aria-hidden="true"></i>
-                            <div><strong>Telepon</strong><span class="ph">Nomor telepon</span></div></li>
-                        <li><i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
-                            <div><strong>WhatsApp</strong><span class="ph">Nomor WhatsApp resmi</span></div></li>
-                        <li><i class="fa-solid fa-envelope" aria-hidden="true"></i>
-                            <div><strong>Email</strong><span class="ph">Email resmi</span></div></li>
-                        <li><i class="fa-solid fa-clock" aria-hidden="true"></i>
-                            <div><strong>Jam Layanan</strong><span class="ph">Jam layanan</span></div></li>
+                        <li>
+                            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                            <div>
+                                <strong>Alamat Kampus</strong>
+                                <span>Kota Palu, Sulawesi Tengah (Klik penanda pada peta di samping untuk rute Google Maps langsung)</span>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                            <div>
+                                <strong>Jam Layanan Sekretariat</strong>
+                                <span>Senin – Sabtu: 07.30 – 15.30 WITA (Hari Ahad & Libur Nasional Tutup)</span>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+                            <div>
+                                <strong>Layanan Informasi & PPDB</strong>
+                                <span>Hubungi Tata Usaha / Panitia Penerimaan Siswa Baru di Sekretariat Sekolah</span>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-laptop" aria-hidden="true"></i>
+                            <div>
+                                <strong>Layanan Akademik Digital (SIAKAD)</strong>
+                                <span>Akses portal Siswa, Guru, dan Admin secara daring melalui menu <a href="/reg" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Portal SIAKAD</a></span>
+                            </div>
+                        </li>
                     </ul>
                 </div>
+
                 <div class="kontak-map" data-aos="fade-left">
-                    <!-- Peta Leaflet. Style inline dipakai supaya welcome.css tidak perlu diubah.
-                         z-index:0 menjaga peta tidak menimpa navbar saat discroll. -->
                     <div id="map" role="region" aria-label="Peta lokasi sekolah"
-                         style="width:100%;height:100%;min-height:340px;position:relative;z-index:0;"></div>
+                         style="width:100%;height:100%;min-height:380px;position:relative;z-index:0;"></div>
                 </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 36px;" data-aos="fade-up">
+                <a href="/prof?halaman=kontak" class="btn-started">
+                    <i class="fa-solid fa-paper-plane"></i> Buka Halaman Kontak & Form Konsultasi Cepat &rarr;
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- ======== 13. FOOTER (TAMPIL) ======== -->
+    <!-- ======== FOOTER ======== -->
     <footer class="footer">
+        <div class="parallax-ornament-layer" style="opacity: 0.08;"></div>
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
@@ -459,43 +671,50 @@
                         <img src="<?php echo e(asset('img/logo.png')); ?>?v=<?php echo e(time()); ?>" alt="Logo Sekolah">
                         <span>Sekolah Al-Qur'an Imam Syafi'i</span>
                     </div>
-                    <p>Pendidikan Al-Qur'an terpadu untuk mencetak generasi rabbani berakhlak Al-Qur'an.</p>
-                </div>
-                <div>
-                    <h4>Tautan</h4>
-                    <ul>
-                        <li><a href="#profil">Profil Sekolah</a></li>
-                        <li><a href="#program">Program</a></li>
-                        <li><a href="#galeri">Galeri</a></li>
-                        <li><a href="#berita">Informasi</a></li>
-                        <li><a href="#ppdb">PPDB</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>Kontak</h4>
-                    <ul>
-                        <li class="ph">Alamat sekolah</li>
-                        <li class="ph">Nomor telepon / WhatsApp</li>
-                        <li class="ph">Email resmi</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>Media Sosial</h4>
-                    <!-- ISI: ganti href="#" dengan akun resmi; hapus ikon yang tidak dipakai -->
+                    <p>Lembaga pendidikan Islam terpadu yang berfokus pada Tahfizhul Qur'an, penanaman akidah & adab salafus shalih, serta keunggulan akademik.</p>
                     <div class="sosmed">
-                        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="/prof?halaman=kontak" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="/prof?halaman=kontak" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="/prof?halaman=kontak" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
                     </div>
+                </div>
+                <div>
+                    <h4>Halaman Utama</h4>
+                    <ul>
+                        <li><a href="/">Beranda (Landing Page)</a></li>
+                        <li><a href="/prof?halaman=profil">Halaman Profil & Fasilitas</a></li>
+                        <li><a href="/prof?halaman=program">Halaman Pendidikan & Program</a></li>
+                        <li><a href="/prof?halaman=galeri">Halaman Galeri & Kegiatan</a></li>
+                        <li><a href="/prof?halaman=ppdb">Halaman Informasi PPDB</a></li>
+                        <li><a href="/prof?halaman=kontak">Halaman Lokasi & Kontak</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Program Unggulan</h4>
+                    <ul>
+                        <li><a href="/prof?halaman=program">Tahfizhul Qur'an 30 Juz</a></li>
+                        <li><a href="/prof?halaman=program">Tahsin & Talaqqi Bacaan</a></li>
+                        <li><a href="/prof?halaman=program">Madrasah Diniyah</a></li>
+                        <li><a href="/prof?halaman=program">Bahasa Arab Aktif</a></li>
+                        <li><a href="/prof?halaman=program">Pembinaan Adab Harian</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Akses Sistem</h4>
+                    <ul>
+                        <li><a href="/reg"><i class="fa-solid fa-right-to-bracket"></i> Login Portal SIAKAD</a></li>
+                        <li><a href="/prof?halaman=ppdb"><i class="fa-solid fa-user-plus"></i> Alur & Syarat Pendaftaran</a></li>
+                        <li><a href="/prof?halaman=kontak"><i class="fa-solid fa-location-dot"></i> Peta Lokasi Sekolah</a></li>
+                    </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; <span id="year">2026</span> Sekolah Al-Qur'an Imam Syafi'i. All rights reserved.</p>
+                <p>&copy; <span id="year">2026</span> Sekolah Islam Al-Qur'an Imam Syafi'i. Seluruh hak cipta dilindungi.</p>
             </div>
         </div>
     </footer>
 
-    <!-- ======== LIGHTBOX ======== -->
+    <!-- ======== LIGHTBOX GALERI ======== -->
     <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Pratinjau foto" hidden>
         <button type="button" class="lb-close" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
         <button type="button" class="lb-nav lb-prev" aria-label="Foto sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
@@ -508,89 +727,278 @@
 
     <!-- ======== SCRIPTS ======== -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <!-- Leaflet JS (baru, untuk peta) -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        AOS.init({ once: true });
+        AOS.init({
+            once: false,
+            mirror: true,
+            duration: 850,
+            easing: 'ease-out-cubic',
+            offset: 80
+        });
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        function forceViewportReflow() {
-            var viewportMeta = document.querySelector('meta[name="viewport"]');
-            if (viewportMeta) {
-                var original = viewportMeta.getAttribute('content');
-                viewportMeta.setAttribute('content', original + ', shrink-to-fit=no');
-                setTimeout(function () { viewportMeta.setAttribute('content', original); }, 50);
-            }
-            window.scrollTo(0, 1);
-            requestAnimationFrame(function () {
-                window.scrollTo(0, 0);
-                window.dispatchEvent(new Event('resize'));
-                window.dispatchEvent(new Event('orientationchange'));
-            });
-        }
-        forceViewportReflow();
-        [0, 100, 300, 600, 1000, 2000].forEach(function (delay) { setTimeout(forceViewportReflow, delay); });
-        window.addEventListener('load', forceViewportReflow);
-
-        // ===== Navbar: hamburger + dropdown =====
+        // ===== 1. ENGINE MULTI-LAYER PARALLAX (SCROLL + MOUSE 3D) =====
         (function () {
-            var NAV_BREAKPOINT = 1240; // samakan dengan @media (max-width: 1240px) di CSS
-            var navbar = document.getElementById('navbar');
-            var toggleBtn = document.getElementById('mobile-menu');
-            if (!navbar || !toggleBtn) return;
-            var dropdowns = navbar.querySelectorAll('.has-dropdown');
+            var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reduceMotion) return;
 
-            function closeDropdowns(except) {
-                dropdowns.forEach(function (d) {
-                    if (d !== except) {
-                        d.classList.remove('open');
-                        d.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
+            var heroEls = [].slice.call(document.querySelectorAll('[data-parallax-hero]'));
+            var speedEls = [].slice.call(document.querySelectorAll('[data-parallax-speed]'));
+            var imgEls = [].slice.call(document.querySelectorAll('[data-parallax-img]'));
+            var bgEls = [].slice.call(document.querySelectorAll('[data-parallax-bg]'));
+            var mouseEls = [].slice.call(document.querySelectorAll('[data-mouse-speed]'));
+            var progressBar = document.getElementById('scrollProgressBar');
+            var navbar = document.getElementById('navbar');
+
+            var ticking = false;
+            var mouseX = 0, mouseY = 0;
+            var targetMouseX = 0, targetMouseY = 0;
+
+            function updateScrollParallax() {
+                var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+                var vh = window.innerHeight || 800;
+                var docHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) - vh;
+
+                // Top scroll progress bar
+                if (progressBar && docHeight > 0) {
+                    progressBar.style.width = Math.min(100, Math.max(0, (scrollY / docHeight) * 100)) + '%';
+                }
+
+                // Navbar shrink state
+                if (navbar) {
+                    navbar.classList.toggle('scrolled', scrollY > 40);
+                }
+
+                // A. Hero multi-layer parallax (gabungan scroll + mouse 3D tanpa konflik)
+                if (scrollY < vh * 1.4) {
+                    for (var i = 0; i < heroEls.length; i++) {
+                        var el = heroEls[i];
+                        var speed = parseFloat(el.getAttribute('data-parallax-hero')) || 0;
+                        var mFactor = parseFloat(el.getAttribute('data-mouse-speed')) || 0;
+                        var yPos = (scrollY * speed) + (mouseY * mFactor);
+                        var xPos = mouseX * mFactor;
+                        if (el.classList.contains('hero-bg-parallax')) {
+                            var scale = 1.14 + (scrollY * 0.00014);
+                            el.style.transform = 'translate3d(' + xPos.toFixed(1) + 'px, ' + yPos.toFixed(1) + 'px, 0) scale(' + scale.toFixed(3) + ')';
+                        } else {
+                            el.style.transform = 'translate3d(' + xPos.toFixed(1) + 'px, ' + yPos.toFixed(1) + 'px, 0)';
+                        }
                     }
+                }
+
+                // B. Section-relative floating elements ([data-parallax-speed])
+                for (var j = 0; j < speedEls.length; j++) {
+                    var sEl = speedEls[j];
+                    var rect = sEl.getBoundingClientRect();
+                    if (rect.bottom > -200 && rect.top < vh + 200) {
+                        var centerOffset = (rect.top + rect.height * 0.5) - (vh * 0.5);
+                        var spd = parseFloat(sEl.getAttribute('data-parallax-speed')) || 0;
+                        var shiftY = centerOffset * spd;
+                        sEl.style.transform = 'translate3d(0, ' + shiftY.toFixed(1) + 'px, 0)';
+                    }
+                }
+
+                // C. Inside-frame image parallax ([data-parallax-img])
+                for (var k = 0; k < imgEls.length; k++) {
+                    var iEl = imgEls[k];
+                    var pRect = iEl.parentElement.getBoundingClientRect();
+                    if (pRect.bottom > -100 && pRect.top < vh + 100) {
+                        var progress = (vh - pRect.top) / (vh + pRect.height);
+                        var move = (progress - 0.5) * 90 * (parseFloat(iEl.getAttribute('data-parallax-img')) || 0.16);
+                        iEl.style.transform = 'translate3d(0, ' + move.toFixed(1) + 'px, 0) scale(1.12)';
+                    }
+                }
+
+                // D. Full-bleed section background parallax ([data-parallax-bg])
+                for (var m = 0; m < bgEls.length; m++) {
+                    var bEl = bgEls[m];
+                    var sec = bEl.closest('.parallax-section') || bEl.parentElement;
+                    var sRect = sec.getBoundingClientRect();
+                    if (sRect.bottom > -150 && sRect.top < vh + 150) {
+                        var bSpeed = parseFloat(bEl.getAttribute('data-parallax-bg')) || 0.3;
+                        var bOffset = (vh * 0.5 - (sRect.top + sRect.height * 0.5)) * bSpeed;
+                        bEl.style.transform = 'translate3d(0, ' + bOffset.toFixed(1) + 'px, 0) scale(1.15)';
+                    }
+                }
+
+                ticking = false;
+            }
+
+            window.addEventListener('scroll', function () {
+                if (!ticking) {
+                    window.requestAnimationFrame(updateScrollParallax);
+                    ticking = true;
+                }
+            }, { passive: true });
+
+            window.addEventListener('resize', updateScrollParallax);
+            updateScrollParallax();
+
+            // E. Interactive Mouse-Move 3D Parallax on Hero (Desktop)
+            var heroSection = document.getElementById('home');
+            if (heroSection && window.matchMedia('(hover: hover)').matches) {
+                heroSection.addEventListener('mousemove', function (e) {
+                    var w = window.innerWidth;
+                    var h = window.innerHeight;
+                    targetMouseX = (e.clientX / w - 0.5);
+                    targetMouseY = (e.clientY / h - 0.5);
+                });
+
+                function animateMouseParallax() {
+                    mouseX += (targetMouseX - mouseX) * 0.08;
+                    mouseY += (targetMouseY - mouseY) * 0.08;
+                    var scrollY = window.pageYOffset || 0;
+                    if (scrollY < window.innerHeight) {
+                        for (var n = 0; n < mouseEls.length; n++) {
+                            var mEl = mouseEls[n];
+                            var factor = parseFloat(mEl.getAttribute('data-mouse-speed')) || 15;
+                            var hSpeed = parseFloat(mEl.getAttribute('data-parallax-hero')) || 0;
+                            var yScroll = scrollY * hSpeed;
+                            var dx = mouseX * factor;
+                            var dy = mouseY * factor + yScroll;
+                            mEl.style.transform = 'translate3d(' + dx.toFixed(1) + 'px, ' + dy.toFixed(1) + 'px, 0)';
+                        }
+                    }
+                    requestAnimationFrame(animateMouseParallax);
+                }
+                requestAnimationFrame(animateMouseParallax);
+            }
+
+            // F. 3D Card Tilt pada Kartu Program
+            var tiltCards = document.querySelectorAll('.tilt-card');
+            if (window.matchMedia('(hover: hover)').matches) {
+                tiltCards.forEach(function (card) {
+                    card.addEventListener('mousemove', function (e) {
+                        var r = card.getBoundingClientRect();
+                        var x = (e.clientX - r.left) / r.width - 0.5;
+                        var y = (e.clientY - r.top) / r.height - 0.5;
+                        card.style.transform = 'perspective(700px) rotateY(' + (x * 10).toFixed(1) + 'deg) rotateX(' + (-y * 10).toFixed(1) + 'deg) translateY(-8px)';
+                    });
+                    card.addEventListener('mouseleave', function () {
+                        card.style.transform = '';
+                    });
                 });
             }
+
+            // G. Animasi Counter Angka pada Parallax Banner
+            var counterWrap = document.getElementById('statCounterSection');
+            if (counterWrap && 'IntersectionObserver' in window) {
+                var obs = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            counterWrap.querySelectorAll('.counter-num').forEach(function (el) {
+                                var target = parseInt(el.getAttribute('data-target'), 10) || 0;
+                                var start = 0;
+                                var duration = 1100;
+                                var startTime = null;
+                                function step(ts) {
+                                    if (!startTime) startTime = ts;
+                                    var prog = Math.min((ts - startTime) / duration, 1);
+                                    var eased = 1 - Math.pow(1 - prog, 3);
+                                    el.textContent = Math.floor(eased * target);
+                                    if (prog < 1) requestAnimationFrame(step);
+                                    else el.textContent = target;
+                                }
+                                requestAnimationFrame(step);
+                            });
+                        }
+                    });
+                }, { threshold: 0.35 });
+                obs.observe(counterWrap);
+            }
+        })();
+
+        // ===== 2. PARTIKEL EMAS MELAYANG DI HERO =====
+        (function () {
+            var overlay = document.getElementById('heroParticles');
+            if (!overlay) return;
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+            var COUNT = window.innerWidth < 768 ? 14 : 26;
+            for (var i = 0; i < COUNT; i++) {
+                var p = document.createElement('span');
+                var size = 3 + Math.random() * 6;
+                p.className = 'particle';
+                p.style.left = (Math.random() * 100) + '%';
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.setProperty('--o', (0.35 + Math.random() * 0.55).toFixed(2));
+                p.style.setProperty('--dx', (Math.random() * 80 - 40).toFixed(0) + 'px');
+                p.style.animationDuration = (9 + Math.random() * 13).toFixed(1) + 's';
+                p.style.animationDelay = (-Math.random() * 22).toFixed(1) + 's';
+                p.setAttribute('aria-hidden', 'true');
+                overlay.appendChild(p);
+            }
+        })();
+
+        // ===== 3. NAVBAR MOBILE & SCROLL-SPY ACTIVE MENU =====
+        (function () {
+            var NAV_BREAKPOINT = 1080;
+            var navbar = document.getElementById('navbar');
+            var toggleBtn = document.getElementById('mobile-menu');
+            var spyLinks = [].slice.call(document.querySelectorAll('.nav-spy'));
+
             function closeMobileNav() {
+                if (!navbar || !toggleBtn) return;
                 navbar.classList.remove('mobile-nav-open');
                 toggleBtn.classList.remove('active');
                 toggleBtn.setAttribute('aria-expanded', 'false');
                 document.body.classList.remove('mobile-nav-locked');
-                closeDropdowns();
             }
-            function toggleMobileNav() {
-                var isOpen = navbar.classList.toggle('mobile-nav-open');
-                toggleBtn.classList.toggle('active', isOpen);
-                toggleBtn.setAttribute('aria-expanded', String(isOpen));
-                document.body.classList.toggle('mobile-nav-locked', isOpen);
+            if (toggleBtn && navbar) {
+                toggleBtn.addEventListener('click', function () {
+                    var isOpen = navbar.classList.toggle('mobile-nav-open');
+                    toggleBtn.classList.toggle('active', isOpen);
+                    toggleBtn.setAttribute('aria-expanded', String(isOpen));
+                    document.body.classList.toggle('mobile-nav-locked', isOpen);
+                });
+                navbar.querySelectorAll('a').forEach(function (link) {
+                    link.addEventListener('click', closeMobileNav);
+                });
+                window.addEventListener('resize', function () {
+                    if (window.innerWidth > NAV_BREAKPOINT) closeMobileNav();
+                });
             }
 
-            toggleBtn.addEventListener('click', toggleMobileNav);
+            // Scroll-Spy untuk menandai menu aktif sesuai section di landing page
+            var sections = spyLinks.map(function (link) {
+                var id = link.getAttribute('data-section') || link.getAttribute('href');
+                return id && id.startsWith('#') ? document.querySelector(id) : null;
+            });
 
-            dropdowns.forEach(function (d) {
-                var btn = d.querySelector('.dropdown-toggle');
-                btn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    var isOpen = d.classList.toggle('open');
-                    btn.setAttribute('aria-expanded', String(isOpen));
-                    closeDropdowns(d);
+            window.addEventListener('scroll', function () {
+                var scrollPos = (window.pageYOffset || document.documentElement.scrollTop) + 180;
+                var currentIdx = 0;
+                for (var i = 0; i < sections.length; i++) {
+                    if (sections[i] && sections[i].offsetTop <= scrollPos) {
+                        currentIdx = i;
+                    }
+                }
+                spyLinks.forEach(function (link, idx) {
+                    link.classList.toggle('active', idx === currentIdx);
+                });
+            }, { passive: true });
+        })();
+
+        // ===== 4. FILTER KATEGORI GALERI & LIGHTBOX =====
+        (function () {
+            var filterBtns = [].slice.call(document.querySelectorAll('.galeri-filter-btn'));
+            var galeriItems = [].slice.call(document.querySelectorAll('#galeriGrid .galeri-item'));
+
+            filterBtns.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var cat = btn.getAttribute('data-filter');
+                    filterBtns.forEach(function (b) { b.classList.toggle('active', b === btn); });
+                    galeriItems.forEach(function (item) {
+                        var match = (cat === 'all' || item.getAttribute('data-category') === cat);
+                        item.style.display = match ? '' : 'none';
+                    });
+                    if (typeof AOS !== 'undefined') AOS.refresh();
                 });
             });
 
-            navbar.querySelectorAll('.nav-links a, .auth-buttons a').forEach(function (link) {
-                link.addEventListener('click', closeMobileNav);
-            });
-
-            document.addEventListener('click', function (e) {
-                if (!navbar.contains(e.target)) closeDropdowns();
-            });
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') closeDropdowns();
-            });
-            window.addEventListener('resize', function () {
-                if (window.innerWidth > NAV_BREAKPOINT) closeMobileNav();
-            });
-        })();
-
-        // ===== Lightbox galeri =====
-        (function () {
+            // Lightbox
             var items = [].slice.call(document.querySelectorAll('[data-lightbox]'));
             var box = document.getElementById('lightbox');
             if (!box || !items.length) return;
@@ -629,16 +1037,14 @@
             });
         })();
 
-        // ===== Peta Leaflet (OpenStreetMap) =====
+        // ===== 5. PETA INTERAKTIF LEAFLET (OPENSTREETMAP) =====
         (function () {
             var el = document.getElementById('map');
             if (!el || typeof L === 'undefined') return;
 
-            // GANTI dengan koordinat asli sekolah
-            // (Google Maps: klik kanan lokasi -> klik angka koordinat untuk menyalin)
             var LAT = -0.9267058875927435;
             var LNG = 119.87149370241973;
-            var NAMA = "Sekolah Al-Qur'an Imam Syafi'i";
+            var NAMA = "Sekolah Islam Al-Qur'an Imam Syafi'i";
 
             var map = L.map(el, { scrollWheelZoom: false }).setView([LAT, LNG], 16);
 
@@ -648,18 +1054,17 @@
             }).addTo(map);
 
             L.marker([LAT, LNG]).addTo(map)
-                .bindPopup('<strong>' + NAMA + '</strong><br><a href="https://www.google.com/maps?q=' + LAT + ',' + LNG + '" target="_blank" rel="noopener">Buka di Google Maps</a>')
+                .bindPopup('<strong>' + NAMA + '</strong><br><a href="https://www.google.com/maps?q=' + LAT + ',' + LNG + '" target="_blank" rel="noopener">Buka Rute di Google Maps &rarr;</a>')
                 .openPopup();
 
-            // Scroll-zoom aktif hanya setelah peta diklik, supaya scroll halaman tidak tersangkut
             map.on('click', function () { map.scrollWheelZoom.enable(); });
             map.on('mouseout', function () { map.scrollWheelZoom.disable(); });
 
-            // Ukuran peta dihitung ulang setelah animasi AOS / reflow selesai
             [300, 1200, 2500].forEach(function (d) { setTimeout(function () { map.invalidateSize(); }, d); });
             window.addEventListener('load', function () { map.invalidateSize(); });
             window.addEventListener('resize', function () { map.invalidateSize(); });
         })();
     </script>
 </body>
-</html><?php /**PATH D:\laragon\www\sekolahsyafii\resources\views\welcome.blade.php ENDPATH**/ ?>
+</html>
+<?php /**PATH D:\laragon\www\sekolahsyafii\resources\views\welcome.blade.php ENDPATH**/ ?>

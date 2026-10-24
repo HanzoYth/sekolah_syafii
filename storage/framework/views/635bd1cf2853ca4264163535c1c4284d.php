@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Riwayat Laporan Tahfiz - Digital Tahfiz</title>
-    <!-- Google Fonts: Amiri + Poppins -->
+    <!-- Google Fonts: Amiri (Arab) + Poppins (Body) -->
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- CSS Utama & CSS Khusus Riwayat Laporan -->
-    <link rel="stylesheet" href="<?php echo e(asset('css/modul/tahfiz/dashboard.css')); ?>?v=<?php echo e(time()); ?>">
-    <link rel="stylesheet" href="<?php echo e(asset('css/modul/tahfiz/riwayat-laporan.css')); ?>?v=<?php echo e(time()); ?>">
+    
+    <link rel="stylesheet" href="<?php echo e(asset('css/modul/tahfiz/riwayat_laporan.css')); ?>?v=<?php echo e(time()); ?>">
     
     <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>">
 </head>
@@ -55,300 +55,294 @@
                 </div>
             </header>
 
-            <!-- CARD FILTER & PERIODE LAPORAN -->
-            <div class="table-card form-card">
-                <div class="card-header-title">
-                    <h4><i class="fa-solid fa-filter"></i> Filter & Periode Laporan</h4>
-                    <span class="detail-header-tag"><i class="fa-solid fa-calendar-days"></i> Filter Data</span>
+            <!-- CARD REKAP LAPORAN HAFALAN SISWA -->
+            <div class="table-card card-rekap-laporan">
+                
+                <!-- 1. HEADER PERIODE & TOMBOL EXPORT PDF -->
+                <div class="header-periode-bar">
+                    <div class="periode-pills-group">
+                        <button type="button" class="btn-pill active">Semua</button>
+                        <button type="button" class="btn-pill">Harian</button>
+                        <button type="button" class="btn-pill">Pekanan</button>
+                        <button type="button" class="btn-pill">Bulanan</button>
+                    </div>
+                    <a href="" target="_blank" class="btn-export-pdf">
+                        <i class="fa-solid fa-file-arrow-down"></i> Export PDF
+                    </a>
                 </div>
 
-                <form action="" method="GET" class="filter-box form-grid-4">
-                    <!-- Opsi Rentang Waktu (Harian / Mingguan / Bulanan) -->
-                    <div class="filter-group">
-                        <label for="periode">Rentang Laporan</label>
-                        <select id="periode" name="periode" onchange="toggleFilterFields(this.value)">
-                            <option value="semua" <?php echo e(request('periode') == 'semua' ? 'selected' : ''); ?>>Semua Laporan</option>
-                            <option value="harian" <?php echo e(request('periode', 'harian') == 'harian' ? 'selected' : ''); ?>>Harian</option>
-                            <option value="mingguan" <?php echo e(request('periode') == 'mingguan' ? 'selected' : ''); ?>>Mingguan</option>
-                            <option value="bulanan" <?php echo e(request('periode') == 'bulanan' ? 'selected' : ''); ?>>Bulanan</option>
-                        </select>
+                <!-- 2. TOOLBAR PENCARIAN & FILTER -->
+                <div class="search-filter-row">
+                    <div class="search-input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="searchRiwayat" placeholder="Cari">
                     </div>
-
-                    <!-- Filter Tanggal Spesifik (Harian) -->
-                    <div class="filter-group filter-dynamic" id="field-harian">
-                        <label for="tanggal">Pilih Tanggal</label>
-                        <input type="date" id="tanggal" name="tanggal" value="<?php echo e(request('tanggal', date('Y-m-d'))); ?>">
-                    </div>
-
-                    <!-- Filter Minggu/Tanggal Mulai (Mingguan) -->
-                    <div class="filter-group filter-dynamic" id="field-mingguan" style="display: none;">
-                        <label for="minggu_ke">Pilih Minggu Ke-</label>
-                        <input type="week" id="minggu_ke" name="minggu_ke" value="<?php echo e(request('minggu_ke')); ?>">
-                    </div>
-
-                    <!-- Filter Bulan & Tahun (Bulanan) -->
-                    <div class="filter-group filter-dynamic" id="field-bulanan" style="display: none;">
-                        <label for="bulan_tahun">Pilih Bulan & Tahun</label>
-                        <input type="month" id="bulan_tahun" name="bulan_tahun" value="<?php echo e(request('bulan_tahun', date('Y-m'))); ?>">
-                    </div>
-
-                    <!-- Filter Siswa Specific -->
-                    <div class="filter-group">
-                        <label for="siswa_id">Pilih Siswa</label>
-                        <select id="siswa_id" name="siswa_id">
-                            <option value="">-- Semua Siswa --</option>
-                            <option value="222301001" <?php echo e(request('siswa_id') == '222301001' ? 'selected' : ''); ?>>Ahmad Fauzi</option>
-                            <option value="222301002" <?php echo e(request('siswa_id') == '222301002' ? 'selected' : ''); ?>>Aisyah Nurbalqis</option>
-                            <option value="222301003" <?php echo e(request('siswa_id') == '222301003' ? 'selected' : ''); ?>>Muhammad Bilal</option>
-                        </select>
-                    </div>
-
-                    <!-- Tombol Terapkan Filter -->
-                    <div class="filter-group filter-btn-group">
-                        <label>&nbsp;</label>
-                        <button type="submit" class="btn-sm btn-submit w-100">
-                            <i class="fa-solid fa-magnifying-glass"></i> Tampilkan
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- TABLE REKAP LAPORAN SISWA -->
-            <div class="table-card">
-                <div class="search-filter-bar">
-                    <h4><i class="fa-solid fa-clock-rotate-left"></i> Daftar Rekap Laporan</h4>
-                    <div class="action-right">
-                        <!-- Tombol Export PDF -->
-                        <a href="" target="_blank" class="btn-action-outline btn-pdf">
-                            <i class="fa-solid fa-file-pdf"></i> Export PDF
-                        </a>
-                    </div>
+                    <button type="button" class="btn-filter-icon" title="Filter Tambahan">
+                        <i class="fa-solid fa-filter"></i>
+                        <span class="badge-count">0</span>
+                    </button>
                 </div>
 
+                <!-- 3. TABEL DATA RIWAYAT SETORAN -->
                 <div class="table-responsive">
-                    <table class="table-compact">
+                    <table class="table-riwayat-custom" id="tableRiwayat">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Tanggal</th>
-                                <th>Nama Siswa</th>
-                                <th>Juz</th>
-                                <th>Setoran Ziyadah</th>
-                                <th>Setoran Murojaah</th>
-                                <th>Baris</th>
-                                <th>Status Target</th>
-                                <th class="text-center">Aksi</th>
+                                <th>Tanggal <i class="fa-solid fa-chevron-down text-xs"></i></th>
+                                <th>Siswa <i class="fa-solid fa-chevron-up text-xs"></i></th>
+                                <th>Surah</th>
+                                <th>Status</th>
+                                <th class="text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Item Laporan 1 -->
+                            <!-- ITEM 1 -->
                             <tr>
-                                <td>1</td>
-                                <td>16/10/2026</td>
-                                <td>
-                                    <div class="student-name-cell">
-                                        <div class="student-avatar">AF</div>
-                                        <span class="cell-strong">Ahmad Fauzi</span>
+                                <td class="col-tanggal">
+                                    <span class="date-txt">19 Okt 2026</span>
+                                    <span class="time-txt">00:45 WIB</span>
+                                </td>
+                                <td class="col-siswa">
+                                    <strong class="student-fullname">Adiba Rizky Nurjannah</strong>
+                                    <span class="student-meta">Halaqah: Halaqah 4</span>
+                                    <span class="student-meta">Kelas: 1B</span>
+                                </td>
+                                <td class="col-surah">
+                                    <div class="surah-item-row">
+                                        <span class="code-tag">Z:</span>
+                                        <span class="arabic-txt">الكوثر</span>
+                                        <span class="latin-txt">(Al-Kausar): 1</span>
+                                    </div>
+                                    <div class="surah-item-row">
+                                        <span class="code-tag">M:</span>
+                                        <span class="arabic-txt">الإخلاص</span>
+                                        <span class="latin-txt">(Al-Ikhlas): 1-4</span>
+                                    </div>
+                                    <div class="surah-item-row sub-murojaah">
+                                        <span class="arabic-txt">الفلق</span>
+                                        <span class="latin-txt">(Al-Falaq): 1-5</span>
+                                    </div>
+                                    <div class="surah-item-row sub-murojaah">
+                                        <span class="arabic-txt">الناس</span>
+                                        <span class="latin-txt">(An-Nas): 1-6</span>
                                     </div>
                                 </td>
-                                <td>Juz 30</td>
-                                <td>Surah An-Naba' (1-20)</td>
-                                <td>Surah An-Nazi'at (1-15)</td>
-                                <td>15 / 15</td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Tercapai</span></td>
-                                <td class="text-center">
-                                    <button type="button" class="btn-xs btn-detail-laporan"
-                                        data-tanggal="16/10/2026"
-                                        data-nama="Ahmad Fauzi"
-                                        data-nisn="222301001"
-                                        data-juz="Juz 30"
-                                        data-target="15 Baris"
-                                        data-jumlah="15 Baris"
-                                        data-status="Tercapai"
-                                        data-ziyadah="Surah An-Naba' (1-20)"
-                                        data-murojaah="Surah An-Nazi'at (1-15)"
-                                        data-prziyadah="Surah An-Naba' (21-40)"
-                                        data-prmurojaah="Surah An-Naba' (1-20)">
-                                        <i class="fa-solid fa-eye"></i> Detail
-                                    </button>
+                                <td class="col-status">
+                                    <div class="status-badges-group">
+                                        <span class="badge-pill outline-dark">Belum Lancar</span>
+                                        <span class="badge-pill outline-dark">Belum Tercapai</span>
+                                    </div>
+                                    <div class="target-details">
+                                        <strong>Juz 30</strong>
+                                        <span>Target: 1 baris</span>
+                                        <span>Disetor 1 baris</span>
+                                    </div>
+                                </td>
+                                <td class="col-aksi">
+                                    <div class="action-btn-vertical">
+                                        <button type="button" class="btn-action-sm btn-catatan" 
+                                            onclick="openCatatanModal('Adiba Rizky Nurjannah', 'Tidak ada catatan khusus.')">
+                                            <i class="fa-solid fa-comment-dots"></i> Catatan
+                                        </button>
+                                        <button type="button" class="btn-action-sm btn-pr" 
+                                            onclick="openPrModal('Adiba Rizky Nurjannah', 'PR Ziyadah: Al-Kausar: 2-3', 'PR Murojaah: An-Nas: 1-6')">
+                                            <i class="fa-solid fa-bookmark"></i> PR
+                                        </button>
+                                        <button type="button" class="btn-action-sm btn-lihat" 
+                                            onclick="openDetailLaporanModal('19 Okt 2026', 'Adiba Rizky Nurjannah', 'Juz 30', '1 baris / 1 baris', 'Belum Tercapai', 'Al-Kausar: 1', 'Al-Ikhlas: 1-4')">
+                                            <i class="fa-solid fa-eye"></i> Lihat
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
 
-                            <!-- Item Laporan 2 -->
+                            <!-- ITEM 2 -->
                             <tr>
-                                <td>2</td>
-                                <td>16/10/2026</td>
-                                <td>
-                                    <div class="student-name-cell">
-                                        <div class="student-avatar">AN</div>
-                                        <span class="cell-strong">Aisyah Nurbalqis</span>
+                                <td class="col-tanggal">
+                                    <span class="date-txt">16 Okt 2026</span>
+                                    <span class="time-txt">03:17 WIB</span>
+                                </td>
+                                <td class="col-siswa">
+                                    <strong class="student-fullname">Adiba Rizky Nurjannah</strong>
+                                    <span class="student-meta">Halaqah: Halaqah 4</span>
+                                    <span class="student-meta">Kelas: 1B</span>
+                                </td>
+                                <td class="col-surah">
+                                    <div class="surah-item-row">
+                                        <span class="code-tag">Z:</span>
+                                        <span class="arabic-txt">الكافرون</span>
+                                        <span class="latin-txt">(Al-Kafirun): 1-6</span>
+                                    </div>
+                                    <div class="surah-item-row">
+                                        <span class="code-tag">M:</span>
+                                        <span class="arabic-txt">النصر</span>
+                                        <span class="latin-txt">(An-Nasr): 1-3</span>
+                                    </div>
+                                    <div class="surah-item-row sub-murojaah">
+                                        <span class="arabic-txt">المسد</span>
+                                        <span class="latin-txt">(Al-Lahab): 1-5</span>
                                     </div>
                                 </td>
-                                <td>Juz 30</td>
-                                <td>Surah An-Nazi'at (1-15)</td>
-                                <td>Surah Abasa (1-15)</td>
-                                <td>15 / 15</td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Tercapai</span></td>
-                                <td class="text-center">
-                                    <button type="button" class="btn-xs btn-detail-laporan"
-                                        data-tanggal="16/10/2026"
-                                        data-nama="Aisyah Nurbalqis"
-                                        data-nisn="222301002"
-                                        data-juz="Juz 30"
-                                        data-target="15 Baris"
-                                        data-jumlah="15 Baris"
-                                        data-status="Tercapai"
-                                        data-ziyadah="Surah An-Nazi'at (1-15)"
-                                        data-murojaah="Surah Abasa (1-15)"
-                                        data-prziyadah="Surah An-Nazi'at (16-30)"
-                                        data-prmurojaah="Surah An-Nazi'at (1-15)">
-                                        <i class="fa-solid fa-eye"></i> Detail
-                                    </button>
+                                <td class="col-status">
+                                    <div class="status-badges-group">
+                                        <span class="badge-pill outline-dark">Lancar</span>
+                                        <span class="badge-pill outline-dark">Tercapai</span>
+                                    </div>
+                                    <div class="target-details">
+                                        <strong>Juz 30</strong>
+                                        <span>Target: 1 baris</span>
+                                        <span>Disetor 1 baris</span>
+                                    </div>
+                                </td>
+                                <td class="col-aksi">
+                                    <div class="action-btn-vertical">
+                                        <button type="button" class="btn-action-sm btn-catatan"
+                                            onclick="openCatatanModal('Adiba Rizky Nurjannah', 'Hafalan sangat lancar dan tajwid tepat.')">
+                                            <i class="fa-solid fa-comment-dots"></i> Catatan
+                                        </button>
+                                        <button type="button" class="btn-action-sm btn-pr"
+                                            onclick="openPrModal('Adiba Rizky Nurjannah', 'PR Ziyadah: Al-Kausar: 1', 'PR Murojaah: Al-Kafirun: 1-6')">
+                                            <i class="fa-solid fa-bookmark"></i> PR
+                                        </button>
+                                        <button type="button" class="btn-action-sm btn-lihat"
+                                            onclick="openDetailLaporanModal('16 Okt 2026', 'Adiba Rizky Nurjannah', 'Juz 30', '1 baris / 1 baris', 'Tercapai', 'Al-Kafirun: 1-6', 'An-Nasr: 1-3')">
+                                            <i class="fa-solid fa-eye"></i> Lihat
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
 
-                            <!-- Item Laporan 3 -->
+                            <!-- ITEM 3 -->
                             <tr>
-                                <td>3</td>
-                                <td>15/10/2026</td>
-                                <td>
-                                    <div class="student-name-cell">
-                                        <div class="student-avatar" style="background: var(--gold-gradient); color: var(--primary-darker);">MB</div>
-                                        <span class="cell-strong">Muhammad Bilal</span>
+                                <td class="col-tanggal">
+                                    <span class="date-txt">14 Okt 2026</span>
+                                    <span class="time-txt">02:28 WIB</span>
+                                </td>
+                                <td class="col-siswa">
+                                    <strong class="student-fullname">Adiba Rizky Nurjannah</strong>
+                                    <span class="student-meta">Halaqah: Halaqah 4</span>
+                                    <span class="student-meta">Kelas: 1B</span>
+                                </td>
+                                <td class="col-surah">
+                                    <div class="surah-item-row">
+                                        <span class="code-tag">Z:</span>
+                                        <span class="arabic-txt">الكافرون</span>
+                                        <span class="latin-txt">(Al-Kafirun): 1-4</span>
+                                    </div>
+                                    <div class="surah-item-row">
+                                        <span class="code-tag">M:</span>
+                                        <span class="arabic-txt">الإخلاص</span>
+                                        <span class="latin-txt">(Al-Ikhlas): 1-4</span>
+                                    </div>
+                                    <div class="surah-item-row sub-murojaah">
+                                        <span class="arabic-txt">الفلق</span>
+                                        <span class="latin-txt">(Al-Falaq): 1-5</span>
+                                    </div>
+                                    <div class="surah-item-row sub-murojaah">
+                                        <span class="arabic-txt">الناس</span>
+                                        <span class="latin-txt">(An-Nas): 1-6</span>
                                     </div>
                                 </td>
-                                <td>Juz 30</td>
-                                <td>Surah Abasa (1-10)</td>
-                                <td>Surah Takwir (1-10)</td>
-                                <td>10 / 15</td>
-                                <td><span class="badge danger"><i class="fa-solid fa-circle-xmark"></i> Belum Tercapai</span></td>
-                                <td class="text-center">
-                                    <button type="button" class="btn-xs btn-detail-laporan" style="background: var(--red-bg); color: var(--red-text); border-color: var(--border-color);"
-                                        data-tanggal="15/10/2026"
-                                        data-nama="Muhammad Bilal"
-                                        data-nisn="222301003"
-                                        data-juz="Juz 30"
-                                        data-target="15 Baris"
-                                        data-jumlah="10 Baris"
-                                        data-status="Belum Tercapai"
-                                        data-ziyadah="Surah Abasa (1-10)"
-                                        data-murojaah="Surah Takwir (1-10)"
-                                        data-prziyadah="Ulangi Surah Abasa (1-10)"
-                                        data-prmurojaah="Murojaah Surah Takwir">
-                                        <i class="fa-solid fa-eye"></i> Detail
-                                    </button>
+                                <td class="col-status">
+                                    <div class="status-badges-group">
+                                        <span class="badge-pill outline-dark">Lancar</span>
+                                        <span class="badge-pill outline-dark">Tercapai</span>
+                                    </div>
+                                    <div class="target-details">
+                                        <strong>Juz 30</strong>
+                                        <span>Target: 1 baris</span>
+                                        <span>Disetor 1 baris</span>
+                                    </div>
+                                </td>
+                                <td class="col-aksi">
+                                    <div class="action-btn-vertical">
+                                        <button type="button" class="btn-action-sm btn-catatan"
+                                            onclick="openCatatanModal('Adiba Rizky Nurjannah', 'Makhraj huruf fathah perlu diperhatikan.')">
+                                            <i class="fa-solid fa-comment-dots"></i> Catatan
+                                        </button>
+                                        <button type="button" class="btn-action-sm btn-pr"
+                                            onclick="openPrModal('Adiba Rizky Nurjannah', 'PR Ziyadah: Al-Kafirun: 5-6', 'PR Murojaah: Al-Ikhlas')">
+                                            <i class="fa-solid fa-bookmark"></i> PR
+                                        </button>
+                                        <button type="button" class="btn-action-sm btn-lihat"
+                                            onclick="openDetailLaporanModal('14 Okt 2026', 'Adiba Rizky Nurjannah', 'Juz 30', '1 baris / 1 baris', 'Tercapai', 'Al-Kafirun: 1-4', 'Al-Ikhlas: 1-4')">
+                                            <i class="fa-solid fa-eye"></i> Lihat
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- ITEM 4 -->
+                            <tr>
+                                <td class="col-tanggal">
+                                    <span class="date-txt">12 Okt 2026</span>
+                                    <span class="time-txt">04:33 WIB</span>
+                                </td>
+                                <td class="col-siswa">
+                                    <strong class="student-fullname">Adiba Rizky Nurjannah</strong>
+                                    <span class="student-meta">Halaqah: Halaqah 4</span>
+                                    <span class="student-meta">Kelas: 1B</span>
+                                </td>
+                                <td class="col-surah">
+                                    <div class="surah-item-row">
+                                        <span class="code-tag">Z:</span>
+                                        <span class="arabic-txt">الكافرون</span>
+                                        <span class="latin-txt">(Al-Kafirun): 1-4</span>
+                                    </div>
+                                    <div class="surah-item-row">
+                                        <span class="code-tag">M:</span>
+                                        <span class="arabic-txt">النصر</span>
+                                        <span class="latin-txt">(An-Nasr): 1-3</span>
+                                    </div>
+                                    <div class="surah-item-row sub-murojaah">
+                                        <span class="arabic-txt">المسد</span>
+                                        <span class="latin-txt">(Al-Lahab): 1-5</span>
+                                    </div>
+                                </td>
+                                <td class="col-status">
+                                    <div class="status-badges-group">
+                                        <span class="badge-pill outline-dark">Belum Lancar</span>
+                                        <span class="badge-pill outline-dark">Belum Tercapai</span>
+                                    </div>
+                                    <div class="target-details">
+                                        <strong>Juz 30</strong>
+                                        <span>Target: 1 baris</span>
+                                        <span>Disetor 1 baris</span>
+                                    </div>
+                                </td>
+                                <td class="col-aksi">
+                                    <div class="action-btn-vertical">
+                                        <button type="button" class="btn-action-sm btn-catatan"
+                                            onclick="openCatatanModal('Adiba Rizky Nurjannah', 'Perlu murojaah ulang di rumah.')">
+                                            <i class="fa-solid fa-comment-dots"></i> Catatan
+                                        </button>
+                                        <button type="button" class="btn-action-sm btn-pr"
+                                            onclick="openPrModal('Adiba Rizky Nurjannah', 'PR Ziyadah: Ulangi Al-Kafirun 1-4', 'PR Murojaah: An-Nasr')">
+                                            <i class="fa-solid fa-bookmark"></i> PR
+                                        </button>
+                                        <button type="button" class="btn-action-sm btn-lihat"
+                                            onclick="openDetailLaporanModal('12 Okt 2026', 'Adiba Rizky Nurjannah', 'Juz 30', '1 baris / 1 baris', 'Belum Tercapai', 'Al-Kafirun: 1-4', 'An-Nasr: 1-3')">
+                                            <i class="fa-solid fa-eye"></i> Lihat
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
             </div>
 
         </main>
     </div>
 
-    <!-- MODAL POP-UP DETAIL LAPORAN SISWA -->
-    <div class="modal-overlay" id="detailLaporanModal">
+    <!-- MODAL POP-UP CATATAN -->
+    <div class="modal-overlay" id="catatanModal">
         <div class="modal-container">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-book-open-reader"></i> Detail Laporan Setoran</h3>
-                <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
+                <h3><i class="fa-solid fa-comment-dots"></i> Catatan Guru</h3>
+                <button type="button" class="modal-close" onclick="closeCatatanModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="modal-detail-list">
-                    <div class="detail-item">
-                        <span class="detail-label">Tanggal Setoran:</span>
-                        <span class="detail-value" id="modalTanggal">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Nama Siswa / NISN:</span>
-                        <span class="detail-value" id="modalSiswa">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Capaian Juz:</span>
-                        <span class="detail-value" id="modalJuz">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Target / Disetor:</span>
-                        <span class="detail-value" id="modalBaris">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Status Target:</span>
-                        <span class="detail-value" id="modalStatus">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Setoran Ziyadah:</span>
-                        <span class="detail-value text-green" id="modalZiyadah">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Setoran Murojaah:</span>
-                        <span class="detail-value style-gold" id="modalMurojaah">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">PR Ziyadah:</span>
-                        <span class="detail-value" id="modalPrZiyadah">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">PR Murojaah:</span>
-                        <span class="detail-value" id="modalPrMurojaah">-</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-close-modal" onclick="closeModal()">Tutup</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT MODAL & TOGGLE FILTER -->
-    <script>
-        function toggleFilterFields(val) {
-            document.querySelectorAll('.filter-dynamic').forEach(el => el.style.display = 'none');
-            if (val === 'harian') {
-                document.getElementById('field-harian').style.display = 'flex';
-            } else if (val === 'mingguan') {
-                document.getElementById('field-mingguan').style.display = 'flex';
-            } else if (val === 'bulanan') {
-                document.getElementById('field-bulanan').style.display = 'flex';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            // Inisialisasi tampilan filter awal
-            const selectedPeriode = document.getElementById('periode').value;
-            toggleFilterFields(selectedPeriode);
-
-            // Trigger Modal Pop-up Detail Laporan
-            const detailButtons = document.querySelectorAll('.btn-detail-laporan');
-            const modal = document.getElementById('detailLaporanModal');
-
-            detailButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    document.getElementById('modalTanggal').innerText = this.getAttribute('data-tanggal');
-                    document.getElementById('modalSiswa').innerText = this.getAttribute('data-nama') + ' (' + this.getAttribute('data-nisn') + ')';
-                    document.getElementById('modalJuz').innerText = this.getAttribute('data-juz');
-                    document.getElementById('modalBaris').innerText = this.getAttribute('data-jumlah') + ' / ' + this.getAttribute('data-target');
-                    document.getElementById('modalStatus').innerText = this.getAttribute('data-status');
-                    document.getElementById('modalZiyadah').innerText = this.getAttribute('data-ziyadah');
-                    document.getElementById('modalMurojaah').innerText = this.getAttribute('data-murojaah');
-                    document.getElementById('modalPrZiyadah').innerText = this.getAttribute('data-prziyadah');
-                    document.getElementById('modalPrMurojaah').innerText = this.getAttribute('data-prmurojaah');
-
-                    modal.classList.add('active');
-                });
-            });
-        });
-
-        function closeModal() {
-            document.getElementById('detailLaporanModal').classList.remove('active');
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('detailLaporanModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        }
-    </script>
-</body>
-</html><?php /**PATH D:\laragon\www\sekolahsyafii\resources\views\modul\tahfiz\guru\riwayat.blade.php ENDPATH**/ ?>
+                <p><strong>Siswa:</strong> <span id="catatanNamaSiswa">-</span></p>
+                <div class="modal-content-box mt-10"<?php /**PATH D:\laragon\www\sekolahsyafii\resources\views\modul\tahfiz\guru\riwayat.blade.php ENDPATH**/ ?>

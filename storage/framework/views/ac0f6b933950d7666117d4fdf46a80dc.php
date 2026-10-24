@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Siswa - Tahfiz Digital</title>
+    <!-- Google Fonts: Amiri + Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="<?php echo e(asset('css/modul/tahfiz/siswa_tahfiz.css')); ?>">
     <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>">
 </head>
@@ -43,8 +46,8 @@
                     <h1>Data Siswa</h1>
                 </div>
                 <div class="page-header-right">
-                    <button class="btn-outline"><i class="fa-solid fa-file-export"></i> Export Data</button>
-                    <button class="btn-primary-gold" onclick="document.getElementById('modalTambahSiswa').classList.add('show')">
+                    <button class="btn-outline"><i class="fa-solid fa-file-export"></i> Import siswa</button>
+                    <button class="btn-primary-gold" onclick="openModal('modalTambahSiswa')">
                         <i class="fa-solid fa-plus"></i> Tambah Siswa
                     </button>
                 </div>
@@ -66,179 +69,162 @@
                         <p>Siswa Aktif</p>
                     </div>
                 </div>
-                <div class="stat-pill alert">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <div>
-                        <h4>18</h4>
-                        <p>Belum Capai Target Minggu Ini</p>
+
+            </div>
+
+            <!-- 3. TOOLBAR ATAS TABEL -->
+            <div class="toolbar-box-custom">
+                <div class="toolbar-left-group">
+                    <button class="btn-tindakan"><i class="fa-solid fa-ellipsis-vertical"></i> Tindakan</button>
+                </div>
+                <div class="toolbar-right-group">
+                    <div class="search-field">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Cari...">
                     </div>
+                    <button class="btn-filter-icon">
+                        <i class="fa-solid fa-filter"></i>
+                        <span class="filter-count">0</span>
+                    </button>
                 </div>
             </div>
 
-            <!-- 3. FILTER & PENCARIAN -->
-            <div class="toolbar-box">
-                <div class="search-field">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Cari nama siswa atau NIS...">
-                </div>
-                <div class="toolbar-filters">
-                    <select>
-                        <option>Semua Kelas</option>
-                        <option>Kelas 1A</option>
-                        <option>Kelas 2B</option>
-                        <option>Kelas 3A</option>
-                    </select>
-                    <select>
-                        <option>Semua Halaqah</option>
-                        <option>Halaqah 1</option>
-                        <option>Halaqah 2</option>
-                    </select>
-                    <select>
-                        <option>Semua Status Hafalan</option>
-                        <option>Lancar</option>
-                        <option>Belum Lancar</option>
-                    </select>
+            <!-- 4. INFO SELEKSI DATA -->
+            <div class="selection-info-bar">
+                <span><strong>20 data dipilih</strong></span>
+                <div class="selection-actions">
+                    <a href="#">Pilih semua (203)</a>
+                    <a href="#" class="text-danger">Batalkan semua pilihan</a>
                 </div>
             </div>
 
-            <!-- 4. TABEL SISWA -->
+            <!-- 5. TABEL DAFTAR SISWA -->
             <div class="table-card">
                 <div class="table-responsive">
-                    <table>
+                    <table class="table-siswa-modern">
                         <thead>
                             <tr>
-                                <th>Siswa</th>
-                                <th>NIS</th>
-                                <th>Kelas</th>
-                                <th>Halaqah</th>
-                                <th>Juz</th>
-                                <th>Progres</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
+                                <th style="width: 40px;" class="text-center"><input type="checkbox" checked></th>
+                                <th>Siswa <i class="fa-solid fa-chevron-down text-xs"></i></th>
+                                <th>Wali Murid / Akses <i class="fa-solid fa-chevron-up text-xs"></i></th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center" style="width: 150px;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <!-- BARIS 1: Faqih -->
                             <tr>
+                                <td class="text-center"><input type="checkbox" checked></td>
                                 <td>
-                                    <div class="student-cell">
-                                        <div class="avatar-sm"><i class="fa-solid fa-user"></i></div>
-                                        <span class="cell-strong">Ali</span>
+                                    <div class="student-main-info">
+                                        <strong class="student-name">Faqih</strong>
+                                        <span class="student-meta">Username: faqih_sqis08</span>
+                                        <span class="student-meta">Halaqah: Halaqah 1</span>
+                                        <span class="student-meta">Kelas: 1A</span>
                                     </div>
                                 </td>
-                                <td>2024001</td>
-                                <td>Kelas 1A</td>
-                                <td>Halaqah 1</td>
-                                <td>29</td>
                                 <td>
-                                    <div class="progress-mini">
-                                        <div class="progress-mini-fill" style="width: 85%;"></div>
+                                    <div class="wali-info">
+                                        <span class="wali-name">-</span>
                                     </div>
-                                    <span class="progress-mini-label">85%</span>
                                 </td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Aktif</span></td>
-                                <td>
-                                    <div class="action-icons">
-                                        <button title="Lihat Detail" onclick="document.getElementById('modalDetailSiswa').classList.add('show')"><i class="fa-solid fa-eye"></i></button>
-                                        <button title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                        <button title="Hapus" class="danger"><i class="fa-solid fa-trash"></i></button>
+                                <td class="text-center">
+                                    <div class="status-juz-group">
+                                        <span class="badge-status-active">Aktif</span>
+                                        <span class="juz-label">Juz 30</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="action-buttons-stack">
+                                        <button class="btn-action-custom btn-blue"><i class="fa-solid fa-copy"></i> Salin Akses</button>
+                                        <button class="btn-action-custom btn-green" onclick="openModal('modalDetailSiswa')"><i class="fa-solid fa-eye"></i> Lihat</button>
+                                        <button class="btn-action-custom btn-orange" onclick="openModal('modalEditSiswa')"><i class="fa-solid fa-pen-to-square"></i> Ubah</button>
+                                        <button class="btn-action-custom btn-red" onclick="openModal('modalHapusSiswa')"><i class="fa-solid fa-trash-can"></i> Hapus</button>
                                     </div>
                                 </td>
                             </tr>
+
+                            <!-- BARIS 2: Raffasya Ilham P -->
                             <tr>
+                                <td class="text-center"><input type="checkbox" checked></td>
                                 <td>
-                                    <div class="student-cell">
-                                        <div class="avatar-sm"><i class="fa-solid fa-user"></i></div>
-                                        <span class="cell-strong">Budi</span>
+                                    <div class="student-main-info">
+                                        <strong class="student-name">Raffasya Ilham P</strong>
+                                        <span class="student-meta">Username: raffasya_sqis04</span>
+                                        <span class="student-meta">Halaqah: Halaqah 5</span>
+                                        <span class="student-meta">Kelas: 2A</span>
                                     </div>
                                 </td>
-                                <td>2024002</td>
-                                <td>Kelas 1A</td>
-                                <td>Halaqah 1</td>
-                                <td>29</td>
                                 <td>
-                                    <div class="progress-mini">
-                                        <div class="progress-mini-fill" style="width: 58%;"></div>
+                                    <div class="wali-info">
+                                        <strong class="wali-name">Abd Darwis P. & Hajrana</strong>
+                                        <span class="wali-detail">Email: -</span>
+                                        <span class="wali-detail">Pass: <code class="pass-code">raffasya_sqis04</code></span>
                                     </div>
-                                    <span class="progress-mini-label">58%</span>
                                 </td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Aktif</span></td>
-                                <td>
-                                    <div class="action-icons">
-                                        <button title="Lihat Detail" onclick="document.getElementById('modalDetailSiswa').classList.add('show')"><i class="fa-solid fa-eye"></i></button>
-                                        <button title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                        <button title="Hapus" class="danger"><i class="fa-solid fa-trash"></i></button>
+                                <td class="text-center">
+                                    <div class="status-juz-group">
+                                        <span class="badge-status-active">Aktif</span>
+                                        <span class="juz-label">Juz 29</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="action-buttons-stack">
+                                        <button class="btn-action-custom btn-blue"><i class="fa-solid fa-copy"></i> Salin Akses</button>
+                                        <button class="btn-action-custom btn-green" onclick="openModal('modalDetailSiswa')"><i class="fa-solid fa-eye"></i> Lihat</button>
+                                        <button class="btn-action-custom btn-orange" onclick="openModal('modalEditSiswa')"><i class="fa-solid fa-pen-to-square"></i> Ubah</button>
+                                        <button class="btn-action-custom btn-red" onclick="openModal('modalHapusSiswa')"><i class="fa-solid fa-trash-can"></i> Hapus</button>
                                     </div>
                                 </td>
                             </tr>
+
+                            <!-- BARIS 3: Muhammad Nurzaty Al Muntazar -->
                             <tr>
+                                <td class="text-center"><input type="checkbox" checked></td>
                                 <td>
-                                    <div class="student-cell">
-                                        <div class="avatar-sm"><i class="fa-solid fa-user"></i></div>
-                                        <span class="cell-strong">Citra</span>
+                                    <div class="student-main-info">
+                                        <strong class="student-name">Muhammad Nurzaty Al Muntazar</strong>
+                                        <span class="student-meta">Username: nurzaty_sqis22</span>
+                                        <span class="student-meta">Halaqah: Halaqah 10</span>
+                                        <span class="student-meta">Kelas: 3A</span>
                                     </div>
                                 </td>
-                                <td>2024003</td>
-                                <td>Kelas 1A</td>
-                                <td>Halaqah 2</td>
-                                <td>28</td>
                                 <td>
-                                    <div class="progress-mini">
-                                        <div class="progress-mini-fill" style="width: 92%;"></div>
-                                    </div>
-                                    <span class="progress-mini-label">92%</span>
-                                </td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Aktif</span></td>
-                                <td>
-                                    <div class="action-icons">
-                                        <button title="Lihat Detail" onclick="document.getElementById('modalDetailSiswa').classList.add('show')"><i class="fa-solid fa-eye"></i></button>
-                                        <button title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                        <button title="Hapus" class="danger"><i class="fa-solid fa-trash"></i></button>
+                                    <div class="wali-info">
+                                        <strong class="wali-name">Abdul Rahman</strong>
+                                        <span class="wali-detail">Email: -</span>
+                                        <span class="wali-detail">Pass: <code class="pass-code">nurzaty_sqis22</code></span>
                                     </div>
                                 </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="student-cell">
-                                        <div class="avatar-sm"><i class="fa-solid fa-user"></i></div>
-                                        <span class="cell-strong">Dafa</span>
+                                <td class="text-center">
+                                    <div class="status-juz-group">
+                                        <span class="badge-status-active">Aktif</span>
+                                        <span class="juz-label">Juz 30</span>
                                     </div>
                                 </td>
-                                <td>2024004</td>
-                                <td>Kelas 2B</td>
-                                <td>Halaqah 1</td>
-                                <td>27</td>
-                                <td>
-                                    <div class="progress-mini">
-                                        <div class="progress-mini-fill" style="width: 100%;"></div>
-                                    </div>
-                                    <span class="progress-mini-label">100%</span>
-                                </td>
-                                <td><span class="badge nonaktif"><i class="fa-solid fa-circle-minus"></i> Nonaktif</span></td>
-                                <td>
-                                    <div class="action-icons">
-                                        <button title="Lihat Detail" onclick="document.getElementById('modalDetailSiswa').classList.add('show')"><i class="fa-solid fa-eye"></i></button>
-                                        <button title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                        <button title="Hapus" class="danger"><i class="fa-solid fa-trash"></i></button>
+                                <td class="text-center">
+                                    <div class="action-buttons-stack">
+                                        <button class="btn-action-custom btn-blue"><i class="fa-solid fa-copy"></i> Salin Akses</button>
+                                        <button class="btn-action-custom btn-green" onclick="openModal('modalDetailSiswa')"><i class="fa-solid fa-eye"></i> Lihat</button>
+                                        <button class="btn-action-custom btn-orange" onclick="openModal('modalEditSiswa')"><i class="fa-solid fa-pen-to-square"></i> Ubah</button>
+                                        <button class="btn-action-custom btn-red" onclick="openModal('modalHapusSiswa')"><i class="fa-solid fa-trash-can"></i> Hapus</button>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
-                <!-- 7. EMPTY STATE (tampil kalau data kosong — sembunyikan/hapus saat sudah ada data) -->
-                
             </div>
 
         </main>
     </div>
 
-    <!-- 6. MODAL TAMBAH / EDIT SISWA -->
+    <!-- 6. MODAL TAMBAH SISWA -->
     <div class="modal-overlay" id="modalTambahSiswa">
         <div class="modal-box">
             <div class="modal-header">
                 <h3>Tambah Siswa</h3>
-                <button class="modal-close" onclick="document.getElementById('modalTambahSiswa').classList.remove('show')"><i class="fa-solid fa-xmark"></i></button>
+                <button class="modal-close" onclick="closeModal('modalTambahSiswa')"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -258,145 +244,22 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Tanggal Lahir</label>
-                    <input type="date">
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Kelas</label>
-                        <select>
-                            <option>Pilih kelas...</option>
-                            <option>Kelas 1A</option>
-                            <option>Kelas 2B</option>
-                            <option>Kelas 3A</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Halaqah</label>
-                        <select>
-                            <option>Pilih halaqah...</option>
-                            <option>Halaqah 1</option>
-                            <option>Halaqah 2</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Nama Orang Tua / Wali</label>
-                    <input type="text" placeholder="Contoh: Bapak Hasan">
-                </div>
-                <div class="form-group">
-                    <label>No. HP Orang Tua / Wali</label>
-                    <input type="text" placeholder="08xxxxxxxxxx">
-                </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-back" onclick="document.getElementById('modalTambahSiswa').classList.remove('show')">Batal</button>
+                <button class="btn-back" onclick="closeModal('modalTambahSiswa')">Batal</button>
                 <button class="btn-primary-gold">Simpan</button>
             </div>
         </div>
     </div>
 
-    <!-- 5. MODAL DETAIL SISWA (panel lebar) -->
+    <!-- 7. MODAL DETAIL SISWA -->
     <div class="modal-overlay" id="modalDetailSiswa">
         <div class="modal-box modal-box-lg">
             <div class="modal-header">
                 <h3>Detail Siswa</h3>
-                <button class="modal-close" onclick="document.getElementById('modalDetailSiswa').classList.remove('show')"><i class="fa-solid fa-xmark"></i></button>
+                <button class="modal-close" onclick="closeModal('modalDetailSiswa')"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
                 <div class="detail-siswa-grid">
-
-                    <!-- KOLOM KIRI: PROFIL, ORANG TUA, CATATAN -->
                     <div class="detail-siswa-col">
-                        <div class="student-profile">
-                            <div class="avatar"><i class="fa-solid fa-user"></i></div>
-                            <div class="student-info">
-                                <h4>Ali</h4>
-                                <p>NIS: 2024001</p>
-                                <p>Kelas 1A · Halaqah 1 · Juz 29</p>
-                            </div>
-                        </div>
-
-                        <div class="info-box">
-                            <h5><i class="fa-solid fa-people-roof"></i> Orang Tua / Wali</h5>
-                            <p class="info-line"><i class="fa-solid fa-user"></i> Bapak Hasan</p>
-                            <p class="info-line"><i class="fa-solid fa-phone"></i> 0812-3456-7890</p>
-                        </div>
-
-                        <div class="info-box">
-                            <h5><i class="fa-solid fa-note-sticky"></i> Catatan Pengampu</h5>
-                            <p class="notes-text">Hafalan cukup lancar, perlu lebih diperhatikan pada bacaan tajwid di juz 29. Semangat murojaah baik.</p>
-                        </div>
-                    </div>
-
-                    <!-- KOLOM KANAN: GRAFIK & RIWAYAT SETORAN -->
-                    <div class="detail-siswa-col">
-                        <div class="chart-box">
-                            <h5>Progress Hafalan</h5>
-                            <div class="dummy-chart">
-                                <div class="bar" style="height: 40%;"></div>
-                                <div class="bar" style="height: 60%;"></div>
-                                <div class="bar" style="height: 80%;"></div>
-                                <div class="bar" style="height: 50%;"></div>
-                                <div class="bar" style="height: 70%;"></div>
-                                <div class="bar" style="height: 90%;"></div>
-                                <div class="bar" style="height: 100%;"></div>
-                            </div>
-                            <div class="chart-labels">
-                                <span>17/06</span><span>18/06</span><span>19/06</span><span>20/06</span><span>21/06</span><span>22/06</span><span>23/06</span>
-                            </div>
-                        </div>
-
-                        <div class="history-section">
-                            <h5>Riwayat Setoran</h5>
-                            <div class="table-responsive">
-                                <table class="table-compact">
-                                    <thead>
-                                        <tr>
-                                            <th>Tgl</th>
-                                            <th>Ziyadah</th>
-                                            <th>Murojaah</th>
-                                            <th>Kondisi</th>
-                                            <th>Capaian</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>23/06</td>
-                                            <td>5 baris<br><small>(An-Naba: 1-5)</small></td>
-                                            <td>2 ayat<br><small>(An-Naba: 1-2)</small></td>
-                                            <td>Lancar</td>
-                                            <td><i class="fa-solid fa-circle-check text-green"></i></td>
-                                        </tr>
-                                        <tr>
-                                            <td>22/06</td>
-                                            <td>4 baris<br><small>(An-Naba: 1-4)</small></td>
-                                            <td>3 ayat<br><small>(An-Naba: 1-3)</small></td>
-                                            <td>Lancar</td>
-                                            <td><i class="fa-solid fa-circle-check text-green"></i></td>
-                                        </tr>
-                                        <tr>
-                                            <td>21/06</td>
-                                            <td>5 baris<br><small>('Abasa: 1-5)</small></td>
-                                            <td>2 ayat<br><small>('Abasa: 1-2)</small></td>
-                                            <td>Belum Lancar</td>
-                                            <td><i class="fa-solid fa-circle-xmark text-red"></i></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-back" onclick="document.getElementById('modalDetailSiswa').classList.remove('show')">Tutup</button>
-                <button class="btn-primary-gold"><i class="fa-solid fa-pen"></i> Edit Siswa</button>
-            </div>
-        </div>
-    </div>
-
-</body>
-</html><?php /**PATH D:\laragon\www\sekolahsyafii\resources\views\modul\tahfiz\siswatahfiz.blade.php ENDPATH**/ ?>
+                        <div class="<?php /**PATH D:\laragon\www\sekolahsyafii\resources\views\modul\tahfiz\siswatahfiz.blade.php ENDPATH**/ ?>

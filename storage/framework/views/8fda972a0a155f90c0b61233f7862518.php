@@ -43,8 +43,8 @@
                     <h1>Pengampu</h1>
                 </div>
                 <div class="page-header-right">
-                    <button class="btn-outline"><i class="fa-solid fa-file-export"></i> Export</button>
-                    <button class="btn-primary-gold" onclick="document.getElementById('modalTambahPengampu').classList.add('show')">
+                    <button class="btn-outline"><i class="fa-solid fa-file-export"></i> Import pengampu</button>
+                    <button class="btn-primary-gold" onclick="openModal('modalTambahPengampu')">
                         <i class="fa-solid fa-plus"></i> Tambah Pengampu
                     </button>
                 </div>
@@ -66,13 +66,7 @@
                         <p>Halaqah Belum Ada Pengampu</p>
                     </div>
                 </div>
-                <div class="stat-pill">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <div>
-                        <h4>89%</h4>
-                        <p>Rata-rata Konsistensi Input</p>
-                    </div>
-                </div>
+              
             </div>
 
             <!-- 3. FILTER & PENCARIAN -->
@@ -136,9 +130,10 @@
                                 <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Aktif</span></td>
                                 <td>
                                     <div class="action-icons">
-                                        <button title="Lihat Detail" onclick="document.getElementById('modalDetailPengampu').classList.add('show')"><i class="fa-solid fa-eye"></i></button>
-                                        <button title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                        <button title="Nonaktifkan" class="danger"><i class="fa-solid fa-user-slash"></i></button>
+                                        <button title="Lihat Detail" onclick="openModal('modalDetailPengampu')"><i class="fa-solid fa-eye"></i></button>
+                                        <button title="Riwayat Aktivitas" onclick="openModal('modalRiwayatAktivitas')"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                                        <button title="Edit" onclick="openModal('modalEditPengampu')"><i class="fa-solid fa-pen"></i></button>
+                                        <button title="Nonaktifkan" class="danger" onclick="openModal('modalNonaktifPengampu')"><i class="fa-solid fa-user-slash"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -166,9 +161,10 @@
                                 <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Aktif</span></td>
                                 <td>
                                     <div class="action-icons">
-                                        <button title="Lihat Detail" onclick="document.getElementById('modalDetailPengampu').classList.add('show')"><i class="fa-solid fa-eye"></i></button>
-                                        <button title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                        <button title="Nonaktifkan" class="danger"><i class="fa-solid fa-user-slash"></i></button>
+                                        <button title="Lihat Detail" onclick="openModal('modalDetailPengampu')"><i class="fa-solid fa-eye"></i></button>
+                                        <button title="Riwayat Aktivitas" onclick="openModal('modalRiwayatAktivitas')"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                                        <button title="Edit" onclick="openModal('modalEditPengampu')"><i class="fa-solid fa-pen"></i></button>
+                                        <button title="Nonaktifkan" class="danger" onclick="openModal('modalNonaktifPengampu')"><i class="fa-solid fa-user-slash"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -195,9 +191,10 @@
                                 <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Aktif</span></td>
                                 <td>
                                     <div class="action-icons">
-                                        <button title="Lihat Detail" onclick="document.getElementById('modalDetailPengampu').classList.add('show')"><i class="fa-solid fa-eye"></i></button>
-                                        <button title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                        <button title="Ingatkan" class="highlight"><i class="fa-solid fa-bell"></i></button>
+                                        <button title="Lihat Detail" onclick="openModal('modalDetailPengampu')"><i class="fa-solid fa-eye"></i></button>
+                                        <button title="Riwayat Aktivitas" onclick="openModal('modalRiwayatAktivitas')"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                                        <button title="Edit" onclick="openModal('modalEditPengampu')"><i class="fa-solid fa-pen"></i></button>
+                                        <button title="Nonaktifkan" class="danger" onclick="openModal('modalNonaktifPengampu')"><i class="fa-solid fa-user-slash"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -224,29 +221,27 @@
                                 <td><span class="badge cuti"><i class="fa-solid fa-mug-hot"></i> Cuti</span></td>
                                 <td>
                                     <div class="action-icons">
-                                        <button title="Lihat Detail" onclick="document.getElementById('modalDetailPengampu').classList.add('show')"><i class="fa-solid fa-eye"></i></button>
-                                        <button title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                        <button title="Nonaktifkan" class="danger"><i class="fa-solid fa-user-slash"></i></button>
+                                        <button title="Lihat Detail" onclick="openModal('modalDetailPengampu')"><i class="fa-solid fa-eye"></i></button>
+                                        <button title="Riwayat Aktivitas" onclick="openModal('modalRiwayatAktivitas')"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                                        <button title="Edit" onclick="openModal('modalEditPengampu')"><i class="fa-solid fa-pen"></i></button>
+                                        <button title="Nonaktifkan" class="danger" onclick="openModal('modalNonaktifPengampu')"><i class="fa-solid fa-user-slash"></i></button>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
-                <!-- 8. EMPTY STATE (tampil kalau belum ada pengampu terdaftar) -->
-                
             </div>
 
         </main>
     </div>
 
-    <!-- 5. MODAL TAMBAH / EDIT PENGAMPU -->
+    <!-- 5. MODAL TAMBAH PENGAMPU -->
     <div class="modal-overlay" id="modalTambahPengampu">
         <div class="modal-box">
             <div class="modal-header">
                 <h3>Tambah Pengampu</h3>
-                <button class="modal-close" onclick="document.getElementById('modalTambahPengampu').classList.remove('show')"><i class="fa-solid fa-xmark"></i></button>
+                <button class="modal-close" onclick="closeModal('modalTambahPengampu')"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -267,9 +262,8 @@
                     <label>Assign ke Halaqah</label>
                     <div class="checkbox-list">
                         <label class="checkbox-item"><input type="checkbox"> Kelas 2B - Halaqah 3</label>
-                        <label class="checkbox-item"><input type="checkbox"> Kelas 1A - Halaqah 3 (belum dibuat)</label>
+                        <label class="checkbox-item"><input type="checkbox"> Kelas 1A - Halaqah 3</label>
                     </div>
-                    <p class="field-hint">Bisa dikosongkan dulu, di-assign belakangan dari halaman Kelas & Halaqah.</p>
                 </div>
                 <div class="form-group">
                     <label>Status</label>
@@ -281,13 +275,110 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-back" onclick="document.getElementById('modalTambahPengampu').classList.remove('show')">Batal</button>
+                <button class="btn-back" onclick="closeModal('modalTambahPengampu')">Batal</button>
                 <button class="btn-primary-gold">Simpan</button>
             </div>
         </div>
     </div>
 
-    <!-- 6 & 7. MODAL DETAIL PENGAMPU (profil + tab grafik + alih tugas) -->
+    <!-- 6. MODAL EDIT PENGAMPU (BARU) -->
+    <div class="modal-overlay" id="modalEditPengampu">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Edit Data Pengampu</h3>
+                <button class="modal-close" onclick="closeModal('modalEditPengampu')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" value="Ustadz Ahmad">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>No. HP / WA</label>
+                        <input type="text" value="0812-3456-7890">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select>
+                            <option selected>Aktif</option>
+                            <option>Nonaktif</option>
+                            <option>Cuti</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-back" onclick="closeModal('modalEditPengampu')">Batal</button>
+                <button class="btn-primary-gold">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. MODAL RIWAYAT AKTIVITAS (BARU) -->
+    <div class="modal-overlay" id="modalRiwayatAktivitas">
+        <div class="modal-box modal-box-lg">
+            <div class="modal-header">
+                <div>
+                    <span class="modal-header-tag">LOG AKTIVITAS</span>
+                    <h3>Riwayat Input Pengampu — Ustadz Ahmad</h3>
+                </div>
+                <button class="modal-close" onclick="closeModal('modalRiwayatAktivitas')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table-modal-siswa">
+                        <thead>
+                            <tr>
+                                <th>WAKTU</th>
+                                <th>AKTIVITAS / HALAQAH</th>
+                                <th class="text-center">STATUS INPUT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>23 Jun 2026, 07:30</td>
+                                <td>Input setoran hafalan Kelas 1A - Halaqah 1 (12 Siswa)</td>
+                                <td class="text-center"><span class="badge success">Tepat Waktu</span></td>
+                            </tr>
+                            <tr>
+                                <td>22 Jun 2026, 08:10</td>
+                                <td>Input setoran hafalan Kelas 1A - Halaqah 1 (11 Siswa)</td>
+                                <td class="text-center"><span class="badge success">Tepat Waktu</span></td>
+                            </tr>
+                            <tr>
+                                <td>20 Jun 2026, 10:00</td>
+                                <td>Pembaruan data catatan siswa</td>
+                                <td class="text-center"><span class="badge success">Selesai</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary-gold" onclick="closeModal('modalRiwayatAktivitas')">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. MODAL NONAKTIFKAN PENGAMPU (BARU) -->
+    <div class="modal-overlay" id="modalNonaktifPengampu">
+        <div class="modal-box modal-confirm">
+            <div class="modal-body text-center">
+                <div class="icon-danger-circle mb-10">
+                    <i class="fa-solid fa-user-slash"></i>
+                </div>
+                <h3>Nonaktifkan Pengampu?</h3>
+                <p class="text-sm text-muted">Apakah Anda yakin ingin menonaktifkan <strong>Ustadz Ahmad</strong>? Akses login dan tugas halaqah terkait akan ditangguhkan.</p>
+            </div>
+            <div class="modal-footer center-footer">
+                <button class="btn-back" onclick="closeModal('modalNonaktifPengampu')">Batal</button>
+                <button class="btn-danger-solid">Ya, Nonaktifkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. MODAL DETAIL PENGAMPU -->
     <div class="modal-overlay" id="modalDetailPengampu">
         <div class="modal-box modal-box-lg">
             <div class="modal-header">
@@ -296,7 +387,7 @@
                     <h3>Ustadz Ahmad</h3>
                     <p class="modal-subtitle">Bergabung sejak 12 Januari 2024</p>
                 </div>
-                <button class="modal-close" onclick="document.getElementById('modalDetailPengampu').classList.remove('show')"><i class="fa-solid fa-xmark"></i></button>
+                <button class="modal-close" onclick="closeModal('modalDetailPengampu')"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
                 <div class="detail-pengampu-grid">
@@ -350,7 +441,7 @@
                                 <button class="tab-btn" onclick="switchTab(event, 'tabBulanan')">Bulanan</button>
                             </div>
 
-                            <!-- TAB HARIAN (7 hari terakhir) -->
+                            <!-- TAB HARIAN -->
                             <div class="tab-panel active" id="tabHarian">
                                 <div class="dummy-chart">
                                     <div class="bar" style="height: 100%;"></div>
@@ -366,7 +457,7 @@
                                 </div>
                             </div>
 
-                            <!-- TAB MINGGUAN (4 minggu terakhir) -->
+                            <!-- TAB MINGGUAN -->
                             <div class="tab-panel" id="tabMingguan">
                                 <div class="dummy-chart">
                                     <div class="bar" style="height: 90%;"></div>
@@ -379,7 +470,7 @@
                                 </div>
                             </div>
 
-                            <!-- TAB BULANAN (6 bulan terakhir) -->
+                            <!-- TAB BULANAN -->
                             <div class="tab-panel" id="tabBulanan">
                                 <div class="dummy-chart">
                                     <div class="bar" style="height: 70%;"></div>
@@ -399,8 +490,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-back" onclick="document.getElementById('modalDetailPengampu').classList.remove('show')">Tutup</button>
-                <button class="btn-primary-gold"><i class="fa-solid fa-pen"></i> Edit Pengampu</button>
+                <button class="btn-back" onclick="closeModal('modalDetailPengampu')">Tutup</button>
+                <button class="btn-primary-gold" onclick="closeModal('modalDetailPengampu'); openModal('modalEditPengampu');"><i class="fa-solid fa-pen"></i> Edit Pengampu</button>
             </div>
         </div>
     </div>
@@ -412,6 +503,14 @@
             modal.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
             evt.target.classList.add('active');
             document.getElementById(panelId).classList.add('active');
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
         }
     </script>
 

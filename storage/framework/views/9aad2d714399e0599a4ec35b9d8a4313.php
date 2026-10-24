@@ -8,7 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="<?php echo e(asset('css/modul/tahfiz/dashboardsiswa.css')); ?>">
+    
+    <!-- CSS Utama & CSS Khusus Dashboard Siswa -->
+    <link rel="stylesheet" href="<?php echo e(asset('css/modul/tahfiz/dashboard.css')); ?>?v=<?php echo e(time()); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('css/modul/tahfiz/dashboardsiswa.css')); ?>?v=<?php echo e(time()); ?>">
+    
     <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>">
 </head>
 <body>
@@ -43,158 +47,183 @@
             <!-- TOPBAR / HEADER -->
             <header class="topbar">
                 <div>
-                    <h2>Assalamu'alaikum, hafiz! 👋</h2>
+                    <h2>Assalamu'alaikum, Razak 👋</h2>
                     <p class="subtitle-text">Tetap semangat menambah dan menjaga hafalan Al-Qur'an hari ini.</p>
                 </div>
                 <div class="topbar-icons">
-                    <i class="fa-regular fa-bell"></i>
-                    <i class="fa-regular fa-user"></i>
+                    <i class="fa-regular fa-bell" title="Notifikasi"></i>
+                    <i class="fa-regular fa-user" title="Profil Siswa"></i>
                 </div>
             </header>
 
-            <!-- PROFILE SUMMARY CARD -->
+            <!-- KARTU BANNER PROFIL SISWA (SESUAI GAMBAR REFERENSI) -->
             <div class="student-profile-banner">
-                <div class="student-profile">
-                    <div class="avatar"><i class="fa-solid fa-user-graduate"></i></div>
-                    <div class="student-info">
-                        <h3>Ali Rahman</h3>
-                        <p>Kelas: <strong>1A</strong> | Halaqah: <strong>Halaqah 1</strong></p>
-                        <p>Pengampu: <strong>Ustadz Ahmad</strong></p>
-                    </div>
-                </div>
-                <div class="target-today-badge">
-                    <span>Target Hari Ini:</span>
-                    <strong>5 Baris Ziyadah</strong>
-                </div>
-            </div>
+                <!-- Avatar Inisial Besar -->
+                <div class="avatar-large">RA</div>
 
-            <!-- STATISTIC CARDS SISWA -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>Juz 29</h3>
-                    <p>Posisi Hafalan saat Ini</p>
-                </div>
-                <div class="stat-card">
-                    <h3>85%</h3>
-                    <p>Capaian Target Bulan Ini</p>
-                </div>
-                <div class="stat-card">
-                    <h3>12</h3>
-                    <p>Halaman Dihafal (Bulan Ini)</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Sangat Baik</h3>
-                    <p>Predikat Kelancaran</p>
-                </div>
-            </div>
-
-            <!-- SECTION PESAN & INFORMASI DARI USTADZ / USTADZAH -->
-            <div class="info-card-section mb-20">
-                <div class="card-header-flex">
-                    <h4><i class="fa-solid fa-bullhorn icon-title"></i> Pesan & Informasi dari Ustadz/Ustadzah</h4>
-                    <span class="badge-count">2 Baru</span>
-                </div>
-                <div class="info-list">
-                    <div class="info-item unread">
-                        <div class="info-icon bg-green">
-                            <i class="fa-solid fa-comment-dots"></i>
+                <!-- Detail Nama & Grid Informasi -->
+                <div class="student-banner-body">
+                    <div class="student-name-row">
+                        <div>
+                            <h3>Razak</h3>
+                            <span class="nis-text">NIS: 222301005</span>
                         </div>
-                        <div class="info-content">
-                            <div class="info-meta">
-                                <span class="sender-name">Ustadz Ahmad</span>
-                                <span class="info-date">Hari ini, 08:30 WITA</span>
+                        <button type="button" class="btn-toggle-collapse" title="Sembunyikan / Tampilkan">
+                            <i class="fa-solid fa-chevron-up"></i>
+                        </button>
+                    </div>
+
+                    <!-- 4 Card Informasi (Kelas, Halaqah, Pengampu, Juz Saat Ini) -->
+                    <div class="profile-info-cards-grid">
+                        <div class="info-card-item">
+                            <div class="info-card-icon"><i class="fa-solid fa-building-columns"></i></div>
+                            <div class="info-card-text">
+                                <small>KELAS</small>
+                                <strong>1A</strong>
                             </div>
-                            <p class="info-message">MasyaAllah Ali, kelancaran di Surah An-Naba' sudah baik. Jangan lupa nanti malam diulang kembali ayat 1-10 untuk persiapan mutqin esok hari.</p>
                         </div>
-                    </div>
 
-                    <div class="info-item">
-                        <div class="info-icon bg-blue">
-                            <i class="fa-solid fa-calendar-check"></i>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-meta">
-                                <span class="sender-name">Ustadzah Nurul (Koordinator Tahfiz)</span>
-                                <span class="info-date">21/06/2026</span>
+                        <div class="info-card-item">
+                            <div class="info-card-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                            <div class="info-card-text">
+                                <small>HALAQAH</small>
+                                <strong>Halaqah 2</strong>
                             </div>
-                            <p class="info-message">Diberitahukan kepada seluruh siswa Halaqah 1 bahwa evaluasi bulanan (Tasmi') akan dilaksanakan pada hari Sabtu pekan depan.</p>
+                        </div>
+
+                        <div class="info-card-item">
+                            <div class="info-card-icon"><i class="fa-solid fa-user-tie"></i></div>
+                            <div class="info-card-text">
+                                <small>PENGAMPU</small>
+                                <strong>Ustadzah Rayhanah Qurri...</strong>
+                            </div>
+                        </div>
+
+                        <div class="info-card-item">
+                            <div class="info-card-icon"><i class="fa-solid fa-book-open"></i></div>
+                            <div class="info-card-text">
+                                <small>JUZ SAAT INI</small>
+                                <strong>Juz 30</strong>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ROW GRAPH & STATUS HARI INI -->
+            <!-- CARD PESAN & INFORMASI (SESUAI DENGAN TAMPILAN GAMBAR REFERENSI) -->
+            <div class="table-card messages-info-card">
+                <div class="messages-card-header">
+                    <h4><i class="fa-solid fa-clipboard-list icon-header"></i> Pesan & Informasi</h4>
+                </div>
+
+                <div class="messages-card-body">
+                    <!-- 1. PENGUMUMAN TERBARU -->
+                    <div class="message-section-block">
+                        <span class="block-label announcement-label">
+                            <i class="fa-solid fa-bullhorn"></i> PENGUMUMAN TERBARU
+                        </span>
+                        <h5 class="announcement-title">⏰ 🗓️ Jadwal Tasmi' Siswa</h5>
+                        <p class="announcement-desc">
+                            Berikut kami lampirkan jadwal tasmi' siswa sebagai informasi bagi siswa dan orang tua. Semoga kegiatan tasmi' berjalan lancar dan menjadi motivasi untuk terus menjaga serta meningkatkan hafalan Al-Qur'an. 🤲 ✨ 📑 Jika nama ananda Sholeh/ah belum tercantum pada flyer jadwal tasmi' mohon segera menghubungi pengampu halaqah...
+                        </p>
+                        <a href="#" class="read-more-link">Baca selengkapnya &rarr;</a>
+                    </div>
+
+                    <hr class="section-divider">
+
+                    <!-- 2. CATATAN GURU -->
+                    <div class="message-section-block">
+                        <span class="block-label teacher-note-label">
+                            <i class="fa-solid fa-comment-dots"></i> CATATAN GURU
+                        </span>
+                        <p class="teacher-note-text">Barakallahu fiik 🌱</p>
+                    </div>
+
+                    <hr class="section-divider">
+
+                    <!-- 3. TUGAS / PR DI RUMAH -->
+                    <div class="message-section-block">
+                        <span class="block-label homework-label">
+                            <i class="fa-solid fa-book-bookmark"></i> TUGAS / PR DI RUMAH
+                        </span>
+                        <div class="homework-item-row">
+                            <span class="code-badge ziyadah-badge">Z</span>
+                            <span class="homework-text">Al-Fil (1-2)</span>
+                        </div>
+                        <div class="homework-item-row">
+                            <span class="code-badge murojaah-badge">M</span>
+                            <span class="homework-text">Quraisy (1-4)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FOOTER TANGGAL SETORAN -->
+                <div class="messages-card-footer">
+                    <span>Setoran: 21 Oktober 2026</span>
+                </div>
+            </div>
+
+            <!-- ROW GRAFIK PERKEMBANGAN & STATUS SETORAN -->
             <div class="summary-filter-row">
-                
-                <!-- PROGRESS GRAFIK DENGAN FILTER TIPE & RENTANG WAKTU -->
+                <!-- GRAFIK PERKEMBANGAN HAFALAN -->
                 <div class="summary-box" style="flex: 2;">
                     <div class="chart-header-flex">
-                        <h4>Grafik Perkembangan Hafalan</h4>
+                        <h4><i class="fa-solid fa-chart-line"></i> Grafik Perkembangan Hafalan</h4>
                         
                         <div class="chart-controls">
-                            <!-- Toggle Jenis Hafalan -->
                             <div class="type-toggle">
                                 <button type="button" class="btn-toggle active" data-type="ziyadah">Ziyadah</button>
                                 <button type="button" class="btn-toggle" data-type="murojaah">Murojaah</button>
                             </div>
                             
-                            <!-- Filter Rentang Waktu -->
                             <select class="select-range-sm" id="timeRangeSelect">
                                 <option value="7">7 Hari Terakhir</option>
                                 <option value="14">14 Hari Terakhir</option>
                                 <option value="30">30 Hari Terakhir</option>
-                                <option value="90">3 Bulan Terakhir</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="chart-box">
                         <div class="dummy-chart" id="chartBars">
-                            <div class="bar" style="height: 40%;" title="17/06: 2 Baris"></div>
-                            <div class="bar" style="height: 60%;" title="18/06: 3 Baris"></div>
-                            <div class="bar" style="height: 80%;" title="19/06: 4 Baris"></div>
-                            <div class="bar" style="height: 50%;" title="20/06: 2.5 Baris"></div>
-                            <div class="bar" style="height: 70%;" title="21/06: 3.5 Baris"></div>
-                            <div class="bar" style="height: 90%;" title="22/06: 4.5 Baris"></div>
-                            <div class="bar" style="height: 100%;" title="23/06: 5 Baris"></div>
+                            <div class="bar" style="height: 40%;" title="17/10: 2 Baris"></div>
+                            <div class="bar" style="height: 60%;" title="18/10: 3 Baris"></div>
+                            <div class="bar" style="height: 80%;" title="19/10: 4 Baris"></div>
+                            <div class="bar" style="height: 50%;" title="20/10: 2.5 Baris"></div>
+                            <div class="bar" style="height: 90%;" title="21/10: 4.5 Baris"></div>
                         </div>
-                        <div class="chart-labels" id="chartLabels">
-                            <span>17/06</span><span>18/06</span><span>19/06</span><span>20/06</span><span>21/06</span><span>22/06</span><span>23/06</span>
+                        <div class="chart-labels">
+                            <span>17/10</span><span>18/10</span><span>19/10</span><span>20/10</span><span>21/10</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- SETORAN HARI INI -->
+                <!-- RINGKASAN CAPAIAN JUZ -->
                 <div class="filter-box" style="flex: 1;">
-                    <h4>Status Setoran Hari Ini</h4>
+                    <h4><i class="fa-solid fa-star"></i> Status Target</h4>
                     <div class="status-card-today">
                         <div class="status-item">
-                            <label>Ziyadah (Setoran Baru):</label>
-                            <span class="badge success"><i class="fa-solid fa-circle-check"></i> An-Naba: 1-5 (5 Baris)</span>
+                            <label>Capaian Target Bulan Ini:</label>
+                            <span class="badge success"><i class="fa-solid fa-circle-check"></i> 85% (Tercapai)</span>
                         </div>
                         <div class="status-item mt-15">
-                            <label>Murojaah (Pengulangan):</label>
-                            <span class="badge success"><i class="fa-solid fa-circle-check"></i> An-Naba: 1-2 (2 Ayat)</span>
-                        </div>
-                        <div class="status-item mt-15">
-                            <label>Kondisi Hafalan:</label>
-                            <span class="badge-text green"><i class="fa-solid fa-star"></i> Lancar</span>
+                            <label>Predikat Kelancaran:</label>
+                            <span class="badge-text green"><i class="fa-solid fa-award"></i> Sangat Baik</span>
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <!-- TABEL RIWAYAT SETORAN HAFALAN -->
-            <div class="table-card">
+            <div class="table-card mt-20">
                 <div class="table-header-flex">
-                    <h4>Riwayat Setoran Hafalan</h4>
+                    <h4><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Setoran Hafalan</h4>
                     <div class="filter-group-inline">
-                        <input type="date" value="2026-06-23" class="input-date-sm">
+                        <input type="date" value="2026-10-21" class="input-date-sm">
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table>
+                    <table class="table-riwayat-siswa">
                         <thead>
                             <tr>
                                 <th>Tanggal</th>
@@ -208,53 +237,32 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>23/06/2026</td>
-                                <td>An-Naba: 1-5</td>
-                                <td>An-Naba: 1-2</td>
+                                <td>21/10/2026</td>
+                                <td>Al-Fil: 1-2</td>
+                                <td>Quraisy: 1-4</td>
                                 <td>5 Baris</td>
                                 <td><span class="badge-text green">Lancar</span></td>
                                 <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Tercapai</span></td>
-                                <td><small><i>Makhraj huruf 'Ain sudah lebih jelas. Pertahankan.</i></small></td>
+                                <td><small><i>Barakallahu fiik 🌱</i></small></td>
                             </tr>
                             <tr>
-                                <td>22/06/2026</td>
-                                <td>An-Naba: 1-4</td>
-                                <td>An-Naba: 1-3</td>
+                                <td>19/10/2026</td>
+                                <td>Al-Humazah: 1-9</td>
+                                <td>At-Takasur: 1-8</td>
                                 <td>4 Baris</td>
                                 <td><span class="badge-text green">Lancar</span></td>
                                 <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Tercapai</span></td>
-                                <td><small><i>Bagus, tajwid sudah tepat.</i></small></td>
-                            </tr>
-                            <tr>
-                                <td>21/06/2026</td>
-                                <td>'Abasa: 1-5</td>
-                                <td>'Abasa: 1-2</td>
-                                <td>5 Baris</td>
-                                <td><span class="badge-text green">Lancar</span></td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Tercapai</span></td>
-                                <td><small><i>Hati-hati di ayat ke-3 mad jaiz-nya.</i></small></td>
-                            </tr>
-                            <tr>
-                                <td>20/06/2026</td>
-                                <td>'Abasa: 1-3</td>
-                                <td>-</td>
-                                <td>3 Baris</td>
-                                <td><span class="badge-text red">Belum Lancar</span></td>
-                                <td><span class="badge danger"><i class="fa-solid fa-circle-xmark"></i> Tidak Tercapai</span></td>
-                                <td><small><i>Perlu diulang kembali di rumah sebelum setoran.</i></small></td>
+                                <td><small><i>Tajwid dan makhraj huruf sudah pas.</i></small></td>
                             </tr>
                         </tbody>
                     </table>
-                </div>
-                <div class="text-center mt-15">
-                    <button class="btn-outline"><i class="fa-solid fa-clock-rotate-left"></i> Lihat Seluruh Riwayat Setoran</button>
                 </div>
             </div>
 
         </main>
     </div>
 
-    <!-- SCRIPT INTERAKSI GRAPH & TOGGLE -->
+    <!-- SCRIPT INTERAKSI TOGGLE & CHART -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const toggleBtns = document.querySelectorAll('.type-toggle .btn-toggle');
@@ -264,21 +272,7 @@
                 btn.addEventListener('click', function() {
                     toggleBtns.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
-                    
-                    const selectedType = this.getAttribute('data-type');
-                    const selectedRange = timeRangeSelect.value;
-                    
-                    // Di sini Anda dapat menambahkan fetch AJAX / update Chart JS sesuai parameter
-                    console.log(`Fetch data untuk tipe: ${selectedType}, rentang: ${selectedRange} hari`);
                 });
-            });
-
-            timeRangeSelect.addEventListener('change', function() {
-                const activeType = document.querySelector('.type-toggle .btn-toggle.active').getAttribute('data-type');
-                const selectedRange = this.value;
-                
-                // Di sini Anda dapat menambahkan fetch AJAX / update Chart JS sesuai parameter
-                console.log(`Fetch data untuk tipe: ${activeType}, rentang: ${selectedRange} hari`);
             });
         });
     </script>

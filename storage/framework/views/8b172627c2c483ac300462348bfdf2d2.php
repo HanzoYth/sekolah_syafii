@@ -55,139 +55,167 @@
                 </div>
             </header>
 
-            <!-- CARD INFORMASI HALAQAH GURU -->
-            <div class="halaqah-info-card">
-                <div class="halaqah-info-main">
-                    <h3>Halaqah 1 — Kelas 1A</h3>
-                    <p>Pengampu: <strong>Ustadz Ahmad, S.Pd.</strong> | Tahun Ajaran 2026/2027</p>
-                </div>
-                <div class="halaqah-badges">
-                    <span class="badge-gold"><i class="fa-solid fa-graduation-cap"></i> Kelas 1A</span>
-                    <span class="badge-info"><i class="fa-solid fa-users"></i> Total 20 Siswa</span>
-                </div>
-            </div>
-
-            <!-- RINGKASAN STATISTIK RINGKAS HARIAN -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>20</h3>
-                    <p>Total Siswa Halaqah</p>
-                </div>
-                <div class="stat-card" style="border-top-color: var(--green-text);">
-                    <h3 class="text-green">16</h3>
-                    <p>Sudah Setor Hari Ini</p>
-                </div>
-                <div class="stat-card" style="border-top-color: var(--yellow-text);">
-                    <h3 style="color: var(--yellow-text);">2</h3>
-                    <p>Izin / Sakit</p>
-                </div>
-                <div class="stat-card" style="border-top-color: var(--red-text);">
-                    <h3 style="color: var(--red-text);">2</h3>
-                    <p>Belum Setor</p>
-                </div>
-            </div>
-
-            <!-- TABLE CARD DATA SISWA -->
-            <div class="table-card">
-                <div class="search-filter-bar">
-                    <h4><i class="fa-solid fa-user-graduate"></i> Daftar Siswa Binaan</h4>
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="searchSiswa" placeholder="Cari nama siswa atau NISN...">
+            <!-- TOOLBAR ATAS: FILTER & PENCARIAN -->
+            <div class="filter-toolbar-box">
+                <div class="filter-left-options">
+                    <div class="dropdown-filter">
+                        <span>Halaqah</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-filter">
+                        <span>Naik</span>
+                        <i class="fa-solid fa-chevron-down"></i>
                     </div>
                 </div>
+                <div class="filter-right-options">
+                    <div class="search-field-custom">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="searchSiswa" placeholder="Cari...">
+                    </div>
+                    <button class="btn-filter-badge" title="Filter Lanjutan">
+                        <i class="fa-solid fa-filter"></i>
+                        <span class="badge-count">0</span>
+                    </button>
+                </div>
+            </div>
 
+            <!-- TABLE CARD DAFTAR SISWA BERDASARKAN HALAQAH -->
+            <div class="table-card">
                 <div class="table-responsive">
-                    <table class="table-compact" id="tableSiswa">
+                    <table class="table-halaqah-modern" id="tableSiswa">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>NISN</th>
-                                <th>Nama Siswa</th>
-                                <th>Kelas</th>
-                                <th>Capaian Terakhir</th>
-                                <th>Status Setoran Hari Ini</th>
-                                <th class="text-center">Aksi</th>
+                                <th>Nama Siswa <i class="fa-solid fa-chevron-down text-xs"></i></th>
+                                <th class="text-right">Status Laporan</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php $currentDate = date('d/m/Y'); ?>
-
-                            <!-- Siswa 1 -->
-                            <tr>
-                                <td>1</td>
-                                <td>222301001</td>
-                                <td>
-                                    <div class="student-name-cell">
-                                        <div class="student-avatar">AF</div>
-                                        <span class="cell-strong">Ahmad Fauzi</span>
+                            <!-- KELOMPOK HALAQAH 1: Kelas 1A - Halaqah 2 -->
+                            <tr class="halaqah-group-row" onclick="toggleGroup(this)">
+                                <td colspan="2">
+                                    <div class="group-header-content">
+                                        <span>Halaqah: Kelas 1A - Halaqah 2</span>
+                                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
                                     </div>
                                 </td>
-                                <td>Kelas 1A</td>
-                                <td>Juz 30 — Surah An-Naba' (1-20)</td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Sudah Setor</span></td>
-                                <td class="text-center">
-                                    <!-- Tombol dialihkan langsung ke halaman input laporan untuk siswa tertentu -->
-                                    <a href="<?php echo e(url('/laporan/input?nisn=222301001')); ?>" class="btn-xs" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                                        <i class="fa-solid fa-pen-to-square"></i> Input Laporan
-                                    </a>
+                            </tr>
+                            <tr class="student-row">
+                                <td>Khayra</td>
+                                <td class="text-right">
+                                    <div class="action-status-cell">
+                                        <span class="badge-status-gray">Belum Input</span>
+                                        <a href="<?php echo e(url('/laporan/input?nama=Khayra')); ?>" class="btn-input-laporan">
+                                            <i class="fa-solid fa-plus"></i> Input Laporan
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="student-row">
+                                <td>Galena Aisyah</td>
+                                <td class="text-right">
+                                    <div class="action-status-cell">
+                                        <span class="badge-status-gray">Belum Input</span>
+                                        <a href="<?php echo e(url('/laporan/input?nama=Galena')); ?>" class="btn-input-laporan">
+                                            <i class="fa-solid fa-plus"></i> Input Laporan
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="student-row">
+                                <td>Feisya</td>
+                                <td class="text-right">
+                                    <div class="action-status-cell">
+                                        <span class="badge-status-gray">Belum Input</span>
+                                        <a href="<?php echo e(url('/laporan/input?nama=Feisya')); ?>" class="btn-input-laporan">
+                                            <i class="fa-solid fa-plus"></i> Input Laporan
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="student-row">
+                                <td>Besse Adzkia</td>
+                                <td class="text-right">
+                                    <div class="action-status-cell">
+                                        <span class="badge-status-gray">Belum Input</span>
+                                        <a href="<?php echo e(url('/laporan/input?nama=Besse')); ?>" class="btn-input-laporan">
+                                            <i class="fa-solid fa-plus"></i> Input Laporan
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="student-row">
+                                <td>Aisyah Aqila Mustafa</td>
+                                <td class="text-right">
+                                    <div class="action-status-cell">
+                                        <span class="badge-status-gray">Belum Input</span>
+                                        <a href="<?php echo e(url('/laporan/input?nama=Aisyah')); ?>" class="btn-input-laporan">
+                                            <i class="fa-solid fa-plus"></i> Input Laporan
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="student-row">
+                                <td>Adiba Rizky Nurjannah</td>
+                                <td class="text-right">
+                                    <div class="action-status-cell">
+                                        <span class="badge-status-gray">Belum Input</span>
+                                        <a href="<?php echo e(url('/laporan/input?nama=Adiba')); ?>" class="btn-input-laporan">
+                                            <i class="fa-solid fa-plus"></i> Input Laporan
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
 
-                            <!-- Siswa 2 -->
-                            <tr>
-                                <td>2</td>
-                                <td>222301002</td>
-                                <td>
-                                    <div class="student-name-cell">
-                                        <div class="student-avatar">AN</div>
-                                        <span class="cell-strong">Aisyah Nurbalqis</span>
+                            <!-- KELOMPOK HALAQAH 2: Kelas 1B - Halaqah 4 (Expanded State dengan Chevron Up) -->
+                            <tr class="halaqah-group-row expanded" onclick="toggleGroup(this)">
+                                <td colspan="2">
+                                    <div class="group-header-content">
+                                        <span>Halaqah: Kelas 1B - Halaqah 4</span>
+                                        <i class="fa-solid fa-chevron-up toggle-icon"></i>
                                     </div>
                                 </td>
-                                <td>Kelas 1A</td>
-                                <td>Juz 30 — Surah An-Nazi'at (1-15)</td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Sudah Setor</span></td>
-                                <td class="text-center">
-                                    <a href="<?php echo e(url('/laporan/input?nisn=222301002')); ?>" class="btn-xs" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                                        <i class="fa-solid fa-pen-to-square"></i> Input Laporan
-                                    </a>
-                                </td>
                             </tr>
-
-                            <!-- Siswa 3 (Belum Setor) -->
-                            <tr>
-                                <td>3</td>
-                                <td>222301003</td>
-                                <td>
-                                    <div class="student-name-cell">
-                                        <div class="student-avatar" style="background: var(--gold-gradient); color: var(--primary-darker);">MB</div>
-                                        <span class="cell-strong">Muhammad Bilal</span>
-                                    </div>
-                                </td>
-                                <td>Kelas 1A</td>
-                                <td>Juz 30 — Surah Abasa (1-10)</td>
-                                <td><span class="badge danger"><i class="fa-solid fa-circle-xmark"></i> Belum Setor</span></td>
-                                <td class="text-center">
-                                    <a href="<?php echo e(url('/laporan/input?nisn=222301003')); ?>" class="btn-xs" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: var(--red-bg); color: var(--red-text); border-color: var(--border-color);">
-                                        <i class="fa-solid fa-pen-to-square"></i> Input Laporan
-                                    </a>
-                                </td>
-                            </tr>
+                            <!-- Tambahkan baris siswa untuk kelompok ini jika diperlukan -->
                         </tbody>
                     </table>
+                </div>
+
+                <!-- PAGINATION FOOTER -->
+                <div class="table-pagination-footer">
+                    <span class="pagination-info">Menampilkan 1 sampai 14 dari 14 hasil</span>
+                    <div class="pagination-per-page">
+                        <span>per halaman</span>
+                        <select class="select-per-page">
+                            <option value="50" selected>50</option>
+                            <option value="25">25</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
         </main>
     </div>
 
-    <!-- JAVASCRIPT HANYA UNTUK SEARCH REAL-TIME -->
+    <!-- JAVASCRIPT: PENCARIAN REAL-TIME & TOGGLE ACCORDION GROUP -->
     <script>
+        function toggleGroup(row) {
+            row.classList.toggle('expanded');
+            const icon = row.querySelector('.toggle-icon');
+            if (row.classList.contains('expanded')) {
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            } else {
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             const searchInput = document.getElementById('searchSiswa');
             searchInput.addEventListener('keyup', function () {
                 const filter = searchInput.value.toLowerCase();
-                const rows = document.querySelectorAll('#tableSiswa tbody tr');
+                const rows = document.querySelectorAll('#tableSiswa tbody tr.student-row');
 
                 rows.forEach(row => {
                     const text = row.innerText.toLowerCase();
