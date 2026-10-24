@@ -445,22 +445,27 @@ body {
     box-shadow: 0 4px 12px rgba(27, 107, 79, 0.25);
 }
 
-/* ======== MODAL POP-UP PROFIL SISWA STYLING ======== */
+
+/* ================================================================
+   STYLING KHUSUS MODAL / POP-UP PROFIL & PROGRES SISWA TAHFIZ
+   ================================================================ */
+
+/* 1. Latar Belakang Overlay (Backdrop) */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(11, 59, 46, 0.6);
-    backdrop-filter: blur(5px);
+    background: rgba(7, 36, 28, 0.65);
+    backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modal-overlay.active {
@@ -468,10 +473,11 @@ body {
     visibility: visible;
 }
 
-.modal-profile-container {
+/* 2. Container Utama Modal */
+.modal-container.modal-profile-container {
     background: var(--white);
-    width: 95%;
-    max-width: 850px;
+    width: 92%;
+    max-width: 820px;
     max-height: 90vh;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-hover);
@@ -479,27 +485,434 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transform: translateY(-20px);
-    transition: transform 0.3s ease;
+    transform: translateY(-25px) scale(0.96);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.modal-overlay.active .modal-profile-container {
-    transform: translateY(0);
+.modal-overlay.active .modal-container.modal-profile-container {
+    transform: translateY(0) scale(1);
 }
 
+/* 3. Header Modal */
 .modal-header {
-    padding: 18px 24px;
-    background: var(--primary-light);
-    border-bottom: 1px solid var(--border-color);
+    padding: 20px 26px;
+    background: var(--primary-gradient);
+    color: var(--white);
+    border-bottom: 3px solid var(--gold);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.modal-header::after {
+    content: '';
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    width: 110px;
+    height: 110px;
+    background: radial-gradient(circle, rgba(201, 162, 39, 0.25) 0%, transparent 70%);
+    pointer-events: none;
 }
 
 .modal-header h3 {
     margin: 0;
     font-family: var(--font-heading);
-    font-size: 1.15rem;
-    color: var(--primary-dark);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--white);
     display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: 0.3px;
+    position: relative;
+    z-index: 1;
+}
+
+.modal-header h3 i {
+    color: var(--gold);
+}
+
+.modal-close {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+
+.modal-close:hover {
+    background: var(--gold);
+    color: var(--primary-darker);
+    transform: rotate(90deg);
+}
+
+/* 4. Body Modal (Bisa di-scroll ke bawah) */
+.modal-body.profile-modal-body {
+    padding: 24px 26px;
+    overflow-y: auto;
+    background-color: var(--bg-light);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex-grow: 1;
+}
+
+/* Kartu Profil Header di Dalam Modal */
+.profile-header-card {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-xs);
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    border-left: 4px solid var(--gold);
+}
+
+.profile-avatar-wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.profile-avatar-large {
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    background: var(--primary-gradient);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    box-shadow: 0 4px 12px rgba(27, 107, 79, 0.25);
+    border: 2px solid var(--gold-light);
+}
+
+.status-online-badge {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.profile-info-content {
+    flex-grow: 1;
+}
+
+.profile-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.profile-title-row h3 {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    color: var(--primary-dark);
+    font-weight: 700;
+    margin: 0;
+}
+
+.badge-gold {
+    background: var(--gold-light);
+    color: var(--primary-darker);
+    border: 1px solid rgba(201, 162, 39, 0.3);
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.profile-username {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+}
+
+.profile-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.profile-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-light);
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+.profile-detail-item i {
+    color: var(--primary-color);
+    font-size: 1rem;
+    background: var(--primary-light);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.profile-detail-item small {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 600;
+}
+
+.profile-detail-item p {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+/* Penyesuaian Statistik Grid di dalam Modal */
+.stats-grid.stats-grid-modal {
+    margin-bottom: 0;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+.stats-grid.stats-grid-modal .stat-card {
+    padding: 16px 12px;
+}
+
+.stats-grid.stats-grid-modal .stat-card h3 {
+    font-size: 1.5rem;
+}
+
+/* Detail Row (Grafik & Kelancaran) */
+.detail-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.detail-box {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    box-shadow: var(--shadow-xs);
+}
+
+.chart-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.dummy-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    width: 100%;
+    height: 120px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 4px;
+    gap: 8px;
+}
+
+.dummy-chart .bar {
+    width: 24px;
+    background: var(--primary-gradient);
+    border-radius: 6px 6px 0 0;
+    transition: height 0.3s ease;
+}
+
+.chart-labels {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 8px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.modal-detail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-detail-list .detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-light);
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    font-size: 0.82rem;
+}
+
+.style-gold {
+    color: var(--gold);
+}
+
+/* Tabel Rincian Capaian di Modal */
+.modal-body .table-card {
+    box-shadow: none;
+    border: 1px solid var(--border-color);
+    margin-bottom: 0;
+    padding: 18px;
+}
+
+.table-compact {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+
+.table-compact th {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    font-weight: 700;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--border-color);
+    text-align: left;
+}
+
+.table-compact td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-dark);
+    vertical-align: middle;
+    text-align: left;
+}
+
+.table-compact tbody tr:hover {
+    background-color: rgba(232, 242, 236, 0.4);
+}
+
+.badge.success {
+    background-color: var(--green-bg);
+    color: var(--green-text);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* 5. Footer Modal */
+.modal-footer {
+    padding: 16px 26px;
+    background: var(--white);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.btn-pdf-modal {
+    background-color: var(--red-bg);
+    color: var(--red-text);
+    border: 1px solid rgba(179, 38, 30, 0.25);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-pdf-modal:hover {
+    background-color: var(--red-text);
+    color: var(--white);
+}
+
+.btn-close-modal {
+    padding: 8px 18px;
+    background: var(--white);
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-xs);
+    transition: all 0.2s ease;
+}
+
+.btn-close-modal:hover {
+    background: var(--primary-gradient);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+/* 6. Media Queries untuk Responsif */
+@media (max-width: 900px) {
+    .stats-grid.stats-grid-modal {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .detail-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .modal-container.modal-profile-container {
+        width: 95%;
+        max-height: 94vh;
+    }
+    .profile-header-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .profile-title-row {
+        justify-content: center;
+    }
+    .profile-details-grid {
+        grid-template-columns: 1fr;
+        text-align: left;
+    }
+    .stats-grid.stats-grid-modal {
+        grid-template-columns: 1fr;
+    }
+    .modal-footer {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+    .btn-pdf-modal, .btn-close-modal {
+        width: 100%;
+        justify-content: center;
+    }
 }

@@ -1,0 +1,844 @@
+/* ================================================================
+   ABSENSI MATA PELAJARAN — TEMA ISLAMI ELEGAN
+   CSS mandiri untuk halaman absensi guru (Emerald & Gold).
+   Sudah termasuk base, kerangka dashboard, dan topbar, sehingga
+   tidak perlu memuat dashboard.css lagi.
+   Letakkan satu folder dengan sidebar.css.
+   ================================================================ */
+@import url('sidebar.css');
+
+/* ======== ROOT VARIABLES & RESET ======== */
+:root {
+    --primary-color: #1B6B4F;       /* Emerald-700 */
+    --primary-dark: #0B3B2E;        /* Emerald-900 */
+    --primary-darker: #07241C;      /* Emerald-950 */
+    --primary-light: #E8F2EC;
+    --primary-gradient: linear-gradient(135deg, #24805F 0%, #0B3B2E 100%);
+
+    --gold: #C9A227;
+    --gold-light: #F4EAC8;
+    --gold-gradient: linear-gradient(135deg, #D8B94A 0%, #C9A227 100%);
+
+    --bg-light: #F7F4EC;
+    --white: #ffffff;
+    --text-dark: #16241f;
+    --text-muted: #6b7d74;
+    --border-color: #E7E1D0;
+    --border-hover: #D9CDA8;
+
+    --green-bg: #eaf7ef;
+    --green-text: #0a7a4a;
+    --yellow-bg: #fdf6e3;
+    --yellow-text: #a5760f;
+    --red-bg: #fdecec;
+    --red-text: #b3261e;
+    --blue-bg: #e8f0fb;
+    --blue-text: #1f4f99;
+
+    --font-heading: 'Amiri', serif;
+    --font-main: 'Poppins', sans-serif;
+
+    --shadow-xs: 0 1px 2px 0 rgba(11, 59, 46, 0.04);
+    --shadow-card: 0 10px 25px -8px rgba(11, 59, 46, 0.10), 0 4px 10px -6px rgba(11, 59, 46, 0.05);
+    --shadow-hover: 0 20px 30px -12px rgba(27, 107, 79, 0.20), 0 8px 14px -6px rgba(0, 0, 0, 0.05);
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    color: var(--text-dark);
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--bg-light);
+    background-image: radial-gradient(circle at 1px 1px, rgba(27, 107, 79, 0.06) 1px, transparent 0);
+    background-size: 26px 26px;
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ======== MAIN CONTENT ======== */
+.main-content {
+    flex: 1;
+    padding: 32px;
+    margin-left: 260px;
+    width: calc(100% - 260px);
+}
+
+/* ======== TOPBAR ======== */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--primary-gradient);
+    padding: 22px 32px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+}
+
+.topbar::after {
+    content: '';
+    position: absolute;
+    right: -30px;
+    top: -30px;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(201, 162, 39, 0.18) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.topbar h2 {
+    font-family: var(--font-heading);
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.3px;
+    position: relative;
+    z-index: 1;
+}
+
+.topbar h2::before {
+    content: '\FDFD';
+    display: block;
+    font-family: 'Amiri', serif;
+    font-size: 0.9rem;
+    color: var(--gold);
+    opacity: 0.85;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+}
+
+.topbar .subtitle-text {
+    color: rgba(255, 255, 255, 0.75);
+    position: relative;
+    z-index: 1;
+}
+
+.topbar-icons {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+}
+
+.topbar-icons a { text-decoration: none; display: flex; }
+
+.topbar-icons i {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--white);
+    border-radius: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(4px);
+}
+
+.topbar-icons i:hover {
+    background: var(--gold);
+    color: var(--primary-darker);
+    transform: translateY(-2px);
+}
+
+/* ======== HELPER UTILITIES ======== */
+.mt-20 { margin-top: 20px; }
+.mb-20 { margin-bottom: 20px; }
+.m-0 { margin: 0 !important; }
+
+/* ======== NOTIFIKASI ======== */
+.abs-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 18px;
+    border-radius: var(--radius-md);
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-xs);
+    border: 1px solid;
+}
+
+.abs-alert i { font-size: 1.1rem; margin-top: 2px; }
+.abs-alert-title { font-size: 0.85rem; font-weight: 700; }
+.abs-alert-text { font-size: 0.82rem; margin-top: 2px; }
+
+.abs-alert-success {
+    background: var(--green-bg);
+    border-color: rgba(10, 122, 74, 0.25);
+    color: var(--green-text);
+}
+
+.abs-alert-error {
+    background: var(--red-bg);
+    border-color: rgba(179, 38, 30, 0.25);
+    color: var(--red-text);
+}
+
+/* ======== KARTU UMUM (PANEL) ======== */
+.abs-card {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    margin-bottom: 24px;
+}
+
+.abs-card-gold { border-top: 3px solid var(--gold); }
+.abs-card-clip { overflow: hidden; }
+.abs-card-pad { padding: 22px 26px; }
+
+/* ======== TOMBOL ======== */
+.abs-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-main);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.25s ease;
+}
+
+.abs-btn-sm { padding: 7px 14px; font-size: 0.75rem; }
+
+.abs-btn-primary {
+    background: var(--primary-gradient);
+    color: var(--white);
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-xs);
+}
+.abs-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--gold);
+}
+
+.abs-btn-soft {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    border-color: rgba(27, 107, 79, 0.2);
+}
+.abs-btn-soft:hover { background: var(--primary-color); color: var(--white); }
+
+.abs-btn-outline {
+    background: var(--white);
+    color: var(--text-dark);
+    border-color: var(--border-color);
+}
+.abs-btn-outline:hover { background: var(--bg-light); border-color: var(--border-hover); }
+
+.abs-btn-gray {
+    background: var(--bg-light);
+    color: var(--text-muted);
+    border-color: var(--border-color);
+}
+.abs-btn-gray:hover { background: var(--border-color); }
+
+/* ======== BADGE ======== */
+.abs-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.abs-badge-success { background: var(--green-bg); color: var(--green-text); }
+.abs-badge-warning { background: var(--yellow-bg); color: var(--yellow-text); }
+.abs-badge-muted   { background: var(--bg-light); color: var(--text-muted); border: 1px solid var(--border-color); }
+.abs-badge-count   { background: var(--primary-light); color: var(--primary-dark); }
+
+/* ======== 1. FILTER TANGGAL ======== */
+.abs-filter-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.abs-filter-info { display: flex; align-items: center; gap: 14px; }
+
+.abs-icon-box {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-light);
+    color: var(--primary-color);
+    border-radius: 12px;
+    font-size: 1.1rem;
+}
+
+.abs-filter-title {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    line-height: 1.2;
+}
+
+.subtitle-text, .abs-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+.abs-subtitle { font-size: 0.78rem; }
+
+.abs-filter-actions { display: flex; align-items: center; gap: 10px; }
+
+.abs-date-wrap { position: relative; }
+
+.abs-date-wrap i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-color);
+    font-size: 0.8rem;
+    pointer-events: none;
+}
+
+.abs-date-wrap input[type="date"] {
+    padding: 8px 12px 8px 34px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-family: var(--font-main);
+    background: var(--bg-light);
+    color: var(--text-dark);
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.abs-date-wrap input[type="date"]:focus {
+    border-color: var(--primary-color);
+    background: var(--white);
+}
+
+/* ======== 2. PEMILIH SESI ======== */
+.abs-section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.abs-section-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+.abs-section-label i { color: var(--gold); font-size: 0.95rem; }
+
+.abs-section-hint { font-size: 0.72rem; color: var(--text-muted); }
+
+.abs-session-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.abs-session-card {
+    display: block;
+    padding: 16px 18px;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text-dark);
+    box-shadow: var(--shadow-xs);
+    transition: all 0.25s ease;
+}
+
+.abs-session-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-hover);
+}
+
+.abs-session-card.active {
+    background: var(--primary-light);
+    border-color: var(--primary-color);
+    border-top: 3px solid var(--gold);
+    box-shadow: var(--shadow-card);
+}
+
+.abs-session-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.abs-session-main { min-width: 0; flex: 1; }
+
+.abs-session-time {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+.abs-session-time i { margin-right: 4px; font-size: 0.68rem; }
+
+.abs-session-name {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.abs-session-class {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 2px 10px;
+    border-radius: 6px;
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.abs-session-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.abs-session-count {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.abs-session-foot {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(27, 107, 79, 0.3);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* ======== EMPTY STATE ======== */
+.abs-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+}
+
+.abs-empty-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+    color: var(--border-hover);
+    font-size: 1.5rem;
+}
+
+.abs-empty h4 {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    color: var(--primary-dark);
+}
+
+.abs-empty p { font-size: 0.78rem; margin-top: 4px; }
+
+/* ======== HEADER TAHAP ======== */
+.abs-panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 18px 26px;
+    background: var(--bg-light);
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.abs-panel-title-wrap { display: flex; align-items: center; gap: 14px; }
+
+.abs-step {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+.abs-step.pending { background: var(--gold-light); color: var(--yellow-text); }
+.abs-step.done    { background: var(--green-bg);   color: var(--green-text); }
+.abs-step.active  { background: var(--primary-gradient); color: var(--white); }
+.abs-step.locked  { background: var(--border-color); color: var(--text-muted); }
+
+.abs-panel-title-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+
+.abs-panel-title {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.abs-deadline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.abs-deadline strong {
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: var(--yellow-bg);
+    border: 1px solid rgba(201, 162, 39, 0.4);
+    color: var(--yellow-text);
+    font-weight: 700;
+}
+
+.abs-panel-body { padding: 24px 26px; }
+
+.abs-head-actions { display: flex; align-items: center; gap: 8px; }
+
+/* ======== PERINGATAN TERKUNCI ======== */
+.abs-notice {
+    text-align: center;
+    padding: 22px 18px;
+    border-radius: var(--radius-md);
+    background: var(--yellow-bg);
+    border: 1px solid rgba(201, 162, 39, 0.4);
+    color: var(--yellow-text);
+}
+.abs-notice i { display: block; font-size: 1.6rem; margin-bottom: 8px; color: var(--gold); }
+.abs-notice h4 { font-family: var(--font-heading); font-size: 1.1rem; }
+.abs-notice p { font-size: 0.78rem; max-width: 420px; margin: 4px auto 0; }
+
+/* ======== FORM ======== */
+.abs-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.abs-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+.abs-label .req { color: var(--red-text); }
+
+.abs-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    font-family: var(--font-main);
+    font-size: 0.82rem;
+    color: var(--text-dark);
+    outline: none;
+    transition: all 0.2s ease;
+}
+.abs-input::placeholder { color: #a3b0a9; }
+.abs-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(27, 107, 79, 0.12);
+}
+.abs-input-sm { padding: 7px 12px; font-size: 0.78rem; }
+
+.abs-form-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.abs-hint { font-size: 0.72rem; font-style: italic; color: var(--text-muted); }
+.abs-hint i { margin-right: 4px; }
+
+/* ======== KONDISI SUDAH PRESENSI ======== */
+.abs-done-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: var(--radius-md);
+    background: var(--green-bg);
+    border: 1px solid rgba(10, 122, 74, 0.2);
+}
+
+.abs-done-info { display: flex; align-items: flex-start; gap: 12px; }
+
+.abs-done-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--white);
+    color: var(--green-text);
+    box-shadow: var(--shadow-xs);
+}
+
+.abs-done-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.abs-done-time { font-size: 0.78rem; font-weight: 600; color: var(--text-dark); }
+.abs-done-materi { margin-top: 6px; font-size: 0.8rem; color: var(--text-dark); }
+.abs-done-materi b { color: var(--primary-dark); }
+.abs-done-materi em { color: var(--text-muted); margin-left: 4px; }
+
+.abs-edit-box {
+    display: none;
+    margin-top: 16px;
+    padding: 18px;
+    border-radius: var(--radius-md);
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+}
+
+.abs-edit-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+
+/* ======== TAHAP 2: TERKUNCI ======== */
+.abs-locked {
+    text-align: center;
+    padding: 48px 20px;
+    background: rgba(247, 244, 236, 0.5);
+}
+
+.abs-locked-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 1.3rem;
+}
+
+.abs-locked h4 { font-family: var(--font-heading); font-size: 1.15rem; color: var(--primary-dark); }
+.abs-locked p { font-size: 0.78rem; color: var(--text-muted); max-width: 420px; margin: 6px auto 0; line-height: 1.6; }
+.abs-locked .abs-btn { margin-top: 16px; }
+
+/* ======== REKAP SISWA ======== */
+.abs-recap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 26px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.75rem;
+}
+
+.abs-recap-list { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.abs-recap-label { font-weight: 700; color: var(--text-muted); margin-right: 4px; }
+
+.abs-recap-item {
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+.abs-recap-item strong { font-weight: 700; margin-right: 2px; }
+.abs-recap-item.hadir { background: var(--green-bg);  color: var(--green-text); }
+.abs-recap-item.sakit { background: var(--yellow-bg); color: var(--yellow-text); }
+.abs-recap-item.izin  { background: var(--blue-bg);   color: var(--blue-text); }
+.abs-recap-item.alpa  { background: var(--red-bg);    color: var(--red-text); }
+
+/* ======== TABEL SISWA ======== */
+.abs-table-wrap { overflow-x: auto; }
+
+.abs-table {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.abs-table thead tr {
+    background: var(--primary-light);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.abs-table th {
+    padding: 12px 18px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--primary-dark);
+}
+
+.abs-table td {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.abs-table tbody tr { transition: background 0.2s ease; }
+.abs-table tbody tr:hover { background: rgba(247, 244, 236, 0.7); }
+.abs-table tbody tr:last-child td { border-bottom: none; }
+
+.abs-center { text-align: center !important; }
+.abs-col-no { width: 52px; }
+.abs-col-nis { width: 120px; }
+.abs-col-status { width: 280px; }
+.abs-col-note { width: 220px; }
+
+.abs-num { font-size: 0.75rem; font-weight: 500; color: var(--text-muted); }
+.abs-nis { font-family: monospace; font-size: 0.75rem; color: var(--text-muted); }
+.abs-student-name { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-dark); }
+.abs-student-gender { font-size: 0.68rem; color: var(--text-muted); }
+.abs-table-empty { padding: 40px 20px !important; text-align: center; font-size: 0.78rem; color: var(--text-muted); }
+
+/* ======== PILIHAN STATUS (RADIO PILL) ======== */
+.abs-status-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 12px;
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+}
+
+.abs-radio { cursor: pointer; }
+
+.abs-radio input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
+
+.abs-radio span {
+    display: block;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+}
+
+.abs-radio:hover span { background: var(--white); }
+
+.abs-radio input:focus-visible + span { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+.abs-radio.hadir input:checked + span { background: var(--primary-gradient); color: var(--white); box-shadow: var(--shadow-xs); }
+.abs-radio.sakit input:checked + span { background: var(--gold-gradient);    color: var(--primary-darker); box-shadow: var(--shadow-xs); }
+.abs-radio.izin  input:checked + span { background: #2a62b8;                 color: var(--white); box-shadow: var(--shadow-xs); }
+.abs-radio.alpa  input:checked + span { background: var(--red-text);         color: var(--white); box-shadow: var(--shadow-xs); }
+
+/* ======== FOOTER TABEL ======== */
+.abs-panel-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 26px;
+    background: var(--bg-light);
+    border-top: 1px dashed var(--border-color);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 992px) {
+    .abs-session-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .abs-form-grid { grid-template-columns: 1fr; }
+    .abs-panel-head, .abs-panel-body, .abs-recap, .abs-panel-foot { padding-left: 18px; padding-right: 18px; }
+}
+
+@media (max-width: 600px) {
+    .abs-session-grid { grid-template-columns: 1fr; }
+    .abs-filter-form { flex-direction: column; align-items: stretch; }
+    .abs-filter-actions { width: 100%; }
+    .abs-filter-actions .abs-date-wrap { flex: 1; }
+    .abs-filter-actions input[type="date"] { width: 100%; }
+    .abs-head-actions { width: 100%; flex-wrap: wrap; }
+    .abs-panel-foot .abs-btn, .abs-form-foot .abs-btn { width: 100%; }
+}
+
+/* ======== RESPONSIVE KERANGKA ======== */
+html, body { max-width: 100%; overflow-x: hidden; }
+.dashboard-container { flex-wrap: nowrap; align-items: flex-start; }
+.main-content { min-width: 0; }
+
+@media (max-width: 900px) {
+    .main-content { padding: 20px; margin-left: 0; width: 100%; }
+}
+
+@media (max-width: 600px) {
+    .main-content { padding: 14px; }
+    .topbar { flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px 20px; }
+    .topbar-icons { align-self: flex-end; }
+}

@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelas & Halaqah - Tahfiz Digital</title>
+    <!-- Google Fonts: Amiri + Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/modul/tahfiz/kelas_halaqah.css') }}">
     <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
@@ -24,8 +26,8 @@
                     <h1>Kelas & Halaqah</h1>
                 </div>
                 <div class="page-header-right">
-                    <button class="btn-outline"><i class="fa-solid fa-school"></i> Tambah Kelas</button>
-                    <button class="btn-primary-gold"><i class="fa-solid fa-plus"></i> Tambah Halaqah</button>
+                    <button class="btn-outline" onclick="openModal('modalTambahKelas')"><i class="fa-solid fa-school"></i> Tambah Kelas</button>
+                    <button class="btn-primary-gold" onclick="openModal('modalTambahHalaqah')"><i class="fa-solid fa-plus"></i> Tambah Halaqah</button>
                 </div>
             </div>
 
@@ -64,6 +66,8 @@
                     <select>
                         <option>Semua Kelas</option>
                         <option>Kelas 1A</option>
+                        <option>Kelas 1B</option>
+                        <option>Kelas 2A</option>
                         <option>Kelas 2B</option>
                         <option>Kelas 3A</option>
                     </select>
@@ -75,151 +79,99 @@
                 </div>
             </div>
 
-            <!-- 4. TABEL HALAQAH (POLA B: DATAR, KOLOM KELAS) -->
+            <!-- 4. TABEL EXPANDABLE DETAIL KELAS & HALAQAH -->
             <div class="table-card">
                 <div class="table-responsive">
-                    <table>
+                    <table class="table-expandable">
                         <thead>
                             <tr>
-                                <th>Nama Halaqah</th>
-                                <th>Kelas</th>
-                                <th>Pengampu</th>
-                                <th>Siswa</th>
-                                <th>Progres Capaian</th>
-                                <th>Input Hari Ini</th>
-                                <th>Aksi</th>
+                                <th style="width: 80px;" class="text-center">DETAIL</th>
+                                <th>NAMA KELAS</th>
+                                <th class="text-center">TOTAL HALAQAH</th>
+                                <th class="text-center">TOTAL SISWA</th>
+                                <th class="text-center" style="width: 100px;">AKSI</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="cell-strong">Halaqah 1</td>
-                                <td>Kelas 1A</td>
-                                <td>Ustadz Ahmad</td>
-                                <td>12</td>
-                                <td>
-                                    <div class="progress-mini">
-                                        <div class="progress-mini-fill" style="width: 85%;"></div>
-                                    </div>
-                                    <span class="progress-mini-label">85%</span>
+                            <!-- BARIS KELAS 1A -->
+                            <tr class="row-parent expanded" onclick="toggleClassRow(this)">
+                                <td class="text-center">
+                                    <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                                    <span class="cid-badge">CID: 24</span>
                                 </td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Sudah</span></td>
                                 <td>
-                                    <div class="action-icons">
-                                        <button title="Lihat Detail"><i class="fa-solid fa-eye"></i></button>
-                                        <button title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                        <button title="Ganti Pengampu"><i class="fa-solid fa-user-pen"></i></button>
-                                        <button title="Hapus" class="danger"><i class="fa-solid fa-trash"></i></button>
+                                    <div class="class-name-cell">
+                                        <i class="fa-solid fa-graduation-cap icon-class"></i>
+                                        <strong>1A</strong>
                                     </div>
                                 </td>
-                            </tr>
-                            <tr>
-                                <td class="cell-strong">Halaqah 2</td>
-                                <td>Kelas 1A</td>
-                                <td>Ustadzah Aisyah</td>
-                                <td>11</td>
-                                <td>
-                                    <div class="progress-mini">
-                                        <div class="progress-mini-fill" style="width: 92%;"></div>
-                                    </div>
-                                    <span class="progress-mini-label">92%</span>
+                                <td class="text-center">
+                                    <span class="count-pill"><i class="fa-solid fa-users"></i> 2</span>
                                 </td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Sudah</span></td>
-                                <td>
-                                    <div class="action-icons">
-                                        <button title="Lihat Detail"><i class="fa-solid fa-eye"></i></button>
-                                        <button title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                        <button title="Ganti Pengampu"><i class="fa-solid fa-user-pen"></i></button>
-                                        <button title="Hapus" class="danger"><i class="fa-solid fa-trash"></i></button>
+                                <td class="text-center">
+                                    <span class="count-pill"><i class="fa-solid fa-user-large"></i> 16</span>
+                                </td>
+                                <td class="text-center" onclick="event.stopPropagation();">
+                                    <div class="action-icons-row">
+                                        <button title="Lihat Detail Kelas" class="btn-action-icon danger-icon" onclick="openModal('modalDetailKelas')"><i class="fa-regular fa-eye"></i></button>
+                                        <button title="Edit Kelas" class="btn-action-icon" onclick="openModal('modalEditKelas')"><i class="fa-regular fa-pen-to-square"></i></button>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td class="cell-strong">Halaqah 1</td>
-                                <td>Kelas 2B</td>
-                                <td>Ustadz Fajar</td>
-                                <td>13</td>
-                                <td>
-                                    <div class="progress-mini">
-                                        <div class="progress-mini-fill" style="width: 58%;"></div>
-                                    </div>
-                                    <span class="progress-mini-label">58%</span>
-                                </td>
-                                <td><span class="badge danger"><i class="fa-solid fa-circle-xmark"></i> Belum</span></td>
-                                <td>
-                                    <div class="action-icons">
-                                        <button title="Lihat Detail"><i class="fa-solid fa-eye"></i></button>
-                                        <button title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                        <button title="Ganti Pengampu"><i class="fa-solid fa-user-pen"></i></button>
-                                        <button title="Hapus" class="danger"><i class="fa-solid fa-trash"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="cell-strong">Halaqah 3</td>
-                                <td>Kelas 2B</td>
-                                <td class="cell-empty"><i class="fa-solid fa-user-slash"></i> Belum ditentukan</td>
-                                <td>9</td>
-                                <td>
-                                    <div class="progress-mini">
-                                        <div class="progress-mini-fill" style="width: 0%;"></div>
-                                    </div>
-                                    <span class="progress-mini-label">-</span>
-                                </td>
-                                <td><span class="badge danger"><i class="fa-solid fa-circle-xmark"></i> Belum</span></td>
-                                <td>
-                                    <div class="action-icons">
-                                        <button title="Lihat Detail"><i class="fa-solid fa-eye"></i></button>
-                                        <button title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                        <button title="Ganti Pengampu" class="highlight"><i class="fa-solid fa-user-pen"></i></button>
-                                        <button title="Hapus" class="danger"><i class="fa-solid fa-trash"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="cell-strong">Halaqah 1</td>
-                                <td>Kelas 3A</td>
-                                <td>Ustadzah Rina</td>
-                                <td>10</td>
-                                <td>
-                                    <div class="progress-mini">
-                                        <div class="progress-mini-fill" style="width: 100%;"></div>
-                                    </div>
-                                    <span class="progress-mini-label">100%</span>
-                                </td>
-                                <td><span class="badge success"><i class="fa-solid fa-circle-check"></i> Sudah</span></td>
-                                <td>
-                                    <div class="action-icons">
-                                        <button title="Lihat Detail"><i class="fa-solid fa-eye"></i></button>
-                                        <button title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                        <button title="Ganti Pengampu"><i class="fa-solid fa-user-pen"></i></button>
-                                        <button title="Hapus" class="danger"><i class="fa-solid fa-trash"></i></button>
+                            <!-- DETAIL KELAS 1A (KARTU HALAQAH) -->
+                            <tr class="row-detail active">
+                                <td colspan="5">
+                                    <div class="class-detail-container">
+                                        <div class="class-detail-header">
+                                            <i class="fa-solid fa-users-gear"></i>
+                                            <div>
+                                                <h4>Daftar Halaqah</h4>
+                                                <p>Mengelola kelompok belajar di kelas 1A</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="halaqah-grid">
+                                            <div class="halaqah-card">
+                                                <span class="hid-badge">HID: 59</span>
+                                                <div class="halaqah-card-header">
+                                                    <h5>Halaqah 1</h5>
+                                                    <div class="halaqah-card-top-right">
+                                                        <span class="student-count-badge"><i class="fa-solid fa-user-group"></i> 8 Siswa</span>
+                                                        <!-- TOMBOL AKSI PADA KARTU HALAQAH -->
+                                                        <div class="halaqah-action-icons">
+                                                            <button title="Lihat Detail & Siswa Halaqah" class="btn-halaqah-action" onclick="openModal('modalSiswaHalaqah')"><i class="fa-regular fa-eye"></i></button>
+                                                            <button title="Edit Halaqah" class="btn-halaqah-action" onclick="openModal('modalEditHalaqah')"><i class="fa-regular fa-pen-to-square"></i></button>
+                                                            <button title="Ganti Pengampu" class="btn-halaqah-action" onclick="openModal('modalGantiPengampu')"><i class="fa-solid fa-user-pen"></i></button>
+                                                            <button title="Hapus Halaqah" class="btn-halaqah-action danger" onclick="openModal('modalHapusHalaqah')"><i class="fa-regular fa-trash-can"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="guru-info-box">
+                                                    <div class="guru-avatar text-avatar">US</div>
+                                                    <div class="guru-details">
+                                                        <span class="guru-label">GURU PENGAMPU</span>
+                                                        <h6>Ustadzah Suhartini, S.IP</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
-                <!-- 8. EMPTY STATE (tampil kalau data kosong, contoh markup — sembunyikan/hapus saat sudah ada data) -->
-                {{--
-                <div class="empty-state">
-                    <i class="fa-solid fa-book-quran"></i>
-                    <h4>Belum ada halaqah</h4>
-                    <p>Tambahkan halaqah pertama untuk mulai mencatat hafalan siswa.</p>
-                    <button class="btn-primary-gold"><i class="fa-solid fa-plus"></i> Tambah Halaqah</button>
-                </div>
-                --}}
             </div>
 
         </main>
     </div>
 
-    <!-- 7. MODAL TAMBAH KELAS -->
+    <!-- 5. MODAL TAMBAH KELAS -->
     <div class="modal-overlay" id="modalTambahKelas">
         <div class="modal-box">
             <div class="modal-header">
                 <h3>Tambah Kelas</h3>
-                <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+                <button class="modal-close" onclick="closeModal('modalTambahKelas')"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -232,18 +184,79 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-back">Batal</button>
+                <button class="btn-back" onclick="closeModal('modalTambahKelas')">Batal</button>
                 <button class="btn-primary-gold">Simpan</button>
             </div>
         </div>
     </div>
 
-    <!-- 7. MODAL TAMBAH / EDIT HALAQAH -->
+    <!-- 6. MODAL DETAIL KELAS -->
+    <div class="modal-overlay" id="modalDetailKelas">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Detail Kelas</h3>
+                <button class="modal-close" onclick="closeModal('modalDetailKelas')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-detail-content">
+                    <div class="detail-item-row">
+                        <span class="d-label">ID Kelas (CID)</span>
+                        <span class="d-value cid-badge">CID: 24</span>
+                    </div>
+                    <div class="detail-item-row">
+                        <span class="d-label">Nama Kelas</span>
+                        <span class="d-value cell-strong">Kelas 1A</span>
+                    </div>
+                    <div class="detail-item-row">
+                        <span class="d-label">Total Halaqah</span>
+                        <span class="d-value">1 Halaqah</span>
+                    </div>
+                    <div class="detail-item-row">
+                        <span class="d-label">Total Siswa</span>
+                        <span class="d-value">16 Siswa</span>
+                    </div>
+                    <div class="detail-item-row">
+                        <span class="d-label">Keterangan / Deskripsi</span>
+                        <span class="d-value text-muted">Kelas reguler program tahfiz pagi hari.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary-gold" onclick="closeModal('modalDetailKelas')">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. MODAL EDIT KELAS -->
+    <div class="modal-overlay" id="modalEditKelas">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Edit Kelas</h3>
+                <button class="modal-close" onclick="closeModal('modalEditKelas')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nama Kelas</label>
+                    <input type="text" value="Kelas 1A" placeholder="Masukkan nama kelas">
+                </div>
+                <div class="form-group">
+                    <label>Keterangan / Deskripsi</label>
+                    <textarea rows="3" class="form-textarea" placeholder="Masukkan keterangan kelas...">Kelas reguler program tahfiz pagi hari.</textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-back" onclick="closeModal('modalEditKelas')">Batal</button>
+                <button class="btn-primary-gold">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. MODAL TAMBAH HALAQAH -->
     <div class="modal-overlay" id="modalTambahHalaqah">
         <div class="modal-box">
             <div class="modal-header">
                 <h3>Tambah Halaqah</h3>
-                <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+                <button class="modal-close" onclick="closeModal('modalTambahHalaqah')"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -255,36 +268,200 @@
                     <select>
                         <option>Pilih kelas...</option>
                         <option>Kelas 1A</option>
-                        <option>Kelas 2B</option>
-                        <option>Kelas 3A</option>
+                        <option>Kelas 1B</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Pengampu</label>
                     <select>
                         <option>Pilih pengampu...</option>
-                        <option>Ustadz Ahmad</option>
-                        <option>Ustadzah Aisyah</option>
-                        <option>Ustadz Fajar</option>
+                        <option>Ustadzah Suhartini, S.IP</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-back" onclick="closeModal('modalTambahHalaqah')">Batal</button>
+                <button class="btn-primary-gold">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. MODAL POP-UP SISWA HALAQAH (LOGS MATA - BARU) -->
+    <div class="modal-overlay" id="modalSiswaHalaqah">
+        <div class="modal-box modal-lg">
+            <div class="modal-header">
+                <div>
+                    <h3>Detail & Daftar Siswa Halaqah</h3>
+                    <p class="text-sm text-muted">Halaqah 1 — Kelas 1A (HID: 59)</p>
+                </div>
+                <button class="modal-close" onclick="closeModal('modalSiswaHalaqah')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="halaqah-summary-banner">
+                    <div class="guru-info-box">
+                        <div class="guru-avatar text-avatar">US</div>
+                        <div class="guru-details">
+                            <span class="guru-label">GURU PENGAMPU</span>
+                            <h6>Ustadzah Suhartini, S.IP</h6>
+                        </div>
+                    </div>
+                    <div class="summary-stat-pill">
+                        <i class="fa-solid fa-user-group"></i>
+                        <div>
+                            <strong>8 Siswa</strong>
+                            <span>Terdaftar</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="section-subtitle"><i class="fa-solid fa-list-ol"></i> Anggota Siswa Halaqah</h4>
+                
+                <div class="table-responsive">
+                    <table class="table-modal-siswa">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;">NO</th>
+                                <th>NAMA SISWA</th>
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center">1</td>
+                                <td><strong class="cell-strong">Razak ganteng</strong></td>
+                             
+                            </tr>
+                            <tr>
+                                <td class="text-center">2</td>
+                                <td><strong class="cell-strong">Razak ganteng sekali</strong></td>
+                              
+                            </tr>
+                            <tr>
+                                <td class="text-center">3</td>
+                                <td><strong class="cell-strong">Razak artis tiktok</strong></td>
+                                
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary-gold" onclick="closeModal('modalSiswaHalaqah')">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. MODAL EDIT HALAQAH (BARU) -->
+    <div class="modal-overlay" id="modalEditHalaqah">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Edit Informasi Halaqah</h3>
+                <button class="modal-close" onclick="closeModal('modalEditHalaqah')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nama Halaqah</label>
+                    <input type="text" value="Halaqah 1">
+                </div>
+                <div class="form-group">
+                    <label>Kelas</label>
+                    <select>
+                        <option selected>Kelas 1A</option>
+                        <option>Kelas 1B</option>
                     </select>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Target Harian (baris)</label>
-                        <input type="number" placeholder="5">
+                        <input type="number" value="5">
                     </div>
                     <div class="form-group">
                         <label>Kapasitas Siswa</label>
-                        <input type="number" placeholder="15">
+                        <input type="number" value="15">
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-back">Batal</button>
-                <button class="btn-primary-gold">Simpan</button>
+                <button class="btn-back" onclick="closeModal('modalEditHalaqah')">Batal</button>
+                <button class="btn-primary-gold">Simpan Perubahan</button>
             </div>
         </div>
     </div>
+
+    <!-- 11. MODAL GANTI PENGAMPU (BARU) -->
+    <div class="modal-overlay" id="modalGantiPengampu">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Ganti Guru Pengampu</h3>
+                <button class="modal-close" onclick="closeModal('modalGantiPengampu')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="guru-current-card mb-10">
+                    <span class="guru-label">PENGAMPU SAAT INI</span>
+                    <h6>Ustadzah Suhartini, S.IP</h6>
+                </div>
+                <div class="form-group mt-15">
+                    <label>Pilih Guru Pengampu Baru</label>
+                    <select>
+                        <option value="">Pilih pengampu...</option>
+                        <option value="1">Ustadzah Rayhanah Qurratu 'Aini</option>
+                        <option value="2">Ustadz Ahmad</option>
+                        <option value="3">Ustadz Abdullah</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-back" onclick="closeModal('modalGantiPengampu')">Batal</button>
+                <button class="btn-primary-gold">Update Pengampu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. MODAL HAPUS HALAQAH (BARU) -->
+    <div class="modal-overlay" id="modalHapusHalaqah">
+        <div class="modal-box modal-confirm">
+            <div class="modal-body text-center">
+                <div class="icon-danger-circle mb-10">
+                    <i class="fa-solid fa-trash-can"></i>
+                </div>
+                <h3>Hapus Halaqah?</h3>
+                <p class="text-sm text-muted">Apakah Anda yakin ingin menghapus <strong>Halaqah 1</strong>? Tindakan ini tidak dapat dibatalkan.</p>
+            </div>
+            <div class="modal-footer center-footer">
+                <button class="btn-back" onclick="closeModal('modalHapusHalaqah')">Batal</button>
+                <button class="btn-danger-solid">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT INTERAKTIF AKORDION & MODAL -->
+    <script>
+        function toggleClassRow(row) {
+            const nextRow = row.nextElementSibling;
+            const icon = row.querySelector('.toggle-icon');
+
+            if (nextRow && nextRow.classList.contains('row-detail')) {
+                row.classList.toggle('expanded');
+                nextRow.classList.toggle('active');
+
+                if (row.classList.contains('expanded')) {
+                    icon.classList.remove('fa-chevron-right');
+                    icon.classList.add('fa-chevron-down');
+                } else {
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-right');
+                }
+            }
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+    </script>
 
 </body>
 </html>

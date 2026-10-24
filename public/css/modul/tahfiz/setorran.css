@@ -430,3 +430,414 @@ table.table-input-setoran tbody tr:last-child td { border-bottom: none; }
     .table-footer-action { justify-content: stretch; }
     .table-footer-action button { width: 100%; justify-content: center; }
 }
+/* ================================================================
+   STYLESHEET INPUT SETORAN HAFALAN - TAHFIZ DIGITAL
+   ================================================================ */
+
+.form-card-main, 
+.setoran-section-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: 0 4px 15px rgba(11, 59, 46, 0.05);
+    margin-bottom: 20px;
+    border: 1px solid #f3e8d2;
+}
+
+.form-row-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.mt-15 { margin-top: 15px; }
+.mt-20 { margin-top: 20px; }
+
+.form-group-custom label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #7a1c1c; /* Warna maroon teks label sesuai referensi */
+    margin-bottom: 6px;
+}
+
+.input-control {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--text-dark, #333333);
+    background: #ffffff;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.input-control:focus {
+    border-color: var(--primary-color, #1b6b4f);
+}
+
+.select-arrow {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 36px;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-icons-right {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+    font-size: 0.8rem;
+    display: flex;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.section-card-header {
+    border-bottom: 1px solid #edf2f7;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.section-title-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #1a202c;
+}
+
+.section-title-left i {
+    color: var(--primary-color, #1b6b4f);
+    font-size: 1.1rem;
+}
+
+.section-title-left h4 {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.ziyadah-item-box {
+    background: #fafafa;
+    border: 1px solid #edf2f7;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 15px;
+}
+
+.ziyadah-item-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    color: #a0aec0;
+}
+
+.toolbar-actions-right {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-icon-action {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #718096;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+.btn-icon-action:hover {
+    color: #e53e3e;
+}
+
+.btn-add-ziyadah {
+    background: #ffffff;
+    border: 1px dashed var(--primary-color, #1b6b4f);
+    color: var(--primary-color, #1b6b4f);
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-add-ziyadah:hover {
+    background: var(--primary-light, #e6fffa);
+}
+
+.text-center { 
+    text-align: center; 
+}
+/* ================================================================
+   STYLESHEET INPUT SETORAN HAFALAN - TAHFIZ DIGITAL
+   ================================================================ */
+
+/* Layout Kartu Form Utama & Kartu Section */
+.form-card-main, 
+.setoran-section-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: 0 4px 15px rgba(11, 59, 46, 0.04);
+    margin-bottom: 20px;
+    border: 1px solid #f3e8d2;
+}
+
+/* Grid Layout Responsif */
+.form-row-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.form-row-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .form-row-split {
+        grid-template-columns: 1fr;
+    }
+}
+
+.mt-15 { margin-top: 15px; }
+.mt-20 { margin-top: 20px; }
+
+/* Label Teks (Warna Maroon Sesuai Tema Referensi) */
+.form-group-custom label,
+.label-maroon {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #7a1c1c; /* Warna Maroon */
+    margin-bottom: 8px;
+}
+
+/* Control Input, Select & Textarea */
+.input-control {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--text-dark, #333333);
+    background: #ffffff;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-control:focus {
+    border-color: var(--primary-color, #1b6b4f);
+    box-shadow: 0 0 0 3px rgba(27, 107, 79, 0.1);
+}
+
+.textarea-control {
+    min-height: 52px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* Panas Dropdown Custom */
+.select-arrow {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 36px;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-icons-right {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+    font-size: 0.8rem;
+    display: flex;
+    gap: 8px;
+    cursor: pointer;
+}
+
+/* Header Section Form */
+.section-card-header {
+    border-bottom: 1px solid #edf2f7;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.section-title-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #7a1c1c;
+}
+
+.section-title-left i {
+    font-size: 1.1rem;
+}
+
+.section-title-left h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+/* Box Item Ziyadah / PR Dynamic */
+.ziyadah-item-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 15px;
+}
+
+.ziyadah-item-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    color: #a0aec0;
+}
+
+.toolbar-actions-right {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-icon-action {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #2d3748;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+.btn-icon-action:hover {
+    color: #e53e3e;
+}
+
+/* Tombol Tambah Item Ziyadah / PR */
+.btn-add-item {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #2d3748;
+    padding: 8px 22px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-add-item:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+/* Radio Button Options (Kondisi Hafalan) */
+.radio-inline-options {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.radio-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #2d3748;
+    cursor: pointer;
+}
+
+.radio-option input[type="radio"] {
+    accent-color: #3182ce;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* Tombol Aksi Bawah (Bottom Action Bar) */
+.bottom-action-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.btn-action-submit {
+    background-color: #d51d52; /* Warna Merah Magenta Sesuai Gambar */
+    color: #ffffff;
+    border: none;
+    padding: 9px 24px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.btn-action-submit:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.btn-action-outline {
+    background-color: #ffffff;
+    color: #2d3748;
+    border: 1px solid #e2e8f0;
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-action-outline:hover {
+    background-color: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+.btn-action-cancel {
+    background-color: #ffffff;
+    color: #2d3748;
+    border: 1px solid #e2e8f0;
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-action-cancel:hover {
+    background-color: #fff5f5;
+    color: #e53e3e;
+    border-color: #feb2b2;
+}
+
+.text-center { 
+    text-align: center; 
+}
