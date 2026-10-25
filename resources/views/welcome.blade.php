@@ -85,7 +85,7 @@
                         <a href="/reg" class="btn-started">
                             <i class="fa-solid fa-right-to-bracket"></i> Login Sistem
                         </a>
-                        <button type="button" class="btn-secondary" data-trigger-pwa-install style="cursor: pointer;">
+                        <button type="button" class="btn-started" data-trigger-pwa-install style="cursor: pointer;">
                             <i class="fa-solid fa-download"></i> Download Aplikasi
                         </button>
                         <a href="#ppdb" class="btn-secondary">
