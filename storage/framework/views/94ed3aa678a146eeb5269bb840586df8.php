@@ -9,6 +9,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <!-- PWA & Mobile Web App Meta Tags -->
+    <meta name="theme-color" content="#0b2e1b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sekolah Syafi'i">
+    <link rel="manifest" href="<?php echo e(asset('manifest.json')); ?>">
+    <link rel="apple-touch-icon" href="<?php echo e(asset('img/logo_sklh.png')); ?>">
     <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>">
     <link rel="stylesheet" href="<?php echo e(asset('css/welcome.css')); ?>?v=<?php echo e(time()); ?>">
 </head>
@@ -78,11 +85,11 @@
                         <a href="/reg" class="btn-started">
                             <i class="fa-solid fa-right-to-bracket"></i> Login Sistem
                         </a>
+                        <button type="button" class="btn-secondary" data-trigger-pwa-install style="cursor: pointer;">
+                            <i class="fa-solid fa-mobile-screen-button"></i> Install Aplikasi
+                        </button>
                         <a href="#ppdb" class="btn-secondary">
                             <i class="fa-solid fa-user-plus"></i> Info PPDB
-                        </a>
-                        <a href="#profil" class="btn-secondary">
-                            <i class="fa-solid fa-compass"></i> Jelajahi Profil
                         </a>
                     </div>
 
@@ -600,6 +607,80 @@
         </div>
     </section>
 
+    <!-- ======== 5B. INFORMASI & DOWNLOAD WEB APP (PWA) ======== -->
+    <section id="install-app" class="section parallax-section" style="padding-top: 30px; padding-bottom: 40px;">
+        <div class="container">
+            <div class="webapp-banner-card" data-aos="fade-up">
+                <div class="parallax-ornament-layer" data-parallax-speed="0.12"></div>
+
+                <div class="webapp-grid">
+                    <!-- Kiri: Informasi & Tombol Install -->
+                    <div class="webapp-content">
+                        <span class="section-eyebrow light">
+                            <i class="fa-solid fa-mobile-screen-button"></i> Aplikasi Portal & SIAKAD (Web App)
+                        </span>
+                        <h2>Pasang Aplikasi <span class="highlight">Sekolah Syafi'i</span> di Perangkat Anda</h2>
+                        <p class="webapp-lead">
+                            Kini sistem informasi sekolah, portal SIAKAD, dan monitoring Tahfizh telah mendukung teknologi <strong>Progressive Web App (PWA)</strong>. Pasang langsung di layar utama HP atau laptop Anda untuk akses satu ketukan layaknya aplikasi native tanpa membebani memori.
+                        </p>
+
+                        <div class="webapp-features-list">
+                            <div class="webapp-feature-pill">
+                                <i class="fa-solid fa-bolt"></i>
+                                <span>Akses 1 Ketukan dari Layar Utama HP</span>
+                            </div>
+                            <div class="webapp-feature-pill">
+                                <i class="fa-solid fa-feather-pointed"></i>
+                                <span>Sangat Ringan & Hemat Memori</span>
+                            </div>
+                            <div class="webapp-feature-pill">
+                                <i class="fa-solid fa-expand"></i>
+                                <span>Tampilan Layar Penuh (Standalone)</span>
+                            </div>
+                            <div class="webapp-feature-pill">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                                <span>Update Otomatis Tanpa Re-install</span>
+                            </div>
+                        </div>
+
+                        <div class="webapp-actions">
+                            <button type="button" class="btn-install-pwa" data-trigger-pwa-install>
+                                <i class="fa-solid fa-download"></i>
+                                <span class="pwa-btn-label">Download / Install Aplikasi</span>
+                            </button>
+                            <button type="button" class="btn-guide-pwa" id="btnOpenPwaGuide">
+                                <i class="fa-solid fa-circle-question"></i> Cara Pasang di HP & Laptop
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Kanan: Kartu Pratinjau Ikon Aplikasi -->
+                    <div class="webapp-preview-stage">
+                        <div class="webapp-phone-frame tilt-card">
+                            <div class="webapp-phone-notch"></div>
+                            <div class="webapp-app-icon">
+                                <img src="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>" alt="Ikon Aplikasi Sekolah Syafi'i">
+                            </div>
+                            <h4>Sekolah Syafi'i</h4>
+                            <span class="app-sub">Portal Akademik, SIAKAD & Tahfizh</span>
+
+                            <div style="font-size: 0.78rem; color: #53665b; background: #f3f7f4; padding: 10px 12px; border-radius: 12px; margin-bottom: 14px; line-height: 1.5;">
+                                <i class="fa-solid fa-circle-check" style="color: #145a32;"></i>
+                                Tersedia untuk Siswa/Wali Santri, Guru, dan Admin
+                            </div>
+
+                            <div class="webapp-platform-badges">
+                                <span class="platform-chip"><i class="fa-brands fa-android"></i> Android</span>
+                                <span class="platform-chip"><i class="fa-brands fa-apple"></i> iOS / iPhone</span>
+                                <span class="platform-chip"><i class="fa-solid fa-laptop"></i> Desktop</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- ======== 6. LOKASI & KONTAK (PETA INTERAKTIF LEAFLET) ======== -->
     <section id="kontak" class="section parallax-section">
         <div class="parallax-ring spin" style="left: -220px; bottom: -180px;" data-parallax-speed="0.14"></div>
@@ -703,6 +784,7 @@
                     <h4>Akses Sistem</h4>
                     <ul>
                         <li><a href="/reg"><i class="fa-solid fa-right-to-bracket"></i> Login Portal SIAKAD</a></li>
+                        <li><a href="#install-app"><i class="fa-solid fa-mobile-screen-button"></i> Install Aplikasi (Web App)</a></li>
                         <li><a href="/prof?halaman=ppdb"><i class="fa-solid fa-user-plus"></i> Alur & Syarat Pendaftaran</a></li>
                         <li><a href="/prof?halaman=kontak"><i class="fa-solid fa-location-dot"></i> Peta Lokasi Sekolah</a></li>
                     </ul>
@@ -723,6 +805,89 @@
             <figcaption class="lb-caption"></figcaption>
         </figure>
         <button type="button" class="lb-nav lb-next" aria-label="Foto berikutnya"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+
+    <!-- ======== MODAL PANDUAN INSTALL WEB APP (PWA) ======== -->
+    <div class="pwa-modal-backdrop" id="pwaInstallModal" role="dialog" aria-modal="true" aria-labelledby="pwaModalTitle" hidden>
+        <div class="pwa-modal-card">
+            <div class="pwa-modal-header">
+                <h3 id="pwaModalTitle">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                    Panduan Pasang Aplikasi (Web App)
+                </h3>
+                <button type="button" class="pwa-modal-close" id="btnClosePwaModal" aria-label="Tutup panduan">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="pwa-modal-body">
+                <div class="pwa-guide-tabs" role="tablist">
+                    <button type="button" class="pwa-tab-btn active" data-pwa-tab="android">
+                        <i class="fa-brands fa-android"></i> Android
+                    </button>
+                    <button type="button" class="pwa-tab-btn" data-pwa-tab="ios">
+                        <i class="fa-brands fa-apple"></i> iPhone / iOS
+                    </button>
+                    <button type="button" class="pwa-tab-btn" data-pwa-tab="desktop">
+                        <i class="fa-solid fa-laptop"></i> Laptop / PC
+                    </button>
+                </div>
+
+                <!-- Panel Android -->
+                <div class="pwa-guide-panel active" id="pwa-panel-android">
+                    <ul class="pwa-step-list">
+                        <li class="pwa-step-item">
+                            <span class="pwa-step-num">1</span>
+                            <div>Buka website ini menggunakan browser <strong>Google Chrome</strong> di HP Android Anda.</div>
+                        </li>
+                        <li class="pwa-step-item">
+                            <span class="pwa-step-num">2</span>
+                            <div>Ketuk ikon <strong>Titik Tiga (<i class="fa-solid fa-ellipsis-vertical"></i>)</strong> di pojok kanan atas layar Chrome.</div>
+                        </li>
+                        <li class="pwa-step-item">
+                            <span class="pwa-step-num">3</span>
+                            <div>Pilih menu <strong>"Instal aplikasi"</strong> atau <strong>"Tambahkan ke layar utama"</strong>, lalu konfirmasi <strong>Instal</strong>.</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Panel iOS -->
+                <div class="pwa-guide-panel" id="pwa-panel-ios">
+                    <ul class="pwa-step-list">
+                        <li class="pwa-step-item">
+                            <span class="pwa-step-num">1</span>
+                            <div>Buka website ini melalui browser <strong>Safari</strong> di iPhone atau iPad Anda.</div>
+                        </li>
+                        <li class="pwa-step-item">
+                            <span class="pwa-step-num">2</span>
+                            <div>Ketuk tombol <strong>Bagikan / Share (<i class="fa-solid fa-arrow-up-from-bracket"></i>)</strong> pada bilah navigasi bawah Safari.</div>
+                        </li>
+                        <li class="pwa-step-item">
+                            <span class="pwa-step-num">3</span>
+                            <div>Gulir ke bawah dan pilih <strong>"Tambah ke Layar Utama" (Add to Home Screen)</strong>, lalu ketuk <strong>Tambah</strong>.</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Panel Desktop -->
+                <div class="pwa-guide-panel" id="pwa-panel-desktop">
+                    <ul class="pwa-step-list">
+                        <li class="pwa-step-item">
+                            <span class="pwa-step-num">1</span>
+                            <div>Buka website ini di browser <strong>Google Chrome</strong> atau <strong>Microsoft Edge</strong> pada komputer/laptop.</div>
+                        </li>
+                        <li class="pwa-step-item">
+                            <span class="pwa-step-num">2</span>
+                            <div>Klik ikon <strong>Install (<i class="fa-solid fa-computer"></i> / <i class="fa-solid fa-download"></i>)</strong> yang muncul di sisi kanan kolom alamat URL (Address Bar).</div>
+                        </li>
+                        <li class="pwa-step-item">
+                            <span class="pwa-step-num">3</span>
+                            <div>Klik <strong>Instal</strong>, dan pintasan aplikasi Sekolah Syafi'i akan tampil di Desktop/Start Menu Anda.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- ======== SCRIPTS ======== -->
@@ -1063,6 +1228,87 @@
             [300, 1200, 2500].forEach(function (d) { setTimeout(function () { map.invalidateSize(); }, d); });
             window.addEventListener('load', function () { map.invalidateSize(); });
             window.addEventListener('resize', function () { map.invalidateSize(); });
+        })();
+
+        // ===== 6. SERVICE WORKER & PWA INSTALL HANDLER =====
+        (function () {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function () {
+                    navigator.serviceWorker.register('/sw.js').catch(function () {});
+                });
+            }
+
+            var deferredPrompt = null;
+            var installBtns = [].slice.call(document.querySelectorAll('[data-trigger-pwa-install]'));
+            var guideBtn = document.getElementById('btnOpenPwaGuide');
+            var modal = document.getElementById('pwaInstallModal');
+            var closeBtn = document.getElementById('btnClosePwaModal');
+            var tabBtns = [].slice.call(document.querySelectorAll('[data-pwa-tab]'));
+
+            window.addEventListener('beforeinstallprompt', function (e) {
+                e.preventDefault();
+                deferredPrompt = e;
+            });
+
+            function openGuideModal() {
+                if (!modal) return;
+                // Otomatis pilih tab sesuai perangkat pengguna
+                var ua = navigator.userAgent || '';
+                var defaultTab = 'android';
+                if (/iPad|iPhone|iPod/.test(ua)) {
+                    defaultTab = 'ios';
+                } else if (!/Android|Mobile/i.test(ua)) {
+                    defaultTab = 'desktop';
+                }
+                switchGuideTab(defaultTab);
+                modal.hidden = false;
+                document.body.classList.add('mobile-nav-locked');
+            }
+
+            function closeGuideModal() {
+                if (!modal) return;
+                modal.hidden = true;
+                document.body.classList.remove('mobile-nav-locked');
+            }
+
+            function switchGuideTab(tabName) {
+                tabBtns.forEach(function (b) {
+                    b.classList.toggle('active', b.getAttribute('data-pwa-tab') === tabName);
+                });
+                ['android', 'ios', 'desktop'].forEach(function (name) {
+                    var panel = document.getElementById('pwa-panel-' + name);
+                    if (panel) panel.classList.toggle('active', name === tabName);
+                });
+            }
+
+            installBtns.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        deferredPrompt.userChoice.then(function () {
+                            deferredPrompt = null;
+                        });
+                    } else {
+                        openGuideModal();
+                    }
+                });
+            });
+
+            if (guideBtn) guideBtn.addEventListener('click', openGuideModal);
+            if (closeBtn) closeBtn.addEventListener('click', closeGuideModal);
+            if (modal) {
+                modal.addEventListener('click', function (e) {
+                    if (e.target === modal) closeGuideModal();
+                });
+            }
+            tabBtns.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    switchGuideTab(btn.getAttribute('data-pwa-tab'));
+                });
+            });
+            document.addEventListener('keydown', function (e) {
+                if (modal && !modal.hidden && e.key === 'Escape') closeGuideModal();
+            });
         })();
     </script>
 </body>

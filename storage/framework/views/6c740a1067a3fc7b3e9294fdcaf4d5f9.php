@@ -3,155 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk & Daftar - Generasi Rabbani</title>
-    
+    <title>Portal Akademik — Sekolah Islam Al-Qur'an Imam Syafi'i</title>
+
     <!-- Font & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="<?php echo e(asset('/css/activity_reg.css')); ?>?v=<?php echo e(time()); ?>">
 
-    <style>
-        /* Tambahan style khusus untuk toggle password */
-        .input-group {
-            position: relative;
-        }
-        .toggle-password {
-            position: absolute !important;
-            right: 16px !important;
-            left: auto !important;
-            top: 50% !important;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #888;
-            transition: color 0.2s ease;
-            /* Override aturan pointer-events:none dari icon dekoratif di activity_reg.css */
-            pointer-events: auto !important;
-            z-index: 5;
-        }
-        .toggle-password:hover {
-            color: #333;
-        }
-        /* Pastikan input tidak menutupi icon mata & teks tidak numpuk dengan icon */
-        .input-group input {
-            position: relative;
-            z-index: 1;
-        }
-        .input-group input[type="password"],
-        .input-group input#loginPassword,
-        .input-group input#registerPassword,
-        .input-group input#registerPasswordConfirmation {
-            padding-right: 40px !important;
-        }
-    </style>
+    <link rel="stylesheet" href="<?php echo e(asset('/css/activity_reg.css')); ?>?v=<?php echo e(time()); ?>">
 </head>
 <body>
 
-    <div class="auth-card-container">
-        <!-- LAYOUT 1: SISI KIRI (INFORMASI SEKOLAH) -->
-        <div class="auth-brand-side">
-            <div class="brand-overlay"></div>
-            <div class="brand-content">
-                <div class="brand-logo">
-                    <i class="fas fa-quran"></i>
-                    <span>Rabbani</span>
-                </div>
-                <p class="basmalah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
-                <h2>Mencetak Generasi Berakhlaq <span class="highlight">Al-Qur'an</span></h2>
-                <p class="brand-desc">
-                    Selamat datang di portal akademik terpadu. Silakan masuk untuk mengakses materi pembelajaran, rekap tahfidz, dan informasi kegiatan santri.
-                </p>
-                <div class="brand-features">
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Sistem Pembelajaran Modern</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Monitoring Tahfidz Real-Time</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Layer Background & Ornamen Parallax (Dipertahankan) -->
+    <div class="auth-bg-layer" style="background-image: url('<?php echo e(asset('img/bg_skl.jpeg')); ?>?v=<?php echo e(time()); ?>');" data-mouse-speed="-14"></div>
+    <div class="auth-pattern-overlay" data-mouse-speed="18"></div>
+    <div class="auth-glow-orb"></div>
 
-        <!-- LAYOUT 2: SISI KANAN (FORM INPUT LOGIN / SIGN UP) -->
-        <div class="auth-form-side">
-            <!-- Navigasi Tab Switcher -->
-            <div class="tab-navigation">
-                <button class="tab-btn active" id="tabLoginBtn" onclick="switchTab('login')">Masuk</button>
-                <button class="tab-btn" id="tabRegisterBtn" onclick="switchTab('register')">Daftar</button>
+    <!-- Card Tunggal Tanpa Gambar di Dalam Card -->
+    <div class="auth-card-container" id="authCard">
+        <div class="auth-card-top-accent"></div>
+
+        <div class="auth-card-inner">
+            <!-- Header Identitas Sekolah -->
+            <div class="auth-identity-header">
+                <a href="/" class="auth-seal-link" title="Kembali ke Beranda">
+                    <img src="<?php echo e(asset('img/logo.png')); ?>?v=<?php echo e(time()); ?>" alt="Logo Sekolah Islam Al-Qur'an Imam Syafi'i">
+                </a>
+                <p class="auth-basmalah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+                <h1 class="auth-school-name">Sekolah Islam Al-Qur'an Imam Syafi'i</h1>
+                <p class="auth-portal-subtitle">Portal Sistem Informasi Terpadu</p>
+            </div>
+
+            <!-- Navigasi Tab Editorial -->
+            <div class="tab-navigation" role="tablist">
+                <button type="button" class="tab-btn active" id="tabLoginBtn" onclick="switchTab('login')">
+                    <i class="fa-solid fa-right-to-bracket"></i> Masuk Portal
+                </button>
+                <button type="button" class="tab-btn" id="tabRegisterBtn" onclick="switchTab('register')">
+                    <i class="fa-solid fa-user-plus"></i> Aktivasi Akun
+                </button>
             </div>
 
             <!-- FORM 1: LOGIN -->
             <div class="form-wrapper active" id="loginForm">
-                <div class="form-header">
-                    <h3>Selamat Datang Kembali! 👋</h3>
-                    <p>Masukkan akun kamu untuk melanjutkan</p>
-                </div>
                 <form action="/reg/login" method="POST">
                     <?php echo csrf_field(); ?>
-                    <div class="input-group">
-                        <i class="fas fa-envelope"></i>
-                        <input name="username" type="text" placeholder="username" required>
+                    <div class="field-group">
+                        <div class="field-label-row">
+                            <label class="field-label" for="loginUsername">Username</label>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-user"></i>
+                            <input id="loginUsername" name="username" type="text" placeholder="Masukkan username akun" value="<?php echo e(old('username')); ?>" autocomplete="username" required>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <i class="fas fa-lock"></i>
-                        <input id="loginPassword" name="password" type="password" placeholder="Kata Sandi" required>
-                        <i class="fas fa-eye toggle-password" onclick="togglePassword('loginPassword', this)"></i>
+
+                    <div class="field-group">
+                        <div class="field-label-row">
+                            <label class="field-label" for="loginPassword">Kata Sandi</label>
+                            <a href="/reg/lps" class="forgot-pass">Lupa kata sandi?</a>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-lock"></i>
+                            <input id="loginPassword" class="has-toggle" name="password" type="password" placeholder="Masukkan kata sandi" autocomplete="current-password" required>
+                            <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('loginPassword', this)" title="Tampilkan/Sembunyikan Sandi"></i>
+                        </div>
                     </div>
-                    <div class="form-options">
-                        <!-- <label class="remember-me">
-                            <input type="checkbox"> Ingat saya
-                        </label> -->
-                        <a href="/reg/lps" class="forgot-pass">Lupa Sandi?</a>
-                    </div>
-                    <button type="submit" class="btn-submit">Masuk Sekarang</button>
+
+                    <button type="submit" class="btn-submit">
+                        <span>Masuk ke Sistem</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
                 </form>
             </div>
 
             <!-- FORM 2: REGISTER -->
             <div class="form-wrapper" id="registerForm">
-                <div class="form-header">
-                    <h3>Buat Akun Baru 🚀</h3>
-                    <p>Lengkapi data di bawah untuk mendaftar</p>
-                </div>
+                <p class="form-section-note">
+                    Gunakan <strong>Kode Identitas</strong> yang diberikan oleh pihak sekolah untuk mengaktifkan akun baru.
+                </p>
+
                 <form action="/reg/sign" method="POST">
                     <?php echo csrf_field(); ?>
-                    <div class="input-group">
-                        <i class="fas fa-user"></i>
-                        <input name ="email" type="email" placeholder="email" required>
+                    <div class="input-row-2">
+                        <div class="field-group">
+                            <label class="field-label" for="regEmail">Alamat Email</label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-envelope"></i>
+                                <input id="regEmail" name="email" type="email" placeholder="nama@email.com" value="<?php echo e(old('email')); ?>" required>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label" for="regUsername">Username</label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-user"></i>
+                                <input id="regUsername" name="username" type="text" placeholder="Buat username" value="<?php echo e(old('username')); ?>" required>
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <i class="fas fa-user"></i>
-                        <input name ="username" type="text" placeholder="username" required>
+
+                    <div class="input-row-2">
+                        <div class="field-group">
+                            <label class="field-label" for="regNoWa">Nomor WhatsApp</label>
+                            <div class="input-group">
+                                <i class="fa-brands fa-whatsapp"></i>
+                                <input id="regNoWa" name="noWa" type="text" placeholder="08xxxxxxxxxx" value="<?php echo e(old('noWa')); ?>" required>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label" for="regKode">Kode Identitas</label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-key"></i>
+                                <input id="regKode" name="kode" type="text" placeholder="Kode dari sekolah" value="<?php echo e(old('kode')); ?>" required>
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <i class="fas fa-envelope"></i>
-                        <input name="noWa" type="text" placeholder="nomor wa" required>
+
+                    <div class="input-row-2">
+                        <div class="field-group">
+                            <label class="field-label" for="registerPassword">Kata Sandi Baru</label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-lock"></i>
+                                <input id="registerPassword" class="has-toggle" name="password" type="password" placeholder="Min. 8 karakter" required>
+                                <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('registerPassword', this)"></i>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label" for="registerPasswordConfirmation">Konfirmasi Sandi</label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <input id="registerPasswordConfirmation" class="has-toggle" name="password_confirmation" type="password" placeholder="Ulangi kata sandi" required>
+                                <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('registerPasswordConfirmation', this)"></i>
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <i class="fas fa-lock"></i>
-                        <input name="kode" type="text" placeholder="kode identitas" required>
+
+                    <div class="password-hint">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Minimal 8 karakter dengan kombinasi huruf besar, huruf kecil, dan angka.
                     </div>
-                    <div class="input-group">
-                        <i class="fas fa-lock"></i>
-                        <input id="registerPassword" name="password" type="password" placeholder="Kata Sandi" required>
-                        <i class="fas fa-eye toggle-password" onclick="togglePassword('registerPassword', this)"></i>
-                    </div>
-                    <div class="input-group">
-                        <i class="fas fa-shield-alt"></i>
-                        <input id="registerPasswordConfirmation" name="password_confirmation" type="password" placeholder="Konfirmasi Kata Sandi" required>
-                        <i class="fas fa-eye toggle-password" onclick="togglePassword('registerPasswordConfirmation', this)"></i>
-                    </div>
-                    <button type="submit" class="btn-submit">Daftar Akun</button>
+
+                    <button type="submit" class="btn-submit">
+                        <span>Aktifkan & Daftar Akun</span>
+                        <i class="fa-solid fa-check"></i>
+                    </button>
                 </form>
             </div>
-
-            <a href="/" class="back-home"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
         </div>
+
+        <!-- Footer Bar Card -->
+        <div class="auth-card-footer">
+            <a href="/" class="back-home">
+                <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
+            </a>
+            <a href="/prof?halaman=kontak" class="footer-help-link">
+                Hubungi Admin Sekolah
+            </a>
+        </div>
+
         <?php if (isset($component)) { $__componentOriginal0681b545d180d4f9d8ad2ed4614031e2 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2 = $attributes; } ?>
 <?php $component = App\View\Components\Warning::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
@@ -174,9 +188,9 @@
 <?php endif; ?>
     </div>
 
-    <!-- JavaScript untuk Switch Tab Form -->
     <script>
         function switchTab(tab) {
+            const authCard = document.getElementById('authCard');
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
             const tabLoginBtn = document.getElementById('tabLoginBtn');
@@ -187,17 +201,19 @@
                 registerForm.classList.remove('active');
                 tabLoginBtn.classList.add('active');
                 tabRegisterBtn.classList.remove('active');
+                if (authCard) authCard.classList.remove('is-register');
             } else {
                 registerForm.classList.add('active');
                 loginForm.classList.remove('active');
                 tabRegisterBtn.classList.add('active');
                 tabLoginBtn.classList.remove('active');
+                if (authCard) authCard.classList.add('is-register');
             }
         }
 
-        // Toggle show/hide password
         function togglePassword(inputId, iconElement) {
             const input = document.getElementById(inputId);
+            if (!input) return;
             if (input.type === 'password') {
                 input.type = 'text';
                 iconElement.classList.remove('fa-eye');
@@ -208,6 +224,34 @@
                 iconElement.classList.add('fa-eye');
             }
         }
+
+        <?php if(old('email') || old('kode') || old('noWa') || $errors->any()): ?>
+            document.addEventListener('DOMContentLoaded', function () {
+                switchTab('register');
+            });
+        <?php endif; ?>
+
+        // Efek Parallax Halus pada Latar Belakang
+        (function () {
+            if (!window.matchMedia || !window.matchMedia('(hover: hover)').matches) return;
+            var layers = [].slice.call(document.querySelectorAll('[data-mouse-speed]'));
+            var tx = 0, ty = 0, cx = 0, cy = 0;
+            document.addEventListener('mousemove', function (e) {
+                tx = (e.clientX / window.innerWidth) - 0.5;
+                ty = (e.clientY / window.innerHeight) - 0.5;
+            });
+            function tick() {
+                cx += (tx - cx) * 0.08;
+                cy += (ty - cy) * 0.08;
+                layers.forEach(function (el) {
+                    var spd = parseFloat(el.getAttribute('data-mouse-speed')) || 12;
+                    el.style.transform = 'translate3d(' + (cx * spd).toFixed(1) + 'px, ' + (cy * spd).toFixed(1) + 'px, 0)';
+                });
+                requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        })();
     </script>
 </body>
-</html><?php /**PATH D:\laragon\www\sekolahsyafii\resources\views\auth\activity_reg.blade.php ENDPATH**/ ?>
+</html>
+<?php /**PATH D:\laragon\www\sekolahsyafii\resources\views\auth\activity_reg.blade.php ENDPATH**/ ?>

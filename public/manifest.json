@@ -1,11 +1,12 @@
 {
-  "name": "SIAKAD - Sistem Informasi Akademik",
-  "short_name": "SIAKAD",
-  "description": "Sistem Informasi Akademik Sekolah Islam Imam Syafi'i",
-  "start_url": "/sk/dsg",
+  "name": "Sekolah Islam Al-Qur'an Imam Syafi'i — Portal & SIAKAD",
+  "short_name": "Sekolah Syafi'i",
+  "description": "Aplikasi Portal Informasi & SIAKAD Terpadu Sekolah Islam Al-Qur'an Imam Syafi'i",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0d5c3a",
+  "background_color": "#071f12",
+  "theme_color": "#0b2e1b",
   "orientation": "portrait-primary",
   "icons": [
     {
@@ -22,4 +23,3 @@
     }
   ]
 }
-

@@ -2188,6 +2188,369 @@ button {
   }
 }
 
+/* ==========================================================================
+   WEB APP / PWA INSTALL BANNER & MODAL PANDUAN INSTALL
+   ========================================================================== */
+.webapp-banner-card {
+  position: relative;
+  border-radius: 26px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #071f12 0%, #114b2a 55%, #092717 100%);
+  border: 1px solid rgba(212, 175, 55, 0.42);
+  box-shadow: 0 26px 64px rgba(7, 31, 18, 0.26);
+  padding: 48px 46px;
+  color: #fff;
+}
+
+.webapp-banner-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent-light), var(--accent), transparent);
+}
+
+.webapp-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1.35fr 0.85fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.webapp-content h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  color: #fff;
+  line-height: 1.25;
+  margin: 10px 0 14px;
+}
+
+.webapp-content h2 .highlight {
+  color: var(--accent-light);
+}
+
+.webapp-content p.webapp-lead {
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.96rem;
+  line-height: 1.72;
+  margin-bottom: 22px;
+}
+
+.webapp-features-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 18px;
+  margin-bottom: 28px;
+}
+
+.webapp-feature-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.86rem;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+
+.webapp-feature-pill i {
+  color: var(--accent-light);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.webapp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-install-pwa {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent) 0%, #b89021 100%);
+  color: #092214;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.92rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 12px 26px rgba(212, 175, 55, 0.28);
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn-install-pwa:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow: 0 16px 32px rgba(212, 175, 55, 0.38);
+}
+
+.btn-guide-pwa {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 20px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.88rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-guide-pwa:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: var(--accent-light);
+}
+
+/* Mockup Preview Card di Sisi Kanan */
+.webapp-preview-stage {
+  display: flex;
+  justify-content: center;
+}
+
+.webapp-phone-frame {
+  width: 100%;
+  max-width: 300px;
+  background: rgba(255, 255, 255, 0.97);
+  color: var(--text);
+  border-radius: 24px;
+  padding: 22px 20px;
+  border: 2px solid rgba(212, 175, 55, 0.55);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.38);
+  text-align: center;
+}
+
+.webapp-phone-notch {
+  width: 56px;
+  height: 5px;
+  border-radius: 999px;
+  background: #d5e0d9;
+  margin: 0 auto 16px;
+}
+
+.webapp-app-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1.5px solid rgba(17, 75, 42, 0.16);
+  box-shadow: 0 10px 24px rgba(17, 75, 42, 0.14);
+  padding: 10px;
+  margin: 0 auto 12px;
+}
+
+.webapp-app-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.webapp-phone-frame h4 {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 3px;
+}
+
+.webapp-phone-frame span.app-sub {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.webapp-platform-badges {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 12px;
+  border-top: 1px solid #e6efe9;
+}
+
+.platform-chip {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--primary);
+  background: #eef5f0;
+  padding: 5px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Modal Panduan Install PWA */
+.pwa-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 20, 12, 0.74);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.pwa-modal-backdrop[hidden] {
+  display: none !important;
+}
+
+.pwa-modal-card {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  animation: fadeIn 0.25s ease;
+}
+
+.pwa-modal-header {
+  background: linear-gradient(135deg, #071f12, #145a32);
+  color: #fff;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pwa-modal-header h3 {
+  font-size: 1.08rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+}
+
+.pwa-modal-header h3 i {
+  color: var(--accent-light);
+}
+
+.pwa-modal-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pwa-modal-body {
+  padding: 22px 24px 24px;
+}
+
+.pwa-guide-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  background: #f1f6f3;
+  padding: 5px;
+  border-radius: 12px;
+  margin-bottom: 18px;
+}
+
+.pwa-tab-btn {
+  padding: 9px 10px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.pwa-tab-btn.active {
+  background: var(--primary);
+  color: #fff;
+}
+
+.pwa-guide-panel {
+  display: none;
+}
+
+.pwa-guide-panel.active {
+  display: block;
+}
+
+.pwa-step-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.pwa-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f7faf8;
+  border: 1px solid #e1ebe4;
+  font-size: 0.86rem;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.pwa-step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--accent-light);
+  font-weight: 700;
+  font-size: 0.78rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+@media (max-width: 900px) {
+  .webapp-banner-card {
+    padding: 32px 22px;
+  }
+  .webapp-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .webapp-features-list {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {

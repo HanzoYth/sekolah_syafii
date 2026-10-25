@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <meta name="theme-color" content="#0b2e1b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="<?php echo e(asset('manifest.json')); ?>">
+    <link rel="apple-touch-icon" href="<?php echo e(asset('img/logo_sklh.png')); ?>">
     <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>">
     <link rel="stylesheet" href="<?php echo e(asset('css/welcome.css')); ?>?v=<?php echo e(time()); ?>">
 </head>
@@ -453,4 +457,5 @@
     <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
+
 <?php /**PATH D:\laragon\www\sekolahsyafii\resources\views\layouts\public.blade.php ENDPATH**/ ?>
