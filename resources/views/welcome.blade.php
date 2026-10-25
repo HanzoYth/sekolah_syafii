@@ -86,7 +86,7 @@
                             <i class="fa-solid fa-right-to-bracket"></i> Login Sistem
                         </a>
                         <button type="button" class="btn-secondary" data-trigger-pwa-install style="cursor: pointer;">
-                            <i class="fa-solid fa-mobile-screen-button"></i> Install Aplikasi
+                            <i class="fa-solid fa-download"></i> Download Aplikasi
                         </button>
                         <a href="#ppdb" class="btn-secondary">
                             <i class="fa-solid fa-user-plus"></i> Info PPDB
@@ -607,80 +607,6 @@
         </div>
     </section>
 
-    <!-- ======== 5B. INFORMASI & DOWNLOAD WEB APP (PWA) ======== -->
-    <section id="install-app" class="section parallax-section" style="padding-top: 30px; padding-bottom: 40px;">
-        <div class="container">
-            <div class="webapp-banner-card" data-aos="fade-up">
-                <div class="parallax-ornament-layer" data-parallax-speed="0.12"></div>
-
-                <div class="webapp-grid">
-                    <!-- Kiri: Informasi & Tombol Install -->
-                    <div class="webapp-content">
-                        <span class="section-eyebrow light">
-                            <i class="fa-solid fa-mobile-screen-button"></i> Aplikasi Portal & SIAKAD (Web App)
-                        </span>
-                        <h2>Pasang Aplikasi <span class="highlight">Sekolah Syafi'i</span> di Perangkat Anda</h2>
-                        <p class="webapp-lead">
-                            Kini sistem informasi sekolah, portal SIAKAD, dan monitoring Tahfizh telah mendukung teknologi <strong>Progressive Web App (PWA)</strong>. Pasang langsung di layar utama HP atau laptop Anda untuk akses satu ketukan layaknya aplikasi native tanpa membebani memori.
-                        </p>
-
-                        <div class="webapp-features-list">
-                            <div class="webapp-feature-pill">
-                                <i class="fa-solid fa-bolt"></i>
-                                <span>Akses 1 Ketukan dari Layar Utama HP</span>
-                            </div>
-                            <div class="webapp-feature-pill">
-                                <i class="fa-solid fa-feather-pointed"></i>
-                                <span>Sangat Ringan & Hemat Memori</span>
-                            </div>
-                            <div class="webapp-feature-pill">
-                                <i class="fa-solid fa-expand"></i>
-                                <span>Tampilan Layar Penuh (Standalone)</span>
-                            </div>
-                            <div class="webapp-feature-pill">
-                                <i class="fa-solid fa-arrows-rotate"></i>
-                                <span>Update Otomatis Tanpa Re-install</span>
-                            </div>
-                        </div>
-
-                        <div class="webapp-actions">
-                            <button type="button" class="btn-install-pwa" data-trigger-pwa-install>
-                                <i class="fa-solid fa-download"></i>
-                                <span class="pwa-btn-label">Download / Install Aplikasi</span>
-                            </button>
-                            <button type="button" class="btn-guide-pwa" id="btnOpenPwaGuide">
-                                <i class="fa-solid fa-circle-question"></i> Cara Pasang di HP & Laptop
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Kanan: Kartu Pratinjau Ikon Aplikasi -->
-                    <div class="webapp-preview-stage">
-                        <div class="webapp-phone-frame tilt-card">
-                            <div class="webapp-phone-notch"></div>
-                            <div class="webapp-app-icon">
-                                <img src="{{ asset('img/logo_sklh.png') }}?v={{ time() }}" alt="Ikon Aplikasi Sekolah Syafi'i">
-                            </div>
-                            <h4>Sekolah Syafi'i</h4>
-                            <span class="app-sub">Portal Akademik, SIAKAD & Tahfizh</span>
-
-                            <div style="font-size: 0.78rem; color: #53665b; background: #f3f7f4; padding: 10px 12px; border-radius: 12px; margin-bottom: 14px; line-height: 1.5;">
-                                <i class="fa-solid fa-circle-check" style="color: #145a32;"></i>
-                                Tersedia untuk Siswa/Wali Santri, Guru, dan Admin
-                            </div>
-
-                            <div class="webapp-platform-badges">
-                                <span class="platform-chip"><i class="fa-brands fa-android"></i> Android</span>
-                                <span class="platform-chip"><i class="fa-brands fa-apple"></i> iOS / iPhone</span>
-                                <span class="platform-chip"><i class="fa-solid fa-laptop"></i> Desktop</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- ======== 6. LOKASI & KONTAK (PETA INTERAKTIF LEAFLET) ======== -->
     <section id="kontak" class="section parallax-section">
         <div class="parallax-ring spin" style="left: -220px; bottom: -180px;" data-parallax-speed="0.14"></div>
@@ -784,7 +710,7 @@
                     <h4>Akses Sistem</h4>
                     <ul>
                         <li><a href="/reg"><i class="fa-solid fa-right-to-bracket"></i> Login Portal SIAKAD</a></li>
-                        <li><a href="#install-app"><i class="fa-solid fa-mobile-screen-button"></i> Install Aplikasi (Web App)</a></li>
+                        <li><a href="#home" data-trigger-pwa-install><i class="fa-solid fa-download"></i> Download Aplikasi</a></li>
                         <li><a href="/prof?halaman=ppdb"><i class="fa-solid fa-user-plus"></i> Alur & Syarat Pendaftaran</a></li>
                         <li><a href="/prof?halaman=kontak"><i class="fa-solid fa-location-dot"></i> Peta Lokasi Sekolah</a></li>
                     </ul>
@@ -1282,7 +1208,8 @@
             }
 
             installBtns.forEach(function (btn) {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
                     if (deferredPrompt) {
                         deferredPrompt.prompt();
                         deferredPrompt.userChoice.then(function () {
