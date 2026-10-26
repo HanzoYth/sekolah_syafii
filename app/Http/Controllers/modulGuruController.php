@@ -346,7 +346,7 @@ class modulGuruController extends Controller
 
     function tambah_Gaji($id_guru){
         if(!gaji::where("guru_id",$id_guru)->exists()){
-            gaji::create([
+            $data = [
                 "gaji_pokok" => 0,
                 "gaji_honor" => 0,
                 "gaji_tugas_tambahan" => 0,
@@ -357,8 +357,11 @@ class modulGuruController extends Controller
                 "bonus" => 0,
                 "ketidakhadiran" => 0,
                 "guru_id" => $id_guru,
-                "evaluasi" => "belum ada evaluasi"
-            ]);
+            ];
+            if (\Illuminate\Support\Facades\Schema::hasColumn('gaji', 'evaluasi')) {
+                $data["evaluasi"] = "belum ada evaluasi";
+            }
+            gaji::create($data);
         }
     }
 
@@ -651,6 +654,7 @@ class modulGuruController extends Controller
             $data_guru->koordinator_tahfiz = (int) $request->koordinator_tahfiz;
             $data_guru->kepala_sekolah = (int) $request->kepala_sekolah;
             $data_guru->wakil_sekolah = (int) $request->wakil_sekolah;
+            $data_guru->bendahara = (int) $request->bendahara;
             $data_guru->ast_krk = (int) $request->asisten;
             $data_guru->cabang_id = (int) $request->cabang_id;
             $data_guru->sekolah_id = (int) $request->sekolah_id;

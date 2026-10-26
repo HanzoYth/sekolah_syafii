@@ -52,46 +52,144 @@
             {{-- ================= ROLE GURU ================= --}}
             @elseif($role === 'g')
                 @php
-                    $isBeranda = request()->is('sk/dsg');
-                    $isJadwal = request()->is('sk/jadwal-guru*');
-                    $isPresensi = request()->is('sk/ass*', 'sk/absensi-walas*');
-                    $isNilai = request()->is('sk/nilai-guru*', 'sk/input-nilai-detail*', 'sk/rapor-walas*');
+                    $guruId = session('id');
+                    $guruData = $guruId ? \App\Models\guru::find($guruId) : null;
+                    if (!$guruData && session('id_akun')) {
+                        $guruData = \App\Models\guru::where('user_id', session('id_akun'))->first();
+                    }
+                    $isKepsek = $guruData && ($guruData->kepala_sekolah == 1 || $guruData->wakil_sekolah == 1);
+                    $isBendahara = $guruData && ($guruData->bendahara == 1);
                 @endphp
 
-                <a href="/sk/dsg" class="bottom-nav-item {{ $isBeranda ? 'active' : '' }}">
-                    <div class="bottom-nav-icon-wrap">
-                        <i class="fa-solid fa-house"></i>
-                    </div>
-                    <span class="bottom-nav-label">Beranda</span>
-                </a>
+                @if($isKepsek)
+                    @php
+                        $isBeranda = request()->is('sk/das');
+                        $isSiswa = request()->is('sk/ds*', 'sk/dls/*', 'sk/dts*');
+                        $isJadwal = request()->is('sk/kelola-jadwal*', 'sk/edit-jadwal*');
+                        $isKelas = request()->is('sk/tk*', 'sk/pembagian-kelas*');
+                    @endphp
 
-                <a href="/sk/jadwal-guru" class="bottom-nav-item {{ $isJadwal ? 'active' : '' }}">
-                    <div class="bottom-nav-icon-wrap">
-                        <i class="fa-solid fa-calendar-week"></i>
-                    </div>
-                    <span class="bottom-nav-label">Jadwal</span>
-                </a>
+                    <a href="/sk/das" class="bottom-nav-item {{ $isBeranda ? 'active' : '' }}">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-house"></i>
+                        </div>
+                        <span class="bottom-nav-label">Beranda</span>
+                    </a>
 
-                <a href="/sk/ass" class="bottom-nav-item {{ $isPresensi ? 'active' : '' }}">
-                    <div class="bottom-nav-icon-wrap">
-                        <i class="fa-solid fa-clipboard-user"></i>
-                    </div>
-                    <span class="bottom-nav-label">Presensi</span>
-                </a>
+                    <a href="/sk/ds" class="bottom-nav-item {{ $isSiswa ? 'active' : '' }}">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                        <span class="bottom-nav-label">Siswa</span>
+                    </a>
 
-                <a href="/sk/nilai-guru" class="bottom-nav-item {{ $isNilai ? 'active' : '' }}">
-                    <div class="bottom-nav-icon-wrap">
-                        <i class="fa-solid fa-star"></i>
-                    </div>
-                    <span class="bottom-nav-label">Nilai</span>
-                </a>
+                    <a href="/sk/kelola-jadwal" class="bottom-nav-item {{ $isJadwal ? 'active' : '' }}">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-calendar-alt"></i>
+                        </div>
+                        <span class="bottom-nav-label">Jadwal</span>
+                    </a>
 
-                <button type="button" class="bottom-nav-item" onclick="if(window.toggleSiakadSidebar){window.toggleSiakadSidebar();}else{var h=document.getElementById('mobile-hamburger-btn');if(h)h.click();}" aria-label="Buka Menu Lengkap">
-                    <div class="bottom-nav-icon-wrap">
-                        <i class="fa-solid fa-bars"></i>
-                    </div>
-                    <span class="bottom-nav-label">Menu</span>
-                </button>
+                    <a href="/sk/tk" class="bottom-nav-item {{ $isKelas ? 'active' : '' }}">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-school"></i>
+                        </div>
+                        <span class="bottom-nav-label">Kelas</span>
+                    </a>
+
+                    <button type="button" class="bottom-nav-item" onclick="if(window.toggleSiakadSidebar){window.toggleSiakadSidebar();}else{var h=document.getElementById('mobile-hamburger-btn');if(h)h.click();}" aria-label="Buka Menu Lengkap">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-bars"></i>
+                        </div>
+                        <span class="bottom-nav-label">Menu</span>
+                    </button>
+
+                @elseif($isBendahara)
+                    @php
+                        $isBeranda = request()->is('sk/das');
+                        $isTagihan = request()->is('sk/bt*');
+                        $isPembayaran = request()->is('sk/pb*', 'sk/dp*');
+                        $isPangkal = request()->is('sk/pp*', 'sk/pd*', 'sk/ppl*');
+                    @endphp
+
+                    <a href="/sk/das" class="bottom-nav-item {{ $isBeranda ? 'active' : '' }}">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-house"></i>
+                        </div>
+                        <span class="bottom-nav-label">Beranda</span>
+                    </a>
+
+                    <a href="/sk/bt" class="bottom-nav-item {{ $isTagihan ? 'active' : '' }}">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-file-circle-plus"></i>
+                        </div>
+                        <span class="bottom-nav-label">Tagihan</span>
+                    </a>
+
+                    <a href="/sk/pb" class="bottom-nav-item {{ $isPembayaran ? 'active' : '' }}">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <span class="bottom-nav-label">Bayar IPP</span>
+                    </a>
+
+                    <a href="/sk/pp" class="bottom-nav-item {{ $isPangkal ? 'active' : '' }}">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-money-check-dollar"></i>
+                        </div>
+                        <span class="bottom-nav-label">Pangkal</span>
+                    </a>
+
+                    <button type="button" class="bottom-nav-item" onclick="if(window.toggleSiakadSidebar){window.toggleSiakadSidebar();}else{var h=document.getElementById('mobile-hamburger-btn');if(h)h.click();}" aria-label="Buka Menu Lengkap">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-bars"></i>
+                        </div>
+                        <span class="bottom-nav-label">Menu</span>
+                    </button>
+
+                @else
+                    @php
+                        $isBeranda = request()->is('sk/dsg');
+                        $isJadwal = request()->is('sk/jadwal-guru*');
+                        $isPresensi = request()->is('sk/ass*', 'sk/absensi-walas*');
+                        $isNilai = request()->is('sk/nilai-guru*', 'sk/input-nilai-detail*', 'sk/rapor-walas*');
+                    @endphp
+
+                    <a href="/sk/dsg" class="bottom-nav-item {{ $isBeranda ? 'active' : '' }}">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-house"></i>
+                        </div>
+                        <span class="bottom-nav-label">Beranda</span>
+                    </a>
+
+                    <a href="/sk/jadwal-guru" class="bottom-nav-item {{ $isJadwal ? 'active' : '' }}">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-calendar-week"></i>
+                        </div>
+                        <span class="bottom-nav-label">Jadwal</span>
+                    </a>
+
+                    <a href="/sk/ass" class="bottom-nav-item {{ $isPresensi ? 'active' : '' }}">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-clipboard-user"></i>
+                        </div>
+                        <span class="bottom-nav-label">Presensi</span>
+                    </a>
+
+                    <a href="/sk/nilai-guru" class="bottom-nav-item {{ $isNilai ? 'active' : '' }}">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <span class="bottom-nav-label">Nilai</span>
+                    </a>
+
+                    <button type="button" class="bottom-nav-item" onclick="if(window.toggleSiakadSidebar){window.toggleSiakadSidebar();}else{var h=document.getElementById('mobile-hamburger-btn');if(h)h.click();}" aria-label="Buka Menu Lengkap">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-bars"></i>
+                        </div>
+                        <span class="bottom-nav-label">Menu</span>
+                    </button>
+                @endif
 
             {{-- ================= ROLE ADMIN ================= --}}
             @elseif($role === 'a')

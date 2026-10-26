@@ -15,15 +15,105 @@ use Illuminate\Support\Facades\DB;
 
 class siakadController extends Controller
 {
-    private function guardRoles(array $allowedRoles) {
+    private function getGuruInfo() {
+        if (session('role') !== 'g') {
+            return null;
+        }
+        $guruId = session('id');
+        $guru = $guruId ? \App\Models\guru::find($guruId) : null;
+        if (!$guru && session('id_akun')) {
+            $guru = \App\Models\guru::where('user_id', session('id_akun'))->first();
+        }
+        return $guru;
+    }
+
+    private function isKepsekOrWakasek() {
+        if (session('role') === 'g') {
+            $guru = $this->getGuruInfo();
+            return $guru && ($guru->kepala_sekolah == 1 || $guru->wakil_sekolah == 1);
+        }
+        return false;
+    }
+
+    private function isBendahara() {
+        if (session('role') === 'g') {
+            $guru = $this->getGuruInfo();
+            return $guru && ($guru->bendahara == 1);
+        }
+        return false;
+    }
+
+    private function guardRoles(array $allowedRoles, string $scope = 'general') {
         $currentRole = session('role');
-        if (!in_array($currentRole, $allowedRoles)) {
-            if ($currentRole === 'a') return redirect('/sk/das')->with('error', 'Akses dialihkan ke Portal Admin.');
-            if ($currentRole === 'g') return redirect('/sk/dsg')->with('error', 'Akses dialihkan ke Portal Guru.');
-            if ($currentRole === 's') return redirect('/sk/dbs')->with('error', 'Akses dialihkan ke Portal Siswa.');
+
+        if (!session('hasLogin') || empty($currentRole)) {
             return redirect('/')->with('error', 'Silakan masuk terlebih dahulu.');
         }
-        return null;
+
+        // Admin selalu memiliki akses penuh ke fitur admin, akademik, keuangan, dan dashboard
+        if ($currentRole === 'a') {
+            if (!in_array('a', $allowedRoles) && !in_array($scope, ['akademik', 'keuangan', 'dashboard'])) {
+                return redirect('/sk/das')->with('error', 'Akses dialihkan ke Portal Admin.');
+            }
+            return null;
+        }
+
+        // Guru / Staf
+        if ($currentRole === 'g') {
+            $guru = $this->getGuruInfo();
+            $isKepsek = $guru && ($guru->kepala_sekolah == 1 || $guru->wakil_sekolah == 1);
+            $isBendahara = $guru && ($guru->bendahara == 1);
+
+            // Scope Dashboard: Admin, Kepala Sekolah, Wakil Kepala Sekolah, & Bendahara dapat mengakses /sk/das
+            if ($scope === 'dashboard') {
+                if ($isKepsek || $isBendahara) {
+                    return null;
+                }
+                return redirect('/sk/dsg')->with('error', 'Akses dialihkan ke Portal Guru.');
+            }
+
+            // Scope Akademik: Admin, Kepala Sekolah, & Wakil Kepala Sekolah diizinkan. Bendahara dilarang.
+            if ($scope === 'akademik') {
+                if ($isKepsek) {
+                    return null;
+                }
+                if ($isBendahara) {
+                    return redirect('/sk/das')->with('error', 'Bendahara tidak memiliki hak akses ke bagian akademik.');
+                }
+                return redirect('/sk/dsg')->with('error', 'Akses dialihkan ke Portal Guru.');
+            }
+
+            // Scope Keuangan: Admin & Bendahara diizinkan. Kepala & Wakil Kepala Sekolah dilarang.
+            if ($scope === 'keuangan') {
+                if ($isBendahara) {
+                    return null;
+                }
+                if ($isKepsek) {
+                    return redirect('/sk/das')->with('error', 'Kepala / Wakil Kepala Sekolah tidak memiliki hak akses ke bagian keuangan.');
+                }
+                return redirect('/sk/dsg')->with('error', 'Akses dialihkan ke Portal Guru.');
+            }
+
+            // General role check
+            if (!in_array('g', $allowedRoles)) {
+                if ($isKepsek || $isBendahara) {
+                    return redirect('/sk/das')->with('error', 'Akses tidak diizinkan.');
+                }
+                return redirect('/sk/dsg')->with('error', 'Akses dialihkan ke Portal Guru.');
+            }
+
+            return null;
+        }
+
+        // Siswa
+        if ($currentRole === 's') {
+            if (!in_array('s', $allowedRoles)) {
+                return redirect('/sk/dbs')->with('error', 'Akses dialihkan ke Portal Siswa.');
+            }
+            return null;
+        }
+
+        return redirect('/')->with('error', 'Silakan masuk terlebih dahulu.');
     }
 
     // ==========================================
@@ -134,7 +224,7 @@ class siakadController extends Controller
     // MANAJEMEN KENAIKAN KELAS & KELULUSAN (ADMIN)
     // ==========================================
     public function kenaikanKelasAdmin(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $sekolah_id = $request->query('sekolah_id');
@@ -160,7 +250,7 @@ class siakadController extends Controller
     }
 
     public function prosesKenaikanKelas(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $request->validate([
@@ -188,7 +278,7 @@ class siakadController extends Controller
     // MANAJEMEN PEMBAGIAN KELAS (ROMBEL)
     // ==========================================
     public function pembagianKelas(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $sekolah_id = $request->query('sekolah_id');
@@ -224,7 +314,7 @@ class siakadController extends Controller
     }
 
     public function simpanPembagianKelas(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $request->validate([
@@ -239,7 +329,7 @@ class siakadController extends Controller
     }
 
     public function keluarkanSiswaDariKelas($id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $siswa = \App\Models\siswa::find($id);
@@ -250,7 +340,7 @@ class siakadController extends Controller
         return redirect()->back()->with('error', 'Siswa tidak ditemukan.');
     }
     function tampilanBuatTagihan_Siswa(){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'keuangan');
         if ($check) return $check;
 
         $data_siswa = siswa::all();
@@ -260,21 +350,35 @@ class siakadController extends Controller
     }
 
     function edit_siswa(){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         return view ('/modul/siakad/admin/editSiswa');
     }
 
     function dashboard_siakad(){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'dashboard');
         if ($check) return $check;
+
+        $guru = $this->getGuruInfo();
+        $isKepsek = $this->isKepsekOrWakasek();
+        $isBendahara = $this->isBendahara();
+        $isAdmin = session('role') === 'a';
+
+        $roleTitle = 'Administrator';
+        if ($isKepsek) {
+            $roleTitle = ($guru && $guru->kepala_sekolah == 1) ? 'Kepala Sekolah' : 'Wakil Kepala Sekolah';
+        } elseif ($isBendahara) {
+            $roleTitle = 'Bendahara Sekolah';
+        }
 
         $jumlahSiswa = siswa::count();
         $jumlahSiswaAktif = siswa::where(function ($query) {
             $query->where('aktif', true)->orWhereNull('aktif');
         })->count();
         $jumlahKelas = ruang_kelas::count();
+        $jumlahMapel = \App\Models\mata_pelajaran::count();
+        $jumlahJadwal = \App\Models\jadwal_pelajaran::count();
         $jumlahTagihan = slip_pembayaran_ipp::count()
             + slip_pembayaran_pangkal::count()
             + slip_pembayaran_pendidikan::count();
@@ -293,9 +397,15 @@ class siakadController extends Controller
             'jumlahSiswa',
             'jumlahSiswaAktif',
             'jumlahKelas',
+            'jumlahMapel',
+            'jumlahJadwal',
             'jumlahTagihan',
             'jumlahTunggakan',
-            'kelasDenganSiswa'
+            'kelasDenganSiswa',
+            'isKepsek',
+            'isBendahara',
+            'isAdmin',
+            'roleTitle'
         ));
     }
 
@@ -349,7 +459,7 @@ class siakadController extends Controller
     }
    
     function tambah_kelas(){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         // Sinkronisasi otomatis dari Modul Guru (ruang_kelas) ke tabel kelas SIAKAD
@@ -394,7 +504,7 @@ class siakadController extends Controller
         return view("/modul/siakad/admin/tambahKelas", compact('data_kelas', 'total_siswa_semua', 'total_walas_terisi', 'total_walas_kosong'));
     }
     public function laporanAbsensiGuru(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
         $tanggal = $request->input('tanggal', date('Y-m-d'));
         $status_filter = $request->input('status', 'semua');
@@ -744,7 +854,7 @@ class siakadController extends Controller
     }
 
     function slipPembayaranGuru(Request $request){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $bulan = $request->query('bulan', date('Y-m'));
@@ -856,7 +966,7 @@ class siakadController extends Controller
         ));
     }
     function tampilanPembayaranPemeliharaan(){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'keuangan');
         if ($check) return $check;
 
        return view("/modul/siakad/admin/pemeliharaan");
@@ -864,7 +974,7 @@ class siakadController extends Controller
     }
 
     function tambahTagihan_Siswa(Request $request){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'keuangan');
         if ($check) return $check;
 
         if ($request->jenis_pembayaran == "ipp"){
@@ -894,7 +1004,7 @@ class siakadController extends Controller
     }
 
     function tampilanPembayaranIpp_siswa(){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'keuangan');
         if ($check) return $check;
 
         $data_slip_ipp = slip_pembayaran_ipp::paginate(5)->onEachSide(1);
@@ -908,7 +1018,7 @@ class siakadController extends Controller
     }
 
     function tampilanPembayaranPangkal(){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'keuangan');
         if ($check) return $check;
 
         $data_slip_pangkal = slip_pembayaran_pangkal::paginate(5)->onEachSide(1);
@@ -922,7 +1032,7 @@ class siakadController extends Controller
     }
 
     function tampilanPembayaranPendidikan(){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'keuangan');
         if ($check) return $check;
         $data_slip_pendidikan = slip_pembayaran_pendidikan::paginate(5)->onEachSide(1);
         $data_kelas = ruang_kelas::all();
@@ -937,7 +1047,7 @@ class siakadController extends Controller
 
     function edit_slipPembayaranIpp(Request $request)
     {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'keuangan');
         if ($check) return $check;
 
         $id = $request->id ?? $request->id_siswa;
@@ -970,7 +1080,7 @@ class siakadController extends Controller
 
 
     function edit_slipPembayaranPangkal(Request $request){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'keuangan');
         if ($check) return $check;
 
         $id = $request->id ?? $request->id_siswa;
@@ -999,7 +1109,7 @@ class siakadController extends Controller
     }
 
     function edit_slipPembayaranPendidikan(Request $request){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'keuangan');
         if ($check) return $check;
 
         $id = $request->id ?? $request->id_siswa;
@@ -1028,7 +1138,7 @@ class siakadController extends Controller
     }
 
     function publish_slipPembayaran(Request $request){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'keuangan');
         if ($check) return $check;
 
         $data_siswa = siswa::where('id',$request->id_siswa)->first();
@@ -1059,7 +1169,7 @@ class siakadController extends Controller
     }
 
     function hapus_SlipPembayaran(Request $request){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'keuangan');
         if ($check) return $check;
         $data_slipPembayaran = null;
 
@@ -1081,7 +1191,7 @@ class siakadController extends Controller
     }
 
     function tampian_daftarSiswa(Request $request){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $sekolah_id = $request->query('sekolah_id');
@@ -1113,7 +1223,7 @@ class siakadController extends Controller
     }
 
     function tampilan_detailSiswa($id){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $data_siswa = siswa::with(['kelas', 'sekolah', 'tahunAjaran'])->find($id);
@@ -1127,7 +1237,7 @@ class siakadController extends Controller
     }
 
     public function updateSiswa(Request $request, $id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $siswa = \App\Models\siswa::find($id);
@@ -1191,7 +1301,7 @@ class siakadController extends Controller
     }
 
     function simpan_kelas(Request $request){
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $request->validate([
@@ -1224,7 +1334,7 @@ class siakadController extends Controller
     }
 
     function editKelas($id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $kelas = \App\Models\kelas::findOrFail($id);
@@ -1232,7 +1342,7 @@ class siakadController extends Controller
     }
 
     function updateKelas(Request $request, $id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $request->validate(['nama_kelas' => 'required']);
@@ -1250,7 +1360,7 @@ class siakadController extends Controller
     }
 
     function hapusKelas($id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $kelas = \App\Models\kelas::findOrFail($id);
@@ -1920,7 +2030,7 @@ class siakadController extends Controller
 
 
     function kelolaJadwalAdmin(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $sekolah_id = $request->query('sekolah_id');
@@ -1954,7 +2064,7 @@ class siakadController extends Controller
     }
 
     function simpanJadwalAdmin(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $request->validate([
@@ -2030,7 +2140,7 @@ class siakadController extends Controller
     }
 
     function kelolaMapel(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $sekolah_id = $request->query('sekolah_id');
@@ -2044,7 +2154,7 @@ class siakadController extends Controller
     }
 
     function simpanMapel(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $request->validate([
@@ -2067,7 +2177,7 @@ class siakadController extends Controller
     }
 
     function hapusMapel($id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         if (\App\Models\jadwal_pelajaran::where('mapel_id', $id)->exists()) {
@@ -2082,7 +2192,7 @@ class siakadController extends Controller
     }
 
     function editMapel($id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $mapel = \App\Models\mata_pelajaran::findOrFail($id);
@@ -2091,7 +2201,7 @@ class siakadController extends Controller
     }
 
     function updateMapel(Request $request, $id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $request->validate([
@@ -2116,7 +2226,7 @@ class siakadController extends Controller
     // MANAJEMEN ATURAN PENILAIAN & KKM (ADMIN SIAKAD)
     // ==========================================
     public function kelolaBobotPenilaian(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $jenis_penilaian = \App\Models\jenis_penilaian::all();
@@ -2175,7 +2285,7 @@ class siakadController extends Controller
     }
 
     public function simpanBobotPenilaian(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $bobot_input = $request->input('bobot', []);
@@ -2195,7 +2305,7 @@ class siakadController extends Controller
     }
 
     public function simpanKkmMapel(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $updated_count = 0;
@@ -2249,7 +2359,7 @@ class siakadController extends Controller
     }
 
     function hapusJadwal($id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         \App\Models\jadwal_pelajaran::findOrFail($id)->delete();
@@ -2257,7 +2367,7 @@ class siakadController extends Controller
     }
 
     function editJadwal($id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $jadwal = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran.sekolah', 'jam_pelajaran.sekolah'])->findOrFail($id);
@@ -2270,7 +2380,7 @@ class siakadController extends Controller
     }
 
     function updateJadwal(Request $request, $id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $request->validate([
@@ -2352,7 +2462,7 @@ class siakadController extends Controller
     // KELOLA REFERENSI AKADEMIK (Tahun & Jam)
     // ==========================================
     public function kelolaReferensi() {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $data_tahun = \App\Models\tahun_ajaran::orderBy('id', 'desc')->get();
@@ -2362,7 +2472,7 @@ class siakadController extends Controller
     }
 
     public function simpanTahunAjaran(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $request->validate([
@@ -2380,7 +2490,7 @@ class siakadController extends Controller
     }
 
     public function updateTahunAjaran(Request $request, $id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $request->validate([
@@ -2398,7 +2508,7 @@ class siakadController extends Controller
     }
 
     public function hapusTahunAjaran($id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         if (\App\Models\jadwal_pelajaran::where('tahun_ajaran_id', $id)->exists()) {
@@ -2410,7 +2520,7 @@ class siakadController extends Controller
     }
 
     public function simpanJamPelajaran(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         // MODE 1: Generate Paket Jam Pelajaran Otomatis Berdasarkan Sistem JP (SD = 35m, SMP = 45m)
@@ -2545,7 +2655,7 @@ class siakadController extends Controller
     }
 
     public function updateJamPelajaran(Request $request, $id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $request->validate([
@@ -2596,7 +2706,7 @@ class siakadController extends Controller
     }
 
     public function hapusJamPelajaran($id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         if (\App\Models\jadwal_pelajaran::where('jam_pelajaran_id', $id)->exists()) {
@@ -2611,7 +2721,7 @@ class siakadController extends Controller
     // KELOLA WALI KELAS (ADMIN)
     // ==========================================
     public function kelolaWaliKelas(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $sekolah_id = $request->query('sekolah_id');
@@ -2639,7 +2749,7 @@ class siakadController extends Controller
     }
 
     public function simpanWaliKelas(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $request->validate([
@@ -2665,7 +2775,7 @@ class siakadController extends Controller
     }
 
     public function updateWaliKelas(Request $request, $id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $request->validate([
@@ -2693,7 +2803,7 @@ class siakadController extends Controller
     }
 
     public function hapusWaliKelas($id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         \App\Models\wallas::findOrFail($id)->delete();
@@ -2980,7 +3090,7 @@ class siakadController extends Controller
     // MANAJEMEN PENGUMUMAN (ADMIN SIAKAD)
     // ==========================================
     public function kelolaPengumumanAdmin(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $target_filter = $request->query('target');
@@ -3014,7 +3124,7 @@ class siakadController extends Controller
     }
 
     public function simpanPengumumanAdmin(Request $request) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $request->validate([
@@ -3060,7 +3170,7 @@ class siakadController extends Controller
     }
 
     public function hapusPengumumanAdmin($id) {
-        $check = $this->guardRoles(['a']);
+        $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         $p = \App\Models\pengumuman::find($id);

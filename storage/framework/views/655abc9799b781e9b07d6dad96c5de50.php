@@ -1,2 +1,0 @@
-<?php echo $__env->make('modul.siakad.siswa.profilSiswa', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
-<?php /**PATH D:\laragon\www\sekolahsyafii\resources\views\modul\siakad\profilSiswa.blade.php ENDPATH**/ ?>

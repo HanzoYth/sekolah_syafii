@@ -1880,18 +1880,31 @@ button {
 
 @media (max-width: 640px) {
   .hero-btns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  .hero-btns .btn-started {
-    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     width: 100%;
   }
+  .hero-btns .btn-started,
   .hero-btns .btn-secondary {
     width: 100%;
-    padding: 12px 14px;
-    font-size: 0.85rem;
+    padding: 13px 24px;
+    font-size: 0.92rem;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .ppdb-btns {
+    flex-direction: column;
+    width: 100%;
+  }
+  .ppdb-btns a {
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: center;
+    text-align: center;
   }
 }
 

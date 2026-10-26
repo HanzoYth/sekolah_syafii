@@ -21,22 +21,37 @@
             </div>
         </div>
 
+        @php
+            $currentRole = session('role');
+            $guruId = session('id');
+            $guruData = ($currentRole === 'g' && $guruId) ? \App\Models\guru::find($guruId) : null;
+            if ($currentRole === 'g' && !$guruData && session('id_akun')) {
+                $guruData = \App\Models\guru::where('user_id', session('id_akun'))->first();
+            }
+            $isAdmin = ($currentRole === 'a');
+            $isKepsek = ($currentRole === 'g' && $guruData && ($guruData->kepala_sekolah == 1 || $guruData->wakil_sekolah == 1));
+            $isBendahara = ($currentRole === 'g' && $guruData && ($guruData->bendahara == 1));
+            
+            $isWallas = ($currentRole === 'g' && $guruId) ? \App\Models\wallas::where('guru_id', $guruId)->exists() : false;
+            $isPengajar = ($currentRole === 'g' && !$isBendahara) && ($isWallas || ($guruData ? ($guruData->guru_tetap || $guruData->guru_honor || \App\Models\jadwal_pelajaran::where('guru_id', $guruId)->exists()) : false));
+        @endphp
+
         <div class="sidebar-menu-wrapper">
             {{-- Dashboard: umum untuk semua role --}}
             <div class="menu-section" id="section-umum">
                 <ul class="menu-list">
                     <li class="menu-item {{ request()->is('sk/das', 'sk/dsg', 'sk/dbs') ? 'active' : '' }}">
-                        @if (session('role') == "a")
+                        @if ($isAdmin || $isKepsek || $isBendahara)
                             <a href="/sk/das">
                                 <i class="fa-solid fa-house"></i>
                                 <span>Dashboard</span>
                             </a>
-                        @elseif (session('role') == "g")
+                        @elseif ($currentRole === 'g')
                             <a href="/sk/dsg">
                                 <i class="fa-solid fa-house"></i>
                                 <span>Dashboard</span>
                             </a>
-                        @elseif (session('role') == "s")
+                        @elseif ($currentRole === 's')
                             <a href="/sk/dbs">
                                 <i class="fa-solid fa-house"></i>
                                 <span>Dashboard</span>
@@ -46,8 +61,8 @@
                 </ul>
             </div>
 
-            {{-- ================= ROLE ADMIN ================= --}}
-            @if (session('role') === 'a')
+            {{-- ================= MENU AKADEMIK (ADMIN & KEPALA/WAKIL SEKOLAH) ================= --}}
+            @if ($isAdmin || $isKepsek)
                 <div class="menu-section" id="section-admin-akademik">
                     <span class="menu-label">AKADEMIK</span>
                     <ul class="menu-list">
@@ -86,7 +101,6 @@
                                 <i class="fa-solid fa-school"></i>
                                 <span>Kelola Kelas</span>
                             </a>
-                            
                         </li>
                         <li class="menu-item {{ request()->is('sk/pembagian-kelas') ? 'active' : '' }}">
                             <a href="/sk/pembagian-kelas">
@@ -126,7 +140,10 @@
                         </li>
                     </ul>
                 </div>
+            @endif
 
+            {{-- ================= MENU KEUANGAN (ADMIN & BENDAHARA) ================= --}}
+            @if ($isAdmin || $isBendahara)
                 <div class="menu-section" id="section-admin-pembayaran">
                     <span class="menu-label">ADMINISTRASI PEMBAYARAN</span>
                     <ul class="menu-list">
@@ -147,18 +164,10 @@
                         </li>
                     </ul>
                 </div>
+            @endif
 
-            {{-- ================= ROLE GURU ================= --}}
-            @elseif (session('role') === 'g')
-                @php
-                    // Cek peran guru: status di modul guru (tetap/honor), penugasan jadwal, dan wali kelas
-                    $guruId = session('id');
-                    $guruData = $guruId ? \App\Models\guru::find($guruId) : null;
-                    $isWallas = $guruId ? \App\Models\wallas::where('guru_id', $guruId)->exists() : false;
-                    // Wali kelas sudah tentu menjadi guru pengajar juga, bahkan jika checkbox di modul guru dimatikan
-                    $isPengajar = $isWallas || ($guruData ? ($guruData->guru_tetap || $guruData->guru_honor || \App\Models\jadwal_pelajaran::where('guru_id', $guruId)->exists()) : false);
-                @endphp
-
+            {{-- ================= ROLE GURU (KBM & WALI KELAS) ================= --}}
+            @if ($currentRole === 'g' && !$isBendahara)
                 @if($isPengajar)
                 <div class="menu-section" id="section-guru-pengajar">
                     <span class="menu-label">MENU PENGAJAR</span>
@@ -217,6 +226,7 @@
                 </div>
                 @endif
 
+                @if(!$isKepsek)
                 <div class="menu-section" id="section-guru-umum" style="margin-top: 15px;">
                     <span class="menu-label">UMUM</span>
                     <ul class="menu-list">
@@ -228,9 +238,10 @@
                         </li>
                     </ul>
                 </div>
+                @endif
 
             {{-- ================= ROLE SISWA (ORANG TUA) ================= --}}
-            @elseif (session('role') === 's')
+            @elseif ($currentRole === 's')
                 <div class="menu-section" id="section-siswa">
                     <span class="menu-label">AKADEMIK & MONITORING</span>
                     <ul class="menu-list">

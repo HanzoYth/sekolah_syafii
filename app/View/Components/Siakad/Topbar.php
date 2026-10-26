@@ -54,18 +54,39 @@ class Topbar extends Component
 
             $isPengajar = $user ? (($user->guru_tetap || $user->guru_honor) || jadwal_pelajaran::where('guru_id', $user->id)->exists()) : false;
 
-            if ($this->isWallas && $isPengajar) {
+            if ($user && $user->kepala_sekolah == 1) {
+                $label = 'Kepala Sekolah';
+                $this->dashboardUrl = '/sk/das';
+                $this->announcementsUrl = '/sk/kelola-pengumuman';
+                $this->userIdentifier = 'Kepala Sekolah';
+            } elseif ($user && $user->wakil_sekolah == 1) {
+                $label = 'Wakil Kepala Sekolah';
+                $this->dashboardUrl = '/sk/das';
+                $this->announcementsUrl = '/sk/kelola-pengumuman';
+                $this->userIdentifier = 'Wakil Kepala Sekolah';
+            } elseif ($user && $user->bendahara == 1) {
+                $label = 'Bendahara';
+                $this->dashboardUrl = '/sk/das';
+                $this->announcementsUrl = '/sk/pengumuman-guru';
+                $this->userIdentifier = 'Bendahara Sekolah';
+            } elseif ($this->isWallas && $isPengajar) {
                 $label = 'Guru & Wali Kelas';
+                $this->dashboardUrl = '/sk/dsg';
+                $this->announcementsUrl = '/sk/pengumuman-guru';
+                $this->userIdentifier = $user?->nip ? 'NIP: ' . $user->nip : ($user?->nuptk ? 'NUPTK: ' . $user->nuptk : 'Guru & Wali Kelas');
             } elseif ($this->isWallas) {
                 $label = 'Wali Kelas';
+                $this->dashboardUrl = '/sk/dsg';
+                $this->announcementsUrl = '/sk/pengumuman-guru';
+                $this->userIdentifier = $user?->nip ? 'NIP: ' . $user->nip : ($user?->nuptk ? 'NUPTK: ' . $user->nuptk : 'Wali Kelas');
             } else {
                 $label = 'Guru Pengajar';
+                $this->dashboardUrl = '/sk/dsg';
+                $this->announcementsUrl = '/sk/pengumuman-guru';
+                $this->userIdentifier = $user?->nip ? 'NIP: ' . $user->nip : ($user?->nuptk ? 'NUPTK: ' . $user->nuptk : 'Guru Pengajar');
             }
 
-            $this->dashboardUrl = '/sk/dsg';
             $this->profileUrl = '/sk/pr';
-            $this->announcementsUrl = '/sk/pengumuman-guru';
-            $this->userIdentifier = $user?->nip ? 'NIP: ' . $user->nip : ($user?->nuptk ? 'NUPTK: ' . $user->nuptk : 'Guru Pengajar');
 
             if ($user) {
                 $this->currentName = $user->nama ?: $this->currentName;

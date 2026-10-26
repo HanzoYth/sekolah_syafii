@@ -20,6 +20,7 @@
 
     @php
         $roleCode = session('role');
+        $userGuru = ($roleCode === 'g') ? (App\Models\guru::find(session('id')) ?? (session('id_akun') ? App\Models\guru::where('user_id', session('id_akun'))->first() : null)) : null;
         $roleLabel = match ($roleCode) {
             'a' => 'Administrator',
             'g' => 'Guru & Staf',
@@ -30,7 +31,15 @@
             'y' => 'Ketua Yayasan',
             default => 'Pengguna Portal',
         };
-        $userGuru = ($roleCode === 'g') ? App\Models\guru::find(session('id')) : null;
+        if ($userGuru) {
+            if ($userGuru->kepala_sekolah == 1) {
+                $roleLabel = 'Kepala Sekolah';
+            } elseif ($userGuru->wakil_sekolah == 1) {
+                $roleLabel = 'Wakil Kepala Sekolah';
+            } elseif ($userGuru->bendahara == 1) {
+                $roleLabel = 'Bendahara';
+            }
+        }
     @endphp
 
     <!-- Latar Parallax & Ornamen Islami -->
@@ -87,17 +96,34 @@
                         </div>
                     </a>
                 @elseif ($roleCode == 'g')
-                    @if ($userGuru && !$userGuru->satpam && !$userGuru->operator)
-                        <a href="/sk/dsg" class="module-card siakad tilt-card">
+                    @php
+                        $isKepsek = $userGuru && ($userGuru->kepala_sekolah == 1 || $userGuru->wakil_sekolah == 1);
+                        $isBendahara = $userGuru && ($userGuru->bendahara == 1);
+                        $siakadUrl = ($isKepsek || $isBendahara) ? '/sk/das' : '/sk/dsg';
+                    @endphp
+                    @if ($userGuru && (!$userGuru->satpam && !$userGuru->operator || $isBendahara || $isKepsek))
+                        <a href="{{ $siakadUrl }}" class="module-card siakad tilt-card">
                             <div>
                                 <div class="card-top-row">
                                     <div class="icon-wrapper">
                                         <i class="fa-solid fa-graduation-cap"></i>
                                     </div>
-                                    <span class="module-tag">Akademik</span>
+                                    @if($isKepsek)
+                                        <span class="module-tag">{{ $userGuru->kepala_sekolah == 1 ? 'Kepala Sekolah' : 'Wakil Kepala' }}</span>
+                                    @elseif($isBendahara)
+                                        <span class="module-tag">Keuangan & Kas</span>
+                                    @else
+                                        <span class="module-tag">Akademik</span>
+                                    @endif
                                 </div>
                                 <h3>Modul SIAKAD</h3>
-                                <p>Sistem Informasi Akademik untuk pengelolaan jadwal mengajar, presensi mapel, input nilai, dan wali kelas.</p>
+                                @if($isKepsek)
+                                    <p>Sistem Informasi Akademik untuk pengawasan kurikulum, jadwal pelajaran, rombel kelas, dan rapor santri.</p>
+                                @elseif($isBendahara)
+                                    <p>Sistem Informasi Administrasi Keuangan untuk pengelolaan tagihan IPP, uang pangkal, pembayaran, dan slip keuangan.</p>
+                                @else
+                                    <p>Sistem Informasi Akademik untuk pengelolaan jadwal mengajar, presensi mapel, input nilai, dan wali kelas.</p>
+                                @endif
                             </div>
                             <div class="card-action">
                                 <span>Buka SIAKAD</span>
