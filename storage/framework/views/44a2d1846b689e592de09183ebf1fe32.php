@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRIS Guru - Dashboard Admin</title>
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('css/modul/guru/das_ad_gr.css')); ?>?v=<?php echo e(time()); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('css/modul/guru/dashboard_admin.css')); ?>?v=<?php echo e(time()); ?>">
+</head>
+<body>
+
+    <div class="app-layout">
+        
+        <!-- SIDEBAR -->
+        <?php if (isset($component)) { $__componentOriginale234f8d1d87fff37708f17b59eb20f90 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale234f8d1d87fff37708f17b59eb20f90 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.sidebar_guru','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('sidebar_guru'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale234f8d1d87fff37708f17b59eb20f90)): ?>
+<?php $attributes = $__attributesOriginale234f8d1d87fff37708f17b59eb20f90; ?>
+<?php unset($__attributesOriginale234f8d1d87fff37708f17b59eb20f90); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale234f8d1d87fff37708f17b59eb20f90)): ?>
+<?php $component = $__componentOriginale234f8d1d87fff37708f17b59eb20f90; ?>
+<?php unset($__componentOriginale234f8d1d87fff37708f17b59eb20f90); ?>
+<?php endif; ?>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+            
+            <!-- TOP NAVBAR -->
+            <header class="topbar">
+                <div class="page-title">
+                    <h2>Dashboard Admin Guru</h2>
+                    <p>Selamat datang kembali, <strong>Administrator</strong></p>
+                </div>
+                <div class="topbar-actions">
+                    <div class="user-profile">
+                        <img src="<?php echo e(route('file.show',$mydata->url_foto)); ?>" alt="Foto Profil">
+                        <div class="user-info">
+                            <span class="name">Administrator</span>
+                            <span class="role">Administrator Modul Guru</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- CONTENT BODY -->
+            <div class="content-body">
+                
+                <!-- 1. STATISTIK UTAMA GURU (ADMIN) -->
+                <div class="stats-grid">
+                    <!-- Stat 1: Guru Aktif (Clickable) -->
+                    <div class="stat-card clickable-card" onclick="openModal('modalGuruAktif')"> 
+                        <div class="stat-icon bg-primary-light">
+                            <i class="fa-solid fa-user-tie text-primary"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="label">Total Guru Aktif</span>
+                            <h3><?php echo e($jumlah_guru_aktif); ?> <small>Orang</small></h3>
+                        </div>
+                    </div>
+
+                    <!-- Stat 2: Kepala Sekolah (Clickable) -->
+                    <div class="stat-card clickable-card" onclick="openModal('modalKepalaSekolah')"> 
+                        <div class="stat-icon bg-primary-light">
+                            <i class="fa-solid fa-user-tie text-primary"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="label">Total Kepala Sekolah</span>
+                            <h3><?php echo e($jumlah_kepala_sekolah); ?> <small>Orang</small></h3>
+                        </div>
+                    </div>
+
+                    <!-- Stat 3: Guru Tetap / Honorer (Clickable) -->
+                    <div class="stat-card clickable-card" onclick="openModal('modalGuruStatus')">
+                        <div class="stat-icon bg-info-light">
+                            <i class="fa-solid fa-id-badge text-info"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="label">Guru Tetap / Honorer</span>
+                            <h3><?php echo e($jumlah_guru_tetap); ?><small>/ <?php echo e($jumlah_guru_honor); ?></small></h3>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon bg-info-light">
+                            <i class="fa-solid fa-id-badge text-info"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="label">koordinator tahfiz/ pengampu</span>
+                            <h3><?php echo e($jumlah_koordinator); ?> <small>/ <?php echo e($jumlah_pengampu); ?></small></h3>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon bg-success-light">
+                            <i class="fa-solid fa-clipboard-user text-success"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="label">Presensi Hari Ini</span>
+                            <h3><?php echo e($jumlah_presensi); ?> <small>/ <?php echo e($jumlah_guru_aktif); ?> Guru</small></h3>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon bg-warning-light">
+                            <i class="fa-solid fa-file-signature text-warning"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="label">Pending Pengajuan</span>
+                            <h3><?php echo e($jumlah_pengajuan); ?> <small>Berkas</small></h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. REKAPITULASI ABSENSI & PENGGAJIAN (ADMIN) -->
+                <div class="dashboard-grid">
+                    
+                    <!-- Monitoring Presensi Hari Ini -->
+                    <div class="card widget-presensi">
+                        <div class="card-header">
+                            <h4><i class="fa-solid fa-chart-pie"></i> Monitoring Absensi Guru</h4>
+                            <span class="date-badge"><?php echo e($nama_hari); ?>, <?php echo e($tanggal_sekarang); ?></span>
+                        </div>
+                        <div class="card-body">
+                            <div class="admin-presensi-summary">
+                                
+                                <!-- Trigger Modal Absen 1: Tepat Waktu -->
+                                <div class="status-box status-success clickable-card" onclick="openModal('modalTepatWaktu')">
+                                    <i class="fa-solid fa-user-check"></i>
+                                    <div>
+                                        <h5><?php echo e($jumlah_guru_tepat_waktu); ?> Guru Tepat Waktu</h5>
+                                        <p>Tercatat masuk sebelum pukul 07:00 WITA</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="admin-presensi-stats">
+                                    <!-- Trigger Modal Absen 2: Terlambat -->
+                                    <div class="presensi-stat-item clickable-card" onclick="openModal('modalTerlambat')">
+                                        <span class="stat-num text-warning"><?php echo e($jumlah_terlambat); ?></span>
+                                        <span class="stat-desc">Terlambat</span>
+                                    </div>
+                                    
+                                    <!-- Trigger Modal Absen 3: Izin / Sakit -->
+                                    <div class="presensi-stat-item clickable-card" onclick="openModal('modalIzinSakit')">
+                                        <span class="stat-num text-info"><?php echo e($jumlah_izin); ?>/<?php echo e($jumlah_sakit); ?></span>
+                                        <span class="stat-desc">Izin / Sakit</span>
+                                    </div>
+                                    
+                                    <!-- Trigger Modal Absen 4: Belum Absen -->
+                                    <div class="presensi-stat-item clickable-card" onclick="openModal('modalBelumAbsen')">
+                                        <span class="stat-num text-danger"><?php echo e($jumlah_belum_absen); ?></span>
+                                        <span class="stat-desc">Belum Absen</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ringkasan Penggajian Periode Ini -->
+                    <div class="card widget-pengumuman">
+                        <div class="card-header">
+                            <h4><i class="fa-solid fa-money-bill-wave"></i> Ringkasan Penggajian</h4>
+                            <a href="/gr/klgjgr" class="link-more">Kelola Gaji</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="payroll-summary-box">
+                                <div class="payroll-row">
+                                    <span>Status Proses:</span>
+                                    <strong class="text-success"><?php echo e($jumlah_gaji_selesai); ?> / <?php echo e($jumlah_gaji); ?> Selesai</strong>
+                                </div>
+                                <div class="payroll-row">
+                                    <span>Total Gaji Pokok:</span>
+                                    <strong>Rp <?php echo e(number_format($jumlah_gaji_pokok,0,",",".")); ?></strong>
+                                </div>
+                                <div class="payroll-row">
+                                    <span>Total Potongan:</span>
+                                    <strong class="text-danger">- Rp <?php echo e(number_format($jumlah_potongan,0,",",".")); ?></strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== STRUKTUR MODAL / POP UP ==================== -->
+    <?php
+        Carbon\Carbon::setlocale("id");
+        $data_guru_tepat_waktu = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("status_kehadiran","h")->get();
+        $data_guru_izin_sakit = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("status_kehadiran","!=","h")->where("status_kehadiran","!=","a")->get();
+        $data_guru_terlambat = App\Models\master_absen_guru::where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->where("status_kehadiran","h")->where("terlambat_menit","!=",0)->get();
+
+        // Data Query untuk Modal Baru
+        $list_guru_aktif = App\Models\guru::all();
+        $list_kepala_sekolah = App\Models\guru::where("kepala_sekolah", true)->get();
+        $list_guru_status = App\Models\guru::where("guru_tetap", true)->orWhere("guru_honor",true)->get();
+    ?>
+
+    <!-- Modal STAT 1: Daftar Guru Aktif -->
+    <div id="modalGuruAktif" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-check text-primary"></i> Daftar Guru Aktif</h3>
+                <button class="modal-close-btn" onclick="closeModal('modalGuruAktif')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="modal-table">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nama Guru</th>
+                                <th>NIG</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $__empty_1 = true; $__currentLoopData = $list_guru_aktif; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $guru): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                <tr>
+                                    <td><img src="<?php echo e(route('file.show',$guru->url_foto)); ?>" class="avatar-img" alt="Foto"></td>
+                                    <td><strong><?php echo e($guru->nama); ?></strong></td>
+                                    <td><?php echo e($guru->nig ?? '-'); ?></td>
+                                    <td><span class="badge badge-success">Aktif</span></td>
+                                </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                                <tr>
+                                    <td colspan="4" class="text-center">Tidak ada data guru aktif.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal STAT 2: Daftar Kepala Sekolah -->
+    <div id="modalKepalaSekolah" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-tie text-primary"></i> Daftar Kepala Sekolah</h3>
+                <button class="modal-close-btn" onclick="closeModal('modalKepalaSekolah')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="modal-table">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nama Kepala Sekolah</th>
+                                <th>Unit/Cabang</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $__empty_1 = true; $__currentLoopData = $list_kepala_sekolah; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ks): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                <?php
+                                    $cabang = App\Models\cabang_guru::find($ks->cabang_id);
+                                ?>
+                                <tr>
+                                    <td><img src="<?php echo e(route('file.show',$ks->url_foto)); ?>" class="avatar-img" alt="Foto"></td>
+                                    <td><strong><?php echo e($ks->nama); ?></strong></td>
+                                    <td><?php echo e($cabang->nama_cabang ?? '-'); ?></td>
+                                    <td><span class="badge badge-primary">Kepala Sekolah</span></td>
+                                </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                                <tr>
+                                    <td colspan="4" class="text-center">Tidak ada data kepala sekolah.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal STAT 3: Daftar Guru Tetap & Honorer -->
+    <div id="modalGuruStatus" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-id-badge text-info"></i> Daftar Guru Tetap & Honorer</h3>
+                <button class="modal-close-btn" onclick="closeModal('modalGuruStatus')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="modal-table">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nama Guru</th>
+                                <th>Status Kepegawaian</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $__empty_1 = true; $__currentLoopData = $list_guru_status; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $guru_st): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                <tr>
+                                    <td><img src="<?php echo e(route('file.show',$guru_st->url_foto)); ?>" class="avatar-img" alt="Foto"></td>
+                                    <td><strong><?php echo e($guru_st->nama); ?></strong></td>
+                                    <td>
+                                        <?php if($guru_st->guru_tetap): ?>
+                                            <span class="badge badge-success">Guru Tetap</span>
+                                        <?php else: ?>
+                                            <span class="badge badge-warning">Guru Honorer</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                                <tr>
+                                    <td colspan="3" class="text-center">Tidak ada data guru tetap/honorer.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 1: Guru Tepat Waktu -->
+    <div id="modalTepatWaktu" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-circle-check text-success"></i> Daftar Guru Tepat Waktu</h3>
+                <button class="modal-close-btn" onclick="closeModal('modalTepatWaktu')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="modal-table">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nama Guru</th>
+                                <th>Jam Masuk</th>
+                                <th>Status Kehadiran</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $__currentLoopData = $data_guru_tepat_waktu; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php
+                                    $data_guru = App\Models\guru::where("id",$data->guru_id)->first();
+                                    $data_cabang = App\Models\cabang_guru::where("id",$data_guru->cabang_id)->first();
+                                    $data_waktu = App\Models\master_waktu_absen_guru::where("cabang_id",$data_cabang->id)->where("hari",strtolower(Carbon\Carbon::now()->locale("id")->translatedFormat("l")))->first();
+                                    $tepat_waktu = Carbon\Carbon::parse($data->waktu_masuk)->lessThan(Carbon\Carbon::parse($data_waktu->waktu_masuk));
+                                ?>
+                                <?php if($tepat_waktu): ?>
+                                    <tr>
+                                        <td><img src="<?php echo e(route('file.show',$data_guru->url_foto)); ?>" class="avatar-img" alt="Foto"></td>
+                                        <td><strong><?php echo e($data_guru->nama); ?></strong></td>
+                                        <td><span class="time-badge"><?php echo e(Carbon\Carbon::parse($data->waktu_masuk)->translatedFormat("H:i")); ?> WITA</span></td>
+                                        <td><span class="badge badge-success">Tepat Waktu</span></td>
+                                    </tr>
+                                <?php endif; ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Guru Terlambat -->
+    <div id="modalTerlambat" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-clock text-warning"></i> Daftar Guru Terlambat</h3>
+                <button class="modal-close-btn" onclick="closeModal('modalTerlambat')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="modal-table">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nama Guru</th>
+                                <th>Terlambat</th>
+                                <th>Status Kehadiran</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $__currentLoopData = $data_guru_terlambat; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php
+                                    $data_guru = App\Models\guru::where("id",$data->guru_id)->first();
+                                ?>
+                                    <tr>
+                                        <td><img src="<?php echo e(route('file.show',$data_guru->url_foto)); ?>" class="avatar-img" alt="Foto"></td>
+                                        <td><strong><?php echo e($data_guru->nama); ?></strong></td>
+                                        <td><span class="time-badge danger"><?php echo e($data->terlambat_menit); ?> Menit (<?php echo e(Carbon\Carbon::parse($data->waktu_masuk)->translatedFormat("H:i")); ?>)</span></td>
+                                        <td><span class="badge badge-warning">Terlambat</span></td>
+                                    </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Guru Izin / Sakit -->
+    <div id="modalIzinSakit" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-file-medical text-info"></i> Daftar Guru Izin & Sakit</h3>
+                <button class="modal-close-btn" onclick="closeModal('modalIzinSakit')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="modal-table">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nama Guru</th>
+                                <th>Status Kehadiran</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $__currentLoopData = $data_guru_izin_sakit; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php
+                                    $data_guru = App\Models\guru::where("id",$data->guru_id)->first();
+                                ?>
+                                <?php if($data->status_kehadiran == "s"): ?>
+                                    <tr>
+                                        <td><img src="<?php echo e(route('file.show',$data_guru->url_foto)); ?>" class="avatar-img" alt="Foto"></td>
+                                        <td><strong><?php echo e($data_guru->nama); ?></strong></td>
+                                        <td><span class="badge badge-info">Sakit</span></td>
+                                    </tr>
+                                <?php else: ?>
+                                    <tr>
+                                        <td><img src="<?php echo e(route('file.show',$data_guru->url_foto)); ?>" class="avatar-img" alt="Foto"></td>
+                                        <td><strong><?php echo e($data_guru->nama); ?></strong></td>
+                                        <td><span class="badge badge-purple">Izin</span></td>
+                                    </tr>
+                                <?php endif; ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Guru Belum Absen -->
+    <div id="modalBelumAbsen" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-xmark text-danger"></i> Daftar Guru Belum Absen</h3>
+                <button class="modal-close-btn" onclick="closeModal('modalBelumAbsen')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="modal-table">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nama Guru</th>
+                                <th>Status Kehadiran</th>
+                                <th>Aksi Notifikasi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $__currentLoopData = App\Models\guru::all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php if(!App\Models\master_absen_guru::where("guru_id",$data->id)->where("tgl_masuk",Carbon\Carbon::now()->translatedFormat("Y-m-d"))->exists()): ?>
+                                    <tr>
+                                        <td><img src="<?php echo e(route('file.show',$data->url_foto)); ?>" class="avatar-img" alt="Foto"></td>
+                                        <td><strong><?php echo e($data->nama); ?></strong></td>
+                                        <td><span class="badge badge-danger">Belum Absen</span></td>
+                                        <td>
+                                            <button class="btn-action-send" data-id = '<?php echo e($data->id); ?>'>
+                                                <i class="fa-solid fa-paper-plane"></i> Pengingat
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <?php if (isset($component)) { $__componentOriginal0681b545d180d4f9d8ad2ed4614031e2 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2 = $attributes; } ?>
+<?php $component = App\View\Components\Warning::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('warning'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\Warning::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2)): ?>
+<?php $attributes = $__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2; ?>
+<?php unset($__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal0681b545d180d4f9d8ad2ed4614031e2)): ?>
+<?php $component = $__componentOriginal0681b545d180d4f9d8ad2ed4614031e2; ?>
+<?php unset($__componentOriginal0681b545d180d4f9d8ad2ed4614031e2); ?>
+<?php endif; ?>
+
+    <!-- JavaScript Event Listener untuk Elemen DOM -->
+    <script>
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Targetkan div utama untuk Tepat Waktu
+            const successBox = document.querySelector('.status-box.status-success');
+            if (successBox) {
+                successBox.style.cursor = 'pointer';
+                successBox.addEventListener('click', function() {
+                    openModal('modalTepatWaktu');
+                });
+            }
+
+            // Targetkan 3 div di dalam container admin-presensi-stats
+            const statItems = document.querySelectorAll('.admin-presensi-stats .presensi-stat-item');
+            
+            if (statItems.length >= 3) {
+                // Div 1: Terlambat
+                statItems[0].style.cursor = 'pointer';
+                statItems[0].addEventListener('click', function() {
+                    openModal('modalTerlambat');
+                });
+
+                // Div 2: Izin / Sakit
+                statItems[1].style.cursor = 'pointer';
+                statItems[1].addEventListener('click', function() {
+                    openModal('modalIzinSakit');
+                });
+
+                // Div 3: Belum Absen
+                statItems[2].style.cursor = 'pointer';
+                statItems[2].addEventListener('click', function() {
+                    openModal('modalBelumAbsen');
+                });
+            }
+
+            // Memberikan style cursor pointer pada stat-card yang clickable
+            document.querySelectorAll('.stat-card.clickable-card').forEach(card => {
+                card.style.cursor = 'pointer';
+            });
+        });
+
+        document.querySelectorAll(".btn-action-send").forEach((value) => {
+            value.addEventListener("click",(e) => {
+                window.location.href = `/krim/${e.target.dataset.id}`;
+            }); 
+        });
+
+        // Tutup modal jika area luar (overlay) diklik
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal-overlay')) {
+                e.target.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html><?php /**PATH C:\laragon\www\project_sekolah\sekolah_syafii\resources\views/modul/guru/a/dashboard.blade.php ENDPATH**/ ?>
