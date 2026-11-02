@@ -322,6 +322,14 @@
                     <td class="bold">+</td>
                 </tr>
             @endif
+            @foreach($data_tunjangan_bonus as $value)
+                <tr>
+                    <td>{{ $value->nama_tunjangan_bonus }}</td>
+                    <td>:</td>
+                    <td>Rp{{ number_format($value->nominal, 0, ",", ".") }}</td>
+                    <td></td>
+                </tr>
+            @endforeach
         </table>
         <div class="single-line" style="margin-bottom: 4px;"></div>
         <div class="total-line">Total Pendapatan (Bruto): Rp{{ number_format($jumlah_gaji_kotor, 0, ",", ".") }}</div>

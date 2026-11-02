@@ -66,4 +66,7 @@ class guru extends Model
     public function getTunjanganPotongan(){
         return $this->hasMany(tunjangan_potongan::class,"guru_id","id");
     }
+    public function getTunjanganBonus(){
+        return $this->hasMany(tunjangan_bonus::class,"guru_id","id");
+    }
 }

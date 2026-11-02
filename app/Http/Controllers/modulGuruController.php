@@ -23,6 +23,7 @@ use App\Models\riwayat_gaji;
 use App\Models\riwayat_tunjangan;
 use App\Models\riwayat_tunjangan_potongan;
 use App\Models\tunjangan;
+use App\Models\tunjangan_bonus;
 use App\Models\tunjangan_potongan;
 use App\Services\FonteService;
 use Illuminate\Support\Carbon;
@@ -1013,6 +1014,13 @@ class modulGuruController extends Controller
             "guru_id" => $id_guru
         ]);
     }
+    function tambah_riwayatTunjanganBonus($id_guru,$nama_tunjangan,$nominal){
+        riwayat_tunjangan::create([
+            "nama_tunjangan_bonus" => $nama_tunjangan,
+            "nominal" => $nominal,
+            "guru_id" => $id_guru
+        ]);
+    }
 
     function tambah_riwayatTunjanganPotonganGuru($id_guru,$nama_potongan,$nominal){
         riwayat_tunjangan_potongan::create([
@@ -1054,13 +1062,13 @@ class modulGuruController extends Controller
         $data = null;
 
         if ($kategori == "guru"){
-            $data = guru::with(["getUser","getGaji","getTunjangan","getTunjanganPotongan"])->where("bendahara",false)->where("operator",false)->where("satpam",false)->get();
+            $data = guru::with(["getUser","getGaji","getTunjangan","getTunjanganPotongan","getTunjanganBonus"])->where("bendahara",false)->where("operator",false)->where("satpam",false)->get();
         }elseif($kategori == "bendahara"){
-            $data = guru::with(["getUser","getGaji","getTunjangan","getTunjanganPotongan"])->where("bendahara",true)->get();
+            $data = guru::with(["getUser","getGaji","getTunjangan","getTunjanganPotongan","getTunjanganBonus"])->where("bendahara",true)->get();
         }elseif ($kategori == "operator"){
-            $data = guru::with(["getUser","getGaji","getTunjangan","getTunjanganPotongan"])->where("operator",true)->get();
+            $data = guru::with(["getUser","getGaji","getTunjangan","getTunjanganPotongan","getTunjanganBonus"])->where("operator",true)->get();
         }else{
-            $data = guru::with(["getUser","getGaji","getTunjangan","getTunjanganPotongan"])->where("satpam",true)->get();
+            $data = guru::with(["getUser","getGaji","getTunjangan","getTunjanganPotongan","getTunjanganBonus"])->where("satpam",true)->get();
         }
 
         return response()->json($data);
@@ -1098,6 +1106,7 @@ class modulGuruController extends Controller
             $data_gaji = gaji::where("guru_id",$id)->first();
             $data_tunjangan = tunjangan::where("guru_id",$id)->get();
             $data_tunjangan_potongan = tunjangan_potongan::where("guru_id",$id)->get();
+            $data_tunjangan_bonus = tunjangan_bonus::where("guru_id",$id)->get();
             if ($cek_wallas){
                 $data_kelas = ruang_kelas::where("id",wallas::where("guru_id",$id)->first()->kelas_id)->first()->nama_ruang;
                 $info_jabatan_kepala_wallas = "guru wali kelas $data_kelas";
@@ -1123,7 +1132,7 @@ class modulGuruController extends Controller
                     if (strtolower(Carbon::parse($data)->translatedFormat("l")) != "minggu"){
                         if ($data->day <= (Carbon::now()->translatedFormat("m") != $bulan ? $akhir_bulan->day :Carbon::now()->day)){
                             if (master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->exists()){
-                                if(master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->where("status_kehadiran","!=","h")->exists()){
+                                if(master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->where("status_kehadiran","!=","h")->exists() || !master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->exists()){
                                     $jumlah_tidak_hadir ++;
                                 }
                             }else{
@@ -1150,6 +1159,7 @@ class modulGuruController extends Controller
                 "jumlah_tidak_hadir" => $jumlah_tidak_hadir,
                 "data_tunjangan" => $data_tunjangan,
                 "data_tunjangan_potongan" => $data_tunjangan_potongan,
+                "data_tunjangan_bonus" => $data_tunjangan_bonus,  
                 "jumlah_hari_aktif" => $jumlah_hari_aktif
             ]);
         }
@@ -1172,6 +1182,15 @@ class modulGuruController extends Controller
             "guru_id" => $guru_id
         ]); 
     }
+
+    function tambah_tunjangan_bonus($nama_tunjangan,$nominal,$guru_id){
+        tunjangan_bonus::create([
+            "nama_tunjangan_bonus" => $nama_tunjangan,
+            "nominal" => $nominal,
+            "guru_id" => $guru_id
+        ]);
+    }
+
 
     function simpan_PerubahanGajiGuru(Request $request){
         $data_priode = priode::all()->first();
@@ -1244,6 +1263,9 @@ class modulGuruController extends Controller
         if (tunjangan_potongan::where("guru_id",$request->id_guru)->exists()){
             tunjangan_potongan::where("guru_id",$request->id_guru)->delete();
         }
+        if (tunjangan_bonus::where("guru_id",$request->id_guru)->exists()){
+            tunjangan_bonus::where("guru_id",$request->id_guru)->delete();
+        }
         
         for ($i = 0; $i < count(isset($request->nama_tunjangan) ? $request->nama_tunjangan : []) ; $i++){
             $this->tambah_tunjangan($request->nama_tunjangan[$i],$request->harga_tunjangan[$i],$request->id_guru);
@@ -1252,6 +1274,11 @@ class modulGuruController extends Controller
         for ($i = 0; $i < count(isset($request->nama_potongan) ? $request->nama_potongan : []) ; $i++){
             $this->tambah_tunjangan_potongan($request->nama_potongan[$i],$request->harga_potongan[$i],$request->id_guru);
         }
+        for ($i = 0; $i < count(isset($request->nama_pendapatan_tambahan) ? $request->nama_pendapatan_tambahan : []) ; $i++){
+            $this->tambah_tunjangan_bonus($request->nama_pendapatan_tambahan[$i],$request->harga_pendapatan_tambahan[$i],$request->id_guru);
+        }
+
+
 
 
 
@@ -1265,6 +1292,8 @@ class modulGuruController extends Controller
         $data_gaji = gaji::where("guru_id",(int) $id)->first();
         $data_tunjangan = tunjangan::where("guru_id",$id)->get();
         $data_tunjangan_potongan = tunjangan_potongan::where("guru_id",$id)->get();
+        $data_tunjangan_bonus = tunjangan_bonus::where("guru_id",$id)->get();
+        
         $data_priode = priode::all()->first();
         $jumlah_terlambat = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$data_priode->created_at)->where("status_kehadiran","h")->sum("terlambat_menit");
         $jumlah_terlambat_cepat_pulang = master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$data_priode->created_at)->where("status_kehadiran","h")->sum("terlambat_pulang_cepat");
@@ -1272,9 +1301,14 @@ class modulGuruController extends Controller
         $data_gaji->save();
 
         $this->tambah_riwayatGajiGuru($id,$data_gaji->gaji_pokok,$data_gaji->gaji_honor,$data_gaji->gaji_tugas_tambahan,$data_gaji->potongan_tidak_hadir,$data_gaji->potongan_keterlambatan,$data_gaji->kasbon,$data_gaji->gaji_tambahan,$data_gaji->bonus,$data_gaji->ketidakhadiran,$jumlah_terlambat,$data_gaji->evaluasi,$jumlah_terlambat_cepat_pulang);
+
         
         foreach($data_tunjangan as $value){
             $this->tambah_riwayatTunjanganGuru($value->guru_id,$value->nama_tunjangan,$value->nominal);
+        }
+
+        foreach($data_tunjangan_bonus as $value){
+            $this->tambah_riwayatTunjanganGuru($value->guru_id,$value->nama_tunjangan_bonus,$value->nominal);
         }
 
         foreach($data_tunjangan_potongan as $value){

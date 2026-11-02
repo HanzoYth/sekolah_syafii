@@ -10,7 +10,9 @@ use App\Models\tunjangan;
 use App\Models\master_absen_guru;
 use App\Models\riwayat_gaji;
 use App\Models\riwayat_tunjangan;
+use App\Models\riwayat_tunjangan_bonus;
 use App\Models\riwayat_tunjangan_potongan;
+use App\Models\tunjangan_bonus;
 use App\Models\tunjangan_potongan;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;                                                               
@@ -32,10 +34,12 @@ class file_surat extends Controller
         $data_gaji = riwayat_gaji::where("id",$id)->first();
         $data_tunjangan = riwayat_tunjangan::where("guru_id",session("id"))->where("created_at",$data_gaji->created_at)->get();
         $data_tunjangan_potongan = riwayat_tunjangan_potongan::where("guru_id",session("id"))->where("created_at",$data_gaji->created_at)->get();
+        $data_tunjangan_bonus = riwayat_tunjangan_bonus::where("guru_id",session("id"))->where("created_at",$data_gaji->created_at)->get();
         
         $jumlah_gaji_kotor = $data_gaji->gaji_pokok + $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus;
         $jumlah_gaji_bisa_kepotong = $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus;
         foreach($data_tunjangan as $data) {$jumlah_gaji_kotor += $data->nominal;$jumlah_gaji_bisa_kepotong += $data->nominal;}
+        foreach($data_tunjangan_bonus as $data) {$jumlah_gaji_kotor += $data->nominal;$jumlah_gaji_bisa_kepotong += $data->nominal;}
 
         $data_potong = $data_gaji->potongan_tidak_hadir + $data_gaji->potongan_keterlambatan + $data_gaji->kasbon;
         foreach($data_tunjangan_potongan as $data)  {$data_potong += $data->nominal;}
@@ -54,6 +58,7 @@ class file_surat extends Controller
             "data_keterlambatan" => $data_keterlambatan,
             "data_tunjangan" => $data_tunjangan,
             "data_tunjangan_potongan" => $data_tunjangan_potongan,
+            "data_tunjangan_bonus" => $data_tunjangan_bonus,
             "jumlah_gaji_kotor" => $jumlah_gaji_kotor,
             "jumlah_alpa" => $data_gaji->ketidakhadiran,
             "jumlah_terlambat" => $data_gaji->keterlambatan,
@@ -66,10 +71,12 @@ class file_surat extends Controller
         $data_gaji = session("role") == "a" ? gaji::where("guru_id",$id)->first() : riwayat_gaji::where("id",$id)->first();
         $data_tunjangan = session("role") == "a" ? tunjangan::where("guru_id",$id)->get() : riwayat_tunjangan::where("guru_id",session("id"))->where("created_at",$data_gaji->created_at)->get();
         $data_tunjangan_potongan = session("role") == "a" ? tunjangan_potongan::where("guru_id",$id)->get() : riwayat_tunjangan_potongan::where("guru_id",session("id"))->where("created_at",$data_gaji->created_at)->get();
+        $data_tunjangan_bonus = session("role") == "a" ? tunjangan_bonus::where("guru_id",$id)->get() : riwayat_tunjangan_bonus::where("guru_id",session("id"))->where("created_at",$data_gaji->created_at)->get();
 
         $jumlah_gaji_kotor = $data_gaji->gaji_pokok + $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus;
         $jumlah_gaji_bisa_kepotong = $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus;
         foreach($data_tunjangan as $data) {$jumlah_gaji_kotor += $data->nominal;$jumlah_gaji_bisa_kepotong += $data->nominal;}
+        foreach($data_tunjangan_bonus as $data) {$jumlah_gaji_kotor += $data->nominal;$jumlah_gaji_bisa_kepotong += $data->nominal;}
 
         $data_potong = $data_gaji->potongan_tidak_hadir + $data_gaji->potongan_keterlambatan + $data_gaji->kasbon;
         foreach($data_tunjangan_potongan as $data)  {$data_potong += $data->nominal;}
@@ -88,6 +95,7 @@ class file_surat extends Controller
             "data_ketidakhadiran" => $data_ketidakhadiran,
             "data_keterlambatan" => $data_keterlambatan,
             "data_tunjangan_potongan" => $data_tunjangan_potongan,
+            "data_tunjangan_bonus" => $data_tunjangan_bonus,
             "jumlah_gaji_kotor" => $jumlah_gaji_kotor,
             "jumlah_alpa" => $data_gaji->ketidakhadiran,
             "jumlah_gaji_bersih" => $jumlah_gaji_bersih
@@ -103,10 +111,12 @@ class file_surat extends Controller
         $data_gaji = gaji::where("guru_id",$id)->first();
         $data_tunjangan = tunjangan::where("guru_id",$id)->get();
         $data_tunjangan_potongan = tunjangan_potongan::where("guru_id",$id)->get();
+        $data_tunjangan_bonus = tunjangan_bonus::where("guru_id",$id)->get();
         
         $jumlah_gaji_kotor = $data_gaji->gaji_pokok + $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus;
         $jumlah_gaji_bisa_kepotong = $data_gaji->gaji_honor + $data_gaji->gaji_tugas_tambahan + $data_gaji->gaji_tambahan + $data_gaji->bonus;
         foreach($data_tunjangan as $data) {$jumlah_gaji_kotor += $data->nominal;$jumlah_gaji_bisa_kepotong += $data->nominal;}
+        foreach($data_tunjangan_bonus as $data) {$jumlah_gaji_kotor += $data->nominal;$jumlah_gaji_bisa_kepotong += $data->nominal;}
 
         $data_potong = $data_gaji->potongan_tidak_hadir + $data_gaji->potongan_keterlambatan + $data_gaji->kasbon;
         foreach($data_tunjangan_potongan as $data)  {$data_potong += $data->nominal;}
@@ -125,6 +135,7 @@ class file_surat extends Controller
             "data_ketidakhadiran" => $data_ketidakhadiran,
             "data_keterlambatan" => $data_keterlambatan,
             "data_tunjangan_potongan" => $data_tunjangan_potongan,
+            "data_tunjangan_bonus" => $data_tunjangan_bonus,
             "jumlah_alpa" => $data_gaji->ketidakhadiran,
             "jumlah_gaji_bersih" => $jumlah_gaji_bersih
         ]);

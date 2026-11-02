@@ -265,6 +265,35 @@
                         </div>
                     </div>
 
+                    <!-- DYNAMIC PENDAPATAN TAMBAHAN SECTION -->
+                    <div class="dynamic-section">
+                        <div class="dynamic-header">
+                            <h4>Pendapatan Tambahan Lainnya</h4>
+                            <button type="button" id="btnAddPendapatanTambahan" class="btn-add">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>Tambah Pendapatan</span>
+                            </button>
+                        </div>
+                        
+                        <div id="pendapatanTambahanContainer" class="dynamic-list">
+                            <!-- Jika ada data dari database untuk pendapatan tambahan dinamis, bisa di-loop di sini -->
+                            @foreach ($data_tunjangan_bonus ?? [] as $value)
+                                <div class="dynamic-row">
+                                    <div class="form-group flex-2">
+                                        <input type="text" name="nama_pendapatan_tambahan[]" value="{{$value->nama_tunjangan_bonus}}" class="form-control" placeholder="Nama Pendapatan">
+                                    </div>
+                                    <div class="form-group flex-2">
+                                        <div class="input-currency">
+                                            <span>Rp</span>
+                                            <input type="number" name="harga_pendapatan_tambahan[]" value="{{(int) $value->nominal}}" class="form-control calc-bonus pendapatan-tambahan-val" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-remove-row"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
                     <!-- TOTAL TAMBAHAN -->
                     <div class="total-box total-bonus">
                         <span>Jumlah Kafalah Tambahan</span>
@@ -330,6 +359,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnAddTunjangan = document.getElementById('btnAddTunjangan');
     const potonganContainer = document.getElementById('potonganContainer');
     const btnAddPotongan = document.getElementById('btnAddPotongan');
+    const pendapatanTambahanContainer = document.getElementById('pendapatanTambahanContainer');
+    const btnAddPendapatanTambahan = document.getElementById('btnAddPendapatanTambahan');
 
     // Format mata uang Rupiah
     function formatRupiah(number) {
@@ -382,7 +413,27 @@ document.addEventListener('DOMContentLoaded', function () {
         calculateAll();
     });
 
-    // 3. HAPUS BARIS DINAMIS (TUNJANGAN & POTONGAN)
+    // 3. TAMBAH PENDAPATAN TAMBAHAN DINAMIS (DI KELOMPOK 4)
+    btnAddPendapatanTambahan.addEventListener('click', function() {
+        const newRow = document.createElement('div');
+        newRow.classList.add('dynamic-row');
+        newRow.innerHTML = `
+            <div class="form-group flex-2">
+                <input type="text" name="nama_pendapatan_tambahan[]" class="form-control" placeholder="Nama Pendapatan Baru">
+            </div>
+            <div class="form-group flex-2">
+                <div class="input-currency">
+                    <span>Rp</span>
+                    <input type="number" name="harga_pendapatan_tambahan[]" value="0" class="form-control calc-bonus pendapatan-tambahan-val" placeholder="0">
+                </div>
+            </div>
+            <button type="button" class="btn-remove-row"><i class="fa-solid fa-trash-can"></i></button>
+        `;
+        pendapatanTambahanContainer.appendChild(newRow);
+        calculateAll();
+    });
+
+    // 4. HAPUS BARIS DINAMIS (SEMUA SECTION)
     document.addEventListener('click', function(e) {
         if (e.target.closest('.btn-remove-row')) {
             e.target.closest('.dynamic-row').remove();
@@ -390,9 +441,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // 4. KALKULASI REAL-TIME
+    // 5. KALKULASI REAL-TIME
     function calculateAll() {
-        // A. Total Pendapatan
+        // A. Total Pendapatan Utama
         const pokok = getVal('kafalahPokok');
         const honor = getVal('kafalahHonor');
         const tugasTambahan = getVal('kafalahTugasTambahan');
@@ -401,14 +452,21 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.tunjangan-val').forEach(input => {
             dynamicTunjanganTotal += parseFloat(input.value) || 0;
         });
+
+        const totalPendapatan = honor + tugasTambahan + dynamicTunjanganTotal;
+
+        // B. Total Bonus / Tambahan (Termasuk Input Dinamis Pendapatan Tambahan)
         const tambahan = getVal('kafalahTambahan');
         const reward = getVal('rewardKafalah');
-        const totalTambahan = tambahan + reward;
+        
+        let dynamicPendapatanTambahanTotal = 0;
+        document.querySelectorAll('.pendapatan-tambahan-val').forEach(input => {
+            dynamicPendapatanTambahanTotal += parseFloat(input.value) || 0;
+        });
 
+        const totalTambahan = tambahan + reward + dynamicPendapatanTambahanTotal;
 
-        const totalPendapatan = honor + tugasTambahan + dynamicTunjanganTotal + totalTambahan;
-
-        // B. Total Potongan
+        // C. Total Potongan
         const absenHariEl = document.getElementById("absenHari");
         const telatMenitEl = document.getElementById("telatMenit");
         const telatCepatEl = document.getElementById("cepatMenit");
@@ -431,7 +489,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const totalPotongan = absen + potTelat + potKasbon + dynamicPotonganTotal;
 
         // D. Grand Total Gaji
-        const grandTotal = (pokok + totalPendapatan) - totalPotongan;
+        const grandTotal = (totalPendapatan + totalTambahan) - totalPotongan > 0 ? pokok + ((totalPendapatan + totalTambahan) - totalPotongan) : pokok;
 
         // Update DOM Display
         document.getElementById('displayTotalPendapatan').textContent = formatRupiah(totalPendapatan);

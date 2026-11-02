@@ -223,22 +223,22 @@
 
 
                     let jumlah_tunjangan_potongan = 0;
+                    let totalTunjangan = 0;
+                    let totalTunjanganBonus = 0;
 
                     (item.get_tunjangan_potongan || []).forEach(value => {
                         jumlah_tunjangan_potongan += value.nominal;
                     });
-
-                    const gajiPokok = n(g.gaji_pokok);
-                    const selisih = n(g.gaji_honor) + n(g.gaji_tugas_tambahan) + n(g.gaji_tambahan) + n(g.bonus)
-                                - n(g.potongan_tidak_hadir) - n(g.potongan_keterlambatan) - n(g.kasbon) - jumlah_tunjangan_potongan;
-
-                    let totalGaji = selisih > 0 ? gajiPokok + selisih : gajiPokok;
-
-                    let totalTunjangan = 0;
                     (item.get_tunjangan || []).forEach(value => {
                         totalTunjangan += n(value.nominal);
                     });
-                    totalGaji += totalTunjangan;
+                    (item.get_tunjangan_bonus || []).forEach(value => {
+                        totalTunjanganBonus += n(value.nominal);
+                    });
+                    const gajiPokok = n(g.gaji_pokok);
+                    const selisih = (totalTunjangan + totalTunjanganBonus + n(g.gaji_honor) + n(g.gaji_tugas_tambahan) + n(g.gaji_tambahan) + n(g.bonus))
+                                - (n(g.potongan_tidak_hadir) + n(g.potongan_keterlambatan) + n(g.kasbon) + jumlah_tunjangan_potongan);
+                    let totalGaji = selisih > 0 ? gajiPokok + selisih : gajiPokok;
 
                     let newData = `
                         <tr data-id="${item.id}" data-nama="${item.nama}">
