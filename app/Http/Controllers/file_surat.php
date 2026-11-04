@@ -22,10 +22,22 @@ use Illuminate\Support\Facades\Mail;
 class file_surat extends Controller
 {
 
-    function SuratSlipPembayaran (){
-        $pdf = Pdf::loadView("surat/suratSlipPembayaran");
-        return $pdf->download("surat.pdf");
+    function SuratSlipPembayaran (Request $request){
+        $id = $request->query('id');
+        $type = strtolower($request->query('type', 'ipp'));
+        $slip = null;
 
+        if ($type === 'pangkal') {
+            $slip = $id ? \App\Models\slip_pembayaran_pangkal::with(['siswa.kelas', 'siswa.sekolah'])->find($id) : null;
+        } elseif ($type === 'pendidikan') {
+            $slip = $id ? \App\Models\slip_pembayaran_pendidikan::with(['siswa.kelas', 'siswa.sekolah'])->find($id) : null;
+        } else {
+            $slip = $id ? \App\Models\slip_pembayaran_ipp::with(['siswa.kelas', 'siswa.sekolah'])->find($id) : null;
+        }
+
+        $pdf = Pdf::loadView("surat/suratSlipPembayaran", compact('slip', 'type'));
+        $fileName = 'Slip_Pembayaran_' . ($slip && $slip->siswa ? str_replace(' ', '_', $slip->siswa->nama) : 'SIAKAD') . '.pdf';
+        return $pdf->download($fileName);
     }
     function tampilan_SuratSlipGaji($id){
         $guru = guru::where("id",session("id"))->first();

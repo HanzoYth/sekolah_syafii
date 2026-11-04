@@ -581,8 +581,8 @@
                         <span class="text-xs font-medium text-slate-700">Pendidikan</span>
                     </a>
                     <a href="/sk/ppl" class="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:border-amber-200 transition-colors group text-center col-span-2">
-                        <i class="fa-solid fa-screwdriver-wrench text-2xl text-amber-500 mb-2 group-hover:scale-110 transition-transform"></i>
-                        <span class="text-xs font-medium text-slate-700">Pemeliharaan & Sarana</span>
+                        <i class="fa-solid fa-clock-rotate-left text-2xl text-amber-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-xs font-medium text-slate-700">Riwayat Pembayaran</span>
                     </a>
 
                 @else
@@ -595,8 +595,12 @@
                         <i class="fa-solid fa-file-circle-plus text-2xl text-blue-500 mb-2 group-hover:scale-110 transition-transform"></i>
                         <span class="text-xs font-medium text-slate-700">Buat Tagihan</span>
                     </a>
-                    <a href="/sk/tk" class="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:border-amber-200 transition-colors group text-center">
-                        <i class="fa-solid fa-users-rectangle text-2xl text-amber-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                    <a href="/sk/ppl" class="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:border-amber-200 transition-colors group text-center">
+                        <i class="fa-solid fa-clock-rotate-left text-2xl text-amber-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-xs font-medium text-slate-700">Riwayat Pembayaran</span>
+                    </a>
+                    <a href="/sk/tk" class="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-200 transition-colors group text-center">
+                        <i class="fa-solid fa-users-rectangle text-2xl text-emerald-500 mb-2 group-hover:scale-110 transition-transform"></i>
                         <span class="text-xs font-medium text-slate-700">Kelola Kelas</span>
                     </a>
                     <a href="/sk/pb" class="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-violet-50 hover:border-violet-200 transition-colors group text-center">

@@ -20,6 +20,13 @@
     <link rel="stylesheet" href="{{ asset('css/welcome.css') }}?v={{ time() }}">
 </head>
 <body>
+    @php
+        $isAdmin = (session('hasLogin') && in_array(session('role'), ['a', 'admin'])) || request()->has('editor_preview');
+    @endphp
+
+    @if($isAdmin)
+        @include('components.home-admin-editor')
+    @endif
 
     <!-- Indikator Progress Scroll di Atas Layar -->
     <div class="scroll-progress-bar" id="scrollProgressBar" aria-hidden="true"></div>
@@ -50,9 +57,15 @@
                     <li><a href="/prof?halaman=kontak" class="nav-spy" data-section="#kontak">Kontak</a></li>
                 </ul>
                 <div class="auth-buttons">
-                    <a class="btn-started" id="openSignup" href="/reg">
-                        <i class="fa-solid fa-right-to-bracket"></i> Login Sistem
-                    </a>
+                    @if(session('hasLogin'))
+                        <a class="btn-started" href="{{ session('role') === 'g' ? '/sk/dsg' : (session('role') === 's' ? '/sk/dss' : '/sk/das') }}">
+                            <i class="fa-solid fa-gauge-high"></i> Dashboard
+                        </a>
+                    @else
+                        <a class="btn-started" id="openSignup" href="/reg">
+                            <i class="fa-solid fa-right-to-bracket"></i> Login Sistem
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>

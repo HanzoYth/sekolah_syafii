@@ -10,7 +10,17 @@ class slip_pembayaran_ipp extends Model
     protected $fillable = [
         "nominal",
         "tanggal_awal",
+        "jumlah_dibayar",
         "jumlah_di_bayar",
-        "siswa_id"
+        "status",
+        "siswa_id",
+        "created_at",
+        "updated_at"
     ];
+
+    public function siswa()
+    {
+        return $this->belongsTo(siswa::class, 'siswa_id');
+    }
 }
+

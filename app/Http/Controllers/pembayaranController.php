@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\slip_pembayaran_ipp;
 use App\Models\slip_pembayaran_pangkal;
 use App\Models\slip_pembayaran_pendidikan;
+use App\Models\siswa;
+use App\Models\ruang_kelas;
+use App\Models\jenis_sekolah;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -123,5 +126,73 @@ class pembayaranController extends Controller
             ->groupBy('tgl')
             ->pluck('total', 'tgl')
             ->toArray();
+    }
+
+    public function detail_pembayaran_siswa(Request $request)
+    {
+        $id = $request->query('id');
+        $type = strtolower($request->query('type', 'ipp'));
+
+        $slip = null;
+        $jenis_label = 'SPP / IPP Bulanan';
+        $periode_label = '-';
+
+        if ($type === 'pangkal') {
+            $slip = $id ? slip_pembayaran_pangkal::with(['siswa.kelas', 'siswa.sekolah', 'siswa.tahunAjaran'])->find($id) : null;
+            $jenis_label = 'Uang Pangkal Siswa';
+            $periode_label = ($slip && $slip->siswa && $slip->siswa->tahunAjaran) ? $slip->siswa->tahunAjaran->nama : 'Tahun Masuk';
+        } elseif ($type === 'pendidikan') {
+            $slip = $id ? slip_pembayaran_pendidikan::with(['siswa.kelas', 'siswa.sekolah', 'siswa.tahunAjaran'])->find($id) : null;
+            $jenis_label = 'Dana Pengembangan Pendidikan';
+            $periode_label = ($slip && $slip->siswa && $slip->siswa->tahunAjaran) ? $slip->siswa->tahunAjaran->nama : 'Tahunan';
+        } else {
+            $type = 'ipp';
+            $slip = $id ? slip_pembayaran_ipp::with(['siswa.kelas', 'siswa.sekolah', 'siswa.tahunAjaran'])->find($id) : null;
+            $jenis_label = 'SPP / IPP Bulanan';
+            $periode_label = ($slip && $slip->tanggal_awal) ? Carbon::parse($slip->tanggal_awal)->locale('id')->isoFormat('MMMM Y') : '-';
+        }
+
+        // Fallback jika id tidak ditemukan
+        if (!$slip) {
+            $slip = slip_pembayaran_ipp::with(['siswa.kelas', 'siswa.sekolah', 'siswa.tahunAjaran'])->latest()->first();
+            $type = 'ipp';
+            $jenis_label = 'SPP / IPP Bulanan';
+            if ($slip && $slip->tanggal_awal) {
+                $periode_label = Carbon::parse($slip->tanggal_awal)->locale('id')->isoFormat('MMMM Y');
+            }
+        }
+        if (!$slip) {
+            $slip = slip_pembayaran_pangkal::with(['siswa.kelas', 'siswa.sekolah', 'siswa.tahunAjaran'])->latest()->first();
+            $type = 'pangkal';
+            $jenis_label = 'Uang Pangkal Siswa';
+        }
+
+        if (!$slip) {
+            return redirect('/sk/ppl')->with('error', 'Belum ada data pembayaran yang tersimpan.');
+        }
+
+        $nominal = (float) $slip->nominal;
+        $dibayar = (float) ($slip->jumlah_dibayar ?? $slip->jumlah_di_bayar ?? 0);
+        $sisa = max(0, $nominal - $dibayar);
+        $isLunas = (bool) $slip->status || ($nominal > 0 && $dibayar >= $nominal);
+
+        $invoice_no = 'INV/' . strtoupper($type) . '/' . ($slip->created_at ? Carbon::parse($slip->created_at)->format('Ym') : date('Ym')) . '/' . str_pad($slip->id, 4, '0', STR_PAD_LEFT);
+
+        return view('modul.siakad.admin.detailPembayaran', compact(
+            'slip',
+            'type',
+            'jenis_label',
+            'periode_label',
+            'nominal',
+            'dibayar',
+            'sisa',
+            'isLunas',
+            'invoice_no'
+        ));
+    }
+
+    public function Ambil_DataPembayaran(Request $request)
+    {
+        return redirect('/sk/ppl');
     }
 }

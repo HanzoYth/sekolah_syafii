@@ -455,7 +455,176 @@ class siakadController extends Controller
             $siswa_walas = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->get();
         }
 
-        return view("/modul/siakad/guru/dashboard_guru", compact('guru', 'wallas', 'isWallas', 'isPengajar', 'jadwal_hari_ini', 'kelas_diampu', 'nama_hari', 'siswa_walas'));
+        // --- FITUR SISTEM GURU PENGGANTI (INVAL / JADWAL KOSONG) ---
+        $tanggal_hari_ini = \Carbon\Carbon::today()->toDateString();
+
+        // Fallback handler jika form/link mengirim aksi langsung ke halaman ini
+        if (request()->has('aksi_pengganti')) {
+            $aksi = request('aksi_pengganti');
+            $idSlot = request('slot_id');
+
+            if ($aksi === 'ambil' && $idSlot) {
+                $slot = \App\Models\guru_pengganti::find($idSlot);
+                if ($slot && $slot->status === 'kosong' && $slot->guru_asli_id != $guru_id && !$slot->cekBentrokDenganGuru($guru_id)) {
+                    $slot->guru_pengganti_id = $guru_id;
+                    $slot->status = 'diambil';
+                    $slot->taken_at = now();
+                    $slot->save();
+                    return redirect('/sk/dsg')->with('success', 'Alhamdulillah! Anda berhasil mengambil jadwal mengajar pengganti ini.');
+                }
+            } elseif ($aksi === 'batal' && $idSlot) {
+                $slot = \App\Models\guru_pengganti::find($idSlot);
+                if ($slot && ($slot->guru_pengganti_id == $guru_id || session('role') === 'a')) {
+                    $slot->guru_pengganti_id = null;
+                    $slot->status = 'kosong';
+                    $slot->taken_at = null;
+                    $slot->save();
+                    return redirect('/sk/dsg')->with('info', 'Jadwal pengganti telah dibatalkan dan statusnya kembali menjadi kosong.');
+                }
+            }
+        }
+
+        // Ambil semua daftar jadwal guru pengganti hari ini
+        $jadwal_pengganti_hari_ini = \App\Models\guru_pengganti::with([
+            'jadwal.mata_pelajaran',
+            'jadwal.kelas',
+            'jadwal.jam_pelajaran',
+            'guruAsli',
+            'guruPengganti'
+        ])
+        ->where('tanggal', $tanggal_hari_ini)
+        ->orderByRaw("FIELD(status, 'kosong', 'diambil', 'selesai', 'dibatalkan')")
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+        // Evaluasi bentrok jadwal dan hak akses untuk guru yang sedang login
+        foreach ($jadwal_pengganti_hari_ini as $gp) {
+            $gp->is_bentrok = $gp->cekBentrokDenganGuru($guru_id);
+            $gp->is_guru_asli = ($gp->guru_asli_id == $guru_id);
+            $gp->is_guru_pengganti = ($gp->guru_pengganti_id == $guru_id);
+        }
+
+        $total_jadwal_kosong = $jadwal_pengganti_hari_ini->where('status', 'kosong')->count();
+        $jadwal_pengganti_saya = $jadwal_pengganti_hari_ini->where('guru_pengganti_id', $guru_id)->where('status', 'diambil');
+
+        return view("/modul/siakad/guru/dashboard_guru", compact(
+            'guru', 'wallas', 'isWallas', 'isPengajar', 'jadwal_hari_ini',
+            'kelas_diampu', 'nama_hari', 'siswa_walas', 'tanggal_hari_ini',
+            'jadwal_pengganti_hari_ini', 'total_jadwal_kosong', 'jadwal_pengganti_saya'
+        ));
+    }
+
+    /**
+     * Guru mengambil jadwal mengajar yang kosong sebagai guru pengganti
+     */
+    public function ambilJadwalPengganti(Request $request)
+    {
+        $check = $this->guardRoles(['g']);
+        if ($check) return $check;
+
+        $guru_id = session('id');
+        $idSlot = $request->input('id');
+
+        $slot = \App\Models\guru_pengganti::with(['jadwal.mata_pelajaran', 'jadwal.kelas', 'jadwal.jam_pelajaran'])->find($idSlot);
+        if (!$slot) {
+            return redirect()->back()->with('error', 'Data jadwal pengganti tidak ditemukan.');
+        }
+
+        if ($slot->guru_asli_id == $guru_id) {
+            return redirect()->back()->with('error', 'Anda tidak dapat menjadi guru pengganti pada jadwal mengajar Anda sendiri.');
+        }
+
+        if ($slot->status !== 'kosong') {
+            return redirect()->back()->with('error', 'Jadwal ini sudah diambil oleh guru lain.');
+        }
+
+        if ($slot->cekBentrokDenganGuru($guru_id)) {
+            return redirect()->back()->with('error', 'Jadwal mengajar ini bentrok dengan jadwal mengajar Anda yang lain.');
+        }
+
+        $slot->guru_pengganti_id = $guru_id;
+        $slot->status = 'diambil';
+        $slot->taken_at = now();
+        $slot->save();
+
+        $mapelNama = $slot->jadwal->mata_pelajaran->nama_mapel ?? 'Mata Pelajaran';
+        $kelasNama = $slot->jadwal->kelas->nama_kelas ?? ($slot->jadwal->kelas->nama_ruang ?? 'Kelas');
+
+        return redirect()->back()->with('success', "Alhamdulillah! Anda berhasil mengambil jadwal pengganti {$mapelNama} ({$kelasNama}).");
+    }
+
+    /**
+     * Membatalkan komitmen sebagai guru pengganti (mengembalikan status menjadi kosong)
+     */
+    public function batalkanJadwalPengganti(Request $request)
+    {
+        $check = $this->guardRoles(['g', 'a']);
+        if ($check) return $check;
+
+        $guru_id = session('id');
+        $idSlot = $request->input('id');
+
+        $slot = \App\Models\guru_pengganti::find($idSlot);
+        if (!$slot) {
+            return redirect()->back()->with('error', 'Data jadwal pengganti tidak ditemukan.');
+        }
+
+        if ($slot->guru_pengganti_id != $guru_id && session('role') !== 'a') {
+            return redirect()->back()->with('error', 'Anda tidak berwenang membatalkan jadwal pengganti ini.');
+        }
+
+        $slot->guru_pengganti_id = null;
+        $slot->status = 'kosong';
+        $slot->taken_at = null;
+        $slot->save();
+
+        return redirect()->back()->with('info', 'Jadwal pengganti telah dibatalkan dan statusnya kembali menjadi KOSONG.');
+    }
+
+    /**
+     * Menandai jadwal mata pelajaran tertentu sebagai KOSONG (karena guru izin/tidak masuk)
+     * Dapat dipanggil oleh Guru dari dashboard, Admin, atau dihubungkan ke fitur Absensi Modul Guru.
+     */
+    public function tandaiJadwalKosong(Request $request)
+    {
+        $check = $this->guardRoles(['g', 'a']);
+        if ($check) return $check;
+
+        $guru_id = session('id');
+        $jadwal_id = $request->input('jadwal_pelajaran_id');
+        $tanggal = $request->input('tanggal', \Carbon\Carbon::today()->toDateString());
+        $alasan = $request->input('alasan_izin', 'Izin jam pelajaran');
+        $tugas = $request->input('keterangan_tugas');
+
+        $jadwal = \App\Models\jadwal_pelajaran::find($jadwal_id);
+        if (!$jadwal) {
+            return redirect()->back()->with('error', 'Jadwal pelajaran tidak ditemukan.');
+        }
+
+        // Pastikan hanya guru pemilik jadwal atau admin yang dapat menandai izin
+        if ($jadwal->guru_id != $guru_id && session('role') !== 'a') {
+            return redirect()->back()->with('error', 'Anda hanya dapat menandai jadwal mengajar Anda sendiri.');
+        }
+
+        $slot = \App\Models\guru_pengganti::where('jadwal_pelajaran_id', $jadwal_id)
+                    ->where('tanggal', $tanggal)
+                    ->first();
+
+        if (!$slot) {
+            $slot = new \App\Models\guru_pengganti();
+            $slot->jadwal_pelajaran_id = $jadwal_id;
+            $slot->guru_asli_id = $jadwal->guru_id;
+            $slot->tanggal = $tanggal;
+        }
+
+        $slot->status = 'kosong';
+        $slot->guru_pengganti_id = null;
+        $slot->alasan_izin = $alasan;
+        $slot->keterangan_tugas = $tugas;
+        $slot->taken_at = null;
+        $slot->save();
+
+        return redirect()->back()->with('success', 'Jadwal mengajar berhasil ditandai sebagai status KOSONG dan kini dapat diambil oleh guru lain.');
     }
    
     function tambah_kelas(){
@@ -605,7 +774,7 @@ class siakadController extends Controller
         $guru_id = session('id');
         $guru = \App\Models\guru::find($guru_id);
         $isWallas = \App\Models\wallas::where('guru_id', $guru_id)->exists();
-        $isPengajar = $isWallas || ($guru && ($guru->guru_tetap || $guru->guru_honor)) || \App\Models\jadwal_pelajaran::where('guru_id', $guru_id)->exists();
+        $isPengajar = $isWallas || ($guru && ($guru->guru_tetap || $guru->guru_honor)) || \App\Models\jadwal_pelajaran::where('guru_id', $guru_id)->exists() || \App\Models\guru_pengganti::where('guru_pengganti_id', $guru_id)->exists();
         if (!$isPengajar) {
             return redirect('/sk/dsg')->with('error', 'Status Anda pada modul guru bukan sebagai Guru Pengajar.');
         }
@@ -615,14 +784,45 @@ class siakadController extends Controller
         $hari_terpilih = strtolower($carbonTanggal->isoFormat('dddd'));
         $hari_indonesia = ucfirst($carbonTanggal->isoFormat('dddd, D MMMM Y'));
         
-        // Ambil jadwal mengajar guru pada hari tanggal terpilih
-        $jadwal_hari_ini = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran'])
+        // Ambil jadwal mengajar reguler guru pada hari tanggal terpilih
+        $jadwal_reguler = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran', 'guru'])
             ->where('guru_id', $guru_id)
             ->where('hari', $hari_terpilih)
             ->get()
-            ->sortBy(function($j) {
-                return $j->jam_pelajaran->jam_mulai ?? '00:00';
+            ->map(function($j) use ($tanggal) {
+                $j->is_pengganti = false;
+                $inval = \App\Models\guru_pengganti::with('guruPengganti')
+                    ->where('jadwal_pelajaran_id', $j->id)
+                    ->where('tanggal', $tanggal)
+                    ->first();
+                $j->inval_status = $inval;
+                return $j;
             });
+
+        // Ambil jadwal di mana guru ini bertindak sebagai GURU PENGGANTI (INVAL) pada tanggal ini
+        $substitutions = \App\Models\guru_pengganti::with(['guruAsli', 'guruPengganti'])
+            ->where('guru_pengganti_id', $guru_id)
+            ->where('tanggal', $tanggal)
+            ->where('status', 'diambil')
+            ->get()
+            ->keyBy('jadwal_pelajaran_id');
+
+        $jadwal_pengganti = collect();
+        if ($substitutions->isNotEmpty()) {
+            $jadwal_pengganti = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran', 'guru'])
+                ->whereIn('id', $substitutions->keys())
+                ->get()
+                ->map(function($j) use ($substitutions) {
+                    $j->is_pengganti = true;
+                    $j->sub_info = $substitutions->get($j->id);
+                    return $j;
+                });
+        }
+
+        // Gabungkan jadwal reguler & pengganti, lalu urutkan sesuai jam mulai
+        $jadwal_hari_ini = $jadwal_reguler->concat($jadwal_pengganti)->sortBy(function($j) {
+            return $j->jam_pelajaran->jam_mulai ?? '00:00';
+        });
 
         // Ambil data absensi guru untuk semua jadwal hari itu
         $absensi_guru_semua = \App\Models\absensi_mengajar_guru::whereIn('jadwal_pelajaran_id', $jadwal_hari_ini->pluck('id'))
@@ -654,8 +854,20 @@ class siakadController extends Controller
         $toleransi_info = null;
         
         if ($jadwal_id) {
-            $jadwal_terpilih = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran'])->find($jadwal_id);
-            if ($jadwal_terpilih && $jadwal_terpilih->guru_id == $guru_id) {
+            $jadwal_terpilih = \App\Models\jadwal_pelajaran::with(['kelas', 'mata_pelajaran', 'jam_pelajaran', 'guru'])->find($jadwal_id);
+            $isGuruAsli = ($jadwal_terpilih && $jadwal_terpilih->guru_id == $guru_id);
+            $subRecord = $jadwal_terpilih ? \App\Models\guru_pengganti::with('guruAsli')
+                ->where('jadwal_pelajaran_id', $jadwal_terpilih->id)
+                ->where('guru_pengganti_id', $guru_id)
+                ->where('tanggal', $tanggal)
+                ->where('status', 'diambil')
+                ->first() : null;
+            $isGuruPengganti = !is_null($subRecord);
+
+            if ($jadwal_terpilih && ($isGuruAsli || $isGuruPengganti)) {
+                $jadwal_terpilih->is_pengganti = $isGuruPengganti;
+                $jadwal_terpilih->sub_info = $subRecord;
+
                 // Sinkronisasi kelas ke ruang_kelas
                 $nama_kelas = $jadwal_terpilih->kelas->nama_kelas ?? '';
                 $ruang_kelas = \App\Models\ruang_kelas::where('nama_ruang', $nama_kelas)->first();
@@ -737,8 +949,15 @@ class siakadController extends Controller
         }
 
         $jadwal = \App\Models\jadwal_pelajaran::with(['jam_pelajaran', 'mata_pelajaran', 'kelas'])->find($jadwal_id);
-        if (!$jadwal || $jadwal->guru_id != $guru_id) {
-            return redirect()->back()->with('error', 'Jadwal mengajar tidak valid atau bukan milik Anda.');
+        $isGuruAsli = ($jadwal && $jadwal->guru_id == $guru_id);
+        $isGuruPengganti = $jadwal ? \App\Models\guru_pengganti::where('jadwal_pelajaran_id', $jadwal->id)
+            ->where('guru_pengganti_id', $guru_id)
+            ->where('tanggal', $tanggal)
+            ->where('status', 'diambil')
+            ->exists() : false;
+
+        if (!$jadwal || (!$isGuruAsli && !$isGuruPengganti)) {
+            return redirect()->back()->with('error', 'Jadwal mengajar tidak valid atau Anda tidak memiliki hak akses pada sesi ini.');
         }
 
         // Cek & Rekam Kehadiran Guru Mengajar
@@ -965,42 +1184,329 @@ class siakadController extends Controller
             'search'
         ));
     }
-    function tampilanPembayaranPemeliharaan(){
+    function tampilanPembayaranPemeliharaan(Request $request){
         $check = $this->guardRoles(['a'], 'keuangan');
         if ($check) return $check;
 
-       return view("/modul/siakad/admin/pemeliharaan");
-       
+        $q = trim($request->input('q', ''));
+        $jenis = $request->input('jenis', ''); // all, ipp, pangkal, pendidikan
+        $status = $request->input('status', ''); // all, lunas, menunggak, cicilan
+        $kelas_id = $request->input('kelas_id', '');
+        $tanggal_mulai = $request->input('tanggal_mulai', '');
+        $tanggal_akhir = $request->input('tanggal_akhir', '');
+
+        $all_records = collect();
+
+        // 1. DATA IPP
+        if (empty($jenis) || $jenis === 'all' || $jenis === 'ipp') {
+            $ippQuery = slip_pembayaran_ipp::with(['siswa.kelas', 'siswa.sekolah', 'siswa.tahunAjaran']);
+
+            if (!empty($q)) {
+                $ippQuery->whereHas('siswa', function($sq) use ($q) {
+                    $sq->where('nama', 'like', "%{$q}%")
+                       ->orWhere('nis', 'like', "%{$q}%");
+                });
+            }
+            if (!empty($kelas_id)) {
+                $ippQuery->whereHas('siswa', function($sq) use ($kelas_id) {
+                    $sq->where('kelas_id', $kelas_id);
+                });
+            }
+            if (!empty($tanggal_mulai)) {
+                $ippQuery->whereDate('created_at', '>=', $tanggal_mulai);
+            }
+            if (!empty($tanggal_akhir)) {
+                $ippQuery->whereDate('created_at', '<=', $tanggal_akhir);
+            }
+
+            $ippData = $ippQuery->get();
+            foreach ($ippData as $item) {
+                $nominal = (float) $item->nominal;
+                $dibayar = (float) ($item->jumlah_dibayar ?? 0);
+                $isLunas = (bool) $item->status || ($nominal > 0 && $dibayar >= $nominal);
+                $sisa = max(0, $nominal - $dibayar);
+                $itemStatus = $isLunas ? 'lunas' : ($dibayar > 0 ? 'cicilan' : 'menunggak');
+
+                if (!empty($status) && $status !== 'all') {
+                    if ($status === 'lunas' && !$isLunas) continue;
+                    if ($status === 'menunggak' && ($isLunas || $dibayar > 0)) continue;
+                    if ($status === 'cicilan' && ($isLunas || $dibayar == 0)) continue;
+                }
+
+                $tglAwal = $item->tanggal_awal ? Carbon::parse($item->tanggal_awal) : ($item->created_at ? Carbon::parse($item->created_at) : now());
+                $all_records->push((object)[
+                    'id' => $item->id,
+                    'kode' => 'IPP-' . str_pad($item->id, 4, '0', STR_PAD_LEFT),
+                    'tipe' => 'ipp',
+                    'tipe_label' => 'SPP / IPP Bulanan',
+                    'tipe_badge' => 'badge-ipp',
+                    'deskripsi' => 'SPP ' . $tglAwal->locale('id')->isoFormat('MMMM Y'),
+                    'tanggal' => $tglAwal,
+                    'tanggal_raw' => $item->created_at ? Carbon::parse($item->created_at)->format('Y-m-d') : $tglAwal->format('Y-m-d'),
+                    'tanggal_bayar_formatted' => ($item->created_at ? Carbon::parse($item->created_at) : $tglAwal)->locale('id')->isoFormat('D MMM Y'),
+                    'created_at' => $item->created_at ? Carbon::parse($item->created_at) : $tglAwal,
+                    'siswa_id' => $item->siswa_id,
+                    'siswa' => $item->siswa,
+                    'nama_siswa' => $item->siswa->nama ?? 'Siswa #' . $item->siswa_id,
+                    'nis' => $item->siswa->nis ?? '-',
+                    'nama_kelas' => ($item->siswa && $item->siswa->kelas) ? $item->siswa->kelas->nama_ruang : 'Belum Ditentukan',
+                    'kelas_id' => $item->siswa->kelas_id ?? null,
+                    'nama_sekolah' => ($item->siswa && $item->siswa->sekolah) ? $item->siswa->sekolah->jenis : '-',
+                    'nominal' => $nominal,
+                    'dibayar' => $dibayar,
+                    'sisa' => $sisa,
+                    'is_lunas' => $isLunas,
+                    'status_label' => $isLunas ? 'Lunas' : ($dibayar > 0 ? 'Dicicil' : 'Menunggak'),
+                    'status_key' => $itemStatus,
+                ]);
+            }
+        }
+
+        // 2. DATA PANGKAL
+        if (empty($jenis) || $jenis === 'all' || $jenis === 'pangkal') {
+            $pangkalQuery = slip_pembayaran_pangkal::with(['siswa.kelas', 'siswa.sekolah', 'siswa.tahunAjaran']);
+
+            if (!empty($q)) {
+                $pangkalQuery->whereHas('siswa', function($sq) use ($q) {
+                    $sq->where('nama', 'like', "%{$q}%")
+                       ->orWhere('nis', 'like', "%{$q}%");
+                });
+            }
+            if (!empty($kelas_id)) {
+                $pangkalQuery->whereHas('siswa', function($sq) use ($kelas_id) {
+                    $sq->where('kelas_id', $kelas_id);
+                });
+            }
+            if (!empty($tanggal_mulai)) {
+                $pangkalQuery->whereDate('created_at', '>=', $tanggal_mulai);
+            }
+            if (!empty($tanggal_akhir)) {
+                $pangkalQuery->whereDate('created_at', '<=', $tanggal_akhir);
+            }
+
+            $pangkalData = $pangkalQuery->get();
+            foreach ($pangkalData as $item) {
+                $nominal = (float) $item->nominal;
+                $dibayar = (float) ($item->jumlah_di_bayar ?? 0);
+                $isLunas = (bool) $item->status || ($nominal > 0 && $dibayar >= $nominal);
+                $sisa = max(0, $nominal - $dibayar);
+                $itemStatus = $isLunas ? 'lunas' : ($dibayar > 0 ? 'cicilan' : 'menunggak');
+
+                if (!empty($status) && $status !== 'all') {
+                    if ($status === 'lunas' && !$isLunas) continue;
+                    if ($status === 'menunggak' && ($isLunas || $dibayar > 0)) continue;
+                    if ($status === 'cicilan' && ($isLunas || $dibayar == 0)) continue;
+                }
+
+                $tgl = $item->created_at ? Carbon::parse($item->created_at) : now();
+                $all_records->push((object)[
+                    'id' => $item->id,
+                    'kode' => 'PKL-' . str_pad($item->id, 4, '0', STR_PAD_LEFT),
+                    'tipe' => 'pangkal',
+                    'tipe_label' => 'Uang Pangkal Masuk',
+                    'tipe_badge' => 'badge-pangkal',
+                    'deskripsi' => 'Uang Pangkal Santri/Siswa',
+                    'tanggal' => $tgl,
+                    'tanggal_raw' => $tgl->format('Y-m-d'),
+                    'tanggal_bayar_formatted' => $tgl->locale('id')->isoFormat('D MMM Y'),
+                    'created_at' => $tgl,
+                    'siswa_id' => $item->siswa_id,
+                    'siswa' => $item->siswa,
+                    'nama_siswa' => $item->siswa->nama ?? 'Siswa #' . $item->siswa_id,
+                    'nis' => $item->siswa->nis ?? '-',
+                    'nama_kelas' => ($item->siswa && $item->siswa->kelas) ? $item->siswa->kelas->nama_ruang : 'Belum Ditentukan',
+                    'kelas_id' => $item->siswa->kelas_id ?? null,
+                    'nama_sekolah' => ($item->siswa && $item->siswa->sekolah) ? $item->siswa->sekolah->jenis : '-',
+                    'nominal' => $nominal,
+                    'dibayar' => $dibayar,
+                    'sisa' => $sisa,
+                    'is_lunas' => $isLunas,
+                    'status_label' => $isLunas ? 'Lunas' : ($dibayar > 0 ? 'Dicicil' : 'Menunggak'),
+                    'status_key' => $itemStatus,
+                ]);
+            }
+        }
+
+        // 3. DATA PENDIDIKAN
+        if (empty($jenis) || $jenis === 'all' || $jenis === 'pendidikan') {
+            $pendidikanQuery = slip_pembayaran_pendidikan::with(['siswa.kelas', 'siswa.sekolah', 'siswa.tahunAjaran']);
+
+            if (!empty($q)) {
+                $pendidikanQuery->whereHas('siswa', function($sq) use ($q) {
+                    $sq->where('nama', 'like', "%{$q}%")
+                       ->orWhere('nis', 'like', "%{$q}%");
+                });
+            }
+            if (!empty($kelas_id)) {
+                $pendidikanQuery->whereHas('siswa', function($sq) use ($kelas_id) {
+                    $sq->where('kelas_id', $kelas_id);
+                });
+            }
+            if (!empty($tanggal_mulai)) {
+                $pendidikanQuery->whereDate('created_at', '>=', $tanggal_mulai);
+            }
+            if (!empty($tanggal_akhir)) {
+                $pendidikanQuery->whereDate('created_at', '<=', $tanggal_akhir);
+            }
+
+            $pendidikanData = $pendidikanQuery->get();
+            foreach ($pendidikanData as $item) {
+                $nominal = (float) $item->nominal;
+                $dibayar = (float) ($item->jumlah_di_bayar ?? 0);
+                $isLunas = (bool) $item->status || ($nominal > 0 && $dibayar >= $nominal);
+                $sisa = max(0, $nominal - $dibayar);
+                $itemStatus = $isLunas ? 'lunas' : ($dibayar > 0 ? 'cicilan' : 'menunggak');
+
+                if (!empty($status) && $status !== 'all') {
+                    if ($status === 'lunas' && !$isLunas) continue;
+                    if ($status === 'menunggak' && ($isLunas || $dibayar > 0)) continue;
+                    if ($status === 'cicilan' && ($isLunas || $dibayar == 0)) continue;
+                }
+
+                $tgl = $item->created_at ? Carbon::parse($item->created_at) : now();
+                $all_records->push((object)[
+                    'id' => $item->id,
+                    'kode' => 'PDD-' . str_pad($item->id, 4, '0', STR_PAD_LEFT),
+                    'tipe' => 'pendidikan',
+                    'tipe_label' => 'Dana Pendidikan',
+                    'tipe_badge' => 'badge-pendidikan',
+                    'deskripsi' => 'Pengembangan Pendidikan & Sarana',
+                    'tanggal' => $tgl,
+                    'tanggal_raw' => $tgl->format('Y-m-d'),
+                    'tanggal_bayar_formatted' => $tgl->locale('id')->isoFormat('D MMM Y'),
+                    'created_at' => $tgl,
+                    'siswa_id' => $item->siswa_id,
+                    'siswa' => $item->siswa,
+                    'nama_siswa' => $item->siswa->nama ?? 'Siswa #' . $item->siswa_id,
+                    'nis' => $item->siswa->nis ?? '-',
+                    'nama_kelas' => ($item->siswa && $item->siswa->kelas) ? $item->siswa->kelas->nama_ruang : 'Belum Ditentukan',
+                    'kelas_id' => $item->siswa->kelas_id ?? null,
+                    'nama_sekolah' => ($item->siswa && $item->siswa->sekolah) ? $item->siswa->sekolah->jenis : '-',
+                    'nominal' => $nominal,
+                    'dibayar' => $dibayar,
+                    'sisa' => $sisa,
+                    'is_lunas' => $isLunas,
+                    'status_label' => $isLunas ? 'Lunas' : ($dibayar > 0 ? 'Dicicil' : 'Menunggak'),
+                    'status_key' => $itemStatus,
+                ]);
+            }
+        }
+
+        // Urutkan transaksi terbaru di atas
+        $sorted_records = $all_records->sortByDesc(function($item) {
+            return $item->created_at ? $item->created_at->timestamp : 0;
+        })->values();
+
+        // Statistik ringkasan
+        $total_transaksi = $sorted_records->count();
+        $total_nominal = $sorted_records->sum('nominal');
+        $total_terbayar = $sorted_records->sum('dibayar');
+        $total_sisa = $sorted_records->sum('sisa');
+        $total_lunas = $sorted_records->where('is_lunas', true)->count();
+        $total_menunggak = $sorted_records->where('is_lunas', false)->count();
+
+        // Pagination
+        $perPage = 10;
+        $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1;
+        $currentItems = $sorted_records->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $paginated_records = new \Illuminate\Pagination\LengthAwarePaginator(
+            $currentItems,
+            $sorted_records->count(),
+            $perPage,
+            $currentPage,
+            ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(), 'query' => $request->query()]
+        );
+
+        $daftar_siswa = siswa::with('kelas')->where('aktif', 1)->orderBy('nama')->get();
+        if ($daftar_siswa->isEmpty()) {
+            $daftar_siswa = siswa::with('kelas')->orderBy('nama')->get();
+        }
+        $daftar_kelas = ruang_kelas::orderBy('nama_ruang')->get();
+
+        return view("/modul/siakad/admin/pemeliharaan", compact(
+            'paginated_records',
+            'total_transaksi',
+            'total_nominal',
+            'total_terbayar',
+            'total_sisa',
+            'total_lunas',
+            'total_menunggak',
+            'daftar_siswa',
+            'daftar_kelas',
+            'q',
+            'jenis',
+            'status',
+            'kelas_id',
+            'tanggal_mulai',
+            'tanggal_akhir'
+        ));
     }
 
     function tambahTagihan_Siswa(Request $request){
         $check = $this->guardRoles(['a'], 'keuangan');
         if ($check) return $check;
 
-        if ($request->jenis_pembayaran == "ipp"){
-            $data_awal_bulan = Carbon::parse($request->tanggal_mulai)->startOfMonth();
-            $data_akhir_bulan = Carbon::parse($request->tanggal_akhir)->startOfMonth();
-            while ($data_awal_bulan->lte($data_akhir_bulan)){
-                slip_pembayaran_ipp::create([
-                    "nominal" => $request->nominal,
-                    "tanggal_awal" => $data_awal_bulan,
-                    "siswa_id" => $request->siswa_id
-                ]);
+        $is_manual = $request->boolean('is_manual') || $request->filled('jumlah_dibayar') || $request->filled('tanggal_bayar');
+        $nominal = (float) str_replace(['.', ','], ['', '.'], $request->nominal ?? 0);
+        $jumlah_dibayar = (float) str_replace(['.', ','], ['', '.'], $request->jumlah_dibayar ?? 0);
 
-                $data_awal_bulan->addMonth();
+        $status = false;
+        if ($request->has('status') && $request->status !== null && $request->status !== '') {
+            $status = in_array(strtolower((string)$request->status), ['1', 'lunas', 'true']);
+        } elseif ($nominal > 0 && $jumlah_dibayar >= $nominal) {
+            $status = true;
+        }
+
+        $tanggal_bayar = $request->tanggal_bayar ? Carbon::parse($request->tanggal_bayar) : Carbon::now();
+
+        if ($request->jenis_pembayaran == "ipp"){
+            if ($is_manual) {
+                $tgl_awal = $request->tanggal_awal ? Carbon::parse($request->tanggal_awal)->startOfMonth() : $tanggal_bayar->copy()->startOfMonth();
+                $dibayar_final = $status ? ($jumlah_dibayar > 0 ? $jumlah_dibayar : $nominal) : $jumlah_dibayar;
+                slip_pembayaran_ipp::create([
+                    "nominal" => $nominal,
+                    "jumlah_dibayar" => $dibayar_final,
+                    "status" => $status ? 1 : 0,
+                    "tanggal_awal" => $tgl_awal,
+                    "siswa_id" => $request->siswa_id,
+                    "created_at" => $tanggal_bayar,
+                    "updated_at" => $tanggal_bayar,
+                ]);
+            } else {
+                $data_awal_bulan = Carbon::parse($request->tanggal_mulai)->startOfMonth();
+                $data_akhir_bulan = Carbon::parse($request->tanggal_akhir)->startOfMonth();
+                while ($data_awal_bulan->lte($data_akhir_bulan)){
+                    slip_pembayaran_ipp::create([
+                        "nominal" => $nominal,
+                        "tanggal_awal" => $data_awal_bulan,
+                        "siswa_id" => $request->siswa_id
+                    ]);
+
+                    $data_awal_bulan->addMonth();
+                }
             }
         }elseif ($request->jenis_pembayaran == "pangkal"){
+            $dibayar_final = $status ? ($jumlah_dibayar > 0 ? $jumlah_dibayar : $nominal) : $jumlah_dibayar;
             slip_pembayaran_pangkal::create([
-                "nominal" => $request->nominal,
-                "siswa_id" => $request->siswa_id
+                "nominal" => $nominal,
+                "jumlah_di_bayar" => $dibayar_final,
+                "status" => $status ? 1 : 0,
+                "siswa_id" => $request->siswa_id,
+                "created_at" => $tanggal_bayar,
+                "updated_at" => $tanggal_bayar,
             ]);
         }else{
+            $dibayar_final = $status ? ($jumlah_dibayar > 0 ? $jumlah_dibayar : $nominal) : $jumlah_dibayar;
             slip_pembayaran_pendidikan::create([
-                "nominal" => $request->nominal,
-                "siswa_id" => $request->siswa_id
+                "nominal" => $nominal,
+                "jumlah_di_bayar" => $dibayar_final,
+                "status" => $status ? 1 : 0,
+                "siswa_id" => $request->siswa_id,
+                "created_at" => $tanggal_bayar,
+                "updated_at" => $tanggal_bayar,
             ]);
         }
-        return back()->with("success","berhasil buat tagihan");
+        return back()->with("success", $is_manual ? "Berhasil mencatat transaksi pembayaran manual!" : "Berhasil buat tagihan!");
     }
 
     function tampilanPembayaranIpp_siswa(){
@@ -1061,7 +1567,9 @@ class siakadController extends Controller
         if ($request->filled('nominal')) {
             $data_slip->nominal = (float) $request->nominal;
         }
-        if ($request->filled('bayar')) {
+        if ($request->filled('jumlah_dibayar')) {
+            $data_slip->jumlah_dibayar = (float) $request->jumlah_dibayar;
+        } elseif ($request->filled('bayar')) {
             $data_slip->jumlah_dibayar += (float) $request->bayar;
         }
 
@@ -1069,13 +1577,13 @@ class siakadController extends Controller
         $dibayar = (float) $data_slip->jumlah_dibayar;
 
         if ($request->has('status') && $request->status !== null && $request->status !== '') {
-            $data_slip->status = (strtolower($request->status) === 'lunas' || $request->status === '1' || $request->status === true);
+            $data_slip->status = (strtolower((string)$request->status) === 'lunas' || $request->status === '1' || $request->status === true);
         } else {
             $data_slip->status = ($dibayar >= $nominal && $nominal > 0);
         }
 
         $data_slip->save();
-        return back()->with('success','berhasil edit pembayaran');
+        return back()->with('success','Berhasil memperbarui data pembayaran IPP');
     }
 
 
@@ -1091,7 +1599,9 @@ class siakadController extends Controller
         if ($request->filled('nominal')) {
             $data_slip->nominal = (float) $request->nominal;
         }
-        if ($request->filled('bayar')) {
+        if ($request->filled('jumlah_dibayar')) {
+            $data_slip->jumlah_di_bayar = (float) $request->jumlah_dibayar;
+        } elseif ($request->filled('bayar')) {
             $data_slip->jumlah_di_bayar += (float) $request->bayar;
         }
 
@@ -1099,13 +1609,13 @@ class siakadController extends Controller
         $dibayar = (float) $data_slip->jumlah_di_bayar;
 
         if ($request->has('status') && $request->status !== null && $request->status !== '') {
-            $data_slip->status = (strtolower($request->status) === 'lunas' || $request->status === '1' || $request->status === true);
+            $data_slip->status = (strtolower((string)$request->status) === 'lunas' || $request->status === '1' || $request->status === true);
         } else {
             $data_slip->status = ($dibayar >= $nominal && $nominal > 0);
         }
 
         $data_slip->save();
-        return back()->with("success","berhasil edit pembayaran");
+        return back()->with("success","Berhasil memperbarui data pembayaran uang pangkal");
     }
 
     function edit_slipPembayaranPendidikan(Request $request){
@@ -1120,7 +1630,9 @@ class siakadController extends Controller
         if ($request->filled('nominal')) {
             $data_slip->nominal = (float) $request->nominal;
         }
-        if ($request->filled('bayar')) {
+        if ($request->filled('jumlah_dibayar')) {
+            $data_slip->jumlah_di_bayar = (float) $request->jumlah_dibayar;
+        } elseif ($request->filled('bayar')) {
             $data_slip->jumlah_di_bayar += (float) $request->bayar;
         }
 
@@ -1128,13 +1640,13 @@ class siakadController extends Controller
         $dibayar = (float) $data_slip->jumlah_di_bayar;
 
         if ($request->has('status') && $request->status !== null && $request->status !== '') {
-            $data_slip->status = (strtolower($request->status) === 'lunas' || $request->status === '1' || $request->status === true);
+            $data_slip->status = (strtolower((string)$request->status) === 'lunas' || $request->status === '1' || $request->status === true);
         } else {
             $data_slip->status = ($dibayar >= $nominal && $nominal > 0);
         }
 
         $data_slip->save();
-        return back()->with("success","berhasil edit pembayaran");
+        return back()->with("success","Berhasil memperbarui data pembayaran dana pendidikan");
     }
 
     function publish_slipPembayaran(Request $request){

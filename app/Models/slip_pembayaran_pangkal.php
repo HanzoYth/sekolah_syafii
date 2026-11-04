@@ -11,6 +11,14 @@ class slip_pembayaran_pangkal extends Model
         "nominal",
         "jumlah_di_bayar",
         "siswa_id",
-        "status"
+        "status",
+        "created_at",
+        "updated_at"
     ];
+
+    public function siswa()
+    {
+        return $this->belongsTo(siswa::class, 'siswa_id');
+    }
 }
+
