@@ -1085,7 +1085,7 @@ class modulGuruController extends Controller
                 "gaji_tambahan" => 0,
                 "publish" => 0,
                 "bonus" => 0,
-                "ketidakhadiran" => 0
+                "ketidakhadiran" => -1
             ]);
             
             priode::all()->first()->delete();
@@ -1125,11 +1125,11 @@ class modulGuruController extends Controller
             $jumlah_hari_aktif = 0;
             $jumlah_tidak_hadir = 0;
             
-
+            
             for ($data = $awal_bulan->copy() ; $data <= $akhir_bulan; $data->addDays()){
                 if (strtolower(Carbon::parse($data)->translatedFormat("l")) != "minggu"){
                     $jumlah_hari_aktif ++;
-                    if (strtolower(Carbon::parse($data)->translatedFormat("l")) != "minggu"){
+                    if ($data ){
                         if ($data->day <= (Carbon::now()->translatedFormat("m") != $bulan ? $akhir_bulan->day :Carbon::now()->day)){
                             if (master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->exists()){
                                 if(master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->where("status_kehadiran","!=","h")->exists() || !master_absen_guru::where("guru_id",$id)->whereMonth("tgl_masuk",$bulan)->whereDay("tgl_masuk",Carbon::parse($data)->translatedFormat("d"))->exists()){
@@ -1143,7 +1143,7 @@ class modulGuruController extends Controller
                 }
             }
 
-            if ($data_gaji->ketidakhadiran > 0){
+            if ($data_gaji->ketidakhadiran > -1){
                 $jumlah_tidak_hadir = $data_gaji->ketidakhadiran;
             }
 
