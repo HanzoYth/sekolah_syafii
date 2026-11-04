@@ -27,7 +27,8 @@
                 </div>
             </div>
             <div class="topbar-actions">
-                <button type="submit" form="formEditGaji" class="btn-primary">
+                <!-- Tombol utama diubah menjadi type="button" agar memicu modal pop-up dulu -->
+                <button type="button" id="btnOpenModal" class="btn-primary">
                     <i class="fa-solid fa-floppy-disk"></i>
                     <span>Simpan Perubahan</span>
                 </button>
@@ -39,6 +40,9 @@
             @csrf
 
             <input type="hidden" value="{{$data_guru->id}}" name="id_guru">
+
+            <!-- INPUT HIDDEN UNTUK STATUS SIMPAN KETIDAKHADIRAN (Nilai 1 atau 0) -->
+            <input type="hidden" name="simpan_ketidakhadiran" id="inputSimpanKetidakhadiran" value="0">
 
             <!-- KELOMPOK 1: INFORMASI GURU & KEHADIRAN -->
             <section class="card col-12">
@@ -82,14 +86,14 @@
                     <div class="form-group">
                         <label>Jumlah Telat (Menit/Frekuensi)</label>
                         <div class="input-unit">
-                            <input type="number" id="telatMenit" name = "telat" value="{{$jumlah_terlambat}}" class="form-control" placeholder="0">
+                            <input type="number" id="telatMenit" name="telat" value="{{$jumlah_terlambat}}" class="form-control" placeholder="0">
                             <span class="unit-text">Menit</span>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Jumlah Terlambat Pulang Cepat (Menit/Frekuensi)</label>
                         <div class="input-unit">
-                            <input type="number" id="cepatMenit" name = "cepat_pulang" value="{{$jumlah_terlambat_pulang_cepat}}" class="form-control" placeholder="0">
+                            <input type="number" id="cepatMenit" name="cepat_pulang" value="{{$jumlah_terlambat_pulang_cepat}}" class="form-control" placeholder="0">
                             <span class="unit-text">Menit</span>
                         </div>
                     </div>
@@ -276,7 +280,6 @@
                         </div>
                         
                         <div id="pendapatanTambahanContainer" class="dynamic-list">
-                            <!-- Jika ada data dari database untuk pendapatan tambahan dinamis, bisa di-loop di sini -->
                             @foreach ($data_tunjangan_bonus ?? [] as $value)
                                 <div class="dynamic-row">
                                     <div class="form-group flex-2">
@@ -348,9 +351,36 @@
                     </div>
                 </div>
             </section>
+            <!-- MODAL KONFIRMASI SIMPAN -->
+            <div id="modalKonfirmasiSimpan" class="modal-overlay">
+                <div class="modal-card">
+                    <div class="modal-header">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <h3>Konfirmasi Simpan Perubahan</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p>Apakah Anda ingin menyimpan data ketidakhadiran ini? Jika Anda menyetujuinya, data tersebut tidak akan mengikuti pembaruan untuk bulan sebelumnya.</p>
+                        
+                        <label class="modal-switch-box">
+                            <input name = "konfirmasi" type="checkbox" id="switchSimpanAbsen">
+                            <div class="modal-switch-label">
+                                <span class="title-switch">Simpan perubahan ketidakhadiran ini</span>
+                                <span class="desc-switch">Jika dicentang bernilai 1 (dikunci), jika kosong bernilai 0.</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btnBatalModal" class="btn-modal-cancel">Batal</button>
+                        <button type="button" id="btnSubmitModal" class="btn-modal-confirm">
+                            <i class="fa-solid fa-check"></i> Ya, Simpan Sekarang
+                        </button>
+                    </div>
+                </div>
+            </div>
         </form>
     </main>
 </div>
+
 
 <!-- JAVASCRIPT LOGIC -->
 <script>
@@ -362,6 +392,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const pendapatanTambahanContainer = document.getElementById('pendapatanTambahanContainer');
     const btnAddPendapatanTambahan = document.getElementById('btnAddPendapatanTambahan');
 
+    // Elemen Modal & Switch
+    const btnOpenModal = document.getElementById('btnOpenModal');
+    const modalKonfirmasiSimpan = document.getElementById('modalKonfirmasiSimpan');
+    const btnBatalModal = document.getElementById('btnBatalModal');
+    const btnSubmitModal = document.getElementById('btnSubmitModal');
+    const switchSimpanAbsen = document.getElementById('switchSimpanAbsen');
+    const inputSimpanKetidakhadiran = document.getElementById('inputSimpanKetidakhadiran');
+    const formEditGaji = document.getElementById('formEditGaji');
+
     // Format mata uang Rupiah
     function formatRupiah(number) {
         return 'Rp ' + new Intl.NumberFormat('id-ID').format(number);
@@ -372,6 +411,25 @@ document.addEventListener('DOMContentLoaded', function () {
         const el = document.getElementById(id);
         return el ? (parseFloat(el.value) || 0) : 0;
     }
+
+    // --- LOGIKA MODAL POP-UP ---
+    btnOpenModal.addEventListener('click', function() {
+        modalKonfirmasiSimpan.classList.add('active');
+    });
+
+    btnBatalModal.addEventListener('click', function() {
+        modalKonfirmasiSimpan.classList.remove('active');
+    });
+
+    // Set nilai input hidden 1 atau 0 berdasarkan status checkbox switch
+    switchSimpanAbsen.addEventListener('change', function() {
+        inputSimpanKetidakhadiran.value = this.checked ? '1' : '0';
+    });
+
+    // Ketika tombol konfirmasi di dalam modal diklik, submit form aslinya
+    btnSubmitModal.addEventListener('click', function() {
+        formEditGaji.submit();
+    });
 
     // 1. TAMBAH TUNJANGAN DINAMIS
     btnAddTunjangan.addEventListener('click', function() {
@@ -503,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Event listener pada perubahan input form
-    document.getElementById('formEditGaji').addEventListener('input', function(e) {
+    formEditGaji.addEventListener('input', function(e) {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
             calculateAll();
         }

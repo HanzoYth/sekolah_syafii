@@ -20,6 +20,13 @@
     <link rel="stylesheet" href="<?php echo e(asset('css/welcome.css')); ?>?v=<?php echo e(time()); ?>">
 </head>
 <body>
+    <?php
+        $isAdmin = (session('hasLogin') && in_array(session('role'), ['a', 'admin'])) || request()->has('editor_preview');
+    ?>
+
+    <?php if($isAdmin): ?>
+        <?php echo $__env->make('components.home-admin-editor', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    <?php endif; ?>
 
     <!-- Indikator Progress Scroll di Atas Layar -->
     <div class="scroll-progress-bar" id="scrollProgressBar" aria-hidden="true"></div>
@@ -50,9 +57,15 @@
                     <li><a href="/prof?halaman=kontak" class="nav-spy" data-section="#kontak">Kontak</a></li>
                 </ul>
                 <div class="auth-buttons">
-                    <a class="btn-started" id="openSignup" href="/reg">
-                        <i class="fa-solid fa-right-to-bracket"></i> Login Sistem
-                    </a>
+                    <?php if(session('hasLogin')): ?>
+                        <a class="btn-started" href="<?php echo e(session('role') === 'g' ? '/sk/dsg' : (session('role') === 's' ? '/sk/dss' : '/sk/das')); ?>">
+                            <i class="fa-solid fa-gauge-high"></i> Dashboard
+                        </a>
+                    <?php else: ?>
+                        <a class="btn-started" id="openSignup" href="/reg">
+                            <i class="fa-solid fa-right-to-bracket"></i> Login Sistem
+                        </a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

@@ -1193,6 +1193,7 @@ class modulGuruController extends Controller
 
 
     function simpan_PerubahanGajiGuru(Request $request){
+
         $data_priode = priode::all()->first();
         $data_gaji = gaji::where("guru_id",(int) $request->id_guru)->first();
         $bulan = Carbon::parse($data_priode->created_at)->translatedFormat("m");
@@ -1239,7 +1240,9 @@ class modulGuruController extends Controller
             }
         }
 
-        $data_gaji->ketidakhadiran =  isset($request->ketidakhadiran) ? $request->ketidakhadiran : 0;
+        if ($request->ketidakhadiran != null){
+            $data_gaji->ketidakhadiran =  isset($request->ketidakhadiran) ? $request->ketidakhadiran : 0;
+        }
         $data_gaji->gaji_pokok = isset($request->pokok) ? $request->pokok : 0;
         $data_gaji->gaji_honor = isset($request->honor) ? $request->honor : 0;
         $data_gaji->gaji_tugas_tambahan = isset($request->tugas_tambahan) ? $request->tugas_tambahan : 0;
