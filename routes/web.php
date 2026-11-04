@@ -278,6 +278,11 @@ Route::post('/sk/simpan-kkm-mapel', [App\Http\Controllers\siakadController::clas
 
 Route::post('/sk/update-siswa/{id}', [App\Http\Controllers\siakadController::class, 'updateSiswa']);
 
+// Rute Sistem Guru Pengganti (Inval) SIAKAD
+Route::post('/sk/ambil-jadwal-pengganti', [App\Http\Controllers\siakadController::class, 'ambilJadwalPengganti']);
+Route::post('/sk/batalkan-jadwal-pengganti', [App\Http\Controllers\siakadController::class, 'batalkanJadwalPengganti']);
+Route::post('/sk/tandai-jadwal-kosong', [App\Http\Controllers\siakadController::class, 'tandaiJadwalKosong']);
+
 
 
 

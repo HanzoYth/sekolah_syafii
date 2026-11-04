@@ -269,6 +269,10 @@ body {
 }
 
 .input-wrap select,
+.input-wrap input[type="text"],
+.input-wrap input[type="search"],
+.input-wrap input[type="date"],
+.input-wrap input[type="month"],
 .modal-field input,
 .modal-field select {
     padding: 10px 14px;
@@ -280,9 +284,14 @@ body {
     background-color: #ffffff;
     outline: none;
     transition: var(--transition-fast);
+    box-sizing: border-box;
 }
 
 .input-wrap select:focus,
+.input-wrap input[type="text"]:focus,
+.input-wrap input[type="search"]:focus,
+.input-wrap input[type="date"]:focus,
+.input-wrap input[type="month"]:focus,
 .modal-field input:focus,
 .modal-field select:focus {
     border-color: var(--islamic-emerald);
@@ -833,32 +842,32 @@ table td {
 ------------------------------------------------------------ */
 @media print {
     body * {
-        visibility: hidden;
+        visibility: hidden !important;
     }
-    #modalDetailPemeliharaan,
-    #modalDetailPemeliharaan * {
-        visibility: visible;
+    #invoicePrintArea,
+    #invoicePrintArea * {
+        visibility: visible !important;
     }
-    #modalDetailPemeliharaan {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: auto;
-        background: none;
-        backdrop-filter: none;
+    #invoicePrintArea {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 10mm 15mm !important;
+        background: #ffffff !important;
+        border: none !important;
+        box-shadow: none !important;
+        z-index: 999999 !important;
     }
-    .modal-card {
-        box-shadow: none;
-        border: none;
-        max-width: 100% !important;
-    }
-    .modal-header .btn-close-modal,
-    .modal-footer {
+    .modal-overlay,
+    .dashboard-container,
+    .main-content,
+    .topbar,
+    .sidebar,
+    .filter-box,
+    .table-card {
         display: none !important;
-    }
-    .printable-header {
-        display: block;
     }
 }
 
@@ -901,8 +910,50 @@ table td {
 
 .maintenance-page .filter-group { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .maintenance-page .input-wrap { min-width: 0; }
-.maintenance-page .input-wrap input[type="search"] { width: 100%; padding: 10px 14px; border: 1px solid #cfddd6; border-radius: 8px; background: #fff; color: var(--maint-text-primary); font: inherit; font-size: .875rem; outline: none; }
-.maintenance-page .input-wrap input[type="search"]:focus { border-color: var(--islamic-emerald); box-shadow: 0 0 0 3px rgba(6, 95, 70, .1); }
+.maintenance-page .input-wrap input[type="search"],
+.maintenance-page .input-wrap input[type="text"],
+.maintenance-page .input-wrap input[type="date"],
+.maintenance-page .input-wrap input[type="month"],
+.maintenance-page .input-wrap select { 
+    width: 100%; 
+    height: 42px;
+    padding: 9px 14px; 
+    border: 1px solid #cfddd6; 
+    border-radius: 8px; 
+    background: #fff; 
+    color: var(--maint-text-primary); 
+    font-family: inherit; 
+    font-size: .875rem; 
+    outline: none; 
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.maintenance-page .input-wrap input[type="date"]::-webkit-calendar-picker-indicator,
+.maintenance-page .input-wrap input[type="month"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.7;
+    filter: invert(0.3) sepia(0.8) saturate(3) hue-rotate(115deg);
+    padding: 2px;
+    margin-left: 6px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.maintenance-page .input-wrap input[type="date"]::-webkit-calendar-picker-indicator:hover,
+.maintenance-page .input-wrap input[type="month"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+    transform: scale(1.15);
+}
+
+.maintenance-page .input-wrap input[type="search"]:focus,
+.maintenance-page .input-wrap input[type="text"]:focus,
+.maintenance-page .input-wrap input[type="date"]:focus,
+.maintenance-page .input-wrap input[type="month"]:focus,
+.maintenance-page .input-wrap select:focus { 
+    border-color: var(--islamic-emerald); 
+    box-shadow: 0 0 0 3px rgba(6, 95, 70, .1); 
+    background-color: #ffffff;
+}
 
 .maintenance-page .table-card { padding: 22px 24px; }
 .maintenance-page .table-header { padding: 0 0 18px; margin-bottom: 0; background: transparent; border-bottom: none; }

@@ -42,4 +42,19 @@ class siswa extends Model
     {
         return $this->belongsTo(tahun_ajaran::class, 'tahun_ajaran_id');
     }
+
+    public function slipIpp()
+    {
+        return $this->hasMany(slip_pembayaran_ipp::class, 'siswa_id');
+    }
+
+    public function slipPangkal()
+    {
+        return $this->hasMany(slip_pembayaran_pangkal::class, 'siswa_id');
+    }
+
+    public function slipPendidikan()
+    {
+        return $this->hasMany(slip_pembayaran_pendidikan::class, 'siswa_id');
+    }
 }

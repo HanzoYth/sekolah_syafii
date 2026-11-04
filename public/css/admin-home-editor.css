@@ -1,0 +1,654 @@
+/* ============================================================
+   ADMIN VISUAL INLINE & IMAGE EDITOR STYLESHEET (LIVELY & DRAGGABLE)
+   Sekolah Islam Al-Qur'an Imam Syafi'i
+   - Bebas Digerakkan (Draggable Floating Popup & Launcher)
+   - Desain Lebih Hidup (Spring Micro-interactions, Glow, & Live Badges)
+   - Undo & Redo Sesi
+   - Inline Contenteditable & Hover Image Replace
+   - Navbar Logo Selalu Bersebelahan
+============================================================ */
+
+/* 0. PENGUNCI LOGO NAVBAR AGAR SELALU BERSEBELAHAN */
+.navbar .logo {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 11px !important;
+    text-decoration: none !important;
+}
+
+.navbar .logo img {
+    height: 40px !important;
+    width: auto !important;
+    max-height: 40px !important;
+    object-fit: contain !important;
+    display: block !important;
+    flex-shrink: 0 !important;
+}
+
+.navbar .logo > div {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+
+/* 1. FLOATING CHATBOT WIDGET WRAPPER */
+#adminFloatingWidget {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999999;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+}
+
+/* 2. LAUNCHER BUTTON DENGAN IDLE FLOATING ANIMATION */
+.admin-launcher-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
+    border: 2.5px solid #f59e0b;
+    color: #ffffff;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 28px rgba(6, 78, 59, 0.45), 0 0 0 1px rgba(245, 158, 11, 0.3);
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease;
+    position: relative;
+    outline: none;
+    animation: launcherFloatIdle 3.6s ease-in-out infinite;
+}
+
+@keyframes launcherFloatIdle {
+    0%, 100% {
+        transform: translateY(0);
+        box-shadow: 0 10px 28px rgba(6, 78, 59, 0.45);
+    }
+    50% {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 36px rgba(6, 78, 59, 0.55), 0 0 20px rgba(16, 185, 129, 0.4);
+    }
+}
+
+.admin-launcher-btn:hover {
+    transform: scale(1.12) translateY(-4px) !important;
+    box-shadow: 0 18px 40px rgba(245, 158, 11, 0.5), 0 0 25px rgba(245, 158, 11, 0.3);
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.admin-launcher-btn:active {
+    transform: scale(0.94) !important;
+}
+
+/* Denyut Cincin Glowing */
+.launcher-pulse {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border-radius: 50%;
+    border: 2px solid #34d399;
+    animation: launcherPulseAnim 2.4s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    pointer-events: none;
+}
+
+@keyframes launcherPulseAnim {
+    0% { transform: scale(1); opacity: 0.85; }
+    50% { transform: scale(1.22); opacity: 0; }
+    100% { transform: scale(1.22); opacity: 0; }
+}
+
+/* 3. POPUP MENU CARD (DRAGGABLE & LIVELY) */
+.admin-editor-card {
+    display: none;
+    position: fixed;
+    bottom: 96px;
+    right: 24px;
+    width: 330px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 20px;
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.7);
+    border: 1.5px solid rgba(234, 179, 8, 0.4);
+    overflow: hidden;
+    transform-origin: bottom right;
+    animation: cardSpringIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.admin-editor-card.active {
+    display: block;
+}
+
+/* Status saat sedang di-drag oleh admin */
+.admin-editor-card.is-dragging {
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45), 0 0 0 2px #10b981 !important;
+    transform: scale(1.02);
+    transition: none !important;
+    cursor: grabbing !important;
+}
+
+@keyframes cardSpringIn {
+    0% { opacity: 0; transform: scale(0.85) translateY(18px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* 4. CARD HEADER DENGAN HANDLE DRAG */
+.admin-card-header {
+    background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+    color: #ffffff;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #eab308;
+    cursor: grab;
+    position: relative;
+    user-select: none;
+}
+
+.admin-card-header:active {
+    cursor: grabbing;
+}
+
+/* Indikator Grip Handle untuk Menandakan Bisa Digerakkan */
+.drag-grip-indicator {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+    cursor: grab;
+    transition: background 0.2s ease;
+}
+
+.admin-card-header:hover .drag-grip-indicator {
+    background: #fcd34d;
+}
+
+.admin-card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.admin-card-title i.wand-icon {
+    font-size: 1.25rem;
+    color: #fcd34d;
+    filter: drop-shadow(0 0 6px rgba(252, 211, 77, 0.6));
+    animation: iconSparkle 2.5s infinite;
+}
+
+@keyframes iconSparkle {
+    0%, 100% { transform: rotate(0) scale(1); }
+    50% { transform: rotate(12deg) scale(1.15); }
+}
+
+.admin-card-title h4 {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.admin-card-title span {
+    font-size: 0.72rem;
+    color: #cbd5e1;
+    display: block;
+}
+
+.header-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-card-snap {
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    color: #cbd5e1;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.btn-card-snap:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+.btn-card-close {
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    color: #ffffff;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    transition: all 0.2s ease;
+}
+
+.btn-card-close:hover {
+    background: #ef4444;
+}
+
+/* 5. CARD BODY DENGAN TAMPILAN HIDUP */
+.admin-card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    background: #ffffff;
+}
+
+/* Switch Row Interaktif */
+.admin-switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 10px 14px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.admin-switch-row.is-active {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+}
+
+.switch-label {
+    display: flex;
+    flex-direction: column;
+}
+
+.switch-label strong {
+    font-size: 0.86rem;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Indikator Lampu Hijau Berkedip Saat Aktif */
+.live-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #94a3b8;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.live-status-dot.active {
+    background: #10b981;
+    box-shadow: 0 0 10px #10b981, 0 0 4px #10b981;
+    animation: livePulseAnim 1.6s infinite;
+}
+
+@keyframes livePulseAnim {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.35); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.switch-label small {
+    font-size: 0.72rem;
+    color: #64748b;
+    margin-top: 1px;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-switch .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #cbd5e1;
+    transition: .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-radius: 34px;
+}
+
+.toggle-switch .slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+}
+
+.toggle-switch input:checked + .slider {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.toggle-switch input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+/* Tip Bantuan */
+.editor-guide-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: 8px 11px;
+    border-radius: 9px;
+    font-size: 0.73rem;
+    color: #14532d;
+    line-height: 1.45;
+}
+
+.editor-guide-tip i {
+    font-size: 0.9rem;
+    margin-top: 1px;
+    color: #16a34a;
+}
+
+/* 6. UNDO & REDO KONTROL DENGAN ANIMASI POP */
+.history-controls-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.history-counter {
+    background: #e2e8f0;
+    color: #475569;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.2s ease;
+}
+
+.history-counter.pop {
+    transform: scale(1.22);
+    background: #fef08a;
+    color: #854d0e;
+}
+
+.history-btn-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.btn-history {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #1e293b;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-history:hover:not(:disabled) {
+    background: #f1f5f9;
+    border-color: #059669;
+    color: #065f46;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.btn-history:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.btn-history:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #94a3b8;
+    box-shadow: none;
+}
+
+.shortcut-hint {
+    text-align: center;
+    font-size: 0.67rem;
+    color: #94a3b8;
+}
+
+.shortcut-hint kbd {
+    background: #e2e8f0;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: inherit;
+    font-size: 0.67rem;
+    color: #334155;
+    font-weight: 600;
+}
+
+/* 7. ACTION BUTTONS */
+.admin-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btn-save-session {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+    color: #ffffff;
+    font-size: 0.83rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(16, 185, 129, 0.28);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-save-session:hover {
+    background: linear-gradient(135deg, #059669 0%, #065f46 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(16, 185, 129, 0.4);
+}
+
+.btn-save-session:active {
+    transform: scale(0.97);
+}
+
+.btn-dashboard-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 8px;
+    border-radius: 9px;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 0.77rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid #e2e8f0;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.btn-dashboard-link:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+/* 8. FITUR 1: KLIK TEKS LANGSUNG KETIK */
+body.editor-mode-active [data-editor-text="true"] {
+    position: relative;
+    transition: outline 0.15s ease, background-color 0.15s ease;
+}
+
+body.editor-mode-active [data-editor-text="true"]:hover {
+    outline: 2px dashed #059669 !important;
+    outline-offset: 3px;
+    background-color: rgba(16, 185, 129, 0.08) !important;
+    border-radius: 4px;
+    cursor: text !important;
+}
+
+body.editor-mode-active [data-editor-text="true"]:focus {
+    outline: 2px solid #d97706 !important;
+    outline-offset: 3px;
+    background-color: rgba(245, 158, 11, 0.1) !important;
+    border-radius: 4px;
+    box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.15);
+}
+
+/* 9. FITUR 2: HOVER FOTO GANTI GAMBAR */
+.admin-img-wrapper {
+    position: relative !important;
+    display: inline-block;
+}
+
+.btn-admin-change-img {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(3, 32, 20, 0.92);
+    backdrop-filter: blur(6px);
+    border: 2px solid #f59e0b;
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+body.editor-mode-active .admin-img-wrapper:hover .btn-admin-change-img {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.btn-admin-change-img:hover {
+    background: #f59e0b;
+    color: #042f1a;
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 10px 28px rgba(245, 158, 11, 0.55);
+}
+
+body.editor-mode-active .admin-img-wrapper:hover img {
+    filter: brightness(0.92);
+    outline: 3px solid #f59e0b;
+    outline-offset: -3px;
+    transition: all 0.2s ease;
+}
+
+/* 10. TOAST NOTIFICATION */
+#adminEditorToast {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 99999999;
+    background: #064e3b;
+    color: #ffffff;
+    border-left: 4px solid #10b981;
+    padding: 12px 18px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 500;
+    transform: translateY(120%);
+    opacity: 0;
+    transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+}
+
+#adminEditorToast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+#adminEditorToast i {
+    font-size: 1.15rem;
+    color: #34d399;
+}
+
+@media (max-width: 480px) {
+    .admin-editor-card {
+        width: 295px;
+    }
+}

@@ -183,13 +183,41 @@
                        class="block p-3.5 rounded-xl border transition-all text-left relative {{ $is_active ? 'bg-emerald-50/70 border-emerald-500 shadow-sm ring-1 ring-emerald-500' : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/60' }}">
                         <div class="flex items-start justify-between gap-2">
                             <div class="min-w-0 flex-1">
-                                <span class="text-xs font-semibold text-slate-500 block">
-                                    <i class="fa-regular fa-clock mr-1 text-[11px]"></i> {{ $jam_mulai_sub }} - {{ $jam_selesai_sub }} WIB
-                                </span>
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="text-xs font-semibold text-slate-500 block">
+                                        <i class="fa-regular fa-clock mr-1 text-[11px]"></i> {{ $jam_mulai_sub }} - {{ $jam_selesai_sub }} WIB
+                                    </span>
+                                    @if($j->is_pengganti ?? false)
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                            <i class="fa-solid fa-handshake mr-1 text-[9px]"></i> Inval
+                                        </span>
+                                    @elseif(isset($j->inval_status) && $j->inval_status)
+                                        @if($j->inval_status->status === 'diambil')
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">
+                                                <i class="fa-solid fa-user-check mr-1 text-[9px]"></i> Digantikan
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                                                <i class="fa-solid fa-triangle-exclamation mr-1 text-[9px]"></i> Kosong
+                                            </span>
+                                        @endif
+                                    @endif
+                                </div>
                                 <h4 class="font-bold text-slate-800 text-sm truncate mt-0.5">{{ $j->mata_pelajaran->nama_mapel ?? '-' }}</h4>
-                                <span class="inline-block mt-1 text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">
-                                    {{ $j->kelas->nama_kelas ?? ($j->kelas->nama_ruang ?? '-') }}
-                                </span>
+                                <div class="flex items-center gap-1.5 flex-wrap mt-1">
+                                    <span class="inline-block text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">
+                                        {{ $j->kelas->nama_kelas ?? ($j->kelas->nama_ruang ?? '-') }}
+                                    </span>
+                                    @if(($j->is_pengganti ?? false) && isset($j->sub_info->guruAsli))
+                                        <span class="text-[11px] text-amber-700 font-medium truncate">
+                                            (Gantikan: {{ $j->sub_info->guruAsli->nama }})
+                                        </span>
+                                    @elseif(isset($j->inval_status) && $j->inval_status && $j->inval_status->status === 'diambil' && isset($j->inval_status->guruPengganti))
+                                        <span class="text-[11px] text-blue-700 font-medium truncate">
+                                            (Oleh: {{ $j->inval_status->guruPengganti->nama }})
+                                        </span>
+                                    @endif
+                                </div>
                             </div>
 
                             <div class="text-right flex-shrink-0 flex flex-col items-end gap-1">
@@ -279,6 +307,12 @@
                         <p class="text-xs text-slate-500 mt-0.5">
                             {{ $jadwal_terpilih->mata_pelajaran->nama_mapel ?? '-' }} • Kelas {{ $jadwal_terpilih->kelas->nama_kelas ?? ($jadwal_terpilih->kelas->nama_ruang ?? '-') }} ({{ $jam_mulai_str }} - {{ $jam_selesai_str }} WIB)
                         </p>
+                        @if($jadwal_terpilih->is_pengganti ?? false)
+                            <div class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-900 font-medium">
+                                <i class="fa-solid fa-handshake text-amber-600"></i>
+                                <span>Anda mengajar sesi ini sebagai <strong>Guru Pengganti (Inval)</strong> menggantikan <strong>{{ $jadwal_terpilih->guru->nama ?? 'Guru Asli' }}</strong>.</span>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
