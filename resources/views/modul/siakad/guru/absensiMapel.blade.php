@@ -1,4 +1,4 @@
-<x-siakad-layout 
+﻿<x-siakad-layout 
     title="Absensi Mata Pelajaran" 
     description="Presensi masuk kelas dan pencatatan kehadiran siswa per mata pelajaran." 
     position="Guru Pengajar" 
