@@ -2252,13 +2252,32 @@ class siakadController extends Controller
     }
 
     public function raporWalas(Request $request) {
-        $check = $this->guardRoles(['g']);
+        $check = $this->guardRoles(['g', 'a']);
         if ($check) return $check;
 
-        $guru_id = session('id');
-        $wallas = \App\Models\wallas::with(['ruangKelas', 'guru'])->where('guru_id', $guru_id)->first();
-        if (!$wallas) {
-            return redirect()->back()->with('error', 'Anda bukan Wali Kelas.');
+        $daftar_semua_kelas = collect();
+        if (session('role') === 'a') {
+            $daftar_semua_kelas = \App\Models\ruang_kelas::orderBy('nama_ruang')->get();
+            $kelas_id = $request->query('kelas_id', $daftar_semua_kelas->first()->id ?? null);
+            $wallas = \App\Models\wallas::with(['ruangKelas', 'guru'])->where('kelas_id', $kelas_id)->first();
+            if (!$wallas && $kelas_id) {
+                $rk = \App\Models\ruang_kelas::find($kelas_id);
+                $wallas = (object)[
+                    'kelas_id' => $kelas_id,
+                    'ruangKelas' => $rk,
+                    'guru' => (object)['nama' => 'Wali Kelas', 'nip' => '-']
+                ];
+            }
+        } else {
+            $guru_id = session('id');
+            $wallas = \App\Models\wallas::with(['ruangKelas', 'guru'])->where('guru_id', $guru_id)->first();
+            if (!$wallas) {
+                return redirect()->back()->with('error', 'Anda bukan Wali Kelas.');
+            }
+        }
+
+        if (!$wallas || !$wallas->kelas_id) {
+            return redirect()->back()->with('error', 'Data kelas tidak ditemukan.');
         }
 
         $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->orderBy('nama')->get();
@@ -2432,6 +2451,45 @@ class siakadController extends Controller
                 : 0
         ];
 
+        $tahun_aktif = \App\Models\tahun_ajaran::where('aktif', 1)->first() ?? \App\Models\tahun_ajaran::orderByDesc('id')->first();
+        $siswa_ids = $siswa->pluck('id');
+        $evaluasi_kelas = \App\Models\evaluasi_rapor_siswa::whereIn('siswa_id', $siswa_ids)
+            ->where(function($q) use ($tahun_aktif) {
+                if ($tahun_aktif) $q->where('tahun_ajaran_id', $tahun_aktif->id);
+            })
+            ->get()
+            ->keyBy('siswa_id');
+        $prestasi_kelas = \App\Models\prestasi_siswa::whereIn('siswa_id', $siswa_ids)
+            ->where(function($q) use ($tahun_aktif) {
+                if ($tahun_aktif) $q->where('tahun_ajaran_id', $tahun_aktif->id);
+            })
+            ->get()
+            ->groupBy('siswa_id');
+
+        $daftar_preset_prestasi = \App\Models\master_prestasi::where('aktif', true)->orderBy('urutan')->get();
+        $daftar_kegiatan_sekolah = \App\Models\kegiatan_sekolah::where('aktif', true)->orderBy('urutan')->get();
+
+        // Fitur 1: Cetak Leger Nilai Kelas (Landscape)
+        if ($request->query('print') === 'leger') {
+            $pengaturan_rapor = \App\Models\pengaturan_rapor::first();
+            return view('modul.siakad.guru.cetakLegerWalas', compact(
+                'wallas', 'siswa', 'rekap_mapel', 'leger_siswa', 'stats_nilai', 'tahun_aktif', 'pengaturan_rapor', 'daftar_jadwal_mapel'
+            ));
+        }
+
+        // Fitur 2: Cetak Rapor Massal Seluruh Siswa Satu Kelas Sekaligus
+        if ($request->query('print') === 'massal') {
+            $data_massal = [];
+            foreach ($siswa as $s) {
+                $data_massal[] = array_merge([
+                    'siswa' => $s
+                ], $this->prepareStudentRaporData($s, $wallas, $jadwal_kelas, $tahun_aktif));
+            }
+            return view('modul.siakad.guru.cetakRaporMassal', compact(
+                'wallas', 'data_massal', 'tahun_aktif'
+            ));
+        }
+
         if ($request->query('tab') === 'nilai') {
             return view('modul.siakad.guru.manajemenNilaiWalas', compact(
                 'wallas', 'siswa', 'rekap_mapel', 'leger_siswa', 'stats_nilai', 'jenis_penilaian'
@@ -2439,21 +2497,107 @@ class siakadController extends Controller
         }
 
         return view('modul.siakad.guru.raporWalas', compact(
-            'wallas', 'siswa', 'rekap_mapel', 'leger_siswa', 'stats_nilai'
+            'wallas', 'siswa', 'rekap_mapel', 'leger_siswa', 'stats_nilai', 'evaluasi_kelas', 'prestasi_kelas', 'tahun_aktif', 'daftar_semua_kelas', 'daftar_preset_prestasi', 'daftar_kegiatan_sekolah'
         ));
     }
 
-    public function detailRaporWalas(Request $request, $siswa_id) {
-        $check = $this->guardRoles(['g']);
-        if ($check) return $check;
+    /**
+     * Helper Penyiapan Data Rapor per Siswa (Nilai, Capaian Kompetensi, Absensi, & Metadata)
+     */
+    protected function prepareStudentRaporData($siswa, $wallas, $jadwal_kelas, $tahun_aktif) {
+        $nilai_db = \App\Models\nilai::with(['mata_pelajaran', 'jenis_penilaian'])
+                        ->where('siswa_id', $siswa->id)
+                        ->get();
 
-        $guru_id = session('id');
-        $wallas = \App\Models\wallas::with(['ruangKelas', 'guru'])->where('guru_id', $guru_id)->first();
-        if (!$wallas) {
-            return redirect()->back()->with('error', 'Akses ditolak.');
+        $rekap_nilai = [];
+        $tingkat_siswa = \App\Models\mata_pelajaran::extractTingkat($siswa->kelas->nama_ruang ?? $siswa->kelas->nama_kelas ?? '');
+
+        foreach ($jadwal_kelas as $jk) {
+            if (!$jk->mata_pelajaran) continue;
+            $rekap_nilai[$jk->mata_pelajaran->nama_mapel] = [
+                'kkm' => $jk->getKkm(),
+                'rincian' => [],
+                'nilai_akhir' => 0,
+                'ada_nilai' => false,
+                'deskripsi' => 'Nilai belum diinput oleh Guru Pengajar.'
+            ];
         }
 
-        $siswa = \App\Models\siswa::where('id', $siswa_id)->where('kelas_id', $wallas->kelas_id)->firstOrFail();
+        foreach ($nilai_db as $n) {
+            if (!$n->mata_pelajaran || !$n->jenis_penilaian) continue;
+            $mapel = $n->mata_pelajaran->nama_mapel;
+            if (!isset($rekap_nilai[$mapel])) {
+                $rekap_nilai[$mapel] = [
+                    'kkm' => $n->mata_pelajaran->getKkmTingkat($tingkat_siswa),
+                    'rincian' => [],
+                    'nilai_akhir' => 0,
+                    'ada_nilai' => false,
+                    'deskripsi' => 'Nilai belum diinput oleh Guru Pengajar.'
+                ];
+            }
+            $rekap_nilai[$mapel]['ada_nilai'] = true;
+            $rekap_nilai[$mapel]['rincian'][$n->jenis_penilaian->nama_jenis] = $n->nilai;
+            $bobot = $n->jenis_penilaian->bobot / 100;
+            $rekap_nilai[$mapel]['nilai_akhir'] += ($n->nilai * $bobot);
+        }
+
+        $total_nilai_akhir = 0;
+        $mapel_dinilai = 0;
+        foreach ($rekap_nilai as $m => &$d) {
+            if (!empty($d['ada_nilai'])) {
+                $d['nilai_akhir'] = round($d['nilai_akhir'], 1);
+                $total_nilai_akhir += $d['nilai_akhir'];
+                $mapel_dinilai++;
+                $d['deskripsi'] = $this->getCapaianKompetensiMapel($m, $d['nilai_akhir'], $d['kkm'] ?? 75);
+            }
+        }
+        unset($d);
+
+        $rata_rata_rapor = $mapel_dinilai > 0 ? round($total_nilai_akhir / $mapel_dinilai, 1) : 0;
+
+        $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa->id)
+            ->whereNull('jadwal_pelajaran_id')
+            ->get();
+        if ($absensi->isEmpty()) {
+            $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa->id)->get();
+        }
+        $rekap_absensi = [
+            'hadir' => $absensi->where('status', 'h')->count(),
+            'sakit' => $absensi->where('status', 's')->count(),
+            'izin'  => $absensi->where('status', 'i')->count(),
+            'alpa'  => $absensi->where('status', 'a')->count(),
+        ];
+
+        $raporMeta = $this->getRaporMetadata($siswa, $tahun_aktif, $rata_rata_rapor);
+
+        return compact('rekap_nilai', 'rekap_absensi', 'rata_rata_rapor', 'total_nilai_akhir', 'raporMeta');
+    }
+
+    public function detailRaporWalas(Request $request, $siswa_id) {
+        $check = $this->guardRoles(['g', 'a']);
+        if ($check) return $check;
+
+        if (session('role') === 'a') {
+            $siswa = \App\Models\siswa::with(['sekolah', 'kelas', 'tahunAjaran'])->findOrFail($siswa_id);
+            $wallas = \App\Models\wallas::with(['ruangKelas', 'guru'])->where('kelas_id', $siswa->kelas_id)->first();
+            if (!$wallas) {
+                $wallas = (object)[
+                    'kelas_id' => $siswa->kelas_id,
+                    'ruangKelas' => $siswa->kelas,
+                    'guru' => (object)[
+                        'nama' => 'Wali Kelas',
+                        'nip' => '-'
+                    ]
+                ];
+            }
+        } else {
+            $guru_id = session('id');
+            $wallas = \App\Models\wallas::with(['ruangKelas', 'guru'])->where('guru_id', $guru_id)->first();
+            if (!$wallas) {
+                return redirect()->back()->with('error', 'Akses ditolak. Anda bukan Wali Kelas.');
+            }
+            $siswa = \App\Models\siswa::with(['sekolah', 'kelas', 'tahunAjaran'])->where('id', $siswa_id)->where('kelas_id', $wallas->kelas_id)->firstOrFail();
+        }
         $semua_siswa_kelas = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->get();
         $total_siswa_kelas = $semua_siswa_kelas->count();
         
@@ -2473,70 +2617,15 @@ class siakadController extends Controller
                 ->unique('mapel_id');
         }
 
-        // Ambil Data Nilai Siswa
-        $nilai_db = \App\Models\nilai::with(['mata_pelajaran', 'jenis_penilaian'])
-                        ->where('siswa_id', $siswa_id)
-                        ->get();
-
-        // Rekap Nilai per Mata Pelajaran
-        $rekap_nilai = [];
-        $tingkat_siswa = \App\Models\mata_pelajaran::extractTingkat($siswa->kelas->nama_ruang ?? $siswa->kelas->nama_kelas ?? '');
-
-        // Inisialisasi dari jadwal kelas agar semua mapel kelas tampil lengkap di lembar rapor
-        foreach ($jadwal_kelas as $jk) {
-            if (!$jk->mata_pelajaran) continue;
-            $rekap_nilai[$jk->mata_pelajaran->nama_mapel] = [
-                'kkm' => $jk->getKkm(),
-                'rincian' => [],
-                'nilai_akhir' => 0,
-                'ada_nilai' => false
-            ];
-        }
-
-        foreach ($nilai_db as $n) {
-            if (!$n->mata_pelajaran || !$n->jenis_penilaian) continue;
-            $mapel = $n->mata_pelajaran->nama_mapel;
-            if (!isset($rekap_nilai[$mapel])) {
-                $rekap_nilai[$mapel] = [
-                    'kkm' => $n->mata_pelajaran->getKkmTingkat($tingkat_siswa),
-                    'rincian' => [],
-                    'nilai_akhir' => 0,
-                    'ada_nilai' => false
-                ];
-            }
-            $rekap_nilai[$mapel]['ada_nilai'] = true;
-            $rekap_nilai[$mapel]['rincian'][$n->jenis_penilaian->nama_jenis] = $n->nilai;
-            $bobot = $n->jenis_penilaian->bobot / 100;
-            $rekap_nilai[$mapel]['nilai_akhir'] += ($n->nilai * $bobot);
-        }
-
-        $total_nilai_akhir = 0;
-        $mapel_dinilai = 0;
-        foreach ($rekap_nilai as $m => $d) {
-            if (!empty($d['ada_nilai'])) {
-                $total_nilai_akhir += $d['nilai_akhir'];
-                $mapel_dinilai++;
-            }
-        }
-        $rata_rata_rapor = $mapel_dinilai > 0 ? round($total_nilai_akhir / $mapel_dinilai, 1) : 0;
-
-
-        // Ambil Rekap Absensi Harian Kelas (jadwal_pelajaran_id = null)
-        $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa_id)
-            ->whereNull('jadwal_pelajaran_id')
-            ->get();
-        if ($absensi->isEmpty()) {
-            $absensi = \App\Models\absensi_siswa::where('siswa_id', $siswa_id)->get();
-        }
-        $rekap_absensi = [
-            'hadir' => $absensi->where('status', 'h')->count(),
-            'sakit' => $absensi->where('status', 's')->count(),
-            'izin'  => $absensi->where('status', 'i')->count(),
-            'alpa'  => $absensi->where('status', 'a')->count(),
-        ];
+        $studentData = $this->prepareStudentRaporData($siswa, $wallas, $jadwal_kelas, $tahun_aktif);
+        $rekap_nilai = $studentData['rekap_nilai'];
+        $rekap_absensi = $studentData['rekap_absensi'];
+        $rata_rata_rapor = $studentData['rata_rata_rapor'];
+        $total_nilai_akhir = $studentData['total_nilai_akhir'];
+        $raporMeta = $studentData['raporMeta'];
 
         return view('modul.siakad.guru.detailRaporWalas', compact(
-            'siswa', 'wallas', 'rekap_nilai', 'rekap_absensi', 'rata_rata_rapor', 'total_nilai_akhir', 'total_siswa_kelas', 'tahun_aktif'
+            'siswa', 'wallas', 'rekap_nilai', 'rekap_absensi', 'rata_rata_rapor', 'total_nilai_akhir', 'total_siswa_kelas', 'tahun_aktif', 'raporMeta'
         ));
     }
 
@@ -2980,7 +3069,159 @@ class siakadController extends Controller
         $data_tahun = \App\Models\tahun_ajaran::orderBy('id', 'desc')->get();
         $data_jam = \App\Models\jam_pelajaran::with('sekolah')->orderBy('sekolah_id', 'asc')->orderBy('jam_mulai', 'asc')->get();
         $data_sekolah = \App\Models\jenis_sekolah::all();
-        return view('modul.siakad.admin.kelolaReferensi', compact('data_tahun', 'data_jam', 'data_sekolah'));
+        $data_kegiatan = \App\Models\kegiatan_sekolah::orderBy('urutan')->get();
+        $data_prestasi = \App\Models\master_prestasi::orderBy('urutan')->orderBy('id')->get();
+        $pengaturan_rapor = \App\Models\pengaturan_rapor::first() ?? new \App\Models\pengaturan_rapor([
+            'tempat_rapor' => 'Tinggede',
+            'tanggal_rapor' => '20 Desember 2025',
+            'nama_kepsek' => 'Rajihul Haq, S.Sos',
+            'nip_kepsek' => '-',
+            'catatan_walas_template' => 'Alhamdulillah, ananda menunjukkan kemajuan yang luar biasa dalam hafalan Al-Qur\'an dan akhlak terpuji. Pertahankan dan terus istiqomah.'
+        ]);
+
+        return view('modul.siakad.admin.kelolaReferensi', compact(
+            'data_tahun', 'data_jam', 'data_sekolah', 'data_kegiatan', 'data_prestasi', 'pengaturan_rapor'
+        ));
+    }
+
+    public function simpanKegiatanSekolah(Request $request) {
+        $check = $this->guardRoles(['a'], 'akademik');
+        if ($check) return $check;
+
+        $request->validate([
+            'nama_kegiatan' => 'required|string|max:150',
+            'jenjang' => 'required|string',
+            'keterangan_default' => 'nullable|string'
+        ]);
+
+        $maxUrutan = \App\Models\kegiatan_sekolah::max('urutan') ?? 0;
+        \App\Models\kegiatan_sekolah::create([
+            'nama_kegiatan' => $request->nama_kegiatan,
+            'jenjang' => $request->jenjang,
+            'keterangan_default' => $request->keterangan_default,
+            'urutan' => $maxUrutan + 1,
+            'aktif' => true,
+        ]);
+
+        return redirect('/sk/referensi?tab=kegiatan')->with('success', 'Master Program Kegiatan Sekolah berhasil ditambahkan.');
+    }
+
+    public function updateKegiatanSekolah(Request $request, $id) {
+        $check = $this->guardRoles(['a'], 'akademik');
+        if ($check) return $check;
+
+        $request->validate([
+            'nama_kegiatan' => 'required|string|max:150',
+            'jenjang' => 'required|string',
+            'keterangan_default' => 'nullable|string'
+        ]);
+
+        $kegiatan = \App\Models\kegiatan_sekolah::findOrFail($id);
+        $kegiatan->update([
+            'nama_kegiatan' => $request->nama_kegiatan,
+            'jenjang' => $request->jenjang,
+            'keterangan_default' => $request->keterangan_default,
+            'aktif' => $request->has('aktif') ? (bool)$request->aktif : true,
+        ]);
+
+        return redirect('/sk/referensi?tab=kegiatan')->with('success', 'Master Program Kegiatan Sekolah berhasil diperbarui.');
+    }
+
+    public function hapusKegiatanSekolah($id) {
+        $check = $this->guardRoles(['a'], 'akademik');
+        if ($check) return $check;
+
+        $kegiatan = \App\Models\kegiatan_sekolah::findOrFail($id);
+        $kegiatan->delete();
+
+        return redirect('/sk/referensi?tab=kegiatan')->with('success', 'Master Program Kegiatan Sekolah berhasil dihapus.');
+    }
+
+    public function simpanMasterPrestasi(Request $request) {
+        $check = $this->guardRoles(['a'], 'akademik');
+        if ($check) return $check;
+
+        $request->validate([
+            'nama_prestasi' => 'required|string|max:200',
+            'kategori' => 'required|string|max:100',
+            'jenjang' => 'required|string|max:50',
+        ]);
+
+        $maxUrutan = \App\Models\master_prestasi::max('urutan') ?? 0;
+        \App\Models\master_prestasi::create([
+            'nama_prestasi' => $request->nama_prestasi,
+            'kategori' => $request->kategori,
+            'jenjang' => $request->jenjang,
+            'urutan' => $maxUrutan + 1,
+            'aktif' => true,
+        ]);
+
+        return redirect('/sk/referensi?tab=prestasi')->with('success', 'Template Jenis Prestasi berhasil ditambahkan ke database.');
+    }
+
+    public function updateMasterPrestasi(Request $request, $id) {
+        $check = $this->guardRoles(['a'], 'akademik');
+        if ($check) return $check;
+
+        $request->validate([
+            'nama_prestasi' => 'required|string|max:200',
+            'kategori' => 'required|string|max:100',
+            'jenjang' => 'required|string|max:50',
+        ]);
+
+        $prestasi = \App\Models\master_prestasi::findOrFail($id);
+        $prestasi->update([
+            'nama_prestasi' => $request->nama_prestasi,
+            'kategori' => $request->kategori,
+            'jenjang' => $request->jenjang,
+            'aktif' => $request->has('aktif') ? (bool)$request->aktif : true,
+        ]);
+
+        return redirect('/sk/referensi?tab=prestasi')->with('success', 'Template Jenis Prestasi berhasil diperbarui.');
+    }
+
+    public function hapusMasterPrestasi($id) {
+        $check = $this->guardRoles(['a'], 'akademik');
+        if ($check) return $check;
+
+        $prestasi = \App\Models\master_prestasi::findOrFail($id);
+        $prestasi->delete();
+
+        return redirect('/sk/referensi?tab=prestasi')->with('success', 'Template Jenis Prestasi berhasil dihapus.');
+    }
+
+    public function simpanPengaturanRapor(Request $request) {
+        $check = $this->guardRoles(['a'], 'akademik');
+        if ($check) return $check;
+
+        $request->validate([
+            'tempat_rapor' => 'required|string|max:100',
+            'tanggal_rapor' => 'required|string|max:100',
+            'nama_kepsek' => 'required|string|max:150',
+            'nip_kepsek' => 'nullable|string|max:50',
+            'catatan_walas_template' => 'nullable|string'
+        ]);
+
+        $pengaturan = \App\Models\pengaturan_rapor::first();
+        if ($pengaturan) {
+            $pengaturan->update([
+                'tempat_rapor' => $request->tempat_rapor,
+                'tanggal_rapor' => $request->tanggal_rapor,
+                'nama_kepsek' => $request->nama_kepsek,
+                'nip_kepsek' => $request->nip_kepsek ?? '-',
+                'catatan_walas_template' => $request->catatan_walas_template
+            ]);
+        } else {
+            \App\Models\pengaturan_rapor::create([
+                'tempat_rapor' => $request->tempat_rapor,
+                'tanggal_rapor' => $request->tanggal_rapor,
+                'nama_kepsek' => $request->nama_kepsek,
+                'nip_kepsek' => $request->nip_kepsek ?? '-',
+                'catatan_walas_template' => $request->catatan_walas_template
+            ]);
+        }
+
+        return redirect('/sk/referensi?tab=pengesahan')->with('success', 'Pengaturan pengesahan dan tanggal rapor berhasil disimpan ke database.');
     }
 
     public function simpanTahunAjaran(Request $request) {
@@ -3548,11 +3789,7 @@ class siakadController extends Controller
 
                 $item['predikat'] = $predikat;
                 $item['tuntas'] = $tuntas;
-                $item['deskripsi'] = $na >= 90
-                    ? "Sangat baik dalam menguasai seluruh kompetensi dasar mata pelajaran {$namaMapel}."
-                    : ($tuntas
-                        ? "Baik dan telah mencapai ketuntasan kompetensi pada mata pelajaran {$namaMapel}."
-                        : "Perlu bimbingan dan penguatan lebih lanjut pada kompetensi dasar {$namaMapel}.");
+                $item['deskripsi'] = $this->getCapaianKompetensiMapel($namaMapel, $na, $kkm);
             } else {
                 $item['predikat'] = '-';
                 $item['tuntas'] = false;
@@ -3593,8 +3830,10 @@ class siakadController extends Controller
             'a' => $absensi->where('status', 'a')->count(),
         ];
 
+        $raporMeta = $this->getRaporMetadata($siswa, $tahun_aktif, $rata_rata);
+
         return view('modul.siakad.siswa.raporSiswa', compact(
-            'siswa', 'wallas', 'tahun_aktif', 'rekap_nilai', 'jenis_penilaian', 'rekap_absen', 'stats_akademik', 'tab'
+            'siswa', 'wallas', 'tahun_aktif', 'rekap_nilai', 'jenis_penilaian', 'rekap_absen', 'stats_akademik', 'tab', 'raporMeta'
         ));
     }
 
@@ -3757,6 +3996,410 @@ class siakadController extends Controller
         });
 
         return view('modul.siakad.guru.pengumumanGuru', compact('guru', 'list_pengumuman'));
+    }
+
+    /**
+     * Simpan Evaluasi Rapor Santri (Catatan, Predikat Kegiatan, dan Prestasi) ke Database
+     */
+    public function simpanEvaluasiRapor(Request $request) {
+        $check = $this->guardRoles(['g', 'a']);
+        if ($check) return $check;
+
+        $siswa_id = $request->input('siswa_id');
+        $tahun_aktif = \App\Models\tahun_ajaran::where('aktif', 1)->first() ?? \App\Models\tahun_ajaran::orderByDesc('id')->first();
+        $tahun_id = $request->input('tahun_ajaran_id', $tahun_aktif->id ?? null);
+        $semester = $request->input('semester', ($tahun_aktif->semester ?? 1) == 2 ? 2 : 1);
+
+        $catatan = $request->input('catatan_walas');
+        $kegiatan = $request->input('kegiatan'); // array [{kegiatan, predikat, keterangan}]
+        $prestasi = $request->input('prestasi'); // array of string
+        $tanggal = $request->input('tanggal_rapor');
+        $kepsek = $request->input('nama_kepsek');
+        $walas = $request->input('nama_walas');
+
+        $evaluasi = \App\Models\evaluasi_rapor_siswa::updateOrCreate(
+            [
+                'siswa_id' => $siswa_id, 
+                'tahun_ajaran_id' => $tahun_id, 
+                'semester' => $semester
+            ],
+            [
+                'catatan_walas' => $catatan,
+                'evaluasi_kegiatan' => $kegiatan,
+                'tanggal_rapor' => $tanggal,
+                'nama_kepsek' => $kepsek,
+                'nama_walas' => $walas,
+            ]
+        );
+
+        if (is_array($prestasi)) {
+            \App\Models\prestasi_siswa::where('siswa_id', $siswa_id)
+                ->where('tahun_ajaran_id', $tahun_id)
+                ->where('semester', $semester)
+                ->delete();
+
+            foreach ($prestasi as $pres) {
+                if (trim($pres) !== '') {
+                    \App\Models\prestasi_siswa::create([
+                        'siswa_id' => $siswa_id,
+                        'tahun_ajaran_id' => $tahun_id,
+                        'semester' => $semester,
+                        'nama_prestasi' => trim($pres),
+                        'created_by' => session('role') === 'a' ? 'admin' : 'walas',
+                    ]);
+                }
+            }
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Evaluasi dan prestasi rapor berhasil disimpan ke database.',
+                'evaluasi' => $evaluasi
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Evaluasi dan prestasi rapor santri berhasil disimpan ke database.');
+    }
+
+    /**
+     * Simpan Massal Catatan & Prestasi Santri Kelas (Rapor Walas)
+     */
+    public function simpanMassalPrestasiWalas(Request $request) {
+        $check = $this->guardRoles(['g', 'a']);
+        if ($check) return $check;
+
+        $tahun_aktif = \App\Models\tahun_ajaran::where('aktif', 1)->first() ?? \App\Models\tahun_ajaran::orderByDesc('id')->first();
+        $tahun_id = $tahun_aktif->id ?? null;
+        $semester = ($tahun_aktif->semester ?? 1) == 2 ? 2 : 1;
+
+        $items = $request->input('siswa', []); // array keyed by siswa_id
+        foreach ($items as $s_id => $data) {
+            $catatan = $data['catatan'] ?? null;
+            $prestasi_text = $data['prestasi'] ?? null;
+
+            if ($catatan !== null) {
+                \App\Models\evaluasi_rapor_siswa::updateOrCreate(
+                    ['siswa_id' => $s_id, 'tahun_ajaran_id' => $tahun_id, 'semester' => $semester],
+                    ['catatan_walas' => $catatan]
+                );
+            }
+
+            if ($prestasi_text !== null) {
+                \App\Models\prestasi_siswa::where('siswa_id', $s_id)
+                    ->where('tahun_ajaran_id', $tahun_id)
+                    ->where('semester', $semester)
+                    ->delete();
+
+                $lines = explode("\n", str_replace("\r", "", $prestasi_text));
+                foreach ($lines as $line) {
+                    $trim = trim($line);
+                    if ($trim !== '') {
+                        \App\Models\prestasi_siswa::create([
+                            'siswa_id' => $s_id,
+                            'tahun_ajaran_id' => $tahun_id,
+                            'semester' => $semester,
+                            'nama_prestasi' => $trim,
+                            'created_by' => session('role') === 'a' ? 'admin' : 'walas',
+                        ]);
+                    }
+                }
+            }
+        }
+
+        return redirect('/sk/rapor-walas?tab=prestasi')->with('success', 'Seluruh catatan dan prestasi siswa kelas berhasil disimpan ke database.');
+    }
+
+    /**
+     * Helper Metadata Rapor Siswa (Jenjang, Fase, Watermark Logo, Master Kegiatan & Database Values)
+     */
+    protected function getRaporMetadata($siswa, $tahun_aktif = null, $rata_rata_rapor = 0)
+    {
+        $nama_ruang = strtolower($siswa->kelas->nama_ruang ?? ($siswa->kelas->nama_kelas ?? ''));
+        $jenis_db = strtolower($siswa->sekolah->jenis ?? '');
+
+        if (str_contains($nama_ruang, 'smp') || preg_match('/\b(7|8|9)\b/', $nama_ruang)) {
+            $jenjang = 'smp';
+        } elseif (str_contains($nama_ruang, 'sd') || preg_match('/\b(1|2|3|4|5|6)\b/', $nama_ruang)) {
+            $jenjang = 'sd';
+        } elseif (str_contains($nama_ruang, 'sma') || preg_match('/\b(10|11|12)\b/', $nama_ruang)) {
+            $jenjang = 'sma';
+        } elseif (str_contains($nama_ruang, 'tk')) {
+            $jenjang = 'tk';
+        } elseif ($jenis_db) {
+            $jenjang = $jenis_db;
+        } else {
+            $jenjang = 'smp';
+        }
+
+        $nama_sekolah = match($jenjang) {
+            'sd' => "SD QUR'AN IMAM SYAFI'I",
+            'smp' => "SMP QUR'AN IMAM SYAFI'I",
+            'tk' => "TK QUR'AN IMAM SYAFI'I",
+            'sma' => "SMA QUR'AN IMAM SYAFI'I",
+            default => "SMP QUR'AN IMAM SYAFI'I"
+        };
+
+        // Watermark: SD = logo_sd.jpg, SMP = logo_smp.webp, TK = KOSONG (null tanpa logo)
+        $watermark_logo = null;
+        if ($jenjang === 'sd') {
+            $watermark_logo = asset('img/logo_sd.jpg');
+        } elseif ($jenjang === 'smp') {
+            $watermark_logo = asset('img/logo_smp.webp');
+        } elseif ($jenjang === 'tk') {
+            $watermark_logo = null;
+        }
+
+        // Ekstrak tingkat dan tentukan Fase Kurikulum Merdeka
+        $tingkat = \App\Models\mata_pelajaran::extractTingkat($nama_ruang);
+        $fase = match(true) {
+            $jenjang === 'tk' => 'Fondasi',
+            in_array($tingkat, [1, 2]) => 'A',
+            in_array($tingkat, [3, 4]) => 'B',
+            in_array($tingkat, [5, 6]) => 'C',
+            in_array($tingkat, [7, 8, 9]) => 'D',
+            $tingkat == 10 => 'E',
+            in_array($tingkat, [11, 12]) => 'F',
+            default => ($jenjang === 'sd' ? 'B' : 'D')
+        };
+
+        $kelas_label = $tingkat ? (string)$tingkat : ($siswa->kelas->nama_ruang ?? '-');
+        $alamat_sekolah = "Jl. Rapolinja Tinggede, lrg. Imam Syafii, Kec. Marawola, Kab. Sigi";
+        $tempat_rapor = "Tinggede";
+        $nama_kepsek = "Rajihul Haq, S.Sos";
+        $tanggal_rapor = "20 Desember 2025";
+        $nama_walas = null;
+        $catatan_walas_default = "Alhamdulillah {$siswa->nama} mulai menunjukkan semangat belajar yang lebih baik dan keberanian untuk bertanya dalam memahami materi. Hasil belajar ananda semakin menunjukkan kemajuan.\n\nHarapan ustadzah, ananda dapat lebih fokus dan konsisten dalam belajar, memanfaatkan waktu dengan efektif, serta melibatkan Allah dalam proses belajar.\n\nBaarakAllahu fiik nak shalih";
+
+        // Ambil Pengaturan Rapor & Pengesahan yang dikelola Admin dari Database
+        $pengaturanRapor = \App\Models\pengaturan_rapor::first();
+        if ($pengaturanRapor) {
+            if (!empty($pengaturanRapor->tanggal_rapor)) $tanggal_rapor = $pengaturanRapor->tanggal_rapor;
+            if (!empty($pengaturanRapor->nama_kepsek)) $nama_kepsek = $pengaturanRapor->nama_kepsek;
+            if (!empty($pengaturanRapor->tempat_rapor)) $tempat_rapor = $pengaturanRapor->tempat_rapor;
+            if (!empty($pengaturanRapor->catatan_walas_template)) {
+                $catatan_walas_default = str_replace('{nama}', $siswa->nama, $pengaturanRapor->catatan_walas_template);
+            }
+        }
+
+        // Ambil Master Kegiatan Sekolah dari Database (Dikelola oleh Admin)
+        $masterKegiatan = \App\Models\kegiatan_sekolah::where('aktif', true)
+            ->where(function($q) use ($jenjang) {
+                $q->where('jenjang', 'semua')->orWhere('jenjang', $jenjang);
+            })
+            ->orderBy('urutan')
+            ->get();
+
+        $kegiatan_sekolah_default = [];
+        if ($masterKegiatan->isNotEmpty()) {
+            foreach ($masterKegiatan as $mk) {
+                $kegiatan_sekolah_default[] = [
+                    'kegiatan' => $mk->nama_kegiatan,
+                    'predikat' => 'Sangat baik',
+                    'keterangan' => $mk->keterangan_default ?: "Sangat baik, aktif dan disiplin dalam mengikuti kegiatan {$mk->nama_kegiatan}."
+                ];
+            }
+        } else {
+            // Fallback jika tabel master belum ada isi
+            $kegiatan_sekolah_default = [
+                ['kegiatan' => 'Mabit', 'predikat' => 'Sangat baik', 'keterangan' => 'Sangat baik, Mengikuti kegiatan Mabit dengan antusias dan melaksanakan ibadah secara mandiri dan berjamaah dengan disiplin'],
+                ['kegiatan' => 'Dzikir Pagi', 'predikat' => 'Sangat baik', 'keterangan' => 'Sangat baik, Berpartisipasi aktif dalam kegiatan dzikir pagi serta menjaga adab selama kegiatan berlangsung'],
+                ['kegiatan' => 'Ilqai Kalimat', 'predikat' => 'Baik', 'keterangan' => 'Baik, Menunjukkan kemampuan berbicara di depan umum melalui kegiatan ini dengan baik'],
+                ['kegiatan' => 'Puasa Sunnah Kamis', 'predikat' => 'Cukup baik', 'keterangan' => 'Cukup baik, Perlu peningkatan kebiasaan puasa Sunnah kamis secara rutin'],
+            ];
+        }
+
+        // Ambil Master Jenis Prestasi (Template Prestasi) yang dikelola Admin dari Database
+        $masterPrestasi = \App\Models\master_prestasi::where('aktif', true)
+            ->where(function($q) use ($jenjang) {
+                $q->where('jenjang', 'semua')->orWhere('jenjang', $jenjang);
+            })
+            ->orderBy('urutan')
+            ->pluck('nama_prestasi')
+            ->toArray();
+
+        $prestasi_default = !empty($masterPrestasi) ? array_slice($masterPrestasi, 0, 1) : ['Tasmi hafalan juz 30 & 29 sekali duduk'];
+        $daftar_preset_prestasi = !empty($masterPrestasi) ? $masterPrestasi : ['Tasmi hafalan juz 30 & 29 sekali duduk', 'Juara 1 MHQ Tingkat Kota'];
+
+        // Sinkronisasi data aktual dari Database jika sudah disimpan sebelumnya
+        $tahun_id = $tahun_aktif->id ?? null;
+        $semester_val = ($tahun_aktif->semester ?? 1) == 2 ? 2 : 1;
+
+        $evaluasiDb = \App\Models\evaluasi_rapor_siswa::where('siswa_id', $siswa->id)
+            ->where(function($q) use ($tahun_id, $semester_val) {
+                if ($tahun_id) $q->where('tahun_ajaran_id', $tahun_id);
+                $q->where('semester', $semester_val);
+            })->first();
+
+        if ($evaluasiDb) {
+            if (!empty($evaluasiDb->catatan_walas)) {
+                $catatan_walas_default = $evaluasiDb->catatan_walas;
+            }
+            if (!empty($evaluasiDb->evaluasi_kegiatan) && is_array($evaluasiDb->evaluasi_kegiatan)) {
+                // Sinkronkan penilaian tersimpan dengan daftar master kegiatan terkini dari Admin
+                $existingMap = [];
+                foreach ($evaluasiDb->evaluasi_kegiatan as $ek) {
+                    if (isset($ek['kegiatan'])) {
+                        $existingMap[$ek['kegiatan']] = $ek;
+                    }
+                }
+                $mergedKegiatan = [];
+                foreach ($kegiatan_sekolah_default as $mk) {
+                    if (isset($existingMap[$mk['kegiatan']])) {
+                        $mergedKegiatan[] = $existingMap[$mk['kegiatan']];
+                        unset($existingMap[$mk['kegiatan']]);
+                    } else {
+                        $mergedKegiatan[] = $mk;
+                    }
+                }
+                foreach ($existingMap as $rem) {
+                    $mergedKegiatan[] = $rem;
+                }
+                $kegiatan_sekolah_default = $mergedKegiatan;
+            }
+            if (!empty($evaluasiDb->tanggal_rapor)) {
+                $tanggal_rapor = $evaluasiDb->tanggal_rapor;
+            }
+            if (!empty($evaluasiDb->nama_kepsek)) {
+                $nama_kepsek = $evaluasiDb->nama_kepsek;
+            }
+            if (!empty($evaluasiDb->nama_walas)) {
+                $nama_walas = $evaluasiDb->nama_walas;
+            }
+        }
+
+        $prestasiDb = \App\Models\prestasi_siswa::where('siswa_id', $siswa->id)
+            ->where(function($q) use ($tahun_id, $semester_val) {
+                if ($tahun_id) $q->where('tahun_ajaran_id', $tahun_id);
+                $q->where('semester', $semester_val);
+            })->get();
+
+        if ($prestasiDb->isNotEmpty()) {
+            $prestasi_default = $prestasiDb->pluck('nama_prestasi')->toArray();
+        }
+
+        return compact(
+            'jenjang', 'nama_sekolah', 'watermark_logo', 'fase', 'kelas_label', 'alamat_sekolah', 'tempat_rapor',
+            'nama_kepsek', 'tanggal_rapor', 'nama_walas', 'kegiatan_sekolah_default', 'prestasi_default', 'catatan_walas_default', 'daftar_preset_prestasi'
+        );
+    }
+
+    /**
+     * Generator Deskripsi Capaian Kompetensi Kurikulum Merdeka Islami (Sesuai dokumen acuan zaky.docx)
+     */
+    protected function getCapaianKompetensiMapel($namaMapel, $nilai, $kkm = 75)
+    {
+        $mapel = strtolower($namaMapel);
+        $na = (float)$nilai;
+
+        if (str_contains($mapel, 'agama') || str_contains($mapel, 'pai') || str_contains($mapel, 'islam') || str_contains($mapel, 'aqidah')) {
+            if ($na >= 85) {
+                return "Alhamdulillah ananda sangat memahami konsep Utsulu Atsalasta (Pengetahuan Tentang Allah, Agama Islam, dan Rasulullah) serta mengamalkannya dalam adab sehari-hari dengan sangat baik.";
+            } elseif ($na >= $kkm) {
+                return "Alhamdulillah Peserta didik cukup memahami konsep Utsulu Atsalasta (Pengetahuan Tentang Allah, Pengetahuan Tentang Agama Islam Pengetahuan Tentang Nabi Muhammad) dengan baik.";
+            } else {
+                return "Perlu bimbingan dan penguatan lebih lanjut dalam memahami konsep dasar Aqidah dan adab ibadah praktis.";
+            }
+        }
+
+        if (str_contains($mapel, 'pancasila') || str_contains($mapel, 'pkn') || str_contains($mapel, 'kewarganegaraan')) {
+            if ($na >= 80) {
+                return "Alhamdulillah Ananda mampu memahami proses perumusan Pancasila mulai dari sidang BPUPKI, peran Panitia Sembilan dalam Piagam Jakarta, hingga penetapan Pancasila sebagai dasar negara, menguasai makna setiap sila dan pentingnya penerapan nilai-nilai Pancasila dalam kehidupan sehari-hari, terlihat dari kemampuannya mengaitkan peristiwa sejarah dengan sikap yang sesuai nilai Pancasila.";
+            } elseif ($na >= $kkm) {
+                return "Alhamdulillah ananda memahami makna setiap sila dan pentingnya penerapan nilai-nilai Pancasila dalam kehidupan sehari-hari.";
+            } else {
+                return "Perlu pendampingan dalam memahami sejarah perumusan dasar negara dan nilai-nilai kebangsaan.";
+            }
+        }
+
+        if (str_contains($mapel, 'bahasa indonesia') || str_contains($mapel, 'indonesia')) {
+            if ($na >= 80) {
+                return "Alhamdulillah ananda sangat mampu memahami pengertian teks deskripsi dan fungsinya dalam sebuah tulisan, mengidentifikasi ciri kebahasaan teks deskripsi, seperti kata konkret dan kata pemerincian, membedakan jenis-jenis teks deskripsi (objektif, subjektif, bagian). Menjelaskan pengertian puisi rakyat dan ciri khas sastra lisan, membedakan pantun dan puisi rakyat lain dari segi struktur dan karakteristiknya dan memahami fungsi puisi rakyat. Menjelaskan pengertian cerita fantasi dan ciri-cirinya, dan menentukan nilai-nilai dalam cerita fantasi (ketuhanan, sosial, budaya)";
+            } elseif ($na >= $kkm) {
+                return "Alhamdulillah ananda mampu memahami gagasan utama dalam teks deskripsi dan menyusun kalimat efektif dengan baik.";
+            } else {
+                return "Perlu latihan membaca pemahaman dan memperkaya perbendaharaan kosakata bahasa Indonesia.";
+            }
+        }
+
+        if (str_contains($mapel, 'matematika')) {
+            if ($na >= 85) {
+                return "Sangat menguasai konsep dasar bilangan bulat (positif dan negatif), operasi hitung campuran, bilangan rasional (pecahan, desimal, persen), serta terampil menyelesaikan masalah pemodelan rasio dan perbandingan secara tepat.";
+            } elseif ($na >= $kkm) {
+                return "Memahami konsep dasar bilangan bulat (positif dan negatif), mampu mengurutkan, serta melakukan operasi hitung campuran; Memahami konsep bilangan rasional (pecahan, desimal, persen) dan mampu mengubah bentuknya dengan tepat; Menguasai konsep rasio (perbandingan), dapat menentukan rasio dari dua besaran serta menyelesaikan masalah perbandingan.";
+            } else {
+                return "Perlu latihan intensif pada operasi hitung campuran bilangan bulat dan pecahan.";
+            }
+        }
+
+        if (str_contains($mapel, 'inggris') || str_contains($mapel, 'english')) {
+            if ($na >= 85) {
+                return "Alhamdulillah, ananda sangat mahir menggunakan berbagai ungkapan greetings dan responsnya dengan percaya diri, memperkenalkan diri dengan lancar, menguasai subject pronouns, serta terampil dalam percakapan sehari-hari.";
+            } elseif ($na >= $kkm) {
+                return "Alhamdulillah, ananda mampu menggunakan berbagai ungkapan greetings (Hi, Hello, Good morning, etc.) dan mampu merespons sapaan dengan tepat. Mampu memperkenalkan diri menggunakan berbagai pola kalimat (Hello, my name is..., Let me introduce myself...) Mampu membedakan dan menggunakan subject pronouns. Mampu membedakan pembagian makanan (Snack, Food & Drinks) dan mampu menggunakan ungkapan ketika berada di restoran";
+            } else {
+                return "Perlu pembiasaan menghafal kosakata dasar harian (vocabulary) dan melatih pelafalan bahasa Inggris.";
+            }
+        }
+
+        if (str_contains($mapel, 'biologi') || str_contains($mapel, 'ipa') || str_contains($mapel, 'alam')) {
+            if ($na >= 85) {
+                return "Alhamdulillah ananda sangat terampil dalam analisis sistem organisasi kehidupan, pengukuran besaran, perubahan wujud zat, perpindahan kalor, dan pemahaman konsep dasar gaya dan gerak.";
+            } elseif ($na >= $kkm) {
+                return "Alhamdulilah ananda mampu dalam pengukuran besaran, analisis perubahan wujud zat, mekanisme perpindahan kalor, dan pemahaman konsep dasar gaya dan gerak (perpindahan, kelajuan).";
+            } else {
+                return "Perlu bimbingan dalam memahami konsep perpindahan kalor dan penerapan prinsip metode ilmiah.";
+            }
+        }
+
+        if (str_contains($mapel, 'ips') || str_contains($mapel, 'sosial')) {
+            if ($na >= 85) {
+                return "Alhamdulillah ananda sangat baik dalam menganalisis interaksi sosial budaya, sejarah kepulauan nusantara, serta potensi ekonomi sumber daya alam dan kegiatan ekonomi masyarakat.";
+            } elseif ($na >= $kkm) {
+                return "Alhamdulillah ananda mampu memahami konsep dasar kehidupan awal keluarga dan sosialisasi, serta mampu mengenali lingkungan sekitar dan isu-isu pelestarian. Memiliki pemahaman yang cukup baik mengenai potensi ekonomi sumber daya alam dan kegiatan ekonomi masyarakat.";
+            } else {
+                return "Perlu pendampingan dalam memahami peta lingkungan geografis dan dinamika interaksi sosial.";
+            }
+        }
+
+        if (str_contains($mapel, 'pjok') || str_contains($mapel, 'penjas') || str_contains($mapel, 'olahraga') || str_contains($mapel, 'memanah')) {
+            if ($na >= 85) {
+                return "Alhamdulillah ananda mampu menggunakan peralatan memanah dengan baik, memanah dengan fokus tinggi dan presisi, memahami nilai-nilai sunnah memanah, serta menguasai teknik dasar pembelajaran bela diri dengan disiplin.";
+            } elseif ($na >= $kkm) {
+                return "Alhamdulillah ananda mampu, Menggunakan peralatan memanah dengan baik, Memanah dengan baik, Memahani nilai-nilai sunnah memanah, Memahami pembelajaran bela diri";
+            } else {
+                return "Perlu meningkatkan kebugaran jasmani, konsentrasi, dan ketertiban dalam olahraga sunnah memanah.";
+            }
+        }
+
+        if (str_contains($mapel, 'arab')) {
+            if ($na >= 85) {
+                return "Alhamdulillah ananda sangat fasih menyebut makanan dan minuman, mengungkapkan kesukaan secara sederhana, menyebut nama dan waktu salat serta memahami kosakata ibadah. Siswa juga mahir mendeskripsikan tempat tinggal dan aktivitas harian dengan bahasa Arab.";
+            } elseif ($na >= $kkm) {
+                return "Alhamdulillah ananda sangat mampu menyebut makanan dan minuman serta mengungkapkan kesukaan secara sederhana, menyebut nama dan waktu salat serta memahami kosakata dasar tentang ibadah. Siswa juga mampu mengenali kosakata rumah dan menjelaskan tempat tinggal dengan kalimat sederhana, menyebutkan aktivitas harian dan menceritakan rutinitas dengan bahasa sederhana, mengenali benda-benda di sekolah dan mengikuti instruksi dasar pembelajaran, menyebut profesi dan mendeskripsikan pekerjaan dengan kalimat sederhana.";
+            } else {
+                return "Perlu muroja'ah mufrodat dasar (kosakata harian) dan latihan merangkai kalimat bahasa Arab sederhana.";
+            }
+        }
+
+        if (str_contains($mapel, 'tahfidz') || str_contains($mapel, 'qur') || str_contains($mapel, 'tajwid')) {
+            if ($na >= 85) {
+                return "Alhamdulillah ananda memiliki hafalan yang mutqin, menguasai makharijul huruf dan kaidah tajwid, serta istiqomah dalam muroja'ah hafalan.";
+            } elseif ($na >= $kkm) {
+                return "Alhamdulillah ananda lancar dalam membaca Al-Qur'an bertajwid dan bersemangat menambah hafalan ayat-ayat Al-Qur'an.";
+            } else {
+                return "Perlu bimbingan khusus pada kelancaran makharijul huruf dan kedisiplinan jadwal muroja'ah.";
+            }
+        }
+
+        // Generic fallback
+        if ($na >= 85) {
+            return "Alhamdulillah ananda menunjukkan penguasaan yang sangat baik terhadap seluruh tujuan pembelajaran pada mata pelajaran {$namaMapel} dan berakhlak terpuji.";
+        } elseif ($na >= $kkm) {
+            return "Alhamdulillah ananda telah mencapai ketuntasan tujuan pembelajaran pada mata pelajaran {$namaMapel} dengan baik.";
+        } else {
+            return "Perlu bimbingan dan pendampingan lebih lanjut untuk mencapai kriteria ketercapaian tujuan pembelajaran pada mata pelajaran {$namaMapel}.";
+        }
     }
 }
 

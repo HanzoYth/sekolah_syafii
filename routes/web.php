@@ -283,7 +283,12 @@ Route::post('/sk/ambil-jadwal-pengganti', [App\Http\Controllers\siakadController
 Route::post('/sk/batalkan-jadwal-pengganti', [App\Http\Controllers\siakadController::class, 'batalkanJadwalPengganti']);
 Route::post('/sk/tandai-jadwal-kosong', [App\Http\Controllers\siakadController::class, 'tandaiJadwalKosong']);
 
-
+// --- RUTE MASTER KEGIATAN & PRESTASI RAPOR SIAKAD ---
+Route::post('/sk/simpan-kegiatan-sekolah', [App\Http\Controllers\siakadController::class, 'simpanKegiatanSekolah']);
+Route::post('/sk/update-kegiatan-sekolah/{id}', [App\Http\Controllers\siakadController::class, 'updateKegiatanSekolah']);
+Route::get('/sk/hapus-kegiatan-sekolah/{id}', [App\Http\Controllers\siakadController::class, 'hapusKegiatanSekolah']);
+Route::post('/sk/simpan-evaluasi-rapor', [App\Http\Controllers\siakadController::class, 'simpanEvaluasiRapor']);
+Route::post('/sk/simpan-massal-prestasi-walas', [App\Http\Controllers\siakadController::class, 'simpanMassalPrestasiWalas']);
 
 
 

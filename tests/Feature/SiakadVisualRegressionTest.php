@@ -148,4 +148,46 @@ class SiakadVisualRegressionTest extends TestCase
         $this->assertNotNull($shots['mobile']);
         $this->assertNotNull($shots['desktop']);
     }
+
+    /** 7. Visual Regression: Wali Kelas Detail Rapor Siswa & Watermark */
+    public function test_visual_walas_detail_rapor()
+    {
+        $wallas = \App\Models\wallas::where('kelas_id', 6)->first() ?? \App\Models\wallas::first();
+        if ($wallas) {
+            $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->first();
+            if ($siswa) {
+                $session = [
+                    'role' => 'g',
+                    'id' => $wallas->guru_id,
+                    'id_akun' => $wallas->guru ? $wallas->guru->user_id : 1,
+                    'nama' => $wallas->guru ? $wallas->guru->nama : 'Wali Kelas',
+                    'hasLogin' => true,
+                ];
+                $response = $this->withSession($session)->get("/sk/detail-rapor-walas/{$siswa->id}");
+                $response->assertStatus(200);
+                $response->assertSee('LAPORAN HASIL BELAJAR', false);
+                $response->assertSee('Program Kegiatan Sekolah', false);
+                $response->assertSee('Jenis Prestasi', false);
+
+                $shots = $this->captureScreenshots('walas_detail_rapor', $response->getContent());
+                $this->assertNotNull($shots['mobile']);
+                $this->assertNotNull($shots['desktop']);
+            }
+        }
+        $this->assertTrue(true);
+    }
+
+    /** 8. Visual Regression: Siswa Lembar Rapor Digital */
+    public function test_visual_siswa_lembar_rapor()
+    {
+        $response = $this->withSession($this->siswaSession)->get('/sk/rapor-siswa?tab=rapor');
+        $response->assertStatus(200);
+        $response->assertSee('LAPORAN HASIL BELAJAR', false);
+        $response->assertSee('Program Kegiatan Sekolah', false);
+        $response->assertSee('Jenis Prestasi', false);
+
+        $shots = $this->captureScreenshots('siswa_lembar_rapor', $response->getContent());
+        $this->assertNotNull($shots['mobile']);
+        $this->assertNotNull($shots['desktop']);
+    }
 }

@@ -160,8 +160,30 @@
     </div>
 
     <!-- ======================================================== -->
+    <!-- TAB SELECTOR MENU DATA REFERENSI AKADEMIK                -->
+    <!-- ======================================================== -->
+    <div class="flex items-center gap-2 border-b border-slate-200 mb-6 overflow-x-auto pb-1" id="tabNavReferensi">
+        <button type="button" onclick="switchRefTab('tahun')" id="tabBtn-tahun" class="ref-nav-btn active px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap bg-emerald-700 text-white shadow-sm">
+            <i class="fa-solid fa-calendar-days"></i> 1. Tahun Ajaran
+        </button>
+        <button type="button" onclick="switchRefTab('jam')" id="tabBtn-jam" class="ref-nav-btn px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200">
+            <i class="fa-solid fa-clock"></i> 2. Jam Pelajaran
+        </button>
+        <button type="button" onclick="switchRefTab('kegiatan')" id="tabBtn-kegiatan" class="ref-nav-btn px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200">
+            <i class="fa-solid fa-clipboard-list"></i> 3. Program Kegiatan Sekolah
+        </button>
+        <button type="button" onclick="switchRefTab('prestasi')" id="tabBtn-prestasi" class="ref-nav-btn px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200">
+            <i class="fa-solid fa-trophy"></i> 4. Template Jenis Prestasi
+        </button>
+        <button type="button" onclick="switchRefTab('pengesahan')" id="tabBtn-pengesahan" class="ref-nav-btn px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200">
+            <i class="fa-solid fa-file-signature"></i> 5. Pengesahan & Tanggal Rapor
+        </button>
+    </div>
+
+    <!-- ======================================================== -->
     <!-- BAGIAN 1: TAHUN AJARAN                                   -->
     <!-- ======================================================== -->
+    <div id="tabPane-tahun" class="ref-tab-pane">
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
         <div class="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-3">
@@ -261,10 +283,12 @@
             </div>
         </div>
     </div>
+    </div>
 
     <!-- ======================================================== -->
     <!-- BAGIAN 2: JAM PELAJARAN (SISTEM JP PER JENJANG)          -->
     <!-- ======================================================== -->
+    <div id="tabPane-jam" class="ref-tab-pane hidden">
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
         <div class="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-3">
@@ -560,6 +584,297 @@
 <?php unset($__componentOriginalb451ae0a4b2a0f57d42f1e2fea2cf880); ?>
 <?php endif; ?>
             </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- BAGIAN 3: MASTER PROGRAM KEGIATAN SEKOLAH (RAPOR)        -->
+    <!-- ======================================================== -->
+    <div id="tabPane-kegiatan" class="ref-tab-pane hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8" id="sectionKegiatanSekolah">
+            <div class="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-700 flex items-center justify-center text-lg flex-shrink-0">
+                        <i class="fa-solid fa-mosque"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-800">Master Program Kegiatan Sekolah (Rapor)</h3>
+                        <p class="text-xs text-slate-500">Daftar kegiatan resmi yayasan/sekolah yang wajib dinilai pada dokumen Rapor Santri (Wali Kelas hanya menilai, kategori dikelola Admin).</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="openModal('addKegiatanModal')" style="background: #6d28d9; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; transition: background 0.2s;">
+                        <i class="fa-solid fa-plus"></i> Tambah Kegiatan
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="overflow-x-auto">
+                    <?php if (isset($component)) { $__componentOriginalb451ae0a4b2a0f57d42f1e2fea2cf880 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalb451ae0a4b2a0f57d42f1e2fea2cf880 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.table','data' => ['id' => 'tableKegiatanSekolah']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('siakad.ui.table'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['id' => 'tableKegiatanSekolah']); ?>
+                         <?php $__env->slot('thead', null, []); ?> 
+                            <tr>
+                                <th style="width: 60px; text-align: center;">No.</th>
+                                <th style="width: 220px;">Nama Program Kegiatan</th>
+                                <th style="width: 140px; text-align: center;">Jenjang Sasaran</th>
+                                <th>Keterangan Default / Panduan Nilai</th>
+                                <th style="width: 100px; text-align: center;">Status</th>
+                                <th style="width: 110px; text-align: center;">Aksi</th>
+                            </tr>
+                         <?php $__env->endSlot(); ?>
+
+                        <?php if(isset($data_kegiatan) && count($data_kegiatan) > 0): ?>
+                            <?php $__currentLoopData = $data_kegiatan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $idx => $keg): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <tr>
+                                    <td style="text-align: center; font-weight: 600;"><?php echo e($idx + 1); ?></td>
+                                    <td>
+                                        <strong style="color: #1e293b; font-size: 14px;"><?php echo e($keg->nama_kegiatan); ?></strong>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <span class="badge-jenjang <?php echo e($keg->jenjang === 'sd' ? 'badge-sd' : ($keg->jenjang === 'smp' ? 'badge-smp' : ($keg->jenjang === 'tk' ? 'badge-tk' : 'badge-umum'))); ?>">
+                                            <?php echo e(strtoupper($keg->jenjang)); ?>
+
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span style="color: #475569; font-size: 12.5px; line-height: 1.4; display: block;">
+                                            <?php echo e($keg->keterangan_default ?? '-'); ?>
+
+                                        </span>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <?php if($keg->aktif): ?>
+                                            <span style="background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                                                <i class="fa-solid fa-check"></i> Aktif
+                                            </span>
+                                        <?php else: ?>
+                                            <span style="background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                                <i class="fa-solid fa-xmark"></i> Non-Aktif
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <div style="display: flex; gap: 8px; justify-content: center;">
+                                            <button type="button" onclick="openEditKegiatan(<?php echo e($keg->id); ?>, '<?php echo e(addslashes($keg->nama_kegiatan)); ?>', '<?php echo e($keg->jenjang); ?>', '<?php echo e(addslashes($keg->keterangan_default)); ?>', <?php echo e($keg->aktif ? 'true' : 'false'); ?>)" style="background: #e9f2ff; color: #3875c5; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Edit Kegiatan">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </button>
+                                            <button type="button" onclick="openDeleteKegiatan(<?php echo e($keg->id); ?>, '<?php echo e(addslashes($keg->nama_kegiatan)); ?>')" style="background: #f8e9e9; color: #b34d4d; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Hapus Kegiatan">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
+                                    <i class="fa-solid fa-mosque" style="font-size: 32px; margin-bottom: 12px; display: block; color: #cbd5e1;"></i>
+                                    Belum ada Master Program Kegiatan Sekolah yang diatur.
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                     <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalb451ae0a4b2a0f57d42f1e2fea2cf880)): ?>
+<?php $attributes = $__attributesOriginalb451ae0a4b2a0f57d42f1e2fea2cf880; ?>
+<?php unset($__attributesOriginalb451ae0a4b2a0f57d42f1e2fea2cf880); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalb451ae0a4b2a0f57d42f1e2fea2cf880)): ?>
+<?php $component = $__componentOriginalb451ae0a4b2a0f57d42f1e2fea2cf880; ?>
+<?php unset($__componentOriginalb451ae0a4b2a0f57d42f1e2fea2cf880); ?>
+<?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- BAGIAN 4: MASTER JENIS PRESTASI (TEMPLATE RAPOR)         -->
+    <!-- ======================================================== -->
+    <div id="tabPane-prestasi" class="ref-tab-pane hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+            <div class="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-lg flex-shrink-0">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-800">Master Jenis Prestasi (Template Rapor Santri)</h3>
+                        <p class="text-xs text-slate-500">Daftar template capaian prestasi yang otomatis muncul sebagai pilihan cepat bagi wali kelas saat mengisi rapor santri.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="openModal('addPrestasiModal')" style="background: #d97706; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; transition: background 0.2s;">
+                        <i class="fa-solid fa-plus"></i> Tambah Template Prestasi
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="overflow-x-auto">
+                    <?php if (isset($component)) { $__componentOriginalb451ae0a4b2a0f57d42f1e2fea2cf880 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalb451ae0a4b2a0f57d42f1e2fea2cf880 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.table','data' => ['id' => 'tableMasterPrestasi']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('siakad.ui.table'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['id' => 'tableMasterPrestasi']); ?>
+                         <?php $__env->slot('thead', null, []); ?> 
+                            <tr>
+                                <th style="width: 60px; text-align: center;">No.</th>
+                                <th>Nama Capaian / Template Prestasi</th>
+                                <th style="width: 160px; text-align: center;">Kategori Bidang</th>
+                                <th style="width: 120px; text-align: center;">Jenjang</th>
+                                <th style="width: 100px; text-align: center;">Status</th>
+                                <th style="width: 110px; text-align: center;">Aksi</th>
+                            </tr>
+                         <?php $__env->endSlot(); ?>
+
+                        <?php if(isset($data_prestasi) && count($data_prestasi) > 0): ?>
+                            <?php $__currentLoopData = $data_prestasi; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pIdx => $pres): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <tr>
+                                    <td style="text-align: center; font-weight: 600;"><?php echo e($pIdx + 1); ?></td>
+                                    <td>
+                                        <strong style="color: #1e293b; font-size: 14px;"><?php echo e($pres->nama_prestasi); ?></strong>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <span class="badge-jenjang" style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a;">
+                                            <?php echo e($pres->kategori); ?>
+
+                                        </span>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <span class="badge-jenjang <?php echo e($pres->jenjang === 'sd' ? 'badge-sd' : ($pres->jenjang === 'smp' ? 'badge-smp' : ($pres->jenjang === 'tk' ? 'badge-tk' : 'badge-umum'))); ?>">
+                                            <?php echo e(strtoupper($pres->jenjang)); ?>
+
+                                        </span>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <?php if($pres->aktif): ?>
+                                            <span style="background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                                                <i class="fa-solid fa-check"></i> Aktif
+                                            </span>
+                                        <?php else: ?>
+                                            <span style="background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                                <i class="fa-solid fa-xmark"></i> Non-Aktif
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <div style="display: flex; gap: 8px; justify-content: center;">
+                                            <button type="button" onclick="openEditPrestasi(<?php echo e($pres->id); ?>, '<?php echo e(addslashes($pres->nama_prestasi)); ?>', '<?php echo e($pres->kategori); ?>', '<?php echo e($pres->jenjang); ?>', <?php echo e($pres->aktif ? 'true' : 'false'); ?>)" style="background: #e9f2ff; color: #3875c5; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Edit Template Prestasi">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </button>
+                                            <button type="button" onclick="openDeletePrestasi(<?php echo e($pres->id); ?>, '<?php echo e(addslashes($pres->nama_prestasi)); ?>')" style="background: #f8e9e9; color: #b34d4d; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Hapus Template Prestasi">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
+                                    <i class="fa-solid fa-trophy" style="font-size: 32px; margin-bottom: 12px; display: block; color: #cbd5e1;"></i>
+                                    Belum ada Master Template Jenis Prestasi yang diatur.
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                     <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalb451ae0a4b2a0f57d42f1e2fea2cf880)): ?>
+<?php $attributes = $__attributesOriginalb451ae0a4b2a0f57d42f1e2fea2cf880; ?>
+<?php unset($__attributesOriginalb451ae0a4b2a0f57d42f1e2fea2cf880); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalb451ae0a4b2a0f57d42f1e2fea2cf880)): ?>
+<?php $component = $__componentOriginalb451ae0a4b2a0f57d42f1e2fea2cf880; ?>
+<?php unset($__componentOriginalb451ae0a4b2a0f57d42f1e2fea2cf880); ?>
+<?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- BAGIAN 5: PENGESAHAN & TANGGAL PEMBAGIAN RAPOR           -->
+    <!-- ======================================================== -->
+    <div id="tabPane-pengesahan" class="ref-tab-pane hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+            <div class="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg flex-shrink-0">
+                        <i class="fa-solid fa-file-signature"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-800">Pengaturan Pengesahan & Tanggal Pembagian Rapor</h3>
+                        <p class="text-xs text-slate-500">Konfigurasi resmi titimangsa, tanggal cetak rapor, dan kepala sekolah yang berlaku untuk lembar rapor santri.</p>
+                    </div>
+                </div>
+            </div>
+
+            <form action="/sk/simpan-pengaturan-rapor" method="POST" class="p-6">
+                <?php echo csrf_field(); ?>
+                <div class="p-4 mb-6 rounded-xl bg-blue-50/70 border border-blue-200 text-xs text-blue-900 flex items-start gap-3">
+                    <i class="fa-solid fa-circle-info text-blue-600 text-base mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <strong>Sinkronisasi Otomatis ke Wali Kelas & Siswa:</strong>
+                        <p class="mt-0.5 text-blue-800">Nilai tanggal pembagian rapor dan nama kepala sekolah di bawah ini otomatis menjadi standar baku pada lembar rapor semua santri. Bila Anda memperbaruinya di sini, rapor di akun walas dan siswa akan langsung berubah mengikuti pengaturan ini.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Tanggal Pembagian Rapor</label>
+                        <input type="text" name="tanggal_rapor" value="<?php echo e(old('tanggal_rapor', $pengaturan_rapor->tanggal_rapor ?? '20 Desember 2025')); ?>" class="ref-input font-medium" placeholder="Contoh: 20 Desember 2025" required>
+                        <span class="text-[11px] text-slate-400 mt-1 block">Format teks yang akan tercetak di bagian titi mangsa rapor (misal: Tinggede, 20 Desember 2025).</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Tempat / Kota Penerbitan</label>
+                        <input type="text" name="tempat_rapor" value="<?php echo e(old('tempat_rapor', $pengaturan_rapor->tempat_rapor ?? 'Tinggede')); ?>" class="ref-input font-medium" placeholder="Contoh: Tinggede" required>
+                        <span class="text-[11px] text-slate-400 mt-1 block">Nama daerah / desa / kota lokasi madrasah / sekolah.</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Nama Kepala Sekolah & Gelar</label>
+                        <input type="text" name="nama_kepsek" value="<?php echo e(old('nama_kepsek', $pengaturan_rapor->nama_kepsek ?? 'Rajihul Haq, S.Sos')); ?>" class="ref-input font-medium font-bold text-slate-800" placeholder="Contoh: Rajihul Haq, S.Sos" required>
+                        <span class="text-[11px] text-slate-400 mt-1 block">Nama pejabat kepala sekolah penandatangan dokumen hasil belajar.</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">NIP / Identitas Kepsek</label>
+                        <input type="text" name="nip_kepsek" value="<?php echo e(old('nip_kepsek', $pengaturan_rapor->nip_kepsek ?? '-')); ?>" class="ref-input font-medium" placeholder="Kosongkan atau beri tanda - jika tidak ada">
+                        <span class="text-[11px] text-slate-400 mt-1 block">Nomor Induk Pegawai kepala sekolah (opsional).</span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Template Default Catatan Wali Kelas</label>
+                        <textarea name="catatan_walas_template" rows="3" class="ref-input font-normal leading-relaxed" placeholder="Tuliskan template pesan wali kelas default..."><?php echo e(old('catatan_walas_template', $pengaturan_rapor->catatan_walas_template ?? '')); ?></textarea>
+                        <span class="text-[11px] text-slate-400 mt-1 block">Gunakan tag <code>{nama}</code> untuk menyisipkan nama santri secara otomatis. Template ini akan menjadi teks saran awal saat guru membuka lembar rapor.</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-4 border-t border-slate-100">
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan Rapor
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1101,6 +1416,228 @@
 <?php unset($__componentOriginale960230fd71228156fe70d1ba75c1455); ?>
 <?php endif; ?>
 
+    <!-- Modal Tambah Kegiatan Sekolah (Admin) -->
+    <?php if (isset($component)) { $__componentOriginale960230fd71228156fe70d1ba75c1455 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale960230fd71228156fe70d1ba75c1455 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.modal','data' => ['id' => 'addKegiatanModal','title' => 'Tambah Master Kegiatan Sekolah','icon' => 'fa-mosque','iconColor' => '#6d28d9','iconBg' => '#ede9fe']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('siakad.ui.modal'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['id' => 'addKegiatanModal','title' => 'Tambah Master Kegiatan Sekolah','icon' => 'fa-mosque','iconColor' => '#6d28d9','iconBg' => '#ede9fe']); ?>
+        <form action="/sk/simpan-kegiatan-sekolah" method="POST">
+            <?php echo csrf_field(); ?>
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Nama Program Kegiatan</label>
+                <input type="text" name="nama_kegiatan" class="ref-input" required placeholder="Contoh: Mabit / Qiyamul Lail">
+            </div>
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Jenjang Sasaran</label>
+                <select name="jenjang" class="ref-input" required>
+                    <option value="semua">Semua Jenjang (Umum)</option>
+                    <option value="smp">SMP</option>
+                    <option value="sd">SD</option>
+                    <option value="tk">TK</option>
+                    <option value="sma">SMA</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Keterangan / Panduan Default</label>
+                <textarea name="keterangan_default" rows="3" class="ref-input" placeholder="Template kalimat keterangan saat santri mendapat predikat baik..."></textarea>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="closeModal('addKegiatanModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
+                <button type="submit" style="padding: 10px 16px; border: none; background: #6d28d9; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-check"></i> Simpan Kegiatan
+                </button>
+            </div>
+        </form>
+     <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale960230fd71228156fe70d1ba75c1455)): ?>
+<?php $attributes = $__attributesOriginale960230fd71228156fe70d1ba75c1455; ?>
+<?php unset($__attributesOriginale960230fd71228156fe70d1ba75c1455); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale960230fd71228156fe70d1ba75c1455)): ?>
+<?php $component = $__componentOriginale960230fd71228156fe70d1ba75c1455; ?>
+<?php unset($__componentOriginale960230fd71228156fe70d1ba75c1455); ?>
+<?php endif; ?>
+
+    <!-- Modal Edit Kegiatan Sekolah (Admin) -->
+    <?php if (isset($component)) { $__componentOriginale960230fd71228156fe70d1ba75c1455 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale960230fd71228156fe70d1ba75c1455 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.modal','data' => ['id' => 'editKegiatanModal','title' => 'Edit Master Kegiatan Sekolah','icon' => 'fa-pen-to-square','iconColor' => '#2563eb','iconBg' => '#dbeafe']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('siakad.ui.modal'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['id' => 'editKegiatanModal','title' => 'Edit Master Kegiatan Sekolah','icon' => 'fa-pen-to-square','iconColor' => '#2563eb','iconBg' => '#dbeafe']); ?>
+        <form id="editKegiatanForm" action="" method="POST">
+            <?php echo csrf_field(); ?>
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Nama Program Kegiatan</label>
+                <input type="text" id="ekNamaKegiatan" name="nama_kegiatan" class="ref-input" required>
+            </div>
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Jenjang Sasaran</label>
+                <select id="ekJenjang" name="jenjang" class="ref-input" required>
+                    <option value="semua">Semua Jenjang (Umum)</option>
+                    <option value="smp">SMP</option>
+                    <option value="sd">SD</option>
+                    <option value="tk">TK</option>
+                    <option value="sma">SMA</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Keterangan / Panduan Default</label>
+                <textarea id="ekKeterangan" name="keterangan_default" rows="3" class="ref-input"></textarea>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: #334155; font-size: 13px; cursor: pointer;">
+                    <input type="checkbox" id="ekAktif" name="aktif" value="1" style="width: 16px; height: 16px; accent-color: #6d28d9;">
+                    <span>Status Aktif (Tampil di Rapor Santri)</span>
+                </label>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="closeModal('editKegiatanModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
+                <button type="submit" style="padding: 10px 16px; border: none; background: #2563eb; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-check"></i> Perbarui Kegiatan
+                </button>
+            </div>
+        </form>
+     <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale960230fd71228156fe70d1ba75c1455)): ?>
+<?php $attributes = $__attributesOriginale960230fd71228156fe70d1ba75c1455; ?>
+<?php unset($__attributesOriginale960230fd71228156fe70d1ba75c1455); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale960230fd71228156fe70d1ba75c1455)): ?>
+<?php $component = $__componentOriginale960230fd71228156fe70d1ba75c1455; ?>
+<?php unset($__componentOriginale960230fd71228156fe70d1ba75c1455); ?>
+<?php endif; ?>
+
+    <!-- Modal Tambah Master Prestasi -->
+    <?php if (isset($component)) { $__componentOriginale960230fd71228156fe70d1ba75c1455 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale960230fd71228156fe70d1ba75c1455 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.modal','data' => ['id' => 'addPrestasiModal','title' => 'Tambah Template Jenis Prestasi','icon' => 'fa-trophy','iconColor' => '#d97706','iconBg' => '#fef3c7']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('siakad.ui.modal'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['id' => 'addPrestasiModal','title' => 'Tambah Template Jenis Prestasi','icon' => 'fa-trophy','iconColor' => '#d97706','iconBg' => '#fef3c7']); ?>
+        <form action="/sk/simpan-master-prestasi" method="POST">
+            <?php echo csrf_field(); ?>
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Nama Capaian / Template Prestasi</label>
+                <input type="text" name="nama_prestasi" class="ref-input" required placeholder="Contoh: Tasmi' hafalan 2 Juz sekali duduk">
+            </div>
+            <div style="display: flex; gap: 10px; margin-bottom: 14px;">
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Kategori Bidang</label>
+                    <select name="kategori" class="ref-input" required>
+                        <option value="Tahfidz">Tahfidz & Qur'an</option>
+                        <option value="Lomba">Perlombaan / Kejuaraan</option>
+                        <option value="Bahasa">Bahasa Arab & Inggris</option>
+                        <option value="Karakter">Karakter & Ibadah</option>
+                        <option value="Akademik">Akademik & Mapel</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Jenjang Sasaran</label>
+                    <select name="jenjang" class="ref-input" required>
+                        <option value="semua">Semua Jenjang</option>
+                        <option value="sd">SD</option>
+                        <option value="smp">SMP</option>
+                        <option value="tk">TK</option>
+                    </select>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="closeModal('addPrestasiModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
+                <button type="submit" style="padding: 10px 16px; border: none; background: #d97706; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-check"></i> Simpan Template
+                </button>
+            </div>
+        </form>
+     <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale960230fd71228156fe70d1ba75c1455)): ?>
+<?php $attributes = $__attributesOriginale960230fd71228156fe70d1ba75c1455; ?>
+<?php unset($__attributesOriginale960230fd71228156fe70d1ba75c1455); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale960230fd71228156fe70d1ba75c1455)): ?>
+<?php $component = $__componentOriginale960230fd71228156fe70d1ba75c1455; ?>
+<?php unset($__componentOriginale960230fd71228156fe70d1ba75c1455); ?>
+<?php endif; ?>
+
+    <!-- Modal Edit Master Prestasi -->
+    <?php if (isset($component)) { $__componentOriginale960230fd71228156fe70d1ba75c1455 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale960230fd71228156fe70d1ba75c1455 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.modal','data' => ['id' => 'editPrestasiModal','title' => 'Edit Template Jenis Prestasi','icon' => 'fa-pen-to-square','iconColor' => '#2563eb','iconBg' => '#dbeafe']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('siakad.ui.modal'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['id' => 'editPrestasiModal','title' => 'Edit Template Jenis Prestasi','icon' => 'fa-pen-to-square','iconColor' => '#2563eb','iconBg' => '#dbeafe']); ?>
+        <form id="editPrestasiForm" action="" method="POST">
+            <?php echo csrf_field(); ?>
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Nama Capaian / Template Prestasi</label>
+                <input type="text" id="epNamaPrestasi" name="nama_prestasi" class="ref-input" required>
+            </div>
+            <div style="display: flex; gap: 10px; margin-bottom: 14px;">
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Kategori Bidang</label>
+                    <select id="epKategori" name="kategori" class="ref-input" required>
+                        <option value="Tahfidz">Tahfidz & Qur'an</option>
+                        <option value="Lomba">Perlombaan / Kejuaraan</option>
+                        <option value="Bahasa">Bahasa Arab & Inggris</option>
+                        <option value="Karakter">Karakter & Ibadah</option>
+                        <option value="Akademik">Akademik & Mapel</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Jenjang Sasaran</label>
+                    <select id="epJenjang" name="jenjang" class="ref-input" required>
+                        <option value="semua">Semua Jenjang</option>
+                        <option value="sd">SD</option>
+                        <option value="smp">SMP</option>
+                        <option value="tk">TK</option>
+                    </select>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 22px;">
+                <input type="checkbox" name="aktif" id="epAktif" value="1" style="width: 18px; height: 18px; accent-color: #2563eb; cursor: pointer;">
+                <label for="epAktif" style="margin: 0; cursor: pointer; font-size: 13.5px; color: #334155; font-weight: 500;">Status Aktif (Tampil di Pilihan Wali Kelas)</label>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="closeModal('editPrestasiModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
+                <button type="submit" style="padding: 10px 16px; border: none; background: #2563eb; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-check"></i> Perbarui Template
+                </button>
+            </div>
+        </form>
+     <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale960230fd71228156fe70d1ba75c1455)): ?>
+<?php $attributes = $__attributesOriginale960230fd71228156fe70d1ba75c1455; ?>
+<?php unset($__attributesOriginale960230fd71228156fe70d1ba75c1455); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale960230fd71228156fe70d1ba75c1455)): ?>
+<?php $component = $__componentOriginale960230fd71228156fe70d1ba75c1455; ?>
+<?php unset($__componentOriginale960230fd71228156fe70d1ba75c1455); ?>
+<?php endif; ?>
+
     <script>
         let deleteTargetUrl = '';
 
@@ -1397,6 +1934,60 @@
             openModal('deleteModal');
         }
 
+        function openEditKegiatan(id, nama, jenjang, keterangan, aktif) {
+            document.getElementById('editKegiatanForm').action = "/sk/update-kegiatan-sekolah/" + id;
+            document.getElementById('ekNamaKegiatan').value = nama;
+            document.getElementById('ekJenjang').value = jenjang;
+            document.getElementById('ekKeterangan').value = keterangan || '';
+            document.getElementById('ekAktif').checked = !!aktif;
+            openModal('editKegiatanModal');
+        }
+
+        function openDeleteKegiatan(id, nama) {
+            deleteTargetUrl = "/sk/hapus-kegiatan-sekolah/" + id;
+            document.getElementById('delName').textContent = "Program Kegiatan: " + nama;
+            openModal('deleteModal');
+        }
+
+        function openEditPrestasi(id, nama, kategori, jenjang, aktif) {
+            document.getElementById('editPrestasiForm').action = "/sk/update-master-prestasi/" + id;
+            document.getElementById('epNamaPrestasi').value = nama;
+            document.getElementById('epKategori').value = kategori;
+            document.getElementById('epJenjang').value = jenjang;
+            document.getElementById('epAktif').checked = !!aktif;
+            openModal('editPrestasiModal');
+        }
+
+        function openDeletePrestasi(id, nama) {
+            deleteTargetUrl = "/sk/hapus-master-prestasi/" + id;
+            document.getElementById('delName').textContent = "Template Prestasi: " + nama;
+            openModal('deleteModal');
+        }
+
+        // Switcher Tab Data Referensi (Selection Tabs)
+        function switchRefTab(tab) {
+            document.querySelectorAll('.ref-tab-pane').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.ref-nav-btn').forEach(btn => {
+                btn.classList.remove('bg-emerald-700', 'text-white', 'shadow-sm', 'active');
+                btn.classList.add('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
+            });
+
+            const targetPane = document.getElementById('tabPane-' + tab);
+            const targetBtn = document.getElementById('tabBtn-' + tab);
+            if (targetPane) targetPane.classList.remove('hidden');
+            if (targetBtn) {
+                targetBtn.classList.remove('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
+                targetBtn.classList.add('bg-emerald-700', 'text-white', 'shadow-sm', 'active');
+            }
+
+            try {
+                const url = new URL(window.location);
+                url.searchParams.set('tab', tab);
+                window.history.replaceState({}, '', url);
+                localStorage.setItem('siakad_ref_selected_tab', tab);
+            } catch(e) {}
+        }
+
         document.getElementById('btnConfirmDelete').addEventListener('click', function() {
             if (deleteTargetUrl) {
                 window.location.href = deleteTargetUrl;
@@ -1420,6 +2011,19 @@
             const activeBtn = document.querySelector(`.jp-tab-btn[data-jenjang-target="${initialJenjang}"]`) || firstTabBtn;
             if (activeBtn) {
                 filterJamJenjang(initialJenjang, activeBtn);
+            }
+
+            // Inisialisasi Tab Data Referensi Aktif
+            let initialRefTab = '<?php echo e(request("tab")); ?>';
+            if (!initialRefTab) {
+                try {
+                    initialRefTab = localStorage.getItem('siakad_ref_selected_tab');
+                } catch(e) {}
+            }
+            if (initialRefTab && document.getElementById('tabPane-' + initialRefTab)) {
+                switchRefTab(initialRefTab);
+            } else {
+                switchRefTab('tahun');
             }
         });
     </script>

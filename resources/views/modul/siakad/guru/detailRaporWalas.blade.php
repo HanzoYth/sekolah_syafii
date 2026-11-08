@@ -1,6 +1,6 @@
 <x-siakad-layout 
     title="Cetak Rapor Siswa" 
-    description="Pratinjau dokumen Laporan Hasil Belajar Siswa (Rapor) dan sesuaikan catatan wali kelas sebelum dicetak." 
+    description="Laporan Hasil Belajar (Rapor) digital ananda {{ $siswa->nama }} sesuai standar Kurikulum Merdeka & Pesantren." 
     position="Guru Wali Kelas" 
     initials="WK">
 
@@ -18,225 +18,913 @@
         </li>
     </x-slot>
 
-    <!-- Panel Kontrol Wali Kelas (Tidak ikut tercetak saat print) -->
-    <div class="no-print bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+    <!-- ============================================================ -->
+    <!-- PANEL KONTROL KUSTOMISASI WALI KELAS (NO-PRINT)             -->
+    <!-- ============================================================ -->
+    <div class="no-print bg-white rounded-2xl shadow-sm border border-slate-200/90 p-5 sm:p-6 mb-6">
+        <!-- Top Toolbar -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-100">
             <div class="flex items-center gap-3">
-                <a href="/sk/rapor-walas" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors">
+                <a href="/sk/rapor-walas" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors shadow-xs">
                     <i class="fa-solid fa-arrow-left text-xs"></i>
                 </a>
                 <div>
-                    <h3 class="text-base font-bold text-slate-800">Kustomisasi & Pratinjau Cetak Rapor: {{ $siswa->nama }}</h3>
-                    <p class="text-xs text-slate-500">Sesuaikan Catatan Wali Kelas di bawah ini sebelum menekan tombol Cetak Rapor</p>
+                    <div class="flex items-center gap-2">
+                        <h3 class="text-base sm:text-lg font-bold text-slate-800">Kustomisasi Rapor: {{ $siswa->nama }}</h3>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-0.5">Sesuaikan catatan, kegiatan sekolah, dan prestasi santri secara live sebelum mencetak.</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2.5">
-                <a href="/sk/rapor-walas?tab=nilai" class="px-4 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold transition-colors flex items-center gap-1.5">
-                    <i class="fa-solid fa-sliders"></i> Edit Nilai
+            <div class="flex items-center gap-2 flex-wrap">
+                <button type="button" onclick="syncToDatabase(true)" id="btnManualSaveDb" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5">
+                    <i class="fa-solid fa-floppy-disk text-[11px]"></i> Simpan Rapor
+                </button>
+                <button type="button" onclick="resetToDefaultTemplates()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-rotate-left text-[11px]"></i> Reset Template
+                </button>
+                <a href="/sk/rapor-walas?tab=nilai{{ session('role') === 'a' ? '&kelas_id='.$siswa->kelas_id : '' }}" class="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-sliders text-[11px]"></i> Edit Nilai
                 </a>
-                <button type="button" onclick="window.print()" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors shadow-sm flex items-center gap-2">
-                    <i class="fa-solid fa-print"></i> Cetak Rapor
+                <button type="button" onclick="window.print()" class="px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm hover:shadow flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> Cetak Dokumen Rapor
                 </button>
             </div>
         </div>
 
-        @php
-            $defaultCatatan = ($rata_rata_rapor ?? 0) >= 85 
-                ? "Ananda {$siswa->nama} menunjukkan prestasi akademik yang sangat baik dan aktif dalam pembelajaran di kelas. Pertahankan semangat belajar dan terus tingkatkan potensi diri."
-                : (($rata_rata_rapor ?? 0) >= 75 
-                    ? "Ananda {$siswa->nama} telah mengikuti kegiatan pembelajaran dengan baik dan mencapai ketuntasan belajar. Tingkatkan lagi kedisiplinan dan keaktifan belajar di semester berikutnya."
-                    : "Ananda {$siswa->nama} perlu lebih giat berlatih dan mengulang materi pelajaran di rumah agar capaian akademik pada semester berikutnya dapat meningkat lebih optimal.");
-        @endphp
+        <!-- Tab Navigation Panel Kontrol -->
+        <div class="mt-5 border-b border-slate-200">
+            <nav class="flex space-x-2 sm:space-x-4 overflow-x-auto pb-px" id="editorTabs">
+                <button type="button" onclick="switchEditorTab('tab-catatan')" id="tabBtn-catatan" class="tab-btn active px-3.5 py-2 text-xs font-bold border-b-2 border-emerald-600 text-emerald-700 flex items-center gap-1.5 whitespace-nowrap">
+                    <i class="fa-solid fa-comment-dots"></i> 1. Catatan Wali Kelas
+                </button>
+                <button type="button" onclick="switchEditorTab('tab-kegiatan')" id="tabBtn-kegiatan" class="tab-btn px-3.5 py-2 text-xs font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+                    <i class="fa-solid fa-mosque"></i> 2. Program Kegiatan Sekolah
+                </button>
+                <button type="button" onclick="switchEditorTab('tab-prestasi')" id="tabBtn-prestasi" class="tab-btn px-3.5 py-2 text-xs font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+                    <i class="fa-solid fa-trophy"></i> 3. Jenis Prestasi
+                </button>
+                <button type="button" onclick="switchEditorTab('tab-pengesahan')" id="tabBtn-pengesahan" class="tab-btn px-3.5 py-2 text-xs font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+                    <i class="fa-solid fa-file-signature"></i> 4. Pengesahan & Tanggal
+                </button>
+            </nav>
+        </div>
 
-        <div class="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div class="lg:col-span-2">
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                    <i class="fa-solid fa-pen-nib text-emerald-600 mr-1"></i> Catatan & Evaluasi Wali Kelas (Tampil di Rapor)
-                </label>
-                <textarea id="inputCatatanWalas" rows="2" oninput="updateCatatanPreview(this.value)"
-                          class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors">{{ $defaultCatatan }}</textarea>
+        <!-- Konten Tab 1: Catatan Wali Kelas -->
+        <div id="tabContent-catatan" class="tab-content py-4">
+            <div class="flex flex-col lg:flex-row gap-5">
+                <div class="flex-1">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-pen-fancy text-emerald-600"></i> Isi Catatan Wali Kelas
+                        </label>
+                        <span class="text-[11px] text-slate-400">Dapat diedit bebas per siswa</span>
+                    </div>
+                    <textarea id="inputCatatanWalas" rows="4" oninput="handleCatatanInput(this.value)"
+                              class="w-full px-3.5 py-2.5 text-sm bg-slate-50/70 border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white transition-all leading-relaxed"
+                              placeholder="Tuliskan catatan wali kelas untuk ananda..."></textarea>
+                    
+                    <!-- Quick Template Pills -->
+                    <div class="mt-3">
+                        <span class="text-[11px] font-bold text-slate-500 block mb-1.5">⚡ Pilih Template Cepat:</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button type="button" onclick="applyCatatanTemplate(1)" class="px-2.5 py-1 text-[11px] font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition-colors">
+                                🌟 Standar Dokumen (Zaky)
+                            </button>
+                            <button type="button" onclick="applyCatatanTemplate(2)" class="px-2.5 py-1 text-[11px] font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors">
+                                💎 Prestasi Sangat Baik (Mumtaz)
+                            </button>
+                            <button type="button" onclick="applyCatatanTemplate(3)" class="px-2.5 py-1 text-[11px] font-medium bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-lg border border-amber-200 transition-colors">
+                                📘 Baik & Berkembang (Jayyid)
+                            </button>
+                            <button type="button" onclick="applyCatatanTemplate(4)" class="px-2.5 py-1 text-[11px] font-medium bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg border border-rose-200 transition-colors">
+                                💡 Motivasi Peningkatan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Box Ringkasan -->
+                <div class="w-full lg:w-72 bg-slate-50 rounded-xl p-4 border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3 pb-2 border-b border-slate-200">Ringkasan Akademik</h4>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500">Jumlah Nilai:</span>
+                                <span class="font-bold text-slate-800">{{ number_format($total_nilai_akhir ?? 0, 0) }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500">Rata-rata:</span>
+                                <span class="font-extrabold text-emerald-700 text-sm">{{ number_format($rata_rata_rapor ?? 0, 0) }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500">Total Mapel:</span>
+                                <span class="font-bold text-slate-800">{{ count($rekap_nilai) }} Mapel</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500">Ketidakhadiran:</span>
+                                <span class="font-bold text-slate-800">{{ ($rekap_absensi['sakit'] ?? 0) + ($rekap_absensi['izin'] ?? 0) + ($rekap_absensi['alpa'] ?? 0) }} Hari</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-200 text-[11px] text-slate-500 flex items-center gap-1.5">
+                        <i class="fa-solid fa-watermark text-slate-400"></i>
+                        <span>Watermark: <strong class="text-slate-700 uppercase">{{ $raporMeta['jenjang'] === 'tk' ? 'Kosong (Tanpa Logo)' : 'Logo ' . $raporMeta['jenjang'] }}</strong></span>
+                    </div>
+                </div>
             </div>
-            <div class="bg-slate-50 rounded-lg p-3.5 border border-slate-200 flex flex-col justify-between">
-                <div class="flex items-center justify-between text-xs">
-                    <span class="text-slate-500 font-medium">Rata-rata Nilai Rapor:</span>
-                    <span class="font-bold text-emerald-700 text-sm">{{ number_format($rata_rata_rapor ?? 0, 1) }}</span>
+        </div>
+
+        <!-- Konten Tab 2: Program Kegiatan Sekolah -->
+        <div id="tabContent-kegiatan" class="tab-content hidden py-4">
+            <div class="mb-3 flex items-center justify-between">
+                <div>
+                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Kelola 4 Program Kegiatan Sekolah</h4>
+                    <p class="text-xs text-slate-500">Ubah predikat untuk mengganti keterangan otomatis, atau edit kalimat secara langsung per santri.</p>
                 </div>
-                <div class="flex items-center justify-between text-xs mt-1.5">
-                    <span class="text-slate-500 font-medium">Mata Pelajaran Dinilai:</span>
-                    <span class="font-bold text-slate-800">{{ count($rekap_nilai) }} Mapel</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="kegiatanEditorList">
+                <!-- Di-render dinamis oleh JavaScript -->
+            </div>
+        </div>
+
+        <!-- Konten Tab 3: Jenis Prestasi -->
+        <div id="tabContent-prestasi" class="tab-content hidden py-4">
+            <div class="mb-3 flex items-center justify-between">
+                <div>
+                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Kelola Prestasi Santri</h4>
+                    <p class="text-xs text-slate-500">Tambahkan capaian hafalan Al-Qur'an, lomba, atau prestasi lainnya.</p>
                 </div>
-                <div class="flex items-center justify-between text-xs mt-1.5">
-                    <span class="text-slate-500 font-medium">Total Ketidakhadiran:</span>
-                    <span class="font-bold text-slate-800">{{ ($rekap_absensi['sakit'] ?? 0) + ($rekap_absensi['izin'] ?? 0) + ($rekap_absensi['alpa'] ?? 0) }} Hari</span>
+                <button type="button" onclick="addPrestasiRow()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors">
+                    <i class="fa-solid fa-plus text-[10px]"></i> Tambah Baris
+                </button>
+            </div>
+
+            <div class="space-y-2.5" id="prestasiEditorList">
+                <!-- Di-render dinamis oleh JavaScript -->
+            </div>
+
+            <div class="mt-3">
+                <span class="text-[11px] font-semibold text-slate-500 block mb-1">⚡ Template Prestasi Resmi (Dikelola Admin):</span>
+                <div class="flex flex-wrap gap-1.5">
+                    @if(isset($raporMeta['daftar_preset_prestasi']) && count($raporMeta['daftar_preset_prestasi']) > 0)
+                        @foreach($raporMeta['daftar_preset_prestasi'] as $preset)
+                            <button type="button" onclick="addPrestasiPreset(@json($preset))" class="px-2 py-0.5 text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-800 rounded border border-amber-200 transition-colors">
+                                + {{ $preset }}
+                            </button>
+                        @endforeach
+                    @else
+                        <button type="button" onclick="addPrestasiPreset('Tasmi hafalan juz 30 & 29 sekali duduk')" class="px-2 py-0.5 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded border border-slate-200">
+                            + Tasmi hafalan juz 30 & 29 sekali duduk
+                        </button>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <!-- Konten Tab 4: Pengesahan & Tanggal -->
+        <div id="tabContent-pengesahan" class="tab-content hidden py-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                        Titimangsa (Tempat & Tanggal)
+                    </label>
+                    <input type="text" id="inputTanggalRapor" oninput="handleTanggalInput(this.value)"
+                           value="{{ $raporMeta['tanggal_rapor'] }}"
+                           class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white">
+                    <span class="text-[10px] text-slate-400 mt-1 block">Contoh: Sigi, 20 Desember 2025</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                        Nama Kepala Sekolah
+                    </label>
+                    <input type="text" id="inputNamaKepsek" oninput="handleKepsekInput(this.value)"
+                           value="{{ $raporMeta['nama_kepsek'] }}"
+                           class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white">
+                    <span class="text-[10px] text-slate-400 mt-1 block">Pejabat Kepala Sekolah pengesah</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                        Nama Wali Kelas
+                    </label>
+                    <input type="text" id="inputNamaWalas" oninput="handleWalasInput(this.value)"
+                           value="{{ $wallas->guru->nama ?? 'Wali Kelas' }}"
+                           class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white">
+                    <span class="text-[10px] text-slate-400 mt-1 block">Nama wali kelas pengampu</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- DOKUMEN RAPOR (AREA CETAK) -->
-    <div class="print-area bg-white rounded-xl shadow-sm border border-slate-200 p-8 sm:p-12 text-slate-900">
-        <!-- Kop Rapor -->
-        <div class="text-center border-b-2 border-slate-800 pb-5 mb-6">
-            <h1 class="text-xl sm:text-2xl font-extrabold uppercase tracking-wide text-slate-900">Laporan Hasil Capaian Belajar Peserta Didik</h1>
-            <p class="text-sm font-semibold text-slate-600 mt-1">
-                Tahun Ajaran {{ $tahun_aktif->nama ?? '2026/2027' }} • Semester {{ ucfirst($tahun_aktif->semester ?? 'Ganjil') }}
-            </p>
-        </div>
+    <!-- ============================================================ -->
+    <!-- DOKUMEN RAPOR RESMI (AREA CETAK / PRINT AREA)                -->
+    <!-- SESUAI ACUAN FILE WORD (zaky.docx)                           -->
+    <!-- ============================================================ -->
+    <div class="print-area bg-white rounded-2xl shadow-sm border border-slate-200 p-8 sm:p-12 text-slate-900 relative overflow-hidden">
+        
+        <!-- WATERMARK LOGO TRANSPARAN DI TENGAH LEMBAR RAPOR -->
+        <!-- SD: Logo SD Qu | SMP: Logo SMP Qu | TK: KOSONG TANPA LOGO -->
+        @if(!empty($raporMeta['watermark_logo']))
+            <div class="watermark-overlay" aria-hidden="true">
+                <img src="{{ $raporMeta['watermark_logo'] }}" alt="Watermark Lembaga" class="watermark-image">
+            </div>
+        @endif
 
-        <!-- Identitas Siswa -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm mb-6 pb-4 border-b border-slate-200">
-            <div class="flex">
-                <span class="w-36 font-semibold text-slate-600">Nama Peserta Didik</span>
-                <span class="mr-2">:</span>
-                <span class="font-bold text-slate-900 uppercase">{{ $siswa->nama }}</span>
-            </div>
-            <div class="flex">
-                <span class="w-36 font-semibold text-slate-600">Kelas / Rombel</span>
-                <span class="mr-2">:</span>
-                <span class="font-bold text-slate-900">{{ $wallas->ruangKelas->nama_ruang ?? '-' }}</span>
-            </div>
-            <div class="flex">
-                <span class="w-36 font-semibold text-slate-600">Nomor Induk / NIS</span>
-                <span class="mr-2">:</span>
-                <span class="font-mono font-semibold text-slate-800">{{ $siswa->nis ?? '-' }}</span>
-            </div>
-            <div class="flex">
-                <span class="w-36 font-semibold text-slate-600">Wali Kelas</span>
-                <span class="mr-2">:</span>
-                <span class="font-semibold text-slate-800">{{ $wallas->guru->nama ?? '-' }}</span>
-            </div>
-        </div>
+        <div class="rapor-content-container relative z-10">
+            <!-- 1. IDENTITAS SISWA & SEKOLAH (2 KOLOM KOP) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1.5 text-xs sm:text-sm font-sans mb-6 pb-4 border-b border-slate-300">
+                <!-- Kolom Kiri -->
+                <div class="space-y-1">
+                    <div class="flex">
+                        <span class="w-28 sm:w-32 font-bold text-slate-800">Nama Sekolah</span>
+                        <span class="mr-2 font-bold">:</span>
+                        <span class="font-bold text-slate-900 uppercase">{{ $raporMeta['nama_sekolah'] }}</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-28 sm:w-32 font-semibold text-slate-700">Nama</span>
+                        <span class="mr-2">:</span>
+                        <span class="font-bold text-slate-900 uppercase">{{ $siswa->nama }}</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-28 sm:w-32 font-semibold text-slate-700">NISN</span>
+                        <span class="mr-2">:</span>
+                        <span class="font-mono font-medium text-slate-800">{{ $siswa->nis ?? '-' }}</span>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="w-28 sm:w-32 font-semibold text-slate-700 flex-shrink-0">Alamat</span>
+                        <span class="mr-2 flex-shrink-0">:</span>
+                        <span class="text-slate-800 leading-tight">{{ $raporMeta['alamat_sekolah'] }}</span>
+                    </div>
+                </div>
 
-        <!-- A. Capaian Nilai Akademik -->
-        <div class="mb-6">
-            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 mb-2.5">A. Capaian Nilai Akademik</h3>
-            <div class="overflow-x-auto w-full">
-                <table class="w-full border-collapse border border-slate-400 text-xs sm:text-sm min-w-[620px]">
-                <thead>
-                    <tr class="bg-slate-100 text-slate-800 font-bold text-center">
-                        <th class="border border-slate-400 px-3 py-2.5 w-10">No</th>
-                        <th class="border border-slate-400 px-3 py-2.5 text-left">Mata Pelajaran</th>
-                        <th class="border border-slate-400 px-3 py-2.5 w-16">KKM</th>
-                        <th class="border border-slate-400 px-3 py-2.5 w-24">Nilai Akhir</th>
-                        <th class="border border-slate-400 px-3 py-2.5 w-20">Predikat</th>
-                        <th class="border border-slate-400 px-3 py-2.5 w-28">Ketuntasan</th>
-                        <th class="border border-slate-400 px-3 py-2.5 text-left">Deskripsi Capaian Kompetensi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php $i = 1; @endphp
-                    @if(count($rekap_nilai) > 0)
-                        @foreach($rekap_nilai as $mapel => $data)
-                            @php 
-                                $adaNilai = !empty($data['ada_nilai']);
-                                $na = $data['nilai_akhir']; 
-                                $kkm = $data['kkm'] ?? 75;
-                                if ($adaNilai) {
-                                    $predikat = 'D';
-                                    if($na >= 90) $predikat = 'A';
-                                    elseif($na >= 80) $predikat = 'B';
-                                    elseif($na >= 70) $predikat = 'C';
-                                    
-                                    $tuntas = $na >= $kkm;
-                                    $deskripsi = $na >= 90 
-                                        ? "Sangat baik dalam menguasai seluruh kompetensi dasar mata pelajaran {$mapel}."
-                                        : ($na >= $kkm 
-                                            ? "Baik dan tuntas dalam memahami materi pokok mata pelajaran {$mapel}."
-                                            : "Perlu bimbingan dan penguatan lebih lanjut pada kompetensi dasar {$mapel}.");
-                                } else {
-                                    $predikat = '-';
-                                    $tuntas = false;
-                                    $deskripsi = "Nilai belum diinput oleh Guru Pengajar.";
-                                }
-                            @endphp
+                <!-- Kolom Kanan -->
+                <div class="space-y-1 md:pl-4">
+                    <div class="flex">
+                        <span class="w-32 sm:w-36 font-semibold text-slate-700">Kelas</span>
+                        <span class="mr-2">:</span>
+                        <span class="font-bold text-slate-900">{{ $raporMeta['kelas_label'] }}</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-32 sm:w-36 font-semibold text-slate-700">Fase</span>
+                        <span class="mr-2">:</span>
+                        <span class="font-bold text-slate-900">{{ $raporMeta['fase'] }}</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-32 sm:w-36 font-semibold text-slate-700">Semester</span>
+                        <span class="mr-2">:</span>
+                        <span class="text-slate-900 font-medium">{{ ($tahun_aktif->semester ?? 1) == 1 ? '1 / Ganjil' : '2 / Genap' }}</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-32 sm:w-36 font-semibold text-slate-700">Tahun Pelajaran</span>
+                        <span class="mr-2">:</span>
+                        <span class="font-semibold text-slate-900">{{ $tahun_aktif->nama ?? '2025/2026' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. JUDUL RAPOR -->
+            <div class="text-center my-6">
+                <h1 class="text-lg sm:text-xl font-extrabold tracking-wider uppercase text-slate-900">LAPORAN HASIL BELAJAR</h1>
+            </div>
+
+            <!-- 3. TABEL CAPAIAN KOMPETENSI (NILAI AKADEMIK) -->
+            <div class="mb-6 overflow-x-auto">
+                <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-slate-100/90 text-slate-900 font-bold text-center">
+                            <th class="border border-slate-800 px-2 py-2.5 w-12">No</th>
+                            <th class="border border-slate-800 px-3 py-2.5 text-left w-52 sm:w-60">Mata Pelajaran</th>
+                            <th class="border border-slate-800 px-2 py-2.5 w-16">Nilai</th>
+                            <th class="border border-slate-800 px-3 py-2.5 text-left">Capaian Kompetensi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(count($rekap_nilai) > 0)
+                            @foreach($rekap_nilai as $mapel => $data)
+                                @php
+                                    $adaNilai = !empty($data['ada_nilai']);
+                                    $na = $data['nilai_akhir'];
+                                    $kkm = $data['kkm'] ?? 75;
+                                @endphp
+                                <tr>
+                                    <td class="border border-slate-800 px-2 py-2.5 text-center font-medium align-top">{{ $loop->iteration }}</td>
+                                    <td class="border border-slate-800 px-3 py-2.5 font-semibold text-slate-900 align-top">{{ $mapel }}</td>
+                                    <td class="border border-slate-800 px-2 py-2.5 text-center font-bold text-slate-900 align-top">
+                                        {{ $adaNilai ? number_format($na, 0) : '-' }}
+                                    </td>
+                                    <td class="border border-slate-800 px-3 py-2 text-xs sm:text-xs text-slate-800 leading-relaxed text-justify align-top">
+                                        {{ $data['deskripsi'] }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                            <!-- Baris Jumlah & Rata-rata Sesuai Dokumen Word -->
+                            <tr class="font-bold bg-slate-50/60">
+                                <td colspan="2" class="border border-slate-800 px-4 py-2 text-left font-bold">Jumlah</td>
+                                <td class="border border-slate-800 px-2 py-2 text-center font-extrabold">{{ number_format($total_nilai_akhir ?? 0, 0) }}</td>
+                                <td class="border border-slate-800 px-3 py-2 bg-slate-50/30"></td>
+                            </tr>
+                            <tr class="font-bold bg-slate-50/60">
+                                <td colspan="2" class="border border-slate-800 px-4 py-2 text-left font-bold">Rata-rata</td>
+                                <td class="border border-slate-800 px-2 py-2 text-center font-extrabold">{{ number_format($rata_rata_rapor ?? 0, 0) }}</td>
+                                <td class="border border-slate-800 px-3 py-2 bg-slate-50/30"></td>
+                            </tr>
+                        @else
                             <tr>
-                                <td class="border border-slate-400 px-3 py-2 text-center">{{ $i++ }}</td>
-                                <td class="border border-slate-400 px-3 py-2 font-semibold">{{ $mapel }}</td>
-                                <td class="border border-slate-400 px-3 py-2 text-center text-slate-600">{{ $kkm }}</td>
-                                <td class="border border-slate-400 px-3 py-2 text-center font-bold">{{ $adaNilai ? number_format($na, 1) : '-' }}</td>
-                                <td class="border border-slate-400 px-3 py-2 text-center font-bold">{{ $predikat }}</td>
-                                <td class="border border-slate-400 px-3 py-2 text-center font-semibold {{ $adaNilai ? ($tuntas ? 'text-emerald-800' : 'text-rose-700') : 'text-slate-400 italic' }}">
-                                    {{ $adaNilai ? ($tuntas ? 'Tuntas' : 'Belum Tuntas') : 'Belum Diinput' }}
+                                <td colspan="4" class="border border-slate-800 px-4 py-6 text-center text-slate-500 italic">
+                                    Belum ada data mata pelajaran atau nilai yang tercatat untuk siswa ini.
                                 </td>
-                                <td class="border border-slate-400 px-3 py-2 text-xs text-slate-700 leading-relaxed">{{ $deskripsi }}</td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 4. TABEL PROGRAM KEGIATAN SEKOLAH (SESUAI DOKUMEN WORD) -->
+            <div class="mb-6 overflow-x-auto">
+                <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-slate-100/90 text-slate-900 font-bold text-center">
+                            <th class="border border-slate-800 px-2 py-2.5 w-12">No</th>
+                            <th class="border border-slate-800 px-3 py-2.5 text-left w-52 sm:w-60">Program Kegiatan Sekolah</th>
+                            <th class="border border-slate-800 px-3 py-2.5 text-left">Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previewKegiatanTableBody">
+                        <!-- Diisi via JavaScript / Default -->
+                        @foreach($raporMeta['kegiatan_sekolah_default'] as $keg)
+                            <tr>
+                                <td class="border border-slate-800 px-2 py-2.5 text-center font-medium align-top">{{ $loop->iteration }}</td>
+                                <td class="border border-slate-800 px-3 py-2.5 font-semibold text-slate-900 align-top">{{ $keg['kegiatan'] }}</td>
+                                <td class="border border-slate-800 px-3 py-2 text-xs sm:text-xs text-slate-800 leading-relaxed align-top">{{ $keg['keterangan'] }}</td>
                             </tr>
                         @endforeach
-                        <tr class="bg-slate-50 font-bold">
-                            <td colspan="3" class="border border-slate-400 px-3 py-2 text-right">Jumlah Nilai Akhir</td>
-                            <td class="border border-slate-400 px-3 py-2 text-center">{{ number_format($total_nilai_akhir ?? 0, 1) }}</td>
-                            <td colspan="3" class="border border-slate-400 px-3 py-2 text-left">
-                                Rata-Rata Capaian Rapor: <span class="underline">{{ number_format($rata_rata_rapor ?? 0, 1) }}</span>
-                            </td>
-                        </tr>
-                    @else
-                        <tr>
-                            <td colspan="7" class="border border-slate-400 px-4 py-6 text-center text-slate-500">
-                                Belum ada nilai mata pelajaran yang diinput untuk siswa ini.
-                            </td>
-                        </tr>
-                    @endif
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
             </div>
-        </div>
 
-        <!-- B. Ketidakhadiran & C. Catatan Wali Kelas -->
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-10">
-            <div class="md:col-span-5">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 mb-2.5">B. Rekapitulasi Ketidakhadiran</h3>
-                <div class="overflow-x-auto w-full">
-                    <table class="w-full border-collapse border border-slate-400 text-sm min-w-[260px]">
+            <!-- 5. TABEL JENIS PRESTASI (SESUAI DOKUMEN WORD) -->
+            <div class="mb-6 overflow-x-auto">
+                <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-slate-100/90 text-slate-900 font-bold text-center">
+                            <th class="border border-slate-800 px-2 py-2.5 w-12">No</th>
+                            <th class="border border-slate-800 px-3 py-2.5 text-left">Jenis Prestasi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previewPrestasiTableBody">
+                        <!-- Diisi via JavaScript / Default -->
+                        @forelse($raporMeta['prestasi_default'] as $pres)
+                            <tr>
+                                <td class="border border-slate-800 px-2 py-2.5 text-center font-medium align-top">{{ $loop->iteration }}</td>
+                                <td class="border border-slate-800 px-3 py-2.5 text-slate-900 font-medium align-top">{{ $pres }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td class="border border-slate-800 px-2 py-2 text-center">-</td>
+                                <td class="border border-slate-800 px-3 py-2 text-slate-500 italic">Tidak ada catatan prestasi khusus semester ini.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 6. TABEL KETIDAKHADIRAN (SESUAI DOKUMEN WORD) -->
+            <div class="mb-6 overflow-x-auto w-full sm:w-80">
+                <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                    <tbody>
                         <tr>
-                            <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">1. Sakit</td>
-                            <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold w-28">{{ $rekap_absensi['sakit'] ?? 0 }} Hari</td>
+                            <td class="border border-slate-800 px-3.5 py-1.5 font-medium w-48">Sakit</td>
+                            <td class="border border-slate-800 px-3.5 py-1.5 text-center font-bold">{{ $rekap_absensi['sakit'] ?? 0 }}</td>
                         </tr>
                         <tr>
-                            <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">2. Izin</td>
-                            <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold">{{ $rekap_absensi['izin'] ?? 0 }} Hari</td>
+                            <td class="border border-slate-800 px-3.5 py-1.5 font-medium">Izin</td>
+                            <td class="border border-slate-800 px-3.5 py-1.5 text-center font-bold">{{ $rekap_absensi['izin'] ?? 0 }}</td>
                         </tr>
                         <tr>
-                            <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">3. Tanpa Keterangan (Alpa)</td>
-                            <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold">{{ $rekap_absensi['alpa'] ?? 0 }} Hari</td>
+                            <td class="border border-slate-800 px-3.5 py-1.5 font-medium">Tanpa Keterangan</td>
+                            <td class="border border-slate-800 px-3.5 py-1.5 text-center font-bold">{{ $rekap_absensi['alpa'] ?? 0 }}</td>
                         </tr>
-                    </table>
+                        <tr class="bg-slate-100/70 font-bold">
+                            <td class="border border-slate-800 px-3.5 py-1.5">Jumlah</td>
+                            <td class="border border-slate-800 px-3.5 py-1.5 text-center font-extrabold">
+                                {{ ($rekap_absensi['sakit'] ?? 0) + ($rekap_absensi['izin'] ?? 0) + ($rekap_absensi['alpa'] ?? 0) }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 7. KOTAK CATATAN WALI KELAS (SESUAI DOKUMEN WORD) -->
+            <div class="mb-8">
+                <div class="border border-slate-800 p-0 overflow-hidden">
+                    <div class="bg-slate-100/90 px-3.5 py-2 border-b border-slate-800 font-bold text-xs sm:text-sm text-slate-900">
+                        Catatan Wali Kelas
+                    </div>
+                    <div id="previewCatatanWalas" class="p-4 text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-line min-h-[90px]">
+{{ $raporMeta['catatan_walas_default'] }}
+                    </div>
                 </div>
             </div>
 
-            <div class="md:col-span-7">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 mb-2.5">C. Catatan & Evaluasi Wali Kelas</h3>
-                <div id="previewCatatanWalas" class="border border-slate-400 p-4 min-h-[106px] text-sm text-slate-800 italic leading-relaxed bg-slate-50/30">
-                    "{{ $defaultCatatan }}"
+            <!-- 8. TANDA TANGAN PENGESAHAN 3 KOLOM (SESUAI DOKUMEN WORD) -->
+            <div class="grid grid-cols-3 gap-4 pt-4 text-xs sm:text-sm text-center">
+                <!-- Kolom 1: Orang Tua / Wali -->
+                <div class="flex flex-col justify-between h-40">
+                    <div>
+                        <p class="font-medium text-slate-800 leading-tight">Mengetahui</p>
+                        <p class="font-medium text-slate-800 leading-tight">Orang Tua/Wali,</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-900 tracking-wider">....................................................</p>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Tanda Tangan Pengesahan -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-12 text-sm text-center">
-            <div>
-                <p class="mb-14 sm:mb-20">Mengetahui,<br>Orang Tua / Wali Peserta Didik</p>
-                <p class="font-bold underline">....................................................</p>
-            </div>
-            <div>
-                <p class="mb-14 sm:mb-20">Diterbitkan pada {{ \Carbon\Carbon::now()->isoFormat('D MMMM Y') }}<br>Wali Kelas {{ $wallas->ruangKelas->nama_ruang ?? '' }}</p>
-                <p class="font-bold underline">{{ $wallas->guru->nama ?? '....................................................' }}</p>
-                @if(!empty($wallas->guru->nig))
-                    <p class="text-xs text-slate-600 mt-0.5">NIG. {{ $wallas->guru->nig }}</p>
-                @endif
+                <!-- Kolom 2: Wali Kelas -->
+                <div class="flex flex-col justify-between h-40">
+                    <div>
+                        <p class="font-medium text-slate-800 leading-tight">&nbsp;</p>
+                        <p class="font-medium text-slate-800 leading-tight">Wali Kelas {{ $raporMeta['kelas_label'] }},</p>
+                    </div>
+                    <div>
+                        <p id="previewWalasNama" class="font-bold underline text-slate-900">
+                            {{ $wallas->guru->nama ?? '....................................................' }}
+                        </p>
+                        @if(!empty($wallas->guru->nig))
+                            <p class="text-[11px] text-slate-600 mt-0.5">NIG. {{ $wallas->guru->nig }}</p>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Kolom 3: Kepala Sekolah -->
+                <div class="flex flex-col justify-between h-40">
+                    <div>
+                        <p id="previewTanggalRapor" class="font-medium text-slate-800 leading-tight">
+                            Sigi, {{ $raporMeta['tanggal_rapor'] }}
+                        </p>
+                        <p class="font-medium text-slate-800 leading-tight">Kepala Sekolah,</p>
+                    </div>
+                    <div>
+                        <p id="previewKepsekNama" class="font-bold underline text-slate-900">
+                            {{ $raporMeta['nama_kepsek'] }}
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT KUSTOMISASI LIVE & AUTO-SAVE (LOCALSTORAGE)        -->
+    <!-- ============================================================ -->
     <script>
-        function updateCatatanPreview(val) {
-            const box = document.getElementById('previewCatatanWalas');
-            if (box) {
-                box.textContent = '"' + val + '"';
+        const SISWA_ID = {{ $siswa->id }};
+        const SISWA_NAMA = @json($siswa->nama);
+        const STORAGE_KEY = 'siakad_rapor_custom_' + SISWA_ID;
+
+        // Template Standar Baku
+        const DEFAULT_STATE = {
+            catatan: @json($raporMeta['catatan_walas_default']),
+            tanggal: @json($raporMeta['tanggal_rapor']),
+            kepsek: @json($raporMeta['nama_kepsek']),
+            walas: @json($wallas->guru->nama ?? 'Wali Kelas'),
+            kegiatan: @json($raporMeta['kegiatan_sekolah_default']),
+            prestasi: @json($raporMeta['prestasi_default'])
+        };
+
+        // Bank Template Keterangan Kegiatan Berdasarkan Predikat
+        const TEMPLATE_KEGIATAN = {
+            'Mabit': {
+                'Sangat baik': 'Sangat baik, Mengikuti kegiatan Mabit dengan antusias dan melaksanakan ibadah secara mandiri dan berjamaah dengan disiplin',
+                'Baik': 'Baik, Mengikuti kegiatan Mabit dengan tertib dan melaksanakan ibadah berjamaah dengan baik',
+                'Cukup baik': 'Cukup baik, Perlu peningkatan kedisiplinan bangun qiyamul lail saat pelaksanaan mabit',
+                'Perlu bimbingan': 'Perlu bimbingan dan dorongan dalam mengikuti rangkaian kegiatan ibadah malam mabit'
+            },
+            'Dzikir Pagi': {
+                'Sangat baik': 'Sangat baik, Berpartisipasi aktif dalam kegiatan dzikir pagi serta menjaga adab selama kegiatan berlangsung',
+                'Baik': 'Baik, Mengikuti dzikir pagi dengan khusyuk dan tertib',
+                'Cukup baik': 'Cukup baik, Perlu pembiasaan merutinkan hafalan doa dzikir pagi',
+                'Perlu bimbingan': 'Perlu perhatian khusus agar lebih fokus dan menjaga adab saat dzikir pagi'
+            },
+            'Ilqai Kalimat': {
+                'Sangat baik': 'Sangat baik, Menunjukkan rasa percaya diri tinggi dan kelancaran berbicara di depan umum melalui kegiatan ini',
+                'Baik': 'Baik, Menunjukkan kemampuan berbicara di depan umum melalui kegiatan ini dengan baik',
+                'Cukup baik': 'Cukup baik, Masih perlu melatih keberanian dan intonasi saat tampil di depan audiens',
+                'Perlu bimbingan': 'Perlu bimbingan dalam menyusun teks kultum dan melatih keberanian tampil'
+            },
+            'Puasa Sunnah Kamis': {
+                'Sangat baik': 'Sangat baik, Istiqomah menjalankan puasa sunnah hari Kamis dengan penuh keikhlasan',
+                'Baik': 'Baik, Mampu melaksanakan puasa sunnah Kamis dengan tertib',
+                'Cukup baik': 'Cukup baik, Perlu peningkatan kebiasaan puasa Sunnah kamis secara rutin',
+                'Perlu bimbingan': 'Perlu motivasi keluarga dan pembiasaan bertahap untuk puasa sunnah Kamis'
+            }
+        };
+
+        // State Aktif
+        let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+        // Load dari localStorage saat pertama dibuka
+        function loadCustomState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    // Selalu sinkronkan kegiatan dari DEFAULT_STATE agar kegiatan baru dari Admin otomatis muncul
+                    if (parsed.kegiatan && Array.isArray(parsed.kegiatan)) {
+                        const savedMap = {};
+                        parsed.kegiatan.forEach(k => { if (k && k.kegiatan) savedMap[k.kegiatan] = k; });
+                        const mergedKegiatan = DEFAULT_STATE.kegiatan.map(defKeg => {
+                            return savedMap[defKeg.kegiatan] ? savedMap[defKeg.kegiatan] : defKeg;
+                        });
+                        parsed.kegiatan.forEach(k => {
+                            if (k && k.kegiatan && !DEFAULT_STATE.kegiatan.some(d => d.kegiatan === k.kegiatan)) {
+                                mergedKegiatan.push(k);
+                            }
+                        });
+                        parsed.kegiatan = mergedKegiatan;
+                    }
+                    state = { ...DEFAULT_STATE, ...parsed };
+                }
+            } catch (e) {
+                console.error('Error loading state:', e);
+            }
+            populateEditorFields();
+            renderLivePreview();
+        }
+
+        // Simpan ke localStorage & Debounced Auto-Sync ke MySQL Database
+        let dbSyncTimer = null;
+        function saveState(immediateSync = false) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } catch (e) {
+                console.error('Error saving state:', e);
+            }
+            renderLivePreview();
+
+            // Auto-sync ke database MySQL
+            clearTimeout(dbSyncTimer);
+            if (immediateSync) {
+                syncToDatabase(false);
+            } else {
+                dbSyncTimer = setTimeout(() => {
+                    syncToDatabase(false);
+                }, 800);
             }
         }
+
+        async function syncToDatabase(isManualClick = false) {
+            const btn = document.getElementById('btnManualSaveDb');
+            if (btn && isManualClick) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-[11px]"></i> Menyimpan...';
+            }
+
+            try {
+                const response = await fetch('/sk/simpan-evaluasi-rapor', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        siswa_id: SISWA_ID,
+                        catatan_walas: state.catatan,
+                        kegiatan: state.kegiatan,
+                        prestasi: state.prestasi,
+                        tanggal_rapor: state.tanggal,
+                        nama_kepsek: state.kepsek,
+                        nama_walas: state.walas,
+                        tahun_ajaran_id: {{ $tahun_aktif->id ?? 'null' }},
+                        semester: {{ ($tahun_aktif->semester ?? 1) == 2 ? 2 : 1 }}
+                    })
+                });
+
+                if (response.ok) {
+                    if (btn && isManualClick) {
+                        btn.innerHTML = '<i class="fa-solid fa-check text-[11px]"></i> Tersimpan!';
+                        setTimeout(() => {
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fa-solid fa-floppy-disk text-[11px]"></i> Simpan Rapor';
+                        }, 1500);
+                    }
+                } else {
+                    if (btn && isManualClick) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-[11px]"></i> Coba Lagi';
+                    }
+                }
+            } catch (err) {
+                console.warn('Sync DB network fallback:', err);
+                if (btn && isManualClick) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-[11px]"></i> Coba Lagi';
+                }
+            }
+        }
+
+        // Tab Switcher
+        function switchEditorTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-emerald-600', 'text-emerald-700');
+                btn.classList.add('border-transparent', 'text-slate-500');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            const activeBtn = document.getElementById('tabBtn-' + tabId.replace('tab-', ''));
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'border-emerald-600', 'text-emerald-700');
+                activeBtn.classList.remove('border-transparent', 'text-slate-500');
+            }
+
+            const activeContent = document.getElementById('tabContent-' + tabId.replace('tab-', ''));
+            if (activeContent) {
+                activeContent.classList.remove('hidden');
+            }
+        }
+
+        // Isi form editor dengan nilai state
+        function populateEditorFields() {
+            // Tab 1: Catatan
+            const inputCatatan = document.getElementById('inputCatatanWalas');
+            if (inputCatatan) inputCatatan.value = state.catatan;
+
+            // Tab 4: Pengesahan
+            const inputTanggal = document.getElementById('inputTanggalRapor');
+            if (inputTanggal) inputTanggal.value = state.tanggal;
+            const inputKepsek = document.getElementById('inputNamaKepsek');
+            if (inputKepsek) inputKepsek.value = state.kepsek;
+            const inputWalas = document.getElementById('inputNamaWalas');
+            if (inputWalas) inputWalas.value = state.walas;
+
+            // Tab 2: Kegiatan List
+            renderKegiatanEditor();
+
+            // Tab 3: Prestasi List
+            renderPrestasiEditor();
+        }
+
+        // Render Editor Kegiatan
+        function renderKegiatanEditor() {
+            const container = document.getElementById('kegiatanEditorList');
+            if (!container) return;
+
+            container.innerHTML = state.kegiatan.map((item, index) => {
+                return `
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-slate-800">${index + 1}. ${item.kegiatan}</span>
+                            <select onchange="handleKegiatanPredikatChange(${index}, this.value)" 
+                                    class="text-xs bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-slate-700 font-semibold focus:outline-none focus:border-emerald-500">
+                                <option value="Sangat baik" ${item.predikat === 'Sangat baik' ? 'selected' : ''}>Sangat baik</option>
+                                <option value="Baik" ${item.predikat === 'Baik' ? 'selected' : ''}>Baik</option>
+                                <option value="Cukup baik" ${item.predikat === 'Cukup baik' ? 'selected' : ''}>Cukup baik</option>
+                                <option value="Perlu bimbingan" ${item.predikat === 'Perlu bimbingan' ? 'selected' : ''}>Perlu bimbingan</option>
+                            </select>
+                        </div>
+                        <textarea oninput="handleKegiatanTextChange(${index}, this.value)" rows="2"
+                                  class="w-full text-xs px-2.5 py-2 bg-white border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:border-emerald-500">${item.keterangan}</textarea>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Render Editor Prestasi
+        function renderPrestasiEditor() {
+            const container = document.getElementById('prestasiEditorList');
+            if (!container) return;
+
+            if (state.prestasi.length === 0) {
+                container.innerHTML = `
+                    <div class="p-3 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-center text-xs text-slate-400">
+                        Belum ada prestasi yang dicatat. Klik tombol "+ Tambah Baris" di atas untuk menambahkan.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = state.prestasi.map((item, index) => {
+                return `
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 text-xs text-center font-bold text-slate-500">${index + 1}.</span>
+                        <input type="text" value="${escapeHtml(item)}" oninput="handlePrestasiTextChange(${index}, this.value)"
+                               class="flex-1 text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:outline-none focus:border-emerald-500"
+                               placeholder="Tuliskan nama prestasi santri...">
+                        <button type="button" onclick="removePrestasiRow(${index})" class="w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center text-xs transition-colors">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update DOM Area Cetak Live
+        function renderLivePreview() {
+            // 1. Catatan Walas
+            const boxCatatan = document.getElementById('previewCatatanWalas');
+            if (boxCatatan) boxCatatan.textContent = state.catatan;
+
+            // 2. Kegiatan Table
+            const bodyKegiatan = document.getElementById('previewKegiatanTableBody');
+            if (bodyKegiatan) {
+                bodyKegiatan.innerHTML = state.kegiatan.map((item, idx) => `
+                    <tr>
+                        <td class="border border-slate-800 px-2 py-2.5 text-center font-medium align-top">${idx + 1}</td>
+                        <td class="border border-slate-800 px-3 py-2.5 font-semibold text-slate-900 align-top">${escapeHtml(item.kegiatan)}</td>
+                        <td class="border border-slate-800 px-3 py-2 text-xs sm:text-xs text-slate-800 leading-relaxed align-top">${escapeHtml(item.keterangan)}</td>
+                    </tr>
+                `).join('');
+            }
+
+            // 3. Prestasi Table
+            const bodyPrestasi = document.getElementById('previewPrestasiTableBody');
+            if (bodyPrestasi) {
+                if (state.prestasi.length === 0) {
+                    bodyPrestasi.innerHTML = `
+                        <tr>
+                            <td class="border border-slate-800 px-2 py-2 text-center">-</td>
+                            <td class="border border-slate-800 px-3 py-2 text-slate-500 italic">Tidak ada catatan prestasi khusus semester ini.</td>
+                        </tr>
+                    `;
+                } else {
+                    bodyPrestasi.innerHTML = state.prestasi.map((item, idx) => `
+                        <tr>
+                            <td class="border border-slate-800 px-2 py-2.5 text-center font-medium align-top">${idx + 1}</td>
+                            <td class="border border-slate-800 px-3 py-2.5 text-slate-900 font-medium align-top">${escapeHtml(item)}</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+            // 4. Pengesahan
+            const elTanggal = document.getElementById('previewTanggalRapor');
+            if (elTanggal) elTanggal.textContent = `Sigi, ${state.tanggal}`;
+            const elKepsek = document.getElementById('previewKepsekNama');
+            if (elKepsek) elKepsek.textContent = state.kepsek;
+            const elWalas = document.getElementById('previewWalasNama');
+            if (elWalas) elWalas.textContent = state.walas;
+        }
+
+        // Input Handlers
+        function handleCatatanInput(val) {
+            state.catatan = val;
+            saveState();
+        }
+
+        function handleTanggalInput(val) {
+            state.tanggal = val;
+            saveState();
+        }
+
+        function handleKepsekInput(val) {
+            state.kepsek = val;
+            saveState();
+        }
+
+        function handleWalasInput(val) {
+            state.walas = val;
+            saveState();
+        }
+
+        // Template Catatan Picker
+        function applyCatatanTemplate(type) {
+            let t = '';
+            if (type === 1) {
+                t = `Alhamdulillah ${SISWA_NAMA} mulai menunjukkan semangat belajar yang lebih baik dan keberanian untuk bertanya dalam memahami materi. Hasil belajar ananda semakin menunjukkan kemajuan.\n\nHarapan ustadzah, ananda dapat lebih fokus dan konsisten dalam belajar, memanfaatkan waktu dengan efektif, serta melibatkan Allah dalam proses belajar.\n\nBaarakAllahu fiik nak shalih`;
+            } else if (type === 2) {
+                t = `Alhamdulillah ananda ${SISWA_NAMA} menunjukkan prestasi akademik yang sangat memuaskan, akhlak yang mulia, serta keteladanan yang baik di kelas. Pertahankan kebiasaan muroja'ah hafalan dan terus kembangkan bakat ananda.\n\nSemoga Allah Ta'ala senantiasa memberkahi ilmu dan langkah ananda ke depan.`;
+            } else if (type === 3) {
+                t = `Alhamdulillah ananda ${SISWA_NAMA} telah mengikuti seluruh rangkaian kegiatan belajar dan ibadah dengan tertib dan tuntas. Diharapkan pada semester berikutnya ananda lebih aktif dalam diskusi dan melatih kemandirian belajar.\n\nJazakallahu khairan atas usaha terbaik ananda.`;
+            } else if (type === 4) {
+                t = `Ananda ${SISWA_NAMA} memiliki potensi besar untuk terus berkembang. Ustadz/Ustadzah berpesan agar ananda lebih disiplin membagi waktu belajar dan bermain di rumah, meningkatkan konsentrasi saat pelajaran, serta senantiasa berdoa memohon kemudahan kepada Allah.`;
+            }
+
+            state.catatan = t;
+            const inputCatatan = document.getElementById('inputCatatanWalas');
+            if (inputCatatan) inputCatatan.value = t;
+            saveState();
+        }
+
+        // Kegiatan Handlers
+        function handleKegiatanPredikatChange(index, predikat) {
+            state.kegiatan[index].predikat = predikat;
+            const namaKeg = state.kegiatan[index].kegiatan;
+            if (TEMPLATE_KEGIATAN[namaKeg] && TEMPLATE_KEGIATAN[namaKeg][predikat]) {
+                state.kegiatan[index].keterangan = TEMPLATE_KEGIATAN[namaKeg][predikat];
+            } else {
+                state.kegiatan[index].keterangan = `${predikat}, aktif dan berpartisipasi dalam kegiatan ${namaKeg}.`;
+            }
+            renderKegiatanEditor();
+            saveState();
+        }
+
+        function handleKegiatanTextChange(index, val) {
+            state.kegiatan[index].keterangan = val;
+            saveState();
+        }
+
+        // Prestasi Handlers
+        function addPrestasiRow() {
+            state.prestasi.push('Tasmi hafalan Al-Qur\'an');
+            renderPrestasiEditor();
+            saveState();
+        }
+
+        function addPrestasiPreset(text) {
+            state.prestasi.push(text);
+            renderPrestasiEditor();
+            saveState();
+        }
+
+        function removePrestasiRow(index) {
+            state.prestasi.splice(index, 1);
+            renderPrestasiEditor();
+            saveState();
+        }
+
+        function handlePrestasiTextChange(index, val) {
+            state.prestasi[index] = val;
+            saveState();
+        }
+
+        function openModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        }
+
+        // Reset
+        function resetToDefaultTemplates() {
+            openModal('resetTemplateModal');
+        }
+
+        function executeResetTemplate() {
+            closeModal('resetTemplateModal');
+            localStorage.removeItem(STORAGE_KEY);
+            state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+            populateEditorFields();
+            renderLivePreview();
+            saveState(true);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Jalankan saat halaman siap
+        document.addEventListener('DOMContentLoaded', loadCustomState);
     </script>
 
+    <!-- ============================================================ -->
+    <!-- STYLING WATERMARK & PRINT MEDIA KHUSUS RAPOR                -->
+    <!-- ============================================================ -->
     <style>
+        /* WATERMARK TRANSPARAN DI TENGAH LEMBAR RAPOR */
+        .watermark-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 480px;
+            max-width: 85%;
+            pointer-events: none;
+            user-select: none;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .watermark-image {
+            width: 100%;
+            height: auto;
+            opacity: 0.07;
+            filter: contrast(110%) brightness(95%);
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .rapor-content-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* MEDIA PRINT UNTUK KERTAS RESMI */
         @media print {
             body * { visibility: hidden; }
             .no-print { display: none !important; }
@@ -248,9 +936,62 @@
                 width: 100%;
                 border: none !important;
                 box-shadow: none !important;
-                padding: 0 !important;
+                padding: 10mm 12mm !important;
                 margin: 0 !important;
+                background: white !important;
+                color: #000 !important;
+            }
+
+            .watermark-overlay {
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                display: flex !important;
+                visibility: visible !important;
+            }
+
+            .watermark-image {
+                visibility: visible !important;
+                opacity: 0.08 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            table {
+                border-collapse: collapse !important;
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            th, td {
+                border-color: #000 !important;
             }
         }
     </style>
+    <!-- Modal Konfirmasi Reset Template -->
+    <x-siakad.ui.modal id="resetTemplateModal" title="Konfirmasi Reset Template" icon="fa-rotate-left" iconColor="#d97706" iconBg="#fef3c7">
+        <div class="text-xs sm:text-sm text-slate-600 leading-relaxed space-y-3">
+            <p>
+                Apakah Anda yakin ingin mengembalikan seluruh <strong>catatan wali kelas, evaluasi kegiatan sekolah, dan prestasi</strong> santri ini ke pengaturan <strong>template standar (default)</strong>?
+            </p>
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-800 flex items-start gap-2.5">
+                <i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5 text-sm flex-shrink-0"></i>
+                <span>Teks catatan atau narasi khusus yang sudah Anda modifikasi secara individu akan digantikan kembali sesuai kalimat panduan awal dari Admin/Yayasan.</span>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+            <button type="button" onclick="closeModal('resetTemplateModal')" style="padding: 9px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px;">
+                Batal
+            </button>
+            <button type="button" onclick="executeResetTemplate()" style="padding: 9px 18px; border: none; background: #d97706; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-rotate-left"></i> Ya, Reset ke Default
+            </button>
+        </div>
+    </x-siakad.ui.modal>
 </x-siakad-layout>

@@ -94,148 +94,330 @@
     </div>
 
     <?php if($activeTab === 'rapor'): ?>
-        <!-- TAB 2: LEMBAR RAPOR RESMI (SIAP CETAK) -->
-        <div class="print-area bg-white rounded-xl shadow-sm border border-slate-200 p-8 sm:p-12 text-slate-900">
-            <!-- Kop Rapor -->
-            <div class="text-center border-b-2 border-slate-800 pb-5 mb-6">
-                <h1 class="text-xl sm:text-2xl font-extrabold uppercase tracking-wide text-slate-900">Laporan Hasil Capaian Belajar Peserta Didik</h1>
-                <p class="text-sm font-semibold text-slate-600 mt-1">
-                    Tahun Ajaran <?php echo e($tahun_aktif->nama ?? '2026/2027'); ?> &bull; Semester <?php echo e(ucfirst($tahun_aktif->semester ?? 'Ganjil')); ?>
+        <!-- TAB 2: LEMBAR RAPOR RESMI (SESUAI DOKUMEN WORD zaky.docx) -->
+        <div class="print-area bg-white rounded-2xl shadow-sm border border-slate-200 p-8 sm:p-12 text-slate-900 relative overflow-hidden">
+            
+            <!-- WATERMARK TRANSPARAN DI TENGAH LEMBAR RAPOR -->
+            <?php if(!empty($raporMeta['watermark_logo'])): ?>
+                <div class="watermark-overlay" aria-hidden="true">
+                    <img src="<?php echo e($raporMeta['watermark_logo']); ?>" alt="Watermark Lembaga" class="watermark-image">
+                </div>
+            <?php endif; ?>
 
-                </p>
-            </div>
+            <div class="rapor-content-container relative z-10">
+                <!-- 1. IDENTITAS SISWA & SEKOLAH (2 KOLOM KOP) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1.5 text-xs sm:text-sm font-sans mb-6 pb-4 border-b border-slate-300">
+                    <!-- Kolom Kiri -->
+                    <div class="space-y-1">
+                        <div class="flex">
+                            <span class="w-28 sm:w-32 font-bold text-slate-800">Nama Sekolah</span>
+                            <span class="mr-2 font-bold">:</span>
+                            <span class="font-bold text-slate-900 uppercase"><?php echo e($raporMeta['nama_sekolah']); ?></span>
+                        </div>
+                        <div class="flex">
+                            <span class="w-28 sm:w-32 font-semibold text-slate-700">Nama</span>
+                            <span class="mr-2">:</span>
+                            <span class="font-bold text-slate-900 uppercase"><?php echo e($siswa->nama); ?></span>
+                        </div>
+                        <div class="flex">
+                            <span class="w-28 sm:w-32 font-semibold text-slate-700">NISN</span>
+                            <span class="mr-2">:</span>
+                            <span class="font-mono font-medium text-slate-800"><?php echo e($siswa->nis ?? '-'); ?></span>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="w-28 sm:w-32 font-semibold text-slate-700 flex-shrink-0">Alamat</span>
+                            <span class="mr-2 flex-shrink-0">:</span>
+                            <span class="text-slate-800 leading-tight"><?php echo e($raporMeta['alamat_sekolah']); ?></span>
+                        </div>
+                    </div>
 
-            <!-- Identitas Siswa -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm mb-6 pb-4 border-b border-slate-200">
-                <div class="flex">
-                    <span class="w-36 font-semibold text-slate-600">Nama Peserta Didik</span>
-                    <span class="mr-2">:</span>
-                    <span class="font-bold text-slate-900 uppercase"><?php echo e($siswa->nama); ?></span>
+                    <!-- Kolom Kanan -->
+                    <div class="space-y-1 md:pl-4">
+                        <div class="flex">
+                            <span class="w-32 sm:w-36 font-semibold text-slate-700">Kelas</span>
+                            <span class="mr-2">:</span>
+                            <span class="font-bold text-slate-900"><?php echo e($raporMeta['kelas_label']); ?></span>
+                        </div>
+                        <div class="flex">
+                            <span class="w-32 sm:w-36 font-semibold text-slate-700">Fase</span>
+                            <span class="mr-2">:</span>
+                            <span class="font-bold text-slate-900"><?php echo e($raporMeta['fase']); ?></span>
+                        </div>
+                        <div class="flex">
+                            <span class="w-32 sm:w-36 font-semibold text-slate-700">Semester</span>
+                            <span class="mr-2">:</span>
+                            <span class="text-slate-900 font-medium"><?php echo e(($tahun_aktif->semester ?? 1) == 1 ? '1 / Ganjil' : '2 / Genap'); ?></span>
+                        </div>
+                        <div class="flex">
+                            <span class="w-32 sm:w-36 font-semibold text-slate-700">Tahun Pelajaran</span>
+                            <span class="mr-2">:</span>
+                            <span class="font-semibold text-slate-900"><?php echo e($tahun_aktif->nama ?? '2025/2026'); ?></span>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex">
-                    <span class="w-36 font-semibold text-slate-600">Kelas / Rombel</span>
-                    <span class="mr-2">:</span>
-                    <span class="font-bold text-slate-900"><?php echo e($namaKelas); ?></span>
-                </div>
-                <div class="flex">
-                    <span class="w-36 font-semibold text-slate-600">Nomor Induk / NIS</span>
-                    <span class="mr-2">:</span>
-                    <span class="font-mono font-semibold text-slate-800"><?php echo e($siswa->nis ?? '-'); ?></span>
-                </div>
-                <div class="flex">
-                    <span class="w-36 font-semibold text-slate-600">Wali Kelas</span>
-                    <span class="mr-2">:</span>
-                    <span class="font-semibold text-slate-800"><?php echo e($wallas->guru->nama ?? '-'); ?></span>
-                </div>
-            </div>
 
-            <!-- A. Capaian Nilai Akademik -->
-            <div class="mb-6">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 mb-2.5">A. Capaian Nilai Akademik</h3>
-                <div class="overflow-x-auto w-full">
-                    <table class="w-full border-collapse border border-slate-400 text-xs sm:text-sm">
+                <!-- 2. JUDUL RAPOR -->
+                <div class="text-center my-6">
+                    <h1 class="text-lg sm:text-xl font-extrabold tracking-wider uppercase text-slate-900">LAPORAN HASIL BELAJAR</h1>
+                </div>
+
+                <!-- 3. TABEL CAPAIAN KOMPETENSI (NILAI AKADEMIK) -->
+                <div class="mb-6 overflow-x-auto">
+                    <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
                         <thead>
-                            <tr class="bg-slate-100 text-slate-800 font-bold text-center">
-                                <th class="border border-slate-400 px-3 py-2.5 w-10">No</th>
-                                <th class="border border-slate-400 px-3 py-2.5 text-left">Mata Pelajaran</th>
-                                <th class="border border-slate-400 px-3 py-2.5 w-16">KKM</th>
-                                <th class="border border-slate-400 px-3 py-2.5 w-24">Nilai Akhir</th>
-                                <th class="border border-slate-400 px-3 py-2.5 w-20">Predikat</th>
-                                <th class="border border-slate-400 px-3 py-2.5 w-28">Ketuntasan</th>
-                                <th class="border border-slate-400 px-3 py-2.5 text-left">Deskripsi Capaian Kompetensi</th>
+                            <tr class="bg-slate-100/90 text-slate-900 font-bold text-center">
+                                <th class="border border-slate-800 px-2 py-2.5 w-12">No</th>
+                                <th class="border border-slate-800 px-3 py-2.5 text-left w-52 sm:w-60">Mata Pelajaran</th>
+                                <th class="border border-slate-800 px-2 py-2.5 w-16">Nilai</th>
+                                <th class="border border-slate-800 px-3 py-2.5 text-left">Capaian Kompetensi</th>
                             </tr>
                         </thead>
-                    <tbody>
-                        <?php if(count($rekap_nilai) > 0): ?>
-                            <?php $__currentLoopData = $rekap_nilai; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mapel_id => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <tbody>
+                            <?php if(count($rekap_nilai) > 0): ?>
+                                <?php $rowIdx = 1; ?>
+                                <?php $__currentLoopData = $rekap_nilai; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mapel_id => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php
+                                        $adaNilai = !empty($data['ada_nilai']);
+                                        $na = $data['nilai_akhir'];
+                                        $namaMapel = $data['mata_pelajaran']->nama_mapel ?? 'Mata Pelajaran';
+                                    ?>
+                                    <tr>
+                                        <td class="border border-slate-800 px-2 py-2.5 text-center font-medium align-top"><?php echo e($rowIdx++); ?></td>
+                                        <td class="border border-slate-800 px-3 py-2.5 font-semibold text-slate-900 align-top"><?php echo e($namaMapel); ?></td>
+                                        <td class="border border-slate-800 px-2 py-2.5 text-center font-bold text-slate-900 align-top">
+                                            <?php echo e($adaNilai ? number_format($na, 0) : '-'); ?>
+
+                                        </td>
+                                        <td class="border border-slate-800 px-3 py-2 text-xs sm:text-xs text-slate-800 leading-relaxed text-justify align-top">
+                                            <?php echo e($data['deskripsi'] ?? '-'); ?>
+
+                                        </td>
+                                    </tr>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <!-- Baris Jumlah & Rata-rata Sesuai Dokumen Word -->
+                                <tr class="font-bold bg-slate-50/60">
+                                    <td colspan="2" class="border border-slate-800 px-4 py-2 text-left font-bold">Jumlah</td>
+                                    <td class="border border-slate-800 px-2 py-2 text-center font-extrabold"><?php echo e(number_format($stats_akademik['total_nilai_akhir'] ?? 0, 0)); ?></td>
+                                    <td class="border border-slate-800 px-3 py-2 bg-slate-50/30"></td>
+                                </tr>
+                                <tr class="font-bold bg-slate-50/60">
+                                    <td colspan="2" class="border border-slate-800 px-4 py-2 text-left font-bold">Rata-rata</td>
+                                    <td class="border border-slate-800 px-2 py-2 text-center font-extrabold"><?php echo e(number_format($stats_akademik['rata_rata'] ?? 0, 0)); ?></td>
+                                    <td class="border border-slate-800 px-3 py-2 bg-slate-50/30"></td>
+                                </tr>
+                            <?php else: ?>
                                 <tr>
-                                    <td class="border border-slate-400 px-3 py-2 text-center"><?php echo e($loop->iteration); ?></td>
-                                    <td class="border border-slate-400 px-3 py-2 font-semibold"><?php echo e($data['mata_pelajaran']->nama_mapel ?? '-'); ?></td>
-                                    <td class="border border-slate-400 px-3 py-2 text-center text-slate-600"><?php echo e($data['kkm'] ?? 75); ?></td>
-                                    <td class="border border-slate-400 px-3 py-2 text-center font-bold">
-                                        <?php echo e($data['ada_nilai'] ? number_format($data['nilai_akhir'], 1) : '-'); ?>
-
+                                    <td colspan="4" class="border border-slate-800 px-4 py-6 text-center text-slate-500 italic">
+                                        Belum ada data nilai mata pelajaran untuk semester ini.
                                     </td>
-                                    <td class="border border-slate-400 px-3 py-2 text-center font-bold"><?php echo e($data['predikat'] ?? '-'); ?></td>
-                                    <td class="border border-slate-400 px-3 py-2 text-center font-semibold <?php echo e(!$data['ada_nilai'] ? 'text-slate-400' : ($data['tuntas'] ? 'text-emerald-800' : 'text-rose-700')); ?>">
-                                        <?php echo e(!$data['ada_nilai'] ? 'Belum Dinilai' : ($data['tuntas'] ? 'Tuntas' : 'Belum Tuntas')); ?>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
 
-                                    </td>
-                                    <td class="border border-slate-400 px-3 py-2 text-xs text-slate-700 leading-relaxed"><?php echo e($data['deskripsi'] ?? '-'); ?></td>
+                <!-- 4. TABEL PROGRAM KEGIATAN SEKOLAH -->
+                <div class="mb-6 overflow-x-auto">
+                    <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-slate-100/90 text-slate-900 font-bold text-center">
+                                <th class="border border-slate-800 px-2 py-2.5 w-12">No</th>
+                                <th class="border border-slate-800 px-3 py-2.5 text-left w-52 sm:w-60">Program Kegiatan Sekolah</th>
+                                <th class="border border-slate-800 px-3 py-2.5 text-left">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentKegiatanBody">
+                            <?php $__currentLoopData = $raporMeta['kegiatan_sekolah_default']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $keg): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <tr>
+                                    <td class="border border-slate-800 px-2 py-2.5 text-center font-medium align-top"><?php echo e($loop->iteration); ?></td>
+                                    <td class="border border-slate-800 px-3 py-2.5 font-semibold text-slate-900 align-top"><?php echo e($keg['kegiatan']); ?></td>
+                                    <td class="border border-slate-800 px-3 py-2 text-xs sm:text-xs text-slate-800 leading-relaxed align-top"><?php echo e($keg['keterangan']); ?></td>
                                 </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            <tr class="bg-slate-50 font-bold">
-                                <td colspan="3" class="border border-slate-400 px-3 py-2 text-right">Jumlah Nilai Akhir</td>
-                                <td class="border border-slate-400 px-3 py-2 text-center"><?php echo e(number_format($stats_akademik['total_nilai_akhir'] ?? 0, 1)); ?></td>
-                                <td colspan="3" class="border border-slate-400 px-3 py-2 text-left">
-                                    Rata-Rata Capaian Rapor: <span class="underline"><?php echo e(number_format($stats_akademik['rata_rata'] ?? 0, 1)); ?></span>
-                                </td>
-                            </tr>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="7" class="border border-slate-400 px-4 py-6 text-center text-slate-500">
-                                    Belum ada data nilai rapor untuk semester ini.
-                                </td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
 
-            <!-- B. Ketidakhadiran & C. Evaluasi Wali Kelas -->
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-10">
-                <div class="md:col-span-5">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 mb-2.5">B. Rekapitulasi Ketidakhadiran</h3>
-                    <div class="overflow-x-auto w-full">
-                        <table class="w-full border-collapse border border-slate-400 text-sm">
+                <!-- 5. TABEL JENIS PRESTASI -->
+                <div class="mb-6 overflow-x-auto">
+                    <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-slate-100/90 text-slate-900 font-bold text-center">
+                                <th class="border border-slate-800 px-2 py-2.5 w-12">No</th>
+                                <th class="border border-slate-800 px-3 py-2.5 text-left">Jenis Prestasi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentPrestasiBody">
+                            <?php $__empty_1 = true; $__currentLoopData = $raporMeta['prestasi_default']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pres): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                <tr>
+                                    <td class="border border-slate-800 px-2 py-2.5 text-center font-medium align-top"><?php echo e($loop->iteration); ?></td>
+                                    <td class="border border-slate-800 px-3 py-2.5 text-slate-900 font-medium align-top"><?php echo e($pres); ?></td>
+                                </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                                <tr>
+                                    <td class="border border-slate-800 px-2 py-2 text-center">-</td>
+                                    <td class="border border-slate-800 px-3 py-2 text-slate-500 italic">Tidak ada catatan prestasi khusus semester ini.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 6. TABEL KETIDAKHADIRAN -->
+                <div class="mb-6 overflow-x-auto w-full sm:w-80">
+                    <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                        <tbody>
                             <tr>
-                                <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">1. Sakit</td>
-                                <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold w-28"><?php echo e($rekap_absen['s'] ?? 0); ?> Hari</td>
+                                <td class="border border-slate-800 px-3.5 py-1.5 font-medium w-48">Sakit</td>
+                                <td class="border border-slate-800 px-3.5 py-1.5 text-center font-bold"><?php echo e($rekap_absen['s'] ?? 0); ?></td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">2. Izin</td>
-                                <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold"><?php echo e($rekap_absen['i'] ?? 0); ?> Hari</td>
+                                <td class="border border-slate-800 px-3.5 py-1.5 font-medium">Izin</td>
+                                <td class="border border-slate-800 px-3.5 py-1.5 text-center font-bold"><?php echo e($rekap_absen['i'] ?? 0); ?></td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 px-3.5 py-2 bg-slate-50 font-medium">3. Tanpa Keterangan (Alpa)</td>
-                                <td class="border border-slate-400 px-3.5 py-2 text-center font-semibold"><?php echo e($rekap_absen['a'] ?? 0); ?> Hari</td>
+                                <td class="border border-slate-800 px-3.5 py-1.5 font-medium">Tanpa Keterangan</td>
+                                <td class="border border-slate-800 px-3.5 py-1.5 text-center font-bold"><?php echo e($rekap_absen['a'] ?? 0); ?></td>
                             </tr>
-                        </table>
+                            <tr class="bg-slate-100/70 font-bold">
+                                <td class="border border-slate-800 px-3.5 py-1.5">Jumlah</td>
+                                <td class="border border-slate-800 px-3.5 py-1.5 text-center font-extrabold">
+                                    <?php echo e(($rekap_absen['s'] ?? 0) + ($rekap_absen['i'] ?? 0) + ($rekap_absen['a'] ?? 0)); ?>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 7. KOTAK CATATAN WALI KELAS -->
+                <div class="mb-8">
+                    <div class="border border-slate-800 p-0 overflow-hidden">
+                        <div class="bg-slate-100/90 px-3.5 py-2 border-b border-slate-800 font-bold text-xs sm:text-sm text-slate-900">
+                            Catatan Wali Kelas
+                        </div>
+                        <div id="studentCatatanWalas" class="p-4 text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-line min-h-[90px]">
+<?php echo e($raporMeta['catatan_walas_default']); ?>
+
+                        </div>
                     </div>
                 </div>
 
-                <div class="md:col-span-7">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 mb-2.5">C. Catatan Evaluasi Wali Kelas</h3>
-                    <?php
-                        $rata = $stats_akademik['rata_rata'] ?? 0;
-                        $catatanOtomatis = $rata >= 85
-                            ? "Ananda {$siswa->nama} menunjukkan prestasi akademik yang sangat baik dan aktif dalam kegiatan pembelajaran di kelas. Pertahankan semangat belajar dan terus tingkatkan potensi diri."
-                            : ($rata >= 75
-                                ? "Ananda {$siswa->nama} telah mengikuti kegiatan pembelajaran dengan baik dan mencapai ketuntasan belajar. Tingkatkan terus kedisiplinan dan keaktifan belajar di semester berikutnya."
-                                : "Terus tingkatkan semangat belajar, keaktifan di kelas, dan pengulangan materi pelajaran di rumah agar capaian akademik semakin optimal.");
-                    ?>
-                    <div class="border border-slate-400 p-4 min-h-[106px] text-sm text-slate-800 italic leading-relaxed bg-slate-50/30">
-                        "<?php echo e($catatanOtomatis); ?>"
+                <!-- 8. TANDA TANGAN PENGESAHAN 3 KOLOM -->
+                <div class="grid grid-cols-3 gap-4 pt-4 text-xs sm:text-sm text-center">
+                    <!-- Kolom 1: Orang Tua / Wali -->
+                    <div class="flex flex-col justify-between h-40">
+                        <div>
+                            <p class="font-medium text-slate-800 leading-tight">Mengetahui</p>
+                            <p class="font-medium text-slate-800 leading-tight">Orang Tua/Wali,</p>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-900 tracking-wider">....................................................</p>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Tanda Tangan -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-12 text-sm text-center">
-                <div>
-                    <p class="mb-14 sm:mb-20">Mengetahui,<br>Orang Tua / Wali Peserta Didik</p>
-                    <p class="font-bold underline">....................................................</p>
-                </div>
-                <div>
-                    <p class="mb-14 sm:mb-20">Wali Kelas <?php echo e($namaKelas); ?></p>
-                    <p class="font-bold underline"><?php echo e($wallas->guru->nama ?? '....................................................'); ?></p>
-                    <?php if(!empty($wallas->guru->nig)): ?>
-                        <p class="text-xs text-slate-600 mt-0.5">NIG. <?php echo e($wallas->guru->nig); ?></p>
-                    <?php endif; ?>
+                    <!-- Kolom 2: Wali Kelas -->
+                    <div class="flex flex-col justify-between h-40">
+                        <div>
+                            <p class="font-medium text-slate-800 leading-tight">&nbsp;</p>
+                            <p class="font-medium text-slate-800 leading-tight">Wali Kelas <?php echo e($raporMeta['kelas_label']); ?>,</p>
+                        </div>
+                        <div>
+                            <p id="studentWalasNama" class="font-bold underline text-slate-900">
+                                <?php echo e($wallas->guru->nama ?? '....................................................'); ?>
+
+                            </p>
+                            <?php if(!empty($wallas->guru->nig)): ?>
+                                <p class="text-[11px] text-slate-600 mt-0.5">NIG. <?php echo e($wallas->guru->nig); ?></p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Kolom 3: Kepala Sekolah -->
+                    <div class="flex flex-col justify-between h-40">
+                        <div>
+                            <p id="studentTanggalRapor" class="font-medium text-slate-800 leading-tight">
+                                Sigi, <?php echo e($raporMeta['tanggal_rapor']); ?>
+
+                            </p>
+                            <p class="font-medium text-slate-800 leading-tight">Kepala Sekolah,</p>
+                        </div>
+                        <div>
+                            <p id="studentKepsekNama" class="font-bold underline text-slate-900">
+                                <?php echo e($raporMeta['nama_kepsek']); ?>
+
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <script>
+            // Sinkronisasi data custom yang disimpan wali kelas di perangkat
+            document.addEventListener('DOMContentLoaded', function() {
+                try {
+                    const saved = localStorage.getItem('siakad_rapor_custom_<?php echo e($siswa->id); ?>');
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        if (data.catatan) {
+                            const c = document.getElementById('studentCatatanWalas');
+                            if (c) c.textContent = data.catatan;
+                        }
+                        if (data.tanggal) {
+                            const t = document.getElementById('studentTanggalRapor');
+                            if (t) t.textContent = 'Sigi, ' + data.tanggal;
+                        }
+                        if (data.kepsek) {
+                            const k = document.getElementById('studentKepsekNama');
+                            if (k) k.textContent = data.kepsek;
+                        }
+                        if (data.walas) {
+                            const w = document.getElementById('studentWalasNama');
+                            if (w) w.textContent = data.walas;
+                        }
+                        if (data.kegiatan && Array.isArray(data.kegiatan)) {
+                            const kb = document.getElementById('studentKegiatanBody');
+                            if (kb) {
+                                const defaultKegiatan = <?php echo json_encode($raporMeta['kegiatan_sekolah_default'], 15, 512) ?>;
+                                const savedMap = {};
+                                data.kegiatan.forEach(k => { if (k && k.kegiatan) savedMap[k.kegiatan] = k; });
+                                const mergedKegiatan = defaultKegiatan.map(defKeg => {
+                                    return savedMap[defKeg.kegiatan] ? savedMap[defKeg.kegiatan] : defKeg;
+                                });
+                                data.kegiatan.forEach(k => {
+                                    if (k && k.kegiatan && !defaultKegiatan.some(d => d.kegiatan === k.kegiatan)) {
+                                        mergedKegiatan.push(k);
+                                    }
+                                });
+                                kb.innerHTML = mergedKegiatan.map((item, idx) => `
+                                    <tr>
+                                        <td class="border border-slate-800 px-2 py-2.5 text-center font-medium align-top">${idx + 1}</td>
+                                        <td class="border border-slate-800 px-3 py-2.5 font-semibold text-slate-900 align-top">${item.kegiatan}</td>
+                                        <td class="border border-slate-800 px-3 py-2 text-xs sm:text-xs text-slate-800 leading-relaxed align-top">${item.keterangan}</td>
+                                    </tr>
+                                `).join('');
+                            }
+                        }
+                        if (data.prestasi && Array.isArray(data.prestasi)) {
+                            const pb = document.getElementById('studentPrestasiBody');
+                            if (pb) {
+                                if (data.prestasi.length === 0) {
+                                    pb.innerHTML = `<tr><td class="border border-slate-800 px-2 py-2 text-center">-</td><td class="border border-slate-800 px-3 py-2 text-slate-500 italic">Tidak ada catatan prestasi khusus semester ini.</td></tr>`;
+                                } else {
+                                    pb.innerHTML = data.prestasi.map((item, idx) => `
+                                        <tr>
+                                            <td class="border border-slate-800 px-2 py-2.5 text-center font-medium align-top">${idx + 1}</td>
+                                            <td class="border border-slate-800 px-3 py-2.5 text-slate-900 font-medium align-top">${item}</td>
+                                        </tr>
+                                    `).join('');
+                                }
+                            }
+                        }
+                    }
+                } catch(e) {}
+            });
+        </script>
     <?php else: ?>
         <!-- TAB 1: TRANSKRIP RINCIAN NILAI KOMPONEN -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
@@ -352,6 +534,36 @@
     <?php endif; ?>
 
     <style>
+        /* WATERMARK TRANSPARAN DI TENGAH LEMBAR RAPOR */
+        .watermark-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 480px;
+            max-width: 85%;
+            pointer-events: none;
+            user-select: none;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .watermark-image {
+            width: 100%;
+            height: auto;
+            opacity: 0.07;
+            filter: contrast(110%) brightness(95%);
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .rapor-content-container {
+            position: relative;
+            z-index: 2;
+        }
+
         @media print {
             body * { visibility: hidden; }
             .no-print { display: none !important; }
@@ -363,7 +575,40 @@
                 width: 100%;
                 border: none !important;
                 box-shadow: none !important;
-                padding: 0 !important;
+                padding: 10mm 12mm !important;
+                margin: 0 !important;
+                background: white !important;
+                color: #000 !important;
+            }
+
+            .watermark-overlay {
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                display: flex !important;
+                visibility: visible !important;
+            }
+
+            .watermark-image {
+                visibility: visible !important;
+                opacity: 0.08 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            table {
+                border-collapse: collapse !important;
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            th, td {
+                border-color: #000 !important;
             }
         }
     </style>
