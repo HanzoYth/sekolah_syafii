@@ -147,6 +147,9 @@ Route::post('/ad/tbad',[adminController::class,"tambahDataAdmin"]);
 Route::get("/slpgj/{id}",[file_surat::class,"cetak_SuratSlipGaji"])->name("Slipgaji.guru");
 Route::get("/slpgjgr/{id}",[file_surat::class,"tampilan_SuratSlipGaji"])->name("DetailSlipGaji.guru");
 Route::get("/sk/ssp",[file_surat::class,"suratSlipPembayaran"]);
+
+
+Route::post("/flabsgr/{id}",[file_surat::class,"Kirim_FileAbsen"]);
 //-------------------------------------------------------------------------------------
 
 

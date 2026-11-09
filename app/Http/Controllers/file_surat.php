@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\sendAbsenFile;
 use App\Mail\sendFileEmail;
 use App\Models\gaji;
 use App\Models\guru;
@@ -14,9 +15,9 @@ use App\Models\riwayat_tunjangan_bonus;
 use App\Models\riwayat_tunjangan_potongan;
 use App\Models\tunjangan_bonus;
 use App\Models\tunjangan_potongan;
-use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;                                                               
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use App\Services\FonteService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -158,5 +159,34 @@ class file_surat extends Controller
         );
 
         return;
+    }
+
+    function Kirim_FileAbsen(Request $request, $id)
+    {
+        // 1. Cari guru
+        $guru = guru::where("id",$id)->first();
+        // 2. Validasi file dari JavaScript
+        $request->validate([
+            'file' => 'required|file|mimes:pdf|max:10240'
+        ]);
+        $file = $request->file('file');
+        $pdfContent = file_get_contents($file->getPathname());
+
+        // Pastikan PDF masih valid secara signature
+        if (!str_starts_with($pdfContent, '%PDF-')) {
+            return response()->json([
+                'message' => 'File PDF tidak valid.'
+            ], 422);
+        }
+        
+        // 5. Kirim email beserta PDF
+        Mail::to($guru->getUser()->first()->email)->send(
+            new sendAbsenFile($file)
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'File berhasil dikirim ke email guru'
+        ]);
     }
 }

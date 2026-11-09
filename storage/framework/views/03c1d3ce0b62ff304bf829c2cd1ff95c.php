@@ -107,9 +107,9 @@
                 <?php elseif($isBendahara): ?>
                     <?php
                         $isBeranda = request()->is('sk/das');
+                        $isRiwayat = request()->is('sk/ppl*');
                         $isTagihan = request()->is('sk/bt*');
-                        $isPembayaran = request()->is('sk/pb*', 'sk/dp*');
-                        $isPangkal = request()->is('sk/pp*', 'sk/pd*', 'sk/ppl*');
+                        $isPembayaran = request()->is('sk/pb*', 'sk/pp*', 'sk/pd*', 'sk/dp*');
                     ?>
 
                     <a href="/sk/das" class="bottom-nav-item <?php echo e($isBeranda ? 'active' : ''); ?>">
@@ -117,6 +117,13 @@
                             <i class="fa-solid fa-house"></i>
                         </div>
                         <span class="bottom-nav-label">Beranda</span>
+                    </a>
+
+                    <a href="/sk/ppl" class="bottom-nav-item <?php echo e($isRiwayat ? 'active' : ''); ?>">
+                        <div class="bottom-nav-icon-wrap">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                        </div>
+                        <span class="bottom-nav-label">Riwayat</span>
                     </a>
 
                     <a href="/sk/bt" class="bottom-nav-item <?php echo e($isTagihan ? 'active' : ''); ?>">
@@ -131,13 +138,6 @@
                             <i class="fa-solid fa-wallet"></i>
                         </div>
                         <span class="bottom-nav-label">Bayar IPP</span>
-                    </a>
-
-                    <a href="/sk/pp" class="bottom-nav-item <?php echo e($isPangkal ? 'active' : ''); ?>">
-                        <div class="bottom-nav-icon-wrap">
-                            <i class="fa-solid fa-money-check-dollar"></i>
-                        </div>
-                        <span class="bottom-nav-label">Pangkal</span>
                     </a>
 
                     <button type="button" class="bottom-nav-item" onclick="if(window.toggleSiakadSidebar){window.toggleSiakadSidebar();}else{var h=document.getElementById('mobile-hamburger-btn');if(h)h.click();}" aria-label="Buka Menu Lengkap">

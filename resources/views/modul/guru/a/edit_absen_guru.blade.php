@@ -3,72 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Detail Absensi Guru - EduHRIS</title>
     <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="{{asset('img/logo_sklh.png')}}?v={{ time() }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Ubah path CSS sesuai lokasi file kamu jika untuk testing lokal, misal: edit_absen_guru.css -->
     <link rel="stylesheet" href="{{asset('css/modul/guru/edit_absen_guru.css')}}?v={{ time() }}">
-    
+
     <style>
-        /* CSS tambahan inline untuk Form Filter Periode */
-        .card-header-filter {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-        .filter-form {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .filter-input-group {
-            display: flex;
-            align-items: center;
-            background: #f9fafb;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            padding: 6px 12px;
-            gap: 8px;
-        }
-        .filter-input-group i {
-            color: #6b7280;
-        }
-        .filter-input-group input[type="month"] {
-            border: none;
-            background: transparent;
-            outline: none;
-            font-family: inherit;
-            font-size: 0.9rem;
-            color: #374151;
-            cursor: pointer;
-        }
-        .btn-filter {
-            background-color: #3b82f6;
-            color: #ffffff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: background-color 0.2s ease;
-        }
-        .btn-filter:hover {
-            background-color: #2563eb;
+        /* Styling Tambahan untuk State Loading pada Tombol */
+        .btn-modal-confirm:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
 
-<div class="dashboard-container">
+<div class="dashboard-container" id="content">
     <main class="main-wrapper">
+        
+        <input type="hidden" value="{{$data_guru->id}}" id="id_guru">
         
         <!-- TOPBAR HEADER -->
         <header class="topbar">
@@ -133,7 +89,7 @@
         </div>
 
         <!-- CARD TABEL DAFTAR ABSENSI BULAN INI -->
-        <div class="col-12">
+        <div class="col-12" id="area_print">
             <div class="card">
                 <div class="card-header card-header-filter">
                     <div style="display: flex; align-items: center; gap: 12px;">
@@ -146,16 +102,27 @@
                         </div>
                     </div>
 
-                    <!-- FORM FILTER PERIODE BULAN -->
-                    <form action="/gr/edklabs/{{$id_guru}}" method="GET" class="filter-form">
-                        <div class="filter-input-group">
-                            <i class="fa-solid fa-calendar"></i>
-                            <input type="month" name="bulan" id="filter_bulan" value="{{ request('bulan', date('Y-m')) }}">
+                    <!-- KELOMPOK FILTER & TOMBOL AKSI -->
+                    <div class="filter-and-actions">
+                        <!-- FORM FILTER PERIODE BULAN -->
+                        <form action="/gr/edklabs/{{$id_guru}}" method="GET" class="filter-form">
+                            <div class="filter-input-group">
+                                <i class="fa-solid fa-calendar"></i>
+                                <input type="month" name="bulan" id="filter_bulan" value="{{ request('bulan', date('Y-m')) }}">
+                            </div>
+                            <button type="submit" class="btn-filter">
+                                <i class="fa-solid fa-magnifying-glass"></i> Cari
+                            </button>
+                        </form>
+
+                        <!-- TOMBOL AKSI UTAMA -->
+                        <div class="action-buttons-group">
+                            <button type="button" class="btn-action btn-print" id="btnPrintModalTrigger" title="Cetak atau Kirim Laporan">
+                                <i class="fa-solid fa-print"></i>
+                                <span>Cetak / Kirim</span>
+                            </button>
                         </div>
-                        <button type="submit" class="btn-filter">
-                            <i class="fa-solid fa-magnifying-glass"></i> Cari
-                        </button>
-                    </form>
+                    </div>
                 </div>
 
                 <div class="card-body" style="padding: 0;">
@@ -252,6 +219,133 @@
 
     </main>
 </div>
+
+<!-- ========================================== -->
+<!-- MODAL POP-UP PILIHAN CETAK / KIRIM         -->
+<!-- ========================================== -->
+<div class="modal-overlay" id="actionModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-file-invoice"></i> Opsi Laporan Absensi</h3>
+            <button type="button" class="modal-close-btn" id="modalCloseBtn">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Silakan pilih tindakan untuk rekapitulasi absensi guru ini. Aktifkan toggle di bawah untuk mengirim laporan otomatis atau biarkan non-aktif untuk mencetak dokumen.</p>
+            
+            <!-- Switch Checklist Toggle -->
+            <div class="switch-container">
+                <div class="switch-label-wrapper">
+                    <span class="switch-title" id="switchStatusText">Cetak Dokumen (PDF)</span>
+                    <span class="switch-desc">Geser untuk beralih ke mode pengiriman laporan</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="actionToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-modal-cancel" id="modalCancelBtn">Batal</button>
+            <button type="button" class="btn-modal-confirm" id="modalConfirmBtn">Lanjutkan</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<!-- SCRIPT INTERAKSI MODAL, LOADING & AKSI -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const btnTrigger = document.getElementById('btnPrintModalTrigger');
+        const modalOverlay = document.getElementById('actionModal');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const modalCancelBtn = document.getElementById('modalCancelBtn');
+        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+        const actionToggle = document.getElementById('actionToggle');
+        const switchStatusText = document.getElementById('switchStatusText');
+        const idGuru = document.getElementById("id_guru");
+        
+        // Buka Modal
+        btnTrigger.addEventListener('click', function () {
+            modalOverlay.classList.add('active');
+        });
+
+        // Tutup Modal
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        modalCloseBtn.addEventListener('click', closeModal);
+        modalCancelBtn.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', function (e) {
+            if (e.target === modalOverlay) closeModal();
+        });
+
+        // Ubah teks label interaktif saat toggle digeser
+        actionToggle.addEventListener('change', function () {
+            if (this.checked) {
+                switchStatusText.textContent = "Kirim Laporan (Email)";
+            } else {
+                switchStatusText.textContent = "Cetak Dokumen (PDF)";
+            }
+        });
+
+        async function KirimFile(){
+            const areaPrint = document.getElementById('area_print');
+
+            // Ubah tombol ke state Loading
+            modalConfirmBtn.disabled = true;
+            modalCancelBtn.disabled = true;
+            modalConfirmBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mengirim...`;
+
+            try {
+                // 1. Buat PDF Blob
+                const pdfBlob = await html2pdf()
+                    .from(areaPrint)
+                    .outputPdf('blob');
+                const formData = new FormData();
+                formData.append('file', pdfBlob, 'absensi.pdf');
+
+                // 3. Ambil CSRF Token
+                const token = document.querySelector('meta[name="csrf-token"]').content;
+
+                // 4. Kirim ke Laravel
+                const response = await fetch(`/flabsgr/${idGuru.value}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });     
+                const result = await response.json();
+
+                alert(result.message);
+                closeModal();
+            } catch (error) {
+                console.error(error);
+                alert('Terjadi kesalahan saat mengirim laporan.');
+            } finally {
+                // Kembalikan tombol ke state normal setelah selesai (sukses/gagal)
+                modalConfirmBtn.disabled = false;
+                modalCancelBtn.disabled = false;
+                modalConfirmBtn.innerHTML = `Lanjutkan`;
+            }
+        }
+
+        // Tombol Konfirmasi Aksi
+        modalConfirmBtn.addEventListener('click', async function () {
+            if (actionToggle.checked) {
+                await KirimFile();
+            } else {
+                closeModal();
+                window.print();
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

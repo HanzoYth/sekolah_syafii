@@ -61,6 +61,12 @@
                                 <span>Pengumuman</span>
                             </a>
                         </li>
+                        <li class="menu-item {{$route == '/gr/pggr' ? 'active' : ''}}">
+                            <a href="/gr/pggr">
+                                <i class="fa-solid fa-user-check"></i>
+                                <span>Data Absen</span>
+                            </a>
+                        </li>
                         @if (!$user->bendahara && !$user->satpam && !$user->operator )
                             <li class="menu-item {{$route == '/gr/edprgr' ? 'active' : ''}}">
                                 <a href="/gr/edprgr">

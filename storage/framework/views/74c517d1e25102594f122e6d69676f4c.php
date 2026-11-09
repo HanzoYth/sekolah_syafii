@@ -154,11 +154,11 @@
                                     <i class="fa-solid fa-chevron-down submenu-icon"></i>
                                 </summary>
                                 <ul class="submenu-list">
+                                    <li class="submenu-item <?php echo e(request()->is('sk/ppl*') ? 'active' : ''); ?>"><a href="/sk/ppl"><i class="fa-solid fa-clock-rotate-left"></i><span>Riwayat Pembayaran</span></a></li>
                                     <li class="submenu-item <?php echo e(request()->is('sk/bt*') ? 'active' : ''); ?>"><a href="/sk/bt"><i class="fa-solid fa-file-circle-plus"></i><span>Buat Tagihan</span></a></li>
                                     <li class="submenu-item <?php echo e(request()->is('sk/pb*', 'sk/dp*') ? 'active' : ''); ?>"><a href="/sk/pb"><i class="fa-solid fa-wallet"></i><span>Pembayaran IPP</span></a></li>
                                     <li class="submenu-item <?php echo e(request()->is('sk/pp*') ? 'active' : ''); ?>"><a href="/sk/pp"><i class="fa-solid fa-money-check-dollar"></i><span>Uang Pangkal</span></a></li>
                                     <li class="submenu-item <?php echo e(request()->is('sk/pd*') ? 'active' : ''); ?>"><a href="/sk/pd"><i class="fa-solid fa-graduation-cap"></i><span>Pendidikan</span></a></li>
-                                    <li class="submenu-item <?php echo e(request()->is('sk/ppl*') ? 'active' : ''); ?>"><a href="/sk/ppl"><i class="fa-solid fa-screwdriver-wrench"></i><span>Pemeliharaan</span></a></li>
                                 </ul>
                             </details>
                         </li>
