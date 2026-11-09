@@ -307,16 +307,16 @@ class SiakadRaporKegiatanDanPrestasiTest extends TestCase
     }
 
     /**
-     * Test 9: Guru Walas can open /sk/rapor-walas with Catatan & Prestasi tab
+     * Test 9: Guru Walas can open /sk/rapor-walas with streamlined Cetak Rapor & Leger Nilai tabs
      */
     public function test_walas_can_view_rapor_walas_tab_prestasi()
     {
-        $response = $this->withSession($this->walasSession)->get('/sk/rapor-walas?tab=prestasi');
+        $response = $this->withSession($this->walasSession)->get('/sk/rapor-walas');
 
         $response->assertStatus(200);
-        $response->assertSee('Catatan & Prestasi Santri', false);
-        $response->assertSee('formMassalPrestasi');
-        $response->assertSee('Simpan Seluruh Catatan & Prestasi Santri', false);
+        $response->assertSee('Cetak Rapor', false);
+        $response->assertSee('Leger Nilai', false);
+        $response->assertDontSee('formMassalPrestasi');
     }
 
     /**
@@ -339,6 +339,8 @@ class SiakadRaporKegiatanDanPrestasiTest extends TestCase
         $responseDetail->assertSee('LAPORAN HASIL BELAJAR');
         $responseDetail->assertSee('Program Kegiatan Sekolah');
         $responseDetail->assertSee('Jenis Prestasi');
+        $responseDetail->assertSee('data-preset', false);
+        $responseDetail->assertDontSee('addPrestasiPreset(@json');
     }
 
     /**

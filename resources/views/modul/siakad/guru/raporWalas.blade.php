@@ -59,34 +59,25 @@
         </div>
     @endif
 
-    <!-- Tab Switcher: Manajemen Nilai vs Cetak Rapor vs Prestasi Kelas -->
+    <!-- Tab Switcher: Manajemen Nilai vs Cetak Rapor -->
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div class="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200">
             <a href="/sk/rapor-walas?tab=nilai{{ session('role') === 'a' ? '&kelas_id='.($wallas->kelas_id ?? '') : '' }}" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-2 transition-all">
                 <i class="fa-solid fa-sliders"></i> Leger Nilai
             </a>
-            <a href="/sk/rapor-walas{{ session('role') === 'a' ? '?kelas_id='.($wallas->kelas_id ?? '') : '' }}" class="px-4 py-2 rounded-lg text-xs font-bold {{ request('tab') !== 'prestasi' ? 'bg-white text-emerald-700 shadow-sm border border-slate-200/80' : 'text-slate-600 hover:text-slate-900' }} flex items-center gap-2 transition-all">
+            <a href="/sk/rapor-walas{{ session('role') === 'a' ? '?kelas_id='.($wallas->kelas_id ?? '') : '' }}" class="px-4 py-2 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-sm border border-slate-200/80 flex items-center gap-2 transition-all">
                 <i class="fa-solid fa-file-contract"></i> Cetak Rapor
-            </a>
-            <a href="/sk/rapor-walas?tab=prestasi{{ session('role') === 'a' ? '&kelas_id='.($wallas->kelas_id ?? '') : '' }}" class="px-4 py-2 rounded-lg text-xs font-bold {{ request('tab') === 'prestasi' ? 'bg-white text-emerald-700 shadow-sm border border-slate-200/80' : 'text-slate-600 hover:text-slate-900' }} flex items-center gap-2 transition-all">
-                <i class="fa-solid fa-trophy"></i> Catatan & Prestasi Santri
             </a>
         </div>
 
-        @if(request('tab') === 'prestasi')
-            <button type="submit" form="formMassalPrestasi" class="inline-flex items-center px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-sm gap-2">
-                <i class="fa-solid fa-floppy-disk"></i> Simpan Seluruh Catatan & Prestasi Santri
-            </button>
-        @else
-            <div class="flex items-center gap-2">
-                <a href="/sk/rapor-walas?print=massal{{ session('role') === 'a' ? '&kelas_id='.($wallas->kelas_id ?? '') : '' }}" target="_blank" class="inline-flex items-center px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm gap-2">
-                    <i class="fa-solid fa-print"></i> Cetak Seluruh Rapor Kelas (Massal)
-                </a>
-                <a href="/sk/rapor-walas?tab=nilai{{ session('role') === 'a' ? '&kelas_id='.($wallas->kelas_id ?? '') : '' }}" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold transition-colors">
-                    <i class="fa-solid fa-sliders mr-1.5"></i> Leger Nilai
-                </a>
-            </div>
-        @endif
+        <div class="flex items-center gap-2">
+            <a href="/sk/rapor-walas?print=massal{{ session('role') === 'a' ? '&kelas_id='.($wallas->kelas_id ?? '') : '' }}" target="_blank" class="inline-flex items-center px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm gap-2">
+                <i class="fa-solid fa-print"></i> Cetak Seluruh Rapor Kelas (Massal)
+            </a>
+            <a href="/sk/rapor-walas?tab=nilai{{ session('role') === 'a' ? '&kelas_id='.($wallas->kelas_id ?? '') : '' }}" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold transition-colors">
+                <i class="fa-solid fa-sliders mr-1.5"></i> Leger Nilai
+            </a>
+        </div>
     </div>
 
     <!-- Top Stats -->
@@ -157,186 +148,10 @@
         </div>
     @endif
 
-    @if(request('tab') === 'prestasi')
-        <!-- ======================================================== -->
-        <!-- TAB 3: INPUT MASSAL CATATAN WALI KELAS & PRESTASI SANTRI -->
-        <!-- ======================================================== -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-            <div class="px-6 py-5 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/70">
-                <div>
-                    <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-trophy text-amber-500"></i>
-                        Input Massal Catatan & Prestasi Santri: Kelas {{ $wallas->ruangKelas->nama_ruang ?? 'Kelas' }}
-                    </h3>
-                    <p class="text-xs text-slate-500 mt-1">
-                        Gunakan halaman ini untuk mengisi catatan perkembangan santri dan daftar prestasi yang diraih dalam satu tampilan sekaligus.
-                    </p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
-                        <i class="fa-solid fa-users mr-1.5 text-xs"></i> {{ count($siswa) }} Santri
-                    </span>
-                </div>
-            </div>
 
-            <!-- Petunjuk Penggunaan -->
-            <div class="p-4 sm:p-5 bg-emerald-50/60 border-b border-emerald-100/80 flex items-start gap-3 text-xs text-emerald-900 leading-relaxed">
-                <i class="fa-solid fa-circle-info text-emerald-600 text-base mt-0.5 flex-shrink-0"></i>
-                <div class="space-y-1">
-                    <p class="font-semibold text-emerald-950">Panduan Pengisian Cepat:</p>
-                    <ul class="list-disc list-inside space-y-0.5 text-emerald-800">
-                        <li><strong>Catatan Wali Kelas:</strong> Anda dapat mengetik manual atau mengklik preset cepat (contoh: <em>Sangat Baik & Pertahankan</em>) lalu mengedit kalimatnya sesuai karakter unik santri.</li>
-                        <li><strong>Prestasi Santri:</strong> Tuliskan <strong>satu prestasi per baris</strong> (tekan tombol <kbd class="px-1.5 py-0.5 bg-white border border-emerald-300 rounded font-mono text-[10px]">Enter</kbd> untuk menambah baris prestasi baru). Jika santri belum berprestasi semester ini, biarkan kolom kosong.</li>
-                        <li>Data yang disimpan otomatis terintegrasi ke lembar cetak rapor masing-masing santri.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <form id="formMassalPrestasi" method="POST" action="/sk/simpan-massal-prestasi-walas">
-                @csrf
-                @if(session('role') === 'a')
-                    <input type="hidden" name="kelas_id" value="{{ $wallas->kelas_id }}">
-                @endif
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wider">
-                                <th class="px-4 py-3.5 text-center w-12">No</th>
-                                <th class="px-4 py-3.5 w-60">Santri</th>
-                                <th class="px-4 py-3.5 min-w-[340px]">Catatan Wali Kelas</th>
-                                <th class="px-4 py-3.5 min-w-[340px]">Prestasi Semester Ini (1 per baris)</th>
-                                <th class="px-4 py-3.5 text-center w-36">Pratinjau</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            @forelse($siswa as $index => $s)
-                                @php
-                                    $eval = $evaluasi_kelas->get($s->id);
-                                    $catatan_val = $eval->catatan_walas ?? '';
-                                    $prestasi_list = $prestasi_kelas->get($s->id);
-                                    $prestasi_val = $prestasi_list ? $prestasi_list->pluck('nama_prestasi')->implode("\n") : '';
-                                @endphp
-                                <tr class="hover:bg-slate-50/70 transition-colors align-top">
-                                    <td class="px-4 py-4 text-xs text-slate-500 text-center font-bold">{{ $index + 1 }}</td>
-                                    <td class="px-4 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs uppercase flex-shrink-0">
-                                                {{ substr($s->nama, 0, 2) }}
-                                            </div>
-                                            <div class="min-w-0">
-                                                <div class="text-xs font-bold text-slate-800 truncate" title="{{ $s->nama }}">{{ $s->nama }}</div>
-                                                <div class="text-[11px] font-mono text-slate-500">NIS: {{ $s->nis ?? '-' }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-4">
-                                        <textarea 
-                                            name="siswa[{{ $s->id }}][catatan]" 
-                                            id="catatan_{{ $s->id }}" 
-                                            rows="3" 
-                                            class="w-full text-xs rounded-lg border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 p-2.5 placeholder-slate-400 transition-all leading-relaxed" 
-                                            placeholder="Tuliskan evaluasi sikap, hafalan, atau motivasi wali kelas...">{{ old("siswa.{$s->id}.catatan", $catatan_val) }}</textarea>
-                                        
-                                        <!-- Preset Cepat Catatan -->
-                                        <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
-                                            <span class="text-[10px] text-slate-400 font-medium">Preset:</span>
-                                            <button type="button" onclick="setCatatanPreset({{ $s->id }}, 'Ananda menunjukkan kemajuan yang luar biasa dalam hafalan Al-Qur\'an dan akhlak terpuji. Pertahankan dan terus istiqomah.')" class="px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-colors">
-                                                + Sangat Baik
-                                            </button>
-                                            <button type="button" onclick="setCatatanPreset({{ $s->id }}, 'Alhamdulillah capaian akademik baik. Terus tingkatkan kedisiplinan mengulang hafalan (muraja\'ah) di asrama.')" class="px-2 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors">
-                                                + Muraja'ah
-                                            </button>
-                                            <button type="button" onclick="setCatatanPreset({{ $s->id }}, 'Perlu peningkatan fokus belajar dan menjaga adab islami. Semoga semester depan ananda jauh lebih berprestasi.')" class="px-2 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 transition-colors">
-                                                + Motivasi Adab
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-4">
-                                        <textarea 
-                                            name="siswa[{{ $s->id }}][prestasi]" 
-                                            id="prestasi_{{ $s->id }}" 
-                                            rows="3" 
-                                            class="w-full text-xs rounded-lg border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 p-2.5 placeholder-slate-400 font-sans transition-all leading-relaxed" 
-                                            placeholder="Satu prestasi per baris, contoh:&#10;Juara 1 Musabaqah Hifdzil Qur'an&#10;Tasmi' hafalan 2 Juz sekali duduk">{{ old("siswa.{$s->id}.prestasi", $prestasi_val) }}</textarea>
-                                        
-                                        <!-- Preset Cepat Prestasi (Dikelola oleh Admin di Database) -->
-                                        <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
-                                            <span class="text-[10px] text-slate-400 font-medium">Preset:</span>
-                                            @if(isset($daftar_preset_prestasi) && $daftar_preset_prestasi->isNotEmpty())
-                                                @foreach($daftar_preset_prestasi as $preset)
-                                                    <button type="button" onclick="addPrestasiPreset({{ $s->id }}, @json($preset->nama_prestasi))" class="px-2 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 transition-colors">
-                                                        + {{ $preset->nama_prestasi }}
-                                                    </button>
-                                                @endforeach
-                                            @else
-                                                <button type="button" onclick="addPrestasiPreset({{ $s->id }}, 'Tasmi hafalan juz 30 & 29 sekali duduk')" class="px-2 py-0.5 rounded text-[10px] font-medium bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-200 transition-colors">
-                                                    + Tasmi' Hafalan
-                                                </button>
-                                            @endif
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-4 text-center">
-                                        <a href="/sk/detail-rapor-walas/{{ $s->id }}" target="_blank" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors shadow-sm">
-                                            <i class="fa-solid fa-arrow-up-right-from-square mr-1 text-[10px]"></i> Buka Rapor
-                                        </a>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="px-6 py-12 text-center text-slate-500">
-                                        <i class="fa-solid fa-users-slash text-3xl text-slate-300 mb-2"></i>
-                                        <p class="text-sm font-semibold text-slate-700">Tidak ada santri pada kelas ini</p>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Footer Action Bar -->
-                <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p class="text-xs text-slate-500">
-                        <i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i> Data catatan dan prestasi langsung disimpan ke tabel database MySQL.
-                    </p>
-                    <button type="submit" class="inline-flex items-center px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-md gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i> Simpan Seluruh Catatan & Prestasi Santri
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <script>
-            function setCatatanPreset(siswaId, text) {
-                const el = document.getElementById('catatan_' + siswaId);
-                if (!el) return;
-                if (el.value.trim() === '') {
-                    el.value = text;
-                } else {
-                    el.value = el.value.trim() + ' ' + text;
-                }
-                el.focus();
-            }
-
-            function addPrestasiPreset(siswaId, text) {
-                const el = document.getElementById('prestasi_' + siswaId);
-                if (!el) return;
-                const current = el.value.trim();
-                if (current === '') {
-                    el.value = text;
-                } else {
-                    if (!current.includes(text)) {
-                        el.value = current + '\n' + text;
-                    }
-                }
-                el.focus();
-            }
-        </script>
-
-    @else
-        <!-- ======================================================== -->
-        <!-- TAB 2: DAFTAR CETAK RAPOR SISWA                          -->
-        <!-- ======================================================== -->
+    <!-- ======================================================== -->
+    <!-- DAFTAR CETAK RAPOR SISWA                                 -->
+    <!-- ======================================================== -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="px-6 py-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
                 <div>
@@ -422,5 +237,4 @@
                 </table>
             </div>
         </div>
-    @endif
 </x-siakad-layout>

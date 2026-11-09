@@ -233,6 +233,12 @@ unset($__defined_vars, $__key, $__value); ?>
                 if (table.hasAttribute('data-no-paginate')) return;
                 if (table.closest('.modal-card, .flatpickr-calendar, .dropdown-menu, .modal-overlay, #modalEditPembayaran, #modalPengumuman')) return;
 
+                // Jangan pernah terapkan paginasi pada dokumen lembar rapor santri (seluruh nilai, kegiatan & prestasi harus utuh saat dilihat/dicetak)
+                if (table.closest('.print-area, .rapor-content-container, .rapor-paper, .rapor-sheet, .rapor-container, .cetak-rapor, .rapor-santri-sheet, #raporContent, #printArea, [data-no-paginate="true"]')) return;
+                if (window.location.pathname.includes('detail-rapor') || window.location.pathname.includes('cetak-rapor') || window.location.pathname.includes('lembar-rapor')) {
+                    if (table.closest('.print-area, .rapor-content-container, .border-slate-800, #printArea')) return;
+                }
+
                 // Cek jika parent card sudah memiliki pagination server-side (misal: pembayaran IPP links())
                 const parentCard = table.closest('.table-card, .card') || table.parentElement;
                 if (parentCard && parentCard.querySelector('.pagination-wrap, .pagination-container') && !table.hasAttribute('data-force-paginate')) {

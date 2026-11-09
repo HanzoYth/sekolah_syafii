@@ -34,6 +34,7 @@
                         <option value="kamis" {{ $jadwal->hari == 'kamis' ? 'selected' : '' }}>Kamis</option>
                         <option value="jumat" {{ $jadwal->hari == 'jumat' ? 'selected' : '' }}>Jumat</option>
                         <option value="sabtu" {{ $jadwal->hari == 'sabtu' ? 'selected' : '' }}>Sabtu</option>
+                        <option value="minggu" {{ $jadwal->hari == 'minggu' ? 'selected' : '' }}>Ahad / Minggu</option>
                     </select>
                 </div>
                 <div>

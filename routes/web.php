@@ -253,6 +253,7 @@ Route::get('/sk/rapor-siswa', [App\Http\Controllers\siakadController::class, 'ra
 // Manajemen Mata Pelajaran (Admin|Siakad)
 Route::get('/sk/kelola-mapel', [siakadController::class, 'kelolaMapel']);
 Route::post('/sk/simpan-mapel', [siakadController::class, 'simpanMapel']);
+Route::get('/sk/hapus-siswa/{id}', [App\Http\Controllers\siakadController::class, 'hapusSiswa']);
 
 // Manajemen Jadwal Mengajar (Admin|Siakad)
 Route::get('/sk/kelola-jadwal', [siakadController::class, 'kelolaJadwalAdmin']);

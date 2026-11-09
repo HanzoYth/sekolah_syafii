@@ -247,6 +247,9 @@
                                     <button type="button" onclick="bukaModalEditSiswa(<?php echo e(json_encode($siswa)); ?>)" style="display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; background: #e9f2ff; color: #3875c5; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#d0e3ff'" onmouseout="this.style.background='#e9f2ff'" title="Edit Data Siswa">
                                         <i class="fa-solid fa-pen-to-square"></i> Edit
                                     </button>
+                                    <button type="button" onclick="bukaModalHapusSiswa(<?php echo e($siswa->id); ?>, '<?php echo e(addslashes($siswa->nama)); ?>', '<?php echo e($siswa->nis); ?>', '<?php echo e(addslashes($siswa->kelas->nama_ruang ?? 'Belum ada rombel')); ?>')" style="display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; border-radius: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'" title="Hapus Data Santri">
+                                        <i class="fa-solid fa-trash-can"></i> Hapus
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -381,6 +384,50 @@
 <?php unset($__componentOriginale960230fd71228156fe70d1ba75c1455); ?>
 <?php endif; ?>
 
+    <!-- Modal Konfirmasi Hapus Siswa -->
+    <?php if (isset($component)) { $__componentOriginale960230fd71228156fe70d1ba75c1455 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale960230fd71228156fe70d1ba75c1455 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.modal','data' => ['id' => 'modalHapusSiswa','title' => 'Konfirmasi Hapus Data Santri','icon' => 'fa-triangle-exclamation','iconColor' => '#b91c1c','iconBg' => '#fef2f2']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('siakad.ui.modal'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['id' => 'modalHapusSiswa','title' => 'Konfirmasi Hapus Data Santri','icon' => 'fa-triangle-exclamation','iconColor' => '#b91c1c','iconBg' => '#fef2f2']); ?>
+        <div style="margin-bottom: 16px;">
+            <p style="font-size: 13.5px; color: #334155; line-height: 1.5; margin: 0 0 12px 0;">
+                Apakah Anda yakin ingin menghapus data santri berikut dari sistem?
+            </p>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 14px;">
+                <div style="font-weight: 700; color: #0f172a; font-size: 14.5px;" id="delSiswaNama">-</div>
+                <div style="font-size: 12.5px; color: #64748b; margin-top: 4px;">
+                    NIS: <span id="delSiswaNis" style="font-weight: 600; color: #334155;">-</span> • 
+                    Rombel: <span id="delSiswaKelas" style="font-weight: 600; color: #334155;">-</span>
+                </div>
+            </div>
+            <div style="margin-top: 12px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 10px 12px; font-size: 12px; color: #9f1239; line-height: 1.4;">
+                <i class="fa-solid fa-triangle-exclamation" style="margin-right: 4px;"></i>
+                <strong>Perhatian:</strong> Tindakan ini akan menghapus data diri santri, akun login, serta seluruh riwayat akademik (nilai, absensi, dan evaluasi rapor) secara permanen.
+            </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" onclick="closeModal('modalHapusSiswa')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
+            <a id="btnExecuteDeleteSiswa" href="#" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border: none; background: #b91c1c; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; text-decoration: none;">
+                <i class="fa-solid fa-trash-can"></i> Ya, Hapus Santri
+            </a>
+        </div>
+     <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale960230fd71228156fe70d1ba75c1455)): ?>
+<?php $attributes = $__attributesOriginale960230fd71228156fe70d1ba75c1455; ?>
+<?php unset($__attributesOriginale960230fd71228156fe70d1ba75c1455); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale960230fd71228156fe70d1ba75c1455)): ?>
+<?php $component = $__componentOriginale960230fd71228156fe70d1ba75c1455; ?>
+<?php unset($__componentOriginale960230fd71228156fe70d1ba75c1455); ?>
+<?php endif; ?>
+
     <script>
         function openModal(id) {
             document.getElementById(id).style.display = 'flex';
@@ -402,6 +449,14 @@
             document.getElementById('editSiswaTanggalLahir').value = s.tanggal_lahir || '';
             document.getElementById('editSiswaAlamat').value = s.alamat || '';
             openModal('modalEditSiswa');
+        }
+
+        function bukaModalHapusSiswa(id, nama, nis, kelas) {
+            document.getElementById('delSiswaNama').textContent = nama;
+            document.getElementById('delSiswaNis').textContent = nis;
+            document.getElementById('delSiswaKelas').textContent = kelas;
+            document.getElementById('btnExecuteDeleteSiswa').href = "/sk/hapus-siswa/" + id;
+            openModal('modalHapusSiswa');
         }
 
         const searchInput = document.getElementById('studentSearch');

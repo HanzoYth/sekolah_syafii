@@ -1812,6 +1812,34 @@ class siakadController extends Controller
         return redirect()->back()->with('success', "Data siswa '{$siswa->nama}' berhasil diperbarui!");
     }
 
+    public function hapusSiswa($id) {
+        $check = $this->guardRoles(['a'], 'akademik');
+        if ($check) return $check;
+
+        $siswa = \App\Models\siswa::findOrFail($id);
+        $namaSiswa = $siswa->nama;
+        $userId = $siswa->user_id;
+
+        // Bersihkan data akademik terkait agar tidak ada orphan records
+        \App\Models\nilai::where('siswa_id', $id)->delete();
+        \App\Models\absensi_siswa::where('siswa_id', $id)->delete();
+        \App\Models\evaluasi_rapor_siswa::where('siswa_id', $id)->delete();
+        \App\Models\prestasi_siswa::where('siswa_id', $id)->delete();
+
+        // Hapus data siswa
+        $siswa->delete();
+
+        // Hapus akun user login jika ada
+        if ($userId) {
+            $user = \App\Models\User::find($userId);
+            if ($user && ($user->role === 's' || $user->role === 'siswa')) {
+                $user->delete();
+            }
+        }
+
+        return redirect('/sk/ds')->with('success', "Data santri '{$namaSiswa}' dan seluruh riwayat terkait berhasil dihapus.");
+    }
+
     function simpan_kelas(Request $request){
         $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
@@ -2133,6 +2161,8 @@ class siakadController extends Controller
                 $rec = $catatan_mapel->where('jadwal_pelajaran_id', $j->id)->first();
                 $guru_absen = $absensi_guru_hari_ini->get($j->id);
                 $mapel_info[] = [
+                    'jadwal_id' => $j->id,
+                    'mapel_id' => $j->mapel_id,
                     'mapel' => $j->mata_pelajaran->nama_mapel ?? 'Mapel',
                     'guru' => $j->guru->nama ?? 'Guru',
                     'jam' => $j->jam_pelajaran ? substr($j->jam_pelajaran->jam_mulai, 0, 5) . '-' . substr($j->jam_pelajaran->jam_selesai, 0, 5) : '',
@@ -2650,7 +2680,9 @@ class siakadController extends Controller
                     $q->where('nama_kelas', 'like', $prefix . ' %');
                 });
             }
-            $mapel_query->where('sekolah_id', $sekolah_id);
+            $mapel_query->where(function($q) use ($sekolah_id) {
+                $q->where('sekolah_id', $sekolah_id)->orWhereNull('sekolah_id');
+            });
         }
 
         $data_kelas = $kelas_query->get();
@@ -2745,7 +2777,7 @@ class siakadController extends Controller
         if ($check) return $check;
 
         $sekolah_id = $request->query('sekolah_id');
-        $query = \App\Models\mata_pelajaran::with(['sekolah', 'kkm_tingkat']);
+        $query = \App\Models\mata_pelajaran::with(['sekolah', 'kkm_tingkat'])->withCount(['nilai', 'jadwal_pelajaran']);
         if ($sekolah_id) {
             $query->where('sekolah_id', $sekolah_id);
         }
@@ -2760,32 +2792,39 @@ class siakadController extends Controller
 
         $request->validate([
             'nama_mapel' => 'required|string|max:100',
-            'sekolah_id' => 'required|exists:jenis_sekolah,id'
+            'sekolah_id' => 'nullable'
         ]);
 
-        $sekolah = \App\Models\jenis_sekolah::find($request->sekolah_id);
+        $sekolahId = ($request->sekolah_id === 'umum' || empty($request->sekolah_id)) ? null : $request->sekolah_id;
+        $sekolah = $sekolahId ? \App\Models\jenis_sekolah::find($sekolahId) : null;
         $isTk = $sekolah && (stripos($sekolah->jenis, 'tk') !== false || stripos($sekolah->jenis, 'paud') !== false);
         $kkm = $isTk ? ($request->filled('kkm') ? intval($request->kkm) : 0) : ($request->filled('kkm') ? intval($request->kkm) : 75);
 
         \App\Models\mata_pelajaran::create([
             'nama_mapel' => trim($request->nama_mapel),
-            'sekolah_id' => $request->sekolah_id,
+            'sekolah_id' => $sekolahId,
             'kkm' => $kkm
         ]);
 
-        $jenjangNama = $sekolah ? strtoupper($sekolah->jenis) : '';
-        return back()->with('success', "Mata Pelajaran '{$request->nama_mapel}' berhasil ditambahkan untuk Jenjang {$jenjangNama}.");
+        $jenjangNama = $sekolah ? 'Jenjang ' . strtoupper($sekolah->jenis) : 'Umum (Semua Jenjang)';
+        return back()->with('success', "Mata Pelajaran '{$request->nama_mapel}' berhasil ditambahkan untuk {$jenjangNama}.");
     }
 
-    function hapusMapel($id) {
+    function hapusMapel(Request $request, $id) {
         $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
         if (\App\Models\jadwal_pelajaran::where('mapel_id', $id)->exists()) {
-            return back()->with('error', 'Tidak dapat menghapus mata pelajaran karena masih digunakan pada jadwal pelajaran aktif.');
+            return back()->with('error', 'Tidak dapat menghapus mata pelajaran karena masih digunakan pada jadwal pelajaran aktif. Hapus jadwal terkait terlebih dahulu di menu Kelola Jadwal.');
         }
-        if (\App\Models\nilai::where('mapel_id', $id)->exists()) {
-            return back()->with('error', 'Tidak dapat menghapus mata pelajaran karena memiliki data nilai siswa.');
+
+        $jmlNilai = \App\Models\nilai::where('mapel_id', $id)->count();
+        if ($jmlNilai > 0) {
+            if ($request->query('force') == '1' || $request->input('force') == '1') {
+                \App\Models\nilai::where('mapel_id', $id)->delete();
+            } else {
+                return back()->with('error', "Tidak dapat menghapus mata pelajaran karena memiliki {$jmlNilai} data nilai siswa.");
+            }
         }
 
         \App\Models\mata_pelajaran::findOrFail($id)->delete();
@@ -2807,20 +2846,22 @@ class siakadController extends Controller
 
         $request->validate([
             'nama_mapel' => 'required|string|max:100',
-            'sekolah_id' => 'required|exists:jenis_sekolah,id'
+            'sekolah_id' => 'nullable'
         ]);
 
         $mapel = \App\Models\mata_pelajaran::findOrFail($id);
-        $sekolah = \App\Models\jenis_sekolah::find($request->sekolah_id);
+        $sekolahId = ($request->sekolah_id === 'umum' || empty($request->sekolah_id)) ? null : $request->sekolah_id;
+        $sekolah = $sekolahId ? \App\Models\jenis_sekolah::find($sekolahId) : null;
         $isTk = $sekolah && (stripos($sekolah->jenis, 'tk') !== false || stripos($sekolah->jenis, 'paud') !== false);
         $kkm = $isTk ? ($request->filled('kkm') ? intval($request->kkm) : 0) : ($request->filled('kkm') ? intval($request->kkm) : ($mapel->kkm ?? 75));
 
         $mapel->update([
             'nama_mapel' => trim($request->nama_mapel),
-            'sekolah_id' => $request->sekolah_id,
+            'sekolah_id' => $sekolahId,
             'kkm' => $kkm
         ]);
-        return redirect('/sk/kelola-mapel')->with('success', "Mata Pelajaran '{$request->nama_mapel}' berhasil diperbarui.");
+        $jenjangNama = $sekolah ? 'Jenjang ' . strtoupper($sekolah->jenis) : 'Umum (Semua Jenjang)';
+        return redirect('/sk/kelola-mapel')->with('success', "Mata Pelajaran '{$request->nama_mapel}' ({$jenjangNama}) berhasil diperbarui.");
     }
 
     // ==========================================
@@ -4278,9 +4319,13 @@ class siakadController extends Controller
             $prestasi_default = $prestasiDb->pluck('nama_prestasi')->toArray();
         }
 
+        $has_evaluasi_db = ($evaluasiDb && !empty($evaluasiDb->catatan_walas));
+        $has_prestasi_db = $prestasiDb->isNotEmpty();
+
         return compact(
             'jenjang', 'nama_sekolah', 'watermark_logo', 'fase', 'kelas_label', 'alamat_sekolah', 'tempat_rapor',
-            'nama_kepsek', 'tanggal_rapor', 'nama_walas', 'kegiatan_sekolah_default', 'prestasi_default', 'catatan_walas_default', 'daftar_preset_prestasi'
+            'nama_kepsek', 'tanggal_rapor', 'nama_walas', 'kegiatan_sekolah_default', 'prestasi_default', 'catatan_walas_default', 'daftar_preset_prestasi',
+            'has_evaluasi_db', 'has_prestasi_db'
         );
     }
 

@@ -33,6 +33,9 @@
                     <div class="form-group">
                         <label>Jenjang Sekolah</label>
                         <select name="sekolah_id" required style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;">
+                            <option value="umum" {{ empty($mapel->sekolah_id) ? 'selected' : '' }} style="font-weight: 700; color: #166534;">
+                                ★ UMUM (Semua Jenjang / Lintas Jenjang)
+                            </option>
                             @foreach($data_sekolah as $s)
                                 <option value="{{ $s->id }}" {{ $mapel->sekolah_id == $s->id ? 'selected' : '' }}>
                                     Jenjang {{ strtoupper($s->jenis) }}

@@ -158,7 +158,7 @@
 
                 <!-- 3. TABEL CAPAIAN KOMPETENSI (NILAI AKADEMIK) -->
                 <div class="mb-6 overflow-x-auto">
-                    <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                    <table data-no-paginate="true" class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
                         <thead>
                             <tr class="bg-slate-100/90 text-slate-900 font-bold text-center">
                                 <th class="border border-slate-800 px-2 py-2.5 w-12">No</th>
@@ -211,7 +211,7 @@
 
                 <!-- 4. TABEL PROGRAM KEGIATAN SEKOLAH -->
                 <div class="mb-6 overflow-x-auto">
-                    <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                    <table data-no-paginate="true" class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
                         <thead>
                             <tr class="bg-slate-100/90 text-slate-900 font-bold text-center">
                                 <th class="border border-slate-800 px-2 py-2.5 w-12">No</th>
@@ -233,7 +233,7 @@
 
                 <!-- 5. TABEL JENIS PRESTASI -->
                 <div class="mb-6 overflow-x-auto">
-                    <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                    <table data-no-paginate="true" class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
                         <thead>
                             <tr class="bg-slate-100/90 text-slate-900 font-bold text-center">
                                 <th class="border border-slate-800 px-2 py-2.5 w-12">No</th>
@@ -258,7 +258,7 @@
 
                 <!-- 6. TABEL KETIDAKHADIRAN -->
                 <div class="mb-6 overflow-x-auto w-full sm:w-80">
-                    <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                    <table data-no-paginate="true" class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
                         <tbody>
                             <tr>
                                 <td class="border border-slate-800 px-3.5 py-1.5 font-medium w-48">Sakit</td>
@@ -346,9 +346,10 @@
             document.addEventListener('DOMContentLoaded', function() {
                 try {
                     const saved = localStorage.getItem('siakad_rapor_custom_{{ $siswa->id }}');
+                    const hasDbCatatan = @json(!empty($raporMeta['has_evaluasi_db']));
                     if (saved) {
                         const data = JSON.parse(saved);
-                        if (data.catatan) {
+                        if (data.catatan && !hasDbCatatan) {
                             const c = document.getElementById('studentCatatanWalas');
                             if (c) c.textContent = data.catatan;
                         }

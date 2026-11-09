@@ -250,30 +250,54 @@
 
 
         <?php if($jadwal_hari_ini->count() > 0): ?>
-        <!-- Kartu Sesi Jadwal Pelajaran Hari Ini -->
+        <!-- Kartu Sesi Jadwal Pelajaran Hari Ini (Interactive Selector Tabs) -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    <i class="fa-solid fa-calendar-day mr-1.5"></i> Sesi Mengajar di Kelas Hari Ini (<?php echo e($hari_indonesia); ?>)
-                </span>
-                <span class="text-xs text-slate-400">Total: <?php echo e($jadwal_hari_ini->count()); ?> Mata Pelajaran</span>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-calendar-day text-emerald-600"></i> Sesi Mengajar di Kelas Hari Ini (<?php echo e($hari_indonesia); ?>)
+                    </span>
+                    <p class="text-[11.5px] text-slate-500 mt-0.5">Pilih salah satu mata pelajaran untuk memfokuskan status presensi khusus sesi tersebut pada tabel:</p>
+                </div>
+                <div class="flex items-center gap-2 self-start sm:self-auto">
+                    <button type="button" 
+                            id="btnTabSemuaMapel"
+                            onclick="pilihSesiMapel('all')"
+                            class="mapel-tab-all inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-white hover:bg-slate-900 transition-all shadow-xs"
+                            title="Tampilkan ringkasan status semua mata pelajaran">
+                        <i class="fa-solid fa-layer-group text-[11px]"></i>
+                        <span>Semua Sesi Mapel</span>
+                    </button>
+                    <span class="text-xs text-slate-400 font-medium">(<?php echo e($jadwal_hari_ini->count()); ?> Sesi)</span>
+                </div>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                 <?php $__currentLoopData = $jadwal_hari_ini; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <?php
                         $guruAbsen = $absensi_guru_hari_ini->get($j->id);
                         $jamStr = $j->jam_pelajaran ? substr($j->jam_pelajaran->jam_mulai, 0, 5) . ' - ' . substr($j->jam_pelajaran->jam_selesai, 0, 5) . ' WIB' : '-';
                     ?>
-                    <div class="p-3 rounded-lg border <?php echo e($guruAbsen ? 'bg-emerald-50/40 border-emerald-200' : 'bg-slate-50 border-slate-200'); ?> flex items-start justify-between gap-2">
-                        <div>
-                            <span class="text-xs font-bold text-slate-800 block truncate"><?php echo e($j->mata_pelajaran->nama_mapel ?? '-'); ?></span>
-                            <span class="text-[11px] text-slate-500 block truncate"><?php echo e($j->guru->nama ?? 'Guru'); ?> • <?php echo e($jamStr); ?></span>
-                        </div>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold <?php echo e($guruAbsen ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'); ?> flex-shrink-0">
-                            <?php echo e($guruAbsen ? 'Sudah Diabsen' : 'Belum Diabsen'); ?>
+                    <button type="button" 
+                            onclick="pilihSesiMapel(<?php echo e($j->id); ?>, '<?php echo e(addslashes($j->mata_pelajaran->nama_mapel ?? '-')); ?>', '<?php echo e(addslashes($j->guru->nama ?? 'Guru')); ?>', '<?php echo e($jamStr); ?>')"
+                            data-jadwal-id="<?php echo e($j->id); ?>"
+                            class="mapel-tab-card w-full text-left p-3.5 rounded-xl border border-slate-200 bg-white hover:border-emerald-400 hover:shadow-sm transition-all relative flex flex-col justify-between gap-2.5 cursor-pointer">
+                        <div class="flex items-start justify-between gap-2 w-full">
+                            <div class="min-w-0 flex-1">
+                                <span class="text-xs font-bold text-slate-800 block truncate leading-tight"><?php echo e($j->mata_pelajaran->nama_mapel ?? '-'); ?></span>
+                                <span class="text-[11px] text-slate-500 block truncate mt-0.5"><?php echo e($j->guru->nama ?? 'Guru'); ?></span>
+                                <span class="text-[10.5px] font-mono text-emerald-700 block mt-0.5 font-semibold"><?php echo e($jamStr); ?></span>
+                            </div>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold <?php echo e($guruAbsen ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200'); ?> flex-shrink-0">
+                                <?php echo e($guruAbsen ? 'Sudah Diabsen' : 'Belum Diabsen'); ?>
 
-                        </span>
-                    </div>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between pt-1.5 border-t border-slate-100 text-[10px] text-slate-400 w-full">
+                            <span class="mapel-card-hint font-medium text-slate-400"><i class="fa-solid fa-arrow-pointer mr-1"></i> Klik untuk filter</span>
+                            <span class="mapel-card-active hidden font-bold text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full"><i class="fa-solid fa-check mr-1"></i> Sedang Ditampilkan</span>
+                        </div>
+                    </button>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
@@ -376,7 +400,11 @@
                                 <th class="px-5 py-3.5 w-12 text-center col-no">No</th>
                                 <th class="px-5 py-3.5 col-nis">NIS</th>
                                 <th class="px-5 py-3.5 col-nama">Nama Peserta Didik</th>
-                                <th class="px-5 py-3.5 col-mapel">Presensi Sesi Mapel Hari Ini</th>
+                                <th class="px-5 py-3.5 col-mapel" id="thHeaderMapel">
+                                    <span class="inline-flex items-center gap-1.5 font-semibold text-slate-600 uppercase tracking-wider text-xs">
+                                        <i class="fa-solid fa-book-open text-slate-400"></i> Presensi Sesi Mapel Hari Ini
+                                    </span>
+                                </th>
                                 <th class="px-5 py-3.5 text-center col-status-harian">Status Harian Kelas</th>
                                 <th class="px-5 py-3.5 col-catatan">Catatan / Surat Keterangan</th>
                             </tr>
@@ -440,39 +468,79 @@
                                             </div>
                                         </td>
                                         <td class="px-5 py-3.5 col-mapel">
-                                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5 md:hidden">
-                                                <i class="fa-solid fa-book-open mr-1 text-slate-400"></i> Presensi Sesi Mapel Hari Ini:
-                                            </span>
-                                            <?php if(count($mapels) > 0): ?>
-                                                <div class="flex flex-wrap items-center gap-1.5 max-w-sm">
-                                                    <?php $__currentLoopData = $mapels; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mp): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                        <?php if($mp['status_siswa'] === 'h'): ?>
-                                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200" title="<?php echo e($mp['mapel']); ?> (<?php echo e($mp['guru']); ?>): Hadir">
-                                                                <i class="fa-solid fa-check text-[9px] mr-1"></i> <?php echo e($mp['mapel']); ?>: Hadir
-                                                            </span>
-                                                        <?php elseif($mp['status_siswa'] === 's'): ?>
-                                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200" title="<?php echo e($mp['mapel']); ?> (<?php echo e($mp['guru']); ?>): Sakit">
-                                                                <i class="fa-solid fa-heart-pulse text-[9px] mr-1"></i> <?php echo e($mp['mapel']); ?>: Sakit
-                                                            </span>
-                                                        <?php elseif($mp['status_siswa'] === 'i'): ?>
-                                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-50 text-blue-800 border border-blue-200" title="<?php echo e($mp['mapel']); ?> (<?php echo e($mp['guru']); ?>): Izin">
-                                                                <i class="fa-solid fa-envelope-open text-[9px] mr-1"></i> <?php echo e($mp['mapel']); ?>: Izin
-                                                            </span>
-                                                        <?php elseif($mp['status_siswa'] === 'a'): ?>
-                                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-200" title="<?php echo e($mp['mapel']); ?> (<?php echo e($mp['guru']); ?>): Alpa / Tidak Hadir">
-                                                                <i class="fa-solid fa-xmark text-[9px] mr-1"></i> <?php echo e($mp['mapel']); ?>: Alpa
-                                                            </span>
-                                                        <?php else: ?>
-                                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-500 border border-slate-200" title="<?php echo e($mp['mapel']); ?> (<?php echo e($mp['guru']); ?>): Belum Diabsen">
-                                                                <i class="fa-regular fa-clock text-[9px] mr-1"></i> <?php echo e($mp['mapel']); ?>
+                                            <!-- Mode 1: Tampilan Lengkap Semua Mapel (Default / Overview) -->
+                                            <div class="view-semua-mapel">
+                                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5 md:hidden">
+                                                    <i class="fa-solid fa-book-open mr-1 text-slate-400"></i> Presensi Sesi Mapel Hari Ini:
+                                                </span>
+                                                <?php if(count($mapels) > 0): ?>
+                                                    <div class="flex flex-wrap items-center gap-1.5 max-w-sm">
+                                                        <?php $__currentLoopData = $mapels; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mp): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <?php if($mp['status_siswa'] === 'h'): ?>
+                                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200" title="<?php echo e($mp['mapel']); ?> (<?php echo e($mp['guru']); ?>): Hadir">
+                                                                    <i class="fa-solid fa-check text-[9px] mr-1"></i> <?php echo e($mp['mapel']); ?>: Hadir
+                                                                </span>
+                                                            <?php elseif($mp['status_siswa'] === 's'): ?>
+                                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200" title="<?php echo e($mp['mapel']); ?> (<?php echo e($mp['guru']); ?>): Sakit">
+                                                                    <i class="fa-solid fa-heart-pulse text-[9px] mr-1"></i> <?php echo e($mp['mapel']); ?>: Sakit
+                                                                </span>
+                                                            <?php elseif($mp['status_siswa'] === 'i'): ?>
+                                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-50 text-blue-800 border border-blue-200" title="<?php echo e($mp['mapel']); ?> (<?php echo e($mp['guru']); ?>): Izin">
+                                                                    <i class="fa-solid fa-envelope-open text-[9px] mr-1"></i> <?php echo e($mp['mapel']); ?>: Izin
+                                                                </span>
+                                                            <?php elseif($mp['status_siswa'] === 'a'): ?>
+                                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-200" title="<?php echo e($mp['mapel']); ?> (<?php echo e($mp['guru']); ?>): Alpa / Tidak Hadir">
+                                                                    <i class="fa-solid fa-xmark text-[9px] mr-1"></i> <?php echo e($mp['mapel']); ?>: Alpa
+                                                                </span>
+                                                            <?php else: ?>
+                                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-500 border border-slate-200" title="<?php echo e($mp['mapel']); ?> (<?php echo e($mp['guru']); ?>): Belum Diabsen">
+                                                                    <i class="fa-regular fa-clock text-[9px] mr-1"></i> <?php echo e($mp['mapel']); ?>
 
-                                                            </span>
-                                                        <?php endif; ?>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                                </span>
+                                                            <?php endif; ?>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <span class="text-xs text-slate-400 italic">Tidak ada jadwal sesi mapel pada hari ini</span>
+                                                <?php endif; ?>
+                                            </div>
+
+                                            <!-- Mode 2: Tampilan Terfokus Khusus Mapel Terpilih (Menampilkan Statusnya Saja: Hadir / Sakit / Izin / Alpa) -->
+                                            <?php $__currentLoopData = $mapels; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mp): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <div class="mapel-single-item mapel-item-<?php echo e($mp['jadwal_id']); ?> hidden" data-jadwal-id="<?php echo e($mp['jadwal_id']); ?>">
+                                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1 md:hidden">
+                                                        Status <?php echo e($mp['mapel']); ?>:
+                                                    </span>
+                                                    <?php if($mp['status_siswa'] === 'h'): ?>
+                                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-xs">
+                                                            <i class="fa-solid fa-circle-check text-emerald-600 mr-1.5 text-xs"></i> Hadir
+                                                        </span>
+                                                    <?php elseif($mp['status_siswa'] === 's'): ?>
+                                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200 shadow-xs">
+                                                            <i class="fa-solid fa-heart-pulse text-amber-600 mr-1.5 text-xs"></i> Sakit
+                                                        </span>
+                                                    <?php elseif($mp['status_siswa'] === 'i'): ?>
+                                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 shadow-xs">
+                                                            <i class="fa-solid fa-envelope-open text-blue-600 mr-1.5 text-xs"></i> Izin
+                                                        </span>
+                                                    <?php elseif($mp['status_siswa'] === 'a'): ?>
+                                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200 shadow-xs">
+                                                            <i class="fa-solid fa-circle-xmark text-rose-600 mr-1.5 text-xs"></i> Alpa
+                                                        </span>
+                                                    <?php else: ?>
+                                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-500 border border-slate-200">
+                                                            <i class="fa-regular fa-clock text-slate-400 mr-1.5 text-xs"></i> Belum Diabsen
+                                                        </span>
+                                                    <?php endif; ?>
+
+                                                    <?php if(!empty($mp['keterangan_guru']) && $mp['keterangan_guru'] !== 'Belum diabsen'): ?>
+                                                        <span class="block text-[11px] text-slate-500 mt-1 italic">
+                                                            <i class="fa-regular fa-comment-dots text-slate-400 mr-1 text-[10px]"></i><?php echo e($mp['keterangan_guru']); ?>
+
+                                                        </span>
+                                                    <?php endif; ?>
                                                 </div>
-                                            <?php else: ?>
-                                                <span class="text-xs text-slate-400 italic">Tidak ada jadwal sesi mapel pada hari ini</span>
-                                            <?php endif; ?>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </td>
                                         <td class="px-5 py-3.5 text-center col-status-harian hidden md:table-cell">
                                             <?php if($sumber === 'belum'): ?>
@@ -559,6 +627,79 @@
             if (input) {
                 input.value = '';
                 onCariSiswaWalas('');
+            }
+        }
+
+        let currentActiveMapelId = 'all';
+
+        function pilihSesiMapel(jadwalId, namaMapel, namaGuru, jam) {
+            currentActiveMapelId = jadwalId;
+            const btnAll = document.getElementById('btnTabSemuaMapel');
+
+            // Reset seluruh kartu tab mapel
+            document.querySelectorAll('.mapel-tab-card').forEach(function(card) {
+                card.classList.remove('ring-2', 'ring-emerald-500', 'bg-emerald-50/70', 'border-emerald-500', 'shadow-md');
+                card.classList.add('border-slate-200', 'bg-white');
+                const hint = card.querySelector('.mapel-card-hint');
+                const active = card.querySelector('.mapel-card-active');
+                if (hint) hint.classList.remove('hidden');
+                if (active) active.classList.add('hidden');
+            });
+
+            const thHeader = document.getElementById('thHeaderMapel');
+
+            if (jadwalId === 'all') {
+                if (btnAll) {
+                    btnAll.className = 'mapel-tab-all inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-white hover:bg-slate-900 transition-all shadow-xs';
+                }
+                if (thHeader) {
+                    thHeader.innerHTML = `
+                        <span class="inline-flex items-center gap-1.5 font-semibold text-slate-600 uppercase tracking-wider text-xs">
+                            <i class="fa-solid fa-book-open text-slate-400"></i> Presensi Sesi Mapel Hari Ini
+                        </span>
+                    `;
+                }
+                document.querySelectorAll('.view-semua-mapel').forEach(el => el.classList.remove('hidden'));
+                document.querySelectorAll('.mapel-single-item').forEach(el => el.classList.add('hidden'));
+            } else {
+                if (btnAll) {
+                    btnAll.className = 'mapel-tab-all inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 transition-all';
+                }
+
+                // Beri highlight kartu yang aktif terpilih
+                const activeCard = document.querySelector(`.mapel-tab-card[data-jadwal-id="${jadwalId}"]`);
+                if (activeCard) {
+                    activeCard.classList.remove('border-slate-200', 'bg-white');
+                    activeCard.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-50/70', 'border-emerald-500', 'shadow-md');
+                    const hint = activeCard.querySelector('.mapel-card-hint');
+                    const active = activeCard.querySelector('.mapel-card-active');
+                    if (hint) hint.classList.add('hidden');
+                    if (active) active.classList.remove('hidden');
+                }
+
+                // Update Table Header agar informatif
+                if (thHeader) {
+                    thHeader.innerHTML = `
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="text-left">
+                                <span class="text-xs font-bold text-emerald-800 block normal-case">
+                                    <i class="fa-solid fa-book text-emerald-600 mr-1"></i> Presensi: ${namaMapel}
+                                </span>
+                                <span class="text-[10.5px] font-normal text-slate-500 block normal-case lowercase first-letter:uppercase">
+                                    ${namaGuru} • ${jam}
+                                </span>
+                            </div>
+                            <button type="button" onclick="pilihSesiMapel('all')" class="text-[10px] font-bold text-slate-600 hover:text-emerald-700 bg-white px-2 py-0.5 rounded border border-slate-300 normal-case flex-shrink-0" title="Tampilkan Semua Mapel">
+                                <i class="fa-solid fa-rotate-left mr-1 text-[9px]"></i> Semua
+                            </button>
+                        </div>
+                    `;
+                }
+
+                // Tampilkan hanya status tunggal (Hadir/Sakit/Izin/Alpa) khusus mapel ini
+                document.querySelectorAll('.view-semua-mapel').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.mapel-single-item').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll(`.mapel-single-item.mapel-item-${jadwalId}`).forEach(el => el.classList.remove('hidden'));
             }
         }
     </script>

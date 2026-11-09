@@ -210,7 +210,7 @@
 
                 <!-- 3. TABEL NILAI MATA PELAJARAN (CAPAIAN KOMPETENSI) -->
                 <div class="mb-5 overflow-x-auto">
-                    <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                    <table data-no-paginate="true" class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
                         <thead>
                             <tr class="bg-slate-100 text-slate-900 font-bold text-center">
                                 <th class="border border-slate-800 px-2 py-2 w-10">No</th>
@@ -247,7 +247,7 @@
 
                 <!-- 4. TABEL PROGRAM KEGIATAN SEKOLAH -->
                 <div class="mb-5 overflow-x-auto">
-                    <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                    <table data-no-paginate="true" class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
                         <thead>
                             <tr class="bg-slate-100 text-slate-900 font-bold text-center">
                                 <th class="border border-slate-800 px-2 py-2 w-10">No</th>
@@ -269,7 +269,7 @@
 
                 <!-- 5. TABEL JENIS PRESTASI -->
                 <div class="mb-5 overflow-x-auto">
-                    <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                    <table data-no-paginate="true" class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
                         <thead>
                             <tr class="bg-slate-100 text-slate-900 font-bold text-center">
                                 <th class="border border-slate-800 px-2 py-2 w-10">No</th>
@@ -294,7 +294,7 @@
 
                 <!-- 6. TABEL KETIDAKHADIRAN -->
                 <div class="mb-5 overflow-x-auto w-full sm:w-80">
-                    <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                    <table data-no-paginate="true" class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
                         <thead>
                             <tr class="bg-slate-100 text-slate-900 font-bold">
                                 <th colspan="2" class="border border-slate-800 px-3 py-1.5 text-left">Ketidakhadiran</th>
@@ -319,7 +319,7 @@
 
                 <!-- 7. CATATAN WALI KELAS -->
                 <div class="mb-6">
-                    <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                    <table data-no-paginate="true" class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
                         <thead>
                             <tr class="bg-slate-100 text-slate-900 font-bold">
                                 <th class="border border-slate-800 px-3 py-1.5 text-left">Catatan Wali Kelas</th>

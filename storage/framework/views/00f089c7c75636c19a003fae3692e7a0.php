@@ -171,18 +171,24 @@
             </div>
 
             <div class="mt-3">
-                <span class="text-[11px] font-semibold text-slate-500 block mb-1">⚡ Template Prestasi Resmi (Dikelola Admin):</span>
+                <span class="text-[11px] font-semibold text-slate-500 block mb-1.5">⚡ Template Prestasi Resmi (Dikelola Admin):</span>
                 <div class="flex flex-wrap gap-1.5">
                     <?php if(isset($raporMeta['daftar_preset_prestasi']) && count($raporMeta['daftar_preset_prestasi']) > 0): ?>
                         <?php $__currentLoopData = $raporMeta['daftar_preset_prestasi']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $preset): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <button type="button" onclick="addPrestasiPreset(<?php echo json_encode($preset, 15, 512) ?>)" class="px-2 py-0.5 text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-800 rounded border border-amber-200 transition-colors">
-                                + <?php echo e($preset); ?>
+                            <button type="button" 
+                                    data-preset="<?php echo e($preset); ?>" 
+                                    onclick="addPrestasiPreset(this.getAttribute('data-preset'))" 
+                                    class="px-2.5 py-1 text-[11px] font-medium bg-amber-50 hover:bg-amber-100 text-amber-800 rounded-lg border border-amber-200 transition-colors flex items-center gap-1 cursor-pointer">
+                                <i class="fa-solid fa-plus text-[9px] text-amber-600"></i> <?php echo e($preset); ?>
 
                             </button>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     <?php else: ?>
-                        <button type="button" onclick="addPrestasiPreset('Tasmi hafalan juz 30 & 29 sekali duduk')" class="px-2 py-0.5 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded border border-slate-200">
-                            + Tasmi hafalan juz 30 & 29 sekali duduk
+                        <button type="button" 
+                                data-preset="Tasmi hafalan juz 30 & 29 sekali duduk" 
+                                onclick="addPrestasiPreset(this.getAttribute('data-preset'))" 
+                                class="px-2.5 py-1 text-[11px] font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg border border-slate-200 flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-plus text-[9px]"></i> Tasmi hafalan juz 30 & 29 sekali duduk
                         </button>
                     <?php endif; ?>
                 </div>
@@ -298,7 +304,7 @@
 
             <!-- 3. TABEL CAPAIAN KOMPETENSI (NILAI AKADEMIK) -->
             <div class="mb-6 overflow-x-auto">
-                <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                <table data-no-paginate="true" class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
                     <thead>
                         <tr class="bg-slate-100/90 text-slate-900 font-bold text-center">
                             <th class="border border-slate-800 px-2 py-2.5 w-12">No</th>
@@ -352,7 +358,7 @@
 
             <!-- 4. TABEL PROGRAM KEGIATAN SEKOLAH (SESUAI DOKUMEN WORD) -->
             <div class="mb-6 overflow-x-auto">
-                <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                <table data-no-paginate="true" class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
                     <thead>
                         <tr class="bg-slate-100/90 text-slate-900 font-bold text-center">
                             <th class="border border-slate-800 px-2 py-2.5 w-12">No</th>
@@ -375,7 +381,7 @@
 
             <!-- 5. TABEL JENIS PRESTASI (SESUAI DOKUMEN WORD) -->
             <div class="mb-6 overflow-x-auto">
-                <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                <table data-no-paginate="true" class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
                     <thead>
                         <tr class="bg-slate-100/90 text-slate-900 font-bold text-center">
                             <th class="border border-slate-800 px-2 py-2.5 w-12">No</th>
@@ -401,7 +407,7 @@
 
             <!-- 6. TABEL KETIDAKHADIRAN (SESUAI DOKUMEN WORD) -->
             <div class="mb-6 overflow-x-auto w-full sm:w-80">
-                <table class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
+                <table data-no-paginate="true" class="w-full border-collapse border border-slate-800 text-xs sm:text-sm">
                     <tbody>
                         <tr>
                             <td class="border border-slate-800 px-3.5 py-1.5 font-medium w-48">Sakit</td>
@@ -559,6 +565,13 @@
                         parsed.kegiatan = mergedKegiatan;
                     }
                     state = { ...DEFAULT_STATE, ...parsed };
+                    // Prioritaskan selalu data riil dari MySQL jika sudah disimpan oleh Wali Kelas
+                    if (<?php echo json_encode(!empty($raporMeta['has_evaluasi_db']), 15, 512) ?>) {
+                        state.catatan = DEFAULT_STATE.catatan;
+                    }
+                    if (<?php echo json_encode(!empty($raporMeta['has_prestasi_db']), 15, 512) ?>) {
+                        state.prestasi = DEFAULT_STATE.prestasi;
+                    }
                 }
             } catch (e) {
                 console.error('Error loading state:', e);
@@ -844,13 +857,37 @@
 
         // Prestasi Handlers
         function addPrestasiRow() {
-            state.prestasi.push('Tasmi hafalan Al-Qur\'an');
+            if (!Array.isArray(state.prestasi)) {
+                state.prestasi = [];
+            }
+            state.prestasi.push('');
             renderPrestasiEditor();
             saveState();
+            setTimeout(() => {
+                const inputs = document.querySelectorAll('#prestasiEditorList input');
+                if (inputs.length > 0) {
+                    inputs[inputs.length - 1].focus();
+                }
+            }, 50);
         }
 
         function addPrestasiPreset(text) {
-            state.prestasi.push(text);
+            if (!text || typeof text !== 'string') return;
+            const cleanText = text.trim();
+            if (!cleanText) return;
+
+            if (!Array.isArray(state.prestasi)) {
+                state.prestasi = [];
+            }
+
+            // Ganti baris kosong jika ada, jika tidak tambahkan baris baru (hindari duplikasi tepat sama)
+            const emptyIdx = state.prestasi.findIndex(p => !p || String(p).trim() === '');
+            if (emptyIdx !== -1) {
+                state.prestasi[emptyIdx] = cleanText;
+            } else if (!state.prestasi.includes(cleanText)) {
+                state.prestasi.push(cleanText);
+            }
+
             renderPrestasiEditor();
             saveState();
         }

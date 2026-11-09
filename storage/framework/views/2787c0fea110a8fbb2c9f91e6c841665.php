@@ -133,16 +133,14 @@
                 </button>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             <?php $jmlUmum = $data_mapel->whereNull('sekolah_id')->count(); ?>
-            <?php if($jmlUmum > 0): ?>
-                <button type="button" class="mapel-tab-btn"
-                    data-jenjang-target="UMUM"
-                    data-sekolah-id=""
-                    onclick="filterMapelJenjang('UMUM', this)">
-                    <i class="fa-solid fa-layer-group"></i>
-                    <span>Umum / Lintas Jenjang</span>
-                    <span class="mapel-tab-pill"><?php echo e($jmlUmum); ?> Mapel</span>
-                </button>
-            <?php endif; ?>
+            <button type="button" class="mapel-tab-btn"
+                data-jenjang-target="UMUM"
+                data-sekolah-id="umum"
+                onclick="filterMapelJenjang('UMUM', this)">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>Umum / Semua Jenjang</span>
+                <span class="mapel-tab-pill"><?php echo e($jmlUmum); ?> Mapel</span>
+            </button>
         </div>
 
         <!-- Sub-Banner Keterangan Jenjang Aktif -->
@@ -232,7 +230,7 @@
                                 <button onclick="editMapel(<?php echo e($m->id); ?>, '<?php echo e(addslashes($m->nama_mapel)); ?>', '<?php echo e($m->sekolah_id); ?>', '<?php echo e($m->kkm ?? 75); ?>', '<?php echo e($kode); ?>')" style="background: #e9f2ff; color: #3875c5; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Edit Mata Pelajaran">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <button onclick="deleteMapel(<?php echo e($m->id); ?>, '<?php echo e(addslashes($m->nama_mapel)); ?>', '<?php echo e($kode); ?>')" style="background: #f8e9e9; color: #b34d4d; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Hapus Mata Pelajaran">
+                                <button onclick="deleteMapel(<?php echo e($m->id); ?>, '<?php echo e(addslashes($m->nama_mapel)); ?>', '<?php echo e($kode); ?>', <?php echo e($m->nilai_count ?? 0); ?>, <?php echo e($m->jadwal_pelajaran_count ?? 0); ?>)" style="background: #f8e9e9; color: #b34d4d; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Hapus Mata Pelajaran">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>
@@ -276,6 +274,9 @@
                 <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Jenjang Sekolah</label>
                 <select name="sekolah_id" id="addSekolahSelect" required onchange="onAddJenjangSelectChange()" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
                     <option value="">-- Pilih Jenjang --</option>
+                    <option value="umum" data-kode="UMUM" data-tk="0" style="font-weight: 700; color: #166534; background: #f0fdf4;">
+                        ★ UMUM (Semua Jenjang / Lintas Jenjang)
+                    </option>
                     <?php $__currentLoopData = $data_sekolah; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <?php
                             $kode = strtoupper(trim($s->jenis));
@@ -337,6 +338,9 @@
                 <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Jenjang Sekolah</label>
                 <select name="sekolah_id" id="editSekolah" required onchange="onEditJenjangSelectChange()" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px;">
                     <option value="">-- Pilih Jenjang --</option>
+                    <option value="umum" data-kode="UMUM" data-tk="0" style="font-weight: 700; color: #166534; background: #f0fdf4;">
+                        ★ UMUM (Semua Jenjang / Lintas Jenjang)
+                    </option>
                     <?php $__currentLoopData = $data_sekolah; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <?php
                             $kode = strtoupper(trim($s->jenis));
@@ -384,15 +388,38 @@
     <!-- Modal Delete Mapel -->
     <?php if (isset($component)) { $__componentOriginale960230fd71228156fe70d1ba75c1455 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginale960230fd71228156fe70d1ba75c1455 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.modal','data' => ['id' => 'deleteModal','title' => 'Konfirmasi Hapus','icon' => 'fa-triangle-exclamation','iconColor' => '#b34d4d','iconBg' => '#f8e9e9']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.modal','data' => ['id' => 'deleteModal','title' => 'Konfirmasi Hapus Mata Pelajaran','icon' => 'fa-triangle-exclamation','iconColor' => '#b34d4d','iconBg' => '#f8e9e9']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('siakad.ui.modal'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['id' => 'deleteModal','title' => 'Konfirmasi Hapus','icon' => 'fa-triangle-exclamation','iconColor' => '#b34d4d','iconBg' => '#f8e9e9']); ?>
-        <p style="margin-bottom: 20px; color: #475569; line-height: 1.5;">Anda yakin ingin menghapus <strong id="deleteMapelName" style="color: #1e293b;"></strong>? Data yang dihapus tidak dapat dipulihkan.</p>
+<?php $component->withAttributes(['id' => 'deleteModal','title' => 'Konfirmasi Hapus Mata Pelajaran','icon' => 'fa-triangle-exclamation','iconColor' => '#b34d4d','iconBg' => '#f8e9e9']); ?>
+        <div style="margin-bottom: 16px;">
+            <p style="margin-bottom: 8px; color: #475569; font-size: 14px; line-height: 1.5;">
+                Anda yakin ingin menghapus <strong id="deleteMapelName" style="color: #1e293b;"></strong>?
+            </p>
+            <div id="deleteMapelJadwalWarning" style="display: none; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 10px 12px; font-size: 12.5px; color: #9f1239; margin-top: 10px;">
+                <i class="fa-solid fa-ban" style="margin-right: 6px;"></i>
+                <strong>Tidak Dapat Dihapus:</strong> Mata pelajaran ini masih digunakan pada <strong id="countMapelJadwal">0</strong> Jadwal Pelajaran aktif. Hapus jadwal terkait di menu <em>Kelola Jadwal</em> terlebih dahulu.
+            </div>
+            <div id="deleteMapelNilaiWarning" style="display: none; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; font-size: 12.5px; color: #92400e; margin-top: 10px;">
+                <div style="font-weight: 700; margin-bottom: 4px;">
+                    <i class="fa-solid fa-triangle-exclamation" style="margin-right: 4px;"></i> Peringatan Data Nilai Siswa:
+                </div>
+                <div>
+                    Mata pelajaran ini memiliki <strong id="countMapelNilai">0</strong> data nilai siswa yang tersimpan.
+                </div>
+                <label style="display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; cursor: pointer; font-weight: 600; color: #78350f;">
+                    <input type="checkbox" id="chkForceDeleteMapel" style="margin-top: 2px;">
+                    <span>Saya mengerti dan setuju menghapus mata pelajaran ini beserta seluruh riwayat nilai siswa terkait.</span>
+                </label>
+            </div>
+            <div id="deleteMapelNormalWarning" style="font-size: 12.5px; color: #94a3b8; margin-top: 8px;">
+                Data mata pelajaran yang sudah dihapus tidak dapat dipulihkan kembali.
+            </div>
+        </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px;">
             <button type="button" onclick="closeModal('deleteModal')" style="padding: 10px 16px; border: none; background: #f1f5f3; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
             <button type="button" id="btnConfirmDelete" style="padding: 10px 16px; border: none; background: #b34d4d; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Ya, Hapus</button>
@@ -434,10 +461,12 @@
             const titleEl = document.getElementById('lblActiveJenjangTitle');
             const descEl = document.getElementById('lblActiveJenjangDesc');
             if (titleEl) {
-                titleEl.textContent = (kode === 'UMUM') ? 'Umum / Lintas Jenjang' : `Jenjang ${kode}`;
+                titleEl.textContent = (kode === 'UMUM') ? 'Umum / Semua Jenjang (Lintas Jenjang)' : `Jenjang ${kode}`;
             }
             if (descEl) {
-                if (kode === 'SD') {
+                if (kode === 'UMUM') {
+                    descEl.textContent = '(Mata pelajaran berlaku untuk seluruh tingkatan kelas di yayasan)';
+                } else if (kode === 'SD') {
                     descEl.textContent = '(Kurikulum & KKM berlaku untuk Kelas 1 s/d 6 SD)';
                 } else if (kode === 'SMP') {
                     descEl.textContent = '(Kurikulum & KKM berlaku untuk Kelas 7 s/d 9 SMP)';
@@ -491,8 +520,12 @@
             const activeBtn = document.querySelector('.mapel-tab-btn.active');
             const activeSekolahId = activeBtn ? activeBtn.getAttribute('data-sekolah-id') : '';
             const sel = document.getElementById('addSekolahSelect');
-            if (sel && activeSekolahId) {
-                sel.value = activeSekolahId;
+            if (sel) {
+                if (activeSekolahId) {
+                    sel.value = activeSekolahId;
+                } else if (activeBtn && activeBtn.getAttribute('data-jenjang-target') === 'UMUM') {
+                    sel.value = 'umum';
+                }
             }
             document.getElementById('addNamaMapel').value = '';
             onAddJenjangSelectChange();
@@ -531,7 +564,7 @@
             if (sekolah_id) {
                 sel.value = sekolah_id;
             } else {
-                sel.value = "";
+                sel.value = "umum";
             }
 
             document.getElementById('editKkm').value = kkm || 75;
@@ -561,15 +594,64 @@
         }
 
         let deleteIdTarget = null;
-        function deleteMapel(id, nama, jenjangKode) {
+        let deleteHasNilai = false;
+        let deleteHasJadwal = false;
+
+        function deleteMapel(id, nama, jenjangKode, jmlNilai = 0, jmlJadwal = 0) {
             deleteIdTarget = id;
+            deleteHasNilai = (jmlNilai > 0);
+            deleteHasJadwal = (jmlJadwal > 0);
+
             document.getElementById('deleteMapelName').textContent = `[Jenjang ${jenjangKode}] ${nama}`;
+            const jWarn = document.getElementById('deleteMapelJadwalWarning');
+            const nWarn = document.getElementById('deleteMapelNilaiWarning');
+            const nNorm = document.getElementById('deleteMapelNormalWarning');
+            const btnDel = document.getElementById('btnConfirmDelete');
+            const chkForce = document.getElementById('chkForceDeleteMapel');
+
+            if (chkForce) chkForce.checked = false;
+
+            if (deleteHasJadwal) {
+                jWarn.style.display = 'block';
+                document.getElementById('countMapelJadwal').textContent = jmlJadwal;
+                nWarn.style.display = 'none';
+                nNorm.style.display = 'none';
+                btnDel.disabled = true;
+                btnDel.style.opacity = '0.5';
+                btnDel.style.cursor = 'not-allowed';
+            } else if (deleteHasNilai) {
+                jWarn.style.display = 'none';
+                nWarn.style.display = 'block';
+                document.getElementById('countMapelNilai').textContent = jmlNilai;
+                nNorm.style.display = 'none';
+                btnDel.disabled = true;
+                btnDel.style.opacity = '0.5';
+                btnDel.style.cursor = 'not-allowed';
+
+                if (chkForce) {
+                    chkForce.onchange = function() {
+                        btnDel.disabled = !this.checked;
+                        btnDel.style.opacity = this.checked ? '1' : '0.5';
+                        btnDel.style.cursor = this.checked ? 'pointer' : 'not-allowed';
+                    };
+                }
+            } else {
+                jWarn.style.display = 'none';
+                nWarn.style.display = 'none';
+                nNorm.style.display = 'block';
+                btnDel.disabled = false;
+                btnDel.style.opacity = '1';
+                btnDel.style.cursor = 'pointer';
+            }
+
             openModal('deleteModal');
         }
 
         document.getElementById('btnConfirmDelete').addEventListener('click', function() {
             if (deleteIdTarget) {
-                window.location.href = "/sk/hapus-mapel/" + deleteIdTarget;
+                const chkForce = document.getElementById('chkForceDeleteMapel');
+                const forceParam = (deleteHasNilai && chkForce && chkForce.checked) ? '?force=1' : '';
+                window.location.href = "/sk/hapus-mapel/" + deleteIdTarget + forceParam;
             }
         });
 

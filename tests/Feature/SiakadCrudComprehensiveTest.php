@@ -257,11 +257,103 @@ class SiakadCrudComprehensiveTest extends TestCase
         $this->assertNull(mata_pelajaran::find($mapel->id));
     }
 
+    /** 5.c HAPUS MAPEL DENGAN NILAI (TEST GUARD & FORCE DELETE) */
+    public function test_hapus_mapel_dengan_nilai_dan_force_delete()
+    {
+        $mapel = mata_pelajaran::create([
+            'nama_mapel' => 'Mapel Uji Nilai ' . rand(100, 999),
+            'sekolah_id' => 1,
+            'kkm' => 75
+        ]);
+
+        $siswa = siswa::first();
+        $ta = tahun_ajaran::first();
+        if ($siswa && $ta) {
+            \App\Models\nilai::create([
+                'siswa_id' => $siswa->id,
+                'guru_id' => 1,
+                'tahun_ajaran_id' => $ta->id,
+                'mapel_id' => $mapel->id,
+                'jenis_penilaian_id' => 1,
+                'nilai' => 85
+            ]);
+        }
+
+        // Hapus tanpa force harus gagal dengan session error
+        $resFailed = $this->withSession($this->adminSession)->get("/sk/hapus-mapel/{$mapel->id}");
+        $resFailed->assertRedirect();
+        $this->assertNotNull(mata_pelajaran::find($mapel->id));
+
+        // Hapus dengan ?force=1 harus berhasil
+        $resForce = $this->withSession($this->adminSession)->get("/sk/hapus-mapel/{$mapel->id}?force=1");
+        $resForce->assertRedirect();
+        $this->assertNull(mata_pelajaran::find($mapel->id));
+        $this->assertEquals(0, \App\Models\nilai::where('mapel_id', $mapel->id)->count());
+    }
+
+    /** 5.d HAPUS SISWA CONTROLLER METHOD */
+    public function test_hapus_siswa_controller_method()
+    {
+        $testSiswa = siswa::create([
+            'nama' => 'Santri Uji Hapus ' . rand(100, 999),
+            'nis' => 'TESTNIS' . rand(1000, 9999),
+            'gender' => 'l',
+            'aktif' => 1,
+            'sekolah_id' => 1
+        ]);
+
+        $controller = new \App\Http\Controllers\siakadController();
+        session($this->adminSession);
+        $res = $controller->hapusSiswa($testSiswa->id);
+        $this->assertTrue($res->isRedirection());
+        $this->assertNull(siswa::find($testSiswa->id));
+    }
+
+    /** 5.b CRUD MATA PELAJARAN UMUM (SEMUA JENJANG) */
+    public function test_crud_mata_pelajaran_jenjang_umum()
+    {
+        $mapelNama = 'Bahasa Uji Umum ' . rand(100, 999);
+
+        // CREATE Mapel Jenjang UMUM (sekolah_id = 'umum')
+        $resCreate = $this->withSession($this->adminSession)->post('/sk/simpan-mapel', [
+            'nama_mapel' => $mapelNama,
+            'sekolah_id' => 'umum',
+            'kkm' => 75,
+        ]);
+        $resCreate->assertRedirect();
+
+        $mapel = mata_pelajaran::where('nama_mapel', $mapelNama)->first();
+        $this->assertNotNull($mapel);
+        $this->assertNull($mapel->sekolah_id);
+        $this->assertEquals('UMUM', $mapel->kode_jenjang);
+
+        // READ kelolaMapel
+        $resRead = $this->withSession($this->adminSession)->get('/sk/kelola-mapel');
+        $resRead->assertStatus(200);
+        $resRead->assertSee('Umum / Semua Jenjang');
+        $resRead->assertSee($mapelNama);
+
+        // UPDATE Mapel UMUM
+        $resUpdate = $this->withSession($this->adminSession)->post("/sk/update-mapel/{$mapel->id}", [
+            'nama_mapel' => $mapelNama . ' REVISI UMUM',
+            'sekolah_id' => 'umum',
+            'kkm' => 78,
+        ]);
+        $resUpdate->assertRedirect();
+        $this->assertEquals($mapelNama . ' REVISI UMUM', $mapel->fresh()->nama_mapel);
+        $this->assertNull($mapel->fresh()->sekolah_id);
+
+        // DELETE
+        $resDelete = $this->withSession($this->adminSession)->get("/sk/hapus-mapel/{$mapel->id}");
+        $resDelete->assertRedirect();
+        $this->assertNull(mata_pelajaran::find($mapel->id));
+    }
+
     /** 6. CRUD JADWAL PELAJARAN */
     public function test_crud_jadwal_pelajaran()
     {
         $jp = jam_pelajaran::first();
-        $kls = kelas::first();
+        $kls = kelas::whereNotIn('id', jadwal_pelajaran::pluck('kelas_id'))->first() ?? kelas::first();
         $mpl = mata_pelajaran::first();
         $ta = tahun_ajaran::first();
         $gr = guru::where('id', '>', 3)->first() ?? guru::first();
@@ -296,12 +388,12 @@ class SiakadCrudComprehensiveTest extends TestCase
             'kelas_id' => $kls->id,
             'guru_id' => $gr->id,
             'mapel_id' => $mpl->id,
-            'hari' => 'jumat',
+            'hari' => 'kamis',
             'jam_pelajaran_id' => $jp->id,
             'tahun_ajaran_id' => $ta->id,
         ]);
         $resUpdate->assertRedirect();
-        $this->assertEquals('jumat', $jadwal->fresh()->hari);
+        $this->assertEquals('kamis', $jadwal->fresh()->hari);
 
         // DELETE
         $resDelete = $this->withSession($this->adminSession)->get("/sk/hapus-jadwal/{$jadwal->id}");
