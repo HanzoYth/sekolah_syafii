@@ -264,6 +264,7 @@
                         <option value="kamis">Kamis</option>
                         <option value="jumat">Jumat</option>
                         <option value="sabtu">Sabtu</option>
+                        <option value="minggu">Ahad / Minggu</option>
                     </select>
                 </div>
                 
@@ -381,6 +382,7 @@
                         <option value="kamis">Kamis</option>
                         <option value="jumat">Jumat</option>
                         <option value="sabtu">Sabtu</option>
+                        <option value="minggu">Ahad / Minggu</option>
                     </select>
                 </div>
                 

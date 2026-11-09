@@ -1,0 +1,1 @@
+<button type="button" data-siswa-id="{{ $siswaId }}" data-text="{{ $preset->nama_prestasi }}" onclick="addPrestasiPreset(this.dataset.siswaId, this.dataset.text)">+ {{ $preset->nama_prestasi }}</button>

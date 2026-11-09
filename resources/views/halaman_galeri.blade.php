@@ -104,7 +104,7 @@
                     </button>
                     <figcaption>
                         <span class="badge"><i class="fa-solid fa-school"></i> Lingkungan Sekolah</span>
-                        <h3>Suasana Kampus yang Kondusif</h3>
+                        <h3>Suasana Sekolah yang Kondusif</h3>
                         <p>Area sekolah yang tenang dan mendukung konsentrasi santri dalam menuntut ilmu dan menghafal.</p>
                     </figcaption>
                 </figure>

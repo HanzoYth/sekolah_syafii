@@ -1,0 +1,1 @@
+<button type="button" data-siswa-id="<?php echo e($siswaId); ?>" data-text="<?php echo e($preset->nama_prestasi); ?>" onclick="addPrestasiPreset(this.dataset.siswaId, this.dataset.text)">+ <?php echo e($preset->nama_prestasi); ?></button><?php /**PATH D:\laragon\www\sekolahsyafii\storage\framework\views/bc5607cb4d298318641ee41ce403232b.blade.php ENDPATH**/ ?>

@@ -7,9 +7,9 @@
 @section('eyebrow_icon', 'fa-solid fa-map-location-dot')
 @section('eyebrow_text', 'Hubungi Kami')
 @section('hero_title')
-    Lokasi Kampus & <span class="highlight">Layanan Informasi</span>
+    Lokasi Sekolah & <span class="highlight">Layanan Informasi</span>
 @endsection
-@section('hero_desc', "Kunjungi langsung kampus Sekolah Islam Al-Qur'an Imam Syafi'i di Kota Palu atau hubungi layanan administrasi kami pada jam kerja.")
+@section('hero_desc', "Kunjungi langsung Sekolah Sekolah Islam Al-Qur'an Imam Syafi'i di Kota Palu atau hubungi layanan administrasi kami pada jam kerja.")
 @section('hero_actions')
     <a href="https://www.google.com/maps?q=-0.9267058875927435,119.87149370241973" target="_blank" rel="noopener" class="btn-secondary">
         <i class="fa-solid fa-route"></i> Buka Rute Google Maps
@@ -27,7 +27,7 @@
 
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <span class="section-eyebrow"><i class="fa-solid fa-building"></i> Sekretariat & Kampus</span>
+                <span class="section-eyebrow"><i class="fa-solid fa-building"></i> Sekretariat & Sekolah</span>
                 <h2 class="section-title">Informasi Kontak & Peta Lokasi</h2>
                 <p class="section-subtitle">
                     Kami menyambut hangat kunjungan orang tua/wali calon santri untuk melihat langsung lingkungan belajar dan berkonsultasi mengenai pendidikan putra-putrinya.
@@ -40,7 +40,7 @@
                         <li>
                             <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
                             <div>
-                                <strong>Alamat Kampus</strong>
+                                <strong>Alamat Sekolah</strong>
                                 <span>Kota Palu, Sulawesi Tengah (Klik penanda pada peta di samping untuk navigasi langsung ke Google Maps)</span>
                             </div>
                         </li>
@@ -115,7 +115,7 @@
                     <ul>
                         <li><i class="fa-solid fa-circle-check"></i><span><strong>Waktu Terbaik Berkunjung:</strong> Pukul 08.00 – 11.30 WITA jika ingin sekaligus melihat suasana halaqah pagi dan kegiatan belajar santri.</span></li>
                         <li><i class="fa-solid fa-circle-check"></i><span><strong>Adab Berpakaian:</strong> Pengunjung dan tamu sekolah diharapkan mengenakan pakaian yang sopan, rapi, dan menutup aurat sesuai syariat Islam.</span></li>
-                        <li><i class="fa-solid fa-circle-check"></i><span><strong>Registrasi Tamu:</strong> Silakan melapor terlebih dahulu kepada petugas keamanan atau meja layanan sekretariat setibanya di lingkungan kampus.</span></li>
+                        <li><i class="fa-solid fa-circle-check"></i><span><strong>Registrasi Tamu:</strong> Silakan melapor terlebih dahulu kepada petugas keamanan atau meja layanan sekretariat setibanya di lingkungan Sekolah.</span></li>
                         <li><i class="fa-solid fa-circle-check"></i><span><strong>Akses Portal Daring:</strong> Bagi wali santri aktif yang membutuhkan bantuan akun SIAKAD, silakan menghubungi Admin SIAKAD di ruang Tata Usaha.</span></li>
                     </ul>
                 </div>

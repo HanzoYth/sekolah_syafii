@@ -20,6 +20,16 @@ class mata_pelajaran extends Model
         return $this->hasMany(kkm_mapel_tingkat::class, 'mapel_id');
     }
 
+    public function nilai()
+    {
+        return $this->hasMany(nilai::class, 'mapel_id');
+    }
+
+    public function jadwal_pelajaran()
+    {
+        return $this->hasMany(jadwal_pelajaran::class, 'mapel_id');
+    }
+
     /**
      * Kode Jenjang Sekolah (SD, SMP, TK, atau UMUM)
      */

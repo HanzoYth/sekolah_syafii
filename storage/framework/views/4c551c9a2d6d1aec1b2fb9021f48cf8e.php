@@ -1,0 +1,1 @@
+<button type="button" onclick="addPrestasiPreset(<?php echo e($siswaId); ?>, <?php echo json_encode($preset->nama_prestasi, 15, 512) ?>)"><?php /**PATH D:\laragon\www\sekolahsyafii\storage\framework\views/3b7b73c3a9cc7323d7a79bc8dfda149b.blade.php ENDPATH**/ ?>

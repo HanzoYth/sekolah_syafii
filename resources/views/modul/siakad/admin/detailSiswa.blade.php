@@ -22,6 +22,9 @@
             </div>
         </div>
         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <a href="/sk/detail-rapor-walas/{{ $data_siswa->id }}" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: #2563eb; color: white; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+                <i class="fa-solid fa-file-contract"></i> Cetak & Evaluasi Rapor
+            </a>
             <button type="button" onclick="bukaModalEditSiswa({{ json_encode($data_siswa) }})" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: #0d5c3a; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#083d26'" onmouseout="this.style.background='#0d5c3a'">
                 <i class="fa-solid fa-pen-to-square"></i> Edit Data Siswa
             </button>

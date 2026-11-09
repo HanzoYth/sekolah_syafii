@@ -1,4 +1,10 @@
 <link rel="stylesheet" href="{{ asset('css/modul/siakad/shared/components.css') }}?v={{ time() }}">
+<style>
+    /* Hindari duplikasi floating hamburger saat topbar SIAKAD aktif */
+    #mobile-hamburger-btn {
+        display: none !important;
+    }
+</style>
 
 <header class="siakad-topbar">
     <div class="siakad-topbar-pattern" aria-hidden="true"></div>
