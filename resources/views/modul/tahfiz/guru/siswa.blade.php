@@ -422,7 +422,7 @@
 
             </div>
             <div class="modal-footer">
-                <a href="" target="_blank" class="btn-pdf-modal"><i class="fa-solid fa-file-pdf"></i> Cetak Rapor Hafalan</a>
+                <a href="{{ url('/tf/gr/rapor') }}" id="modalCetakRaporBtn" target="_blank" class="btn-pdf-modal"><i class="fa-solid fa-file-pdf"></i> Cetak Rapor Santri (P5)</a>
                 <button type="button" class="btn-close-modal" onclick="closeProfilModal()">Tutup</button>
             </div>
         </div>

@@ -11,4 +11,9 @@ class ruang_kelas extends Model
     protected $fillable = [
         "nama_ruang"
     ];
+
+    public function siswa()
+    {
+        return $this->hasMany(siswa::class, 'kelas_id');
+    }
 }

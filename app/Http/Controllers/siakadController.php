@@ -4058,19 +4058,28 @@ class siakadController extends Controller
         $kepsek = $request->input('nama_kepsek');
         $walas = $request->input('nama_walas');
 
+        $updateData = [
+            'catatan_walas' => $catatan,
+            'evaluasi_kegiatan' => $kegiatan,
+            'tanggal_rapor' => $tanggal,
+            'nama_kepsek' => $kepsek,
+            'nama_walas' => $walas,
+        ];
+
+        if ($request->has('ttd_walas')) {
+            $updateData['ttd_walas'] = $request->input('ttd_walas');
+        }
+        if ($request->has('ttd_kepsek')) {
+            $updateData['ttd_kepsek'] = $request->input('ttd_kepsek');
+        }
+
         $evaluasi = \App\Models\evaluasi_rapor_siswa::updateOrCreate(
             [
                 'siswa_id' => $siswa_id, 
                 'tahun_ajaran_id' => $tahun_id, 
                 'semester' => $semester
             ],
-            [
-                'catatan_walas' => $catatan,
-                'evaluasi_kegiatan' => $kegiatan,
-                'tanggal_rapor' => $tanggal,
-                'nama_kepsek' => $kepsek,
-                'nama_walas' => $walas,
-            ]
+            $updateData
         );
 
         if (is_array($prestasi)) {
@@ -4322,10 +4331,13 @@ class siakadController extends Controller
         $has_evaluasi_db = ($evaluasiDb && !empty($evaluasiDb->catatan_walas));
         $has_prestasi_db = $prestasiDb->isNotEmpty();
 
+        $ttd_walas = $evaluasiDb->ttd_walas ?? $pengaturanRapor->ttd_walas ?? null;
+        $ttd_kepsek = $evaluasiDb->ttd_kepsek ?? $pengaturanRapor->ttd_kepsek ?? null;
+
         return compact(
             'jenjang', 'nama_sekolah', 'watermark_logo', 'fase', 'kelas_label', 'alamat_sekolah', 'tempat_rapor',
             'nama_kepsek', 'tanggal_rapor', 'nama_walas', 'kegiatan_sekolah_default', 'prestasi_default', 'catatan_walas_default', 'daftar_preset_prestasi',
-            'has_evaluasi_db', 'has_prestasi_db'
+            'has_evaluasi_db', 'has_prestasi_db', 'ttd_walas', 'ttd_kepsek'
         );
     }
 
