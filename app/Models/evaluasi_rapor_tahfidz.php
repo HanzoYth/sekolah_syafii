@@ -146,6 +146,10 @@ class evaluasi_rapor_tahfidz extends Model
         $umur = $siswa ? self::calculateAge($siswa->tanggal_lahir) : '12 TAHUN';
 
         return [
+            "tema_projek" => "Tema Project",
+            "judul_projek" => "judul_project",
+            "deskripsi_projek" => "Deskripsi",
+            "sub_judul_kegiatan" => "sub judul",
             'judul_rapor' => 'RAPORT TAHFIZH AL-QUR’AN SEMESTER GANJIL 2025',
             'nama_sekolah' => 'SEKOLAH DASAR AL-QUR’AN IMAM SYAFI’I TINGGEDE',
             'nama_siswa' => $siswa->nama ?? 'MOH. IBNU MUNDZIR',
