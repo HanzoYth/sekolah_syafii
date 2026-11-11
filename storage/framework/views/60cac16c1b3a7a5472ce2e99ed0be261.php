@@ -475,7 +475,7 @@
                     </button>
                     <figcaption>
                         <span class="badge"><i class="fa-solid fa-school"></i> Lingkungan Sekolah</span>
-                        <h3>Suasana Kampus yang Kondusif</h3>
+                        <h3>Suasana Sekolah yang Kondusif</h3>
                         <p>Area sekolah yang tenang dan mendukung konsentrasi santri dalam menuntut ilmu dan menghafal.</p>
                     </figcaption>
                 </figure>
@@ -629,7 +629,7 @@
                 <span class="section-eyebrow"><i class="fa-solid fa-map-location-dot"></i> Hubungi Kami</span>
                 <h2 class="section-title">Lokasi & Informasi Kontak</h2>
                 <p class="section-subtitle">
-                    Silakan kunjungi kampus kami atau hubungi layanan administrasi sekolah untuk konsultasi pendidikan dan informasi PPDB.
+                    Silakan kunjungi Sekolah kami atau hubungi layanan administrasi sekolah untuk konsultasi pendidikan dan informasi PPDB.
                 </p>
             </div>
 
@@ -639,7 +639,7 @@
                         <li>
                             <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
                             <div>
-                                <strong>Alamat Kampus</strong>
+                                <strong>Alamat Sekolah</strong>
                                 <span>Kota Palu, Sulawesi Tengah (Klik penanda pada peta di samping untuk rute Google Maps langsung)</span>
                             </div>
                         </li>

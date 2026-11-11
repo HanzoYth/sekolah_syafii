@@ -215,6 +215,36 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- CARD BARU: Widget Jadwal Piket Guru -->
+                        <div class="card widget-piket">
+                            <div class="card-header">
+                                <h4><i class="fa-solid fa-user-shield"></i> Jadwal Piket Minggu Guru Lain</h4>
+                                <span class="badge-status-piket">Aktif</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="piket-list">
+                                    <?php $__currentLoopData = $data_piketLain; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $piket): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php
+                                            Carbon\Carbon::setlocale("id");
+                                            $cek_hari_ini = Carbon\Carbon::now()->translatedFormat("l") == $piket->hari;
+                                            $get_another_theacher = App\Models\guru::where("id",$piket->id_guru)->first();
+                                        ?>
+                                        <div class="piket-item <?php echo e($cek_hari_ini ? 'piket-today' : ''); ?>">
+                                            <div class="piket-date-box">
+                                                <span class="piket-day"><?php echo e($piket->hari); ?></span>
+                                            </div>
+                                            <div class="piket-info">
+                                                <h5><?php echo e($get_another_theacher->nama); ?>--piket(<?php echo e($piket->nama); ?>)</h5>
+                                                <p><i class="fa-regular fa-clock"></i> <?php echo e(Carbon\Carbon::parse($piket->jam)->translatedFormat('H:i')); ?> WITA</p>
+                                            </div>
+                                            <?php if($cek_hari_ini): ?>
+                                                <span class="badge-today">Hari Ini</span>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </div>
+                            </div>
+                        </div>
                     <?php endif; ?>
 
                     <!-- Pengumuman Terbaru -->

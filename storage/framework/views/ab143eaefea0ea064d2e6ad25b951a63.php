@@ -61,6 +61,18 @@
                                 <span>Pengumuman</span>
                             </a>
                         </li>
+                        <li class="menu-item <?php echo e($route == '/gr/edklabsdt' ? 'active' : ''); ?>">
+                            <a href="/gr/edklabsdt">
+                                <i class="fa-solid fa-user-check"></i>
+                                <span>Data Absen</span>
+                            </a>
+                        </li>
+                        <li class="menu-item <?php echo e($route == '/gr/ldkdgr' ? 'active' : ''); ?>">
+                            <a href="/gr/ldkdgr">
+                                <i class="fa-solid fa-user-check"></i>
+                                <span>LeaderBoad Absen</span>
+                            </a>
+                        </li>
                         <?php if(!$user->bendahara && !$user->satpam && !$user->operator ): ?>
                             <li class="menu-item <?php echo e($route == '/gr/edprgr' ? 'active' : ''); ?>">
                                 <a href="/gr/edprgr">

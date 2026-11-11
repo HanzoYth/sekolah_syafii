@@ -52,6 +52,43 @@ class MasterAbsenController extends Controller
         ]);
     }
 
+    function edit_AbsenGuruData(Request $request){
+
+
+        $Awaldate = Carbon::parse($request->bulan)->startOfMonth();
+        $Akhirdate = Carbon::parse($request->bulan)->endOfMonth();
+
+        $tanggal = [];
+        Carbon::setLocale("id");
+        for ($date = $Awaldate->copy() ;$date <= $Akhirdate;$date->addDay()){
+            $tanggal[] = (object) [
+                "tanggal_bulan" => $date->translatedFormat("Y-m-d"),
+                "hari" => $date->translatedFormat("l"),
+               
+            ];
+        }
+
+        $bulan = Carbon::parse($request->bulan)->translatedFormat("m");
+        $data_guru = guru::where("id",session("id"))->first();
+        $nama_lokasi = master_lokasi_absen_guru::where("cabang_id",$data_guru->cabang_id)->first()->nama_lokasi;
+        $data_cabang = cabang_guru::where("id",$data_guru->cabang_id)->first();
+        $jumlah_hadir = master_absen_guru::where("guru_id",session("id"))->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->count();
+        $jumlah_izin = master_absen_guru::where("guru_id",session("id"))->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","i")->count();
+        $jumlah_sakit = master_absen_guru::where("guru_id",session("id"))->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","s")->count();
+        $jumlah_terlambat = master_absen_guru::where("guru_id",session("id"))->whereMonth("tgl_masuk",$bulan)->where("status_kehadiran","h")->sum("terlambat_menit");
+        return view("modul/guru/g/data_absen",[
+            "data_guru" => $data_guru,
+            "data_cabang" => $data_cabang,
+            "jumlah_hadir" => $jumlah_hadir,
+            "jumlah_izin" => $jumlah_izin,
+            "jumlah_sakit" => $jumlah_sakit,
+            "tanggal" => $tanggal,
+            "terlambat" => $jumlah_terlambat,
+            "id_guru" => session("id"),
+            "nama_lokasi" => $nama_lokasi
+        ]);
+    }
+
     
     function tampilan_kelolaAbsenGuru(){
 

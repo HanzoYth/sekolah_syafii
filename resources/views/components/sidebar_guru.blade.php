@@ -61,10 +61,16 @@
                                 <span>Pengumuman</span>
                             </a>
                         </li>
-                        <li class="menu-item {{$route == '/gr/pggr' ? 'active' : ''}}">
-                            <a href="/gr/pggr">
+                        <li class="menu-item {{$route == '/gr/edklabsdt' ? 'active' : ''}}">
+                            <a href="/gr/edklabsdt">
                                 <i class="fa-solid fa-user-check"></i>
                                 <span>Data Absen</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{$route == '/gr/ldkdgr' ? 'active' : ''}}">
+                            <a href="/gr/ldkdgr">
+                                <i class="fa-solid fa-user-check"></i>
+                                <span>LeaderBoad Absen</span>
                             </a>
                         </li>
                         @if (!$user->bendahara && !$user->satpam && !$user->operator )

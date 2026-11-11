@@ -53,6 +53,8 @@ class modulGuruController extends Controller
             $jam_keluar = Carbon::parse("00:00:00")->translatedFormat("H:i:s");
 
             $data_piket = jadwal_piket::where("id_guru",session("id"))->get();
+            $data_piketLain = jadwal_piket::where("hari",Carbon::now()->translatedFormat("l"))->get();
+
 
             $data_pengumuman = pengumuman::where("sekolah_id",$data_guru->sekolah_id)->get();
 
@@ -118,6 +120,7 @@ class modulGuruController extends Controller
                 "data_pengumuman" => $data_pengumuman,
                 "jumlah_hari_aktif" => $jumlah_hari_aktif,
                 "data_piket" => $data_piket,
+                "data_piketLain" => $data_piketLain,
                 "data_terlambat" => $keterlambatan_hari_ini,
                 "data_ketidakhadiran" => $jumlah_tidak_hadir
             ]);
@@ -633,7 +636,7 @@ class modulGuruController extends Controller
 
     function tambah_piket($hari,$jam,$id,$nama){
         jadwal_piket::create([
-            "hari" => $hari,
+            "hari" =>   $hari,
             "jam" => $jam,
             "id_guru" => $id,
             "nama" => $nama
@@ -1648,4 +1651,8 @@ class modulGuruController extends Controller
         }
         return back()->with("eror","ruang kelas sudah tersedia");
     }   
+
+    function LeaderBoardKedisiplinan(){
+        return view("modul/guru/g/leaderboardGuru");
+    }
 }

@@ -113,11 +113,14 @@ Route::get("/gr/totp",[otpController::class,"tampilan_otp"]);
 Route::post("/gr/otp",[otpController::class,"createOtp"]);
 Route::post("/gr/ckotp",[otpController::class,"cekOtp"]);
 
+Route::get("/gr/ldkdgr",[modulGuruController::class,"LeaderBoardKedisiplinan"]);
+
 //ini setting absen
 Route::post('/gr/crtabs/{id}',[MasterAbsenController::class,"SettingAbsenGuru"]);
 Route::get('/gr/acabs',[MasterAbsenController::class,"addAbsenGuru"]);
 Route::get('/gr/klabs',[MasterAbsenController::class,"keluarAbsenGuru"]);
 Route::get('/gr/edklabs/{id}',[MasterAbsenController::class,"edit_AbsenGuru"]);
+Route::get('/gr/edklabsdt',[MasterAbsenController::class,"edit_AbsenGuruData"]);
 
 //ini kelola guru
 Route::get('/gr/klgr',[modulGuruController::class,"tampilan_kelolaGuru"]);

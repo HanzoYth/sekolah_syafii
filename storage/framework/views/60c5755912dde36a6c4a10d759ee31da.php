@@ -10,14 +10,6 @@
     <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo e(asset('css/modul/guru/edit_absen_guru.css')); ?>?v=<?php echo e(time()); ?>">
-
-    <style>
-        /* Styling Tambahan untuk State Loading pada Tombol */
-        .btn-modal-confirm:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-    </style>
 </head>
 <body>
 
@@ -25,7 +17,6 @@
     <main class="main-wrapper">
         
         <input type="hidden" value="<?php echo e($data_guru->id); ?>" id="id_guru">
-        
         <!-- TOPBAR HEADER -->
         <header class="topbar">
             <div class="topbar-left">
@@ -221,38 +212,6 @@
     </main>
 </div>
 
-<!-- ========================================== -->
-<!-- MODAL POP-UP PILIHAN CETAK / KIRIM         -->
-<!-- ========================================== -->
-<div class="modal-overlay" id="actionModal">
-    <div class="modal-card">
-        <div class="modal-header">
-            <h3><i class="fa-solid fa-file-invoice"></i> Opsi Laporan Absensi</h3>
-            <button type="button" class="modal-close-btn" id="modalCloseBtn">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        <div class="modal-body">
-            <p>Silakan pilih tindakan untuk rekapitulasi absensi guru ini. Aktifkan toggle di bawah untuk mengirim laporan otomatis atau biarkan non-aktif untuk mencetak dokumen.</p>
-            
-            <!-- Switch Checklist Toggle -->
-            <div class="switch-container">
-                <div class="switch-label-wrapper">
-                    <span class="switch-title" id="switchStatusText">Cetak Dokumen (PDF)</span>
-                    <span class="switch-desc">Geser untuk beralih ke mode pengiriman laporan</span>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="actionToggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-modal-cancel" id="modalCancelBtn">Batal</button>
-            <button type="button" class="btn-modal-confirm" id="modalConfirmBtn">Lanjutkan</button>
-        </div>
-    </div>
-</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
@@ -261,11 +220,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const btnTrigger = document.getElementById('btnPrintModalTrigger');
         const modalOverlay = document.getElementById('actionModal');
-        const modalCloseBtn = document.getElementById('modalCloseBtn');
-        const modalCancelBtn = document.getElementById('modalCancelBtn');
-        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
         const actionToggle = document.getElementById('actionToggle');
-        const switchStatusText = document.getElementById('switchStatusText');
         const idGuru = document.getElementById("id_guru");
         
         // Buka Modal
@@ -282,68 +237,6 @@
         modalCancelBtn.addEventListener('click', closeModal);
         modalOverlay.addEventListener('click', function (e) {
             if (e.target === modalOverlay) closeModal();
-        });
-
-        // Ubah teks label interaktif saat toggle digeser
-        actionToggle.addEventListener('change', function () {
-            if (this.checked) {
-                switchStatusText.textContent = "Kirim Laporan (Email)";
-            } else {
-                switchStatusText.textContent = "Cetak Dokumen (PDF)";
-            }
-        });
-
-        async function KirimFile(){
-            const areaPrint = document.getElementById('area_print');
-
-            // Ubah tombol ke state Loading
-            modalConfirmBtn.disabled = true;
-            modalCancelBtn.disabled = true;
-            modalConfirmBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mengirim...`;
-
-            try {
-                // 1. Buat PDF Blob
-                const pdfBlob = await html2pdf()
-                    .from(areaPrint)
-                    .outputPdf('blob');
-                const formData = new FormData();
-                formData.append('file', pdfBlob, 'absensi.pdf');
-
-                // 3. Ambil CSRF Token
-                const token = document.querySelector('meta[name="csrf-token"]').content;
-
-                // 4. Kirim ke Laravel
-                const response = await fetch(`/flabsgr/${idGuru.value}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': token,
-                        'Accept': 'application/json'
-                    },
-                    body: formData
-                });     
-                const result = await response.json();
-
-                alert(result.message);
-                closeModal();
-            } catch (error) {
-                console.error(error);
-                alert('Terjadi kesalahan saat mengirim laporan.');
-            } finally {
-                // Kembalikan tombol ke state normal setelah selesai (sukses/gagal)
-                modalConfirmBtn.disabled = false;
-                modalCancelBtn.disabled = false;
-                modalConfirmBtn.innerHTML = `Lanjutkan`;
-            }
-        }
-
-        // Tombol Konfirmasi Aksi
-        modalConfirmBtn.addEventListener('click', async function () {
-            if (actionToggle.checked) {
-                await KirimFile();
-            } else {
-                closeModal();
-                window.print();
-            }
         });
     });
 </script>
