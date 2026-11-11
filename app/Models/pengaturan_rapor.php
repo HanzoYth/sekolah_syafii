@@ -19,6 +19,8 @@ class pengaturan_rapor extends Model
         'tanggal_rapor',
         'nama_kepsek',
         'nip_kepsek',
+        'ttd_kepsek',
+        'ttd_walas',
         'catatan_walas_template'
     ];
 

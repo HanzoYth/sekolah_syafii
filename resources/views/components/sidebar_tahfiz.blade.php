@@ -21,7 +21,7 @@
 
         @php
             // buang query string supaya ?page=2 dll tidak merusak penanda active
-            $route = strtok($_SERVER['REQUEST_URI'], '?');
+            $route = strtok($_SERVER['REQUEST_URI'] ?? request()->getRequestUri() ?? '/', '?');
         @endphp
 
         <div class="sidebar-menu-wrapper">
@@ -66,6 +66,18 @@
                             <a href="/tf/gr/ps">
                                 <i class="fa-solid fa-file-lines"></i>
                                 <span>siswa</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ (str_starts_with($route, '/tf/gr/input-nilai') || request('view') === 'input_nilai') ? 'active' : '' }}">
+                            <a href="/tf/gr/input-nilai">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                <span>Input Nilai Rapor</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ (str_starts_with($route, '/tf/gr/rapor') || str_starts_with($route, '/tf/gr/detail-rapor') || request('view') === 'rapor') ? 'active' : '' }}">
+                            <a href="/tf/gr/rapor">
+                                <i class="fa-solid fa-file-contract"></i>
+                                <span>Rapor Santri</span>
                             </a>
                         </li>
                         <li class="menu-item {{ $route == '/tf/lh' ? 'active' : '' }}">
@@ -128,6 +140,18 @@
                             <a href="/tf/rb">
                                 <i class="fa-solid fa-calendar-days"></i>
                                 <span>Rekap Bulanan</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ (str_starts_with($route, '/tf/gr/input-nilai') || request('view') === 'input_nilai') ? 'active' : '' }}">
+                            <a href="/tf/gr/input-nilai">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                <span>Input Nilai Rapor</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ (str_starts_with($route, '/tf/gr/rapor') || str_starts_with($route, '/tf/gr/detail-rapor') || request('view') === 'rapor') ? 'active' : '' }}">
+                            <a href="/tf/gr/rapor">
+                                <i class="fa-solid fa-file-contract"></i>
+                                <span>Rapor Santri</span>
                             </a>
                         </li>
                         <li class="menu-item {{ $route == '/tf/pgm' ? 'active' : '' }}">

@@ -339,10 +339,13 @@
                 <!-- 8. TANDA TANGAN (3 KOLOM PENGESAHAN) -->
                 <div class="grid grid-cols-3 gap-2 sm:gap-4 text-center text-xs sm:text-sm pt-2">
                     <!-- Kolom 1: Orang Tua -->
-                    <div class="flex flex-col justify-between h-36">
+                    <div class="flex flex-col justify-between h-40">
                         <div>
                             <p class="font-medium text-slate-800 leading-tight">Mengetahui,</p>
                             <p class="font-medium text-slate-800 leading-tight">Orang Tua / Wali,</p>
+                        </div>
+                        <div class="h-16 flex items-center justify-center my-0.5 relative">
+                            <!-- Ruang tanda tangan basah orang tua -->
                         </div>
                         <div>
                             <p class="font-bold underline text-slate-900">....................................................</p>
@@ -350,10 +353,15 @@
                     </div>
 
                     <!-- Kolom 2: Wali Kelas -->
-                    <div class="flex flex-col justify-between h-36">
+                    <div class="flex flex-col justify-between h-40">
                         <div>
                             <p class="font-medium text-slate-800 leading-tight">&nbsp;</p>
                             <p class="font-medium text-slate-800 leading-tight">Wali Kelas <?php echo e($raporMeta['kelas_label']); ?>,</p>
+                        </div>
+                        <div class="h-16 flex items-center justify-center my-0.5 relative">
+                            <?php if(!empty($raporMeta['ttd_walas'])): ?>
+                                <img src="<?php echo e($raporMeta['ttd_walas']); ?>" alt="TTD Wali Kelas" class="max-h-16 max-w-[140px] object-contain" style="mix-blend-mode: multiply;" />
+                            <?php endif; ?>
                         </div>
                         <div>
                             <p class="font-bold underline text-slate-900">
@@ -367,13 +375,18 @@
                     </div>
 
                     <!-- Kolom 3: Kepala Sekolah -->
-                    <div class="flex flex-col justify-between h-36">
+                    <div class="flex flex-col justify-between h-40">
                         <div>
                             <p class="font-medium text-slate-800 leading-tight">
                                 <?php echo e($raporMeta['tempat_rapor'] ?? 'Sigi'); ?>, <?php echo e($raporMeta['tanggal_rapor']); ?>
 
                             </p>
                             <p class="font-medium text-slate-800 leading-tight">Kepala Sekolah,</p>
+                        </div>
+                        <div class="h-16 flex items-center justify-center my-0.5 relative">
+                            <?php if(!empty($raporMeta['ttd_kepsek'])): ?>
+                                <img src="<?php echo e($raporMeta['ttd_kepsek']); ?>" alt="TTD Kepala Sekolah" class="max-h-16 max-w-[140px] object-contain" style="mix-blend-mode: multiply;" />
+                            <?php endif; ?>
                         </div>
                         <div>
                             <p class="font-bold underline text-slate-900">

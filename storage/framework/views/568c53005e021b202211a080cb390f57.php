@@ -306,10 +306,13 @@
                 <!-- 8. TANDA TANGAN PENGESAHAN 3 KOLOM -->
                 <div class="grid grid-cols-3 gap-4 pt-4 text-xs sm:text-sm text-center">
                     <!-- Kolom 1: Orang Tua / Wali -->
-                    <div class="flex flex-col justify-between h-40">
+                    <div class="flex flex-col justify-between h-44">
                         <div>
                             <p class="font-medium text-slate-800 leading-tight">Mengetahui</p>
                             <p class="font-medium text-slate-800 leading-tight">Orang Tua/Wali,</p>
+                        </div>
+                        <div class="h-20 flex items-center justify-center my-0.5 relative">
+                            <!-- Ruang tanda tangan basah orang tua -->
                         </div>
                         <div>
                             <p class="font-bold text-slate-900 tracking-wider">....................................................</p>
@@ -317,10 +320,13 @@
                     </div>
 
                     <!-- Kolom 2: Wali Kelas -->
-                    <div class="flex flex-col justify-between h-40">
+                    <div class="flex flex-col justify-between h-44">
                         <div>
                             <p class="font-medium text-slate-800 leading-tight">&nbsp;</p>
                             <p class="font-medium text-slate-800 leading-tight">Wali Kelas <?php echo e($raporMeta['kelas_label']); ?>,</p>
+                        </div>
+                        <div class="h-20 flex items-center justify-center my-0.5 relative">
+                            <img id="studentTtdWalas" src="<?php echo e($raporMeta['ttd_walas'] ?? ''); ?>" alt="TTD Wali Kelas" class="max-h-20 max-w-[150px] object-contain <?php echo e(!empty($raporMeta['ttd_walas']) ? '' : 'hidden'); ?>" style="mix-blend-mode: multiply;" />
                         </div>
                         <div>
                             <p id="studentWalasNama" class="font-bold underline text-slate-900">
@@ -334,13 +340,16 @@
                     </div>
 
                     <!-- Kolom 3: Kepala Sekolah -->
-                    <div class="flex flex-col justify-between h-40">
+                    <div class="flex flex-col justify-between h-44">
                         <div>
                             <p id="studentTanggalRapor" class="font-medium text-slate-800 leading-tight">
                                 Sigi, <?php echo e($raporMeta['tanggal_rapor']); ?>
 
                             </p>
                             <p class="font-medium text-slate-800 leading-tight">Kepala Sekolah,</p>
+                        </div>
+                        <div class="h-20 flex items-center justify-center my-0.5 relative">
+                            <img id="studentTtdKepsek" src="<?php echo e($raporMeta['ttd_kepsek'] ?? ''); ?>" alt="TTD Kepala Sekolah" class="max-h-20 max-w-[150px] object-contain <?php echo e(!empty($raporMeta['ttd_kepsek']) ? '' : 'hidden'); ?>" style="mix-blend-mode: multiply;" />
                         </div>
                         <div>
                             <p id="studentKepsekNama" class="font-bold underline text-slate-900">
@@ -376,6 +385,14 @@
                         if (data.walas) {
                             const w = document.getElementById('studentWalasNama');
                             if (w) w.textContent = data.walas;
+                        }
+                        if (data.ttd_walas) {
+                            const tw = document.getElementById('studentTtdWalas');
+                            if (tw) { tw.src = data.ttd_walas; tw.classList.remove('hidden'); }
+                        }
+                        if (data.ttd_kepsek) {
+                            const tk = document.getElementById('studentTtdKepsek');
+                            if (tk) { tk.src = data.ttd_kepsek; tk.classList.remove('hidden'); }
                         }
                         if (data.kegiatan && Array.isArray(data.kegiatan)) {
                             const kb = document.getElementById('studentKegiatanBody');

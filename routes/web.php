@@ -324,6 +324,15 @@ Route::get('/grafik-keuangan', [pembayaranController::class, 'data'])->name('gra
 
 Route::get("/krim/{id}",[kirimPesanController::class,"kirim_pesanPengingat"]);
 
+Route::get('/tf/gr/input-nilai', [\App\Http\Controllers\tahfizController::class, 'input_nilai']);
+Route::post('/tf/gr/simpan-massal-nilai', [\App\Http\Controllers\tahfizController::class, 'simpan_massal_nilai']);
+
+// Rapor Walas & Projek P5 / Tahfidz (Role Guru)
+Route::get('/tf/gr/rapor', [\App\Http\Controllers\tahfizController::class, 'rapor_guru']);
+Route::get('/tf/gr/detail-rapor/{siswa_id}', [\App\Http\Controllers\tahfizController::class, 'detail_rapor']);
+Route::get('/tf/gr/cetak-rapor-massal', [\App\Http\Controllers\tahfizController::class, 'cetak_rapor_massal']);
+Route::post('/tf/gr/simpan-evaluasi-rapor', [\App\Http\Controllers\tahfizController::class, 'simpan_evaluasi_rapor']);
+
 
 
 Route::get('/file/{path}', function ($path) {

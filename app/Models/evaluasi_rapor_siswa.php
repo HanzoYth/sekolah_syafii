@@ -17,6 +17,8 @@ class evaluasi_rapor_siswa extends Model
         'tanggal_rapor',
         'nama_kepsek',
         'nama_walas',
+        'ttd_walas',
+        'ttd_kepsek',
     ];
 
     protected $casts = [

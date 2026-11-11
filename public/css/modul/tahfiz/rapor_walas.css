@@ -1,0 +1,1136 @@
+/* ==========================================================================
+   RAPOR WALAS & PENILAIAN PROJEK TAHFIDZ DIGITAL
+   Tema Islami Elegan: Emerald Green & Gold Sesuai Konsep Tahfiz SD Qu
+   ========================================================================== */
+
+/* ======== ROOT VARIABLES & DESIGN TOKENS ======== */
+:root {
+    --primary-color: #1B6B4F;       /* Emerald-700 */
+    --primary-dark: #0B3B2E;        /* Emerald-900 */
+    --primary-darker: #07241C;      /* Emerald-950 */
+    --primary-light: #E8F2EC;       /* Tint terang emerald */
+    --primary-hover: #14553e;
+    --primary-gradient: linear-gradient(135deg, #24805F 0%, #0B3B2E 100%);
+
+    --gold: #C9A227;                /* Gold-500 */
+    --gold-light: #FBF6E2;          /* Gold-100 */
+    --gold-border: #E8D799;
+    --gold-gradient: linear-gradient(135deg, #E5C358 0%, #C9A227 100%);
+
+    --bg-light: #F7F4EC;            /* Cream khas tahfidz */
+    --white: #ffffff;
+    --text-dark: #16241f;
+    --text-muted: #6b7d74;
+    --border-color: #E2DBD0;
+    --border-hover: #D5CCBD;
+
+    --green-bg: #E8F5E9;
+    --green-text: #1B5E20;
+    --blue-bg: #E3F2FD;
+    --blue-text: #0D47A1;
+    --yellow-bg: #FFF8E1;
+    --yellow-text: #F57F17;
+    --purple-bg: #F3E5F5;
+    --purple-text: #6A1B9A;
+
+    --font-heading: 'Amiri', serif;
+    --font-main: 'Poppins', sans-serif;
+
+    --shadow-xs: 0 1px 3px rgba(11, 59, 46, 0.05);
+    --shadow-card: 0 10px 25px -8px rgba(11, 59, 46, 0.08), 0 4px 10px -6px rgba(11, 59, 46, 0.04);
+    --shadow-hover: 0 18px 30px -10px rgba(27, 107, 79, 0.16);
+    --radius-lg: 18px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+}
+
+/* ======== TOP STATS CARDS ======== */
+.rapor-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.rapor-stat-card {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-xs);
+    transition: all 0.25s ease;
+}
+
+.rapor-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+    border-color: var(--primary-color);
+}
+
+.rapor-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.rapor-stat-icon.emerald {
+    background: var(--primary-light);
+    color: var(--primary-color);
+}
+
+.rapor-stat-icon.gold {
+    background: var(--gold-light);
+    color: var(--gold);
+}
+
+.rapor-stat-icon.blue {
+    background: var(--blue-bg);
+    color: var(--blue-text);
+}
+
+.rapor-stat-icon.purple {
+    background: var(--purple-bg);
+    color: var(--purple-text);
+}
+
+.rapor-stat-info h4 {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.rapor-stat-info h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.2;
+}
+
+.rapor-stat-info p {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* ======== ACTION & TAB TOOLBAR ======== */
+.rapor-toolbar-card {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    box-shadow: var(--shadow-xs);
+}
+
+.rapor-tab-pills {
+    display: inline-flex;
+    background: #F1EFE8;
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.rapor-tab-pill {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.rapor-tab-pill:hover {
+    color: var(--text-dark);
+}
+
+.rapor-tab-pill.active {
+    background: var(--white);
+    color: var(--primary-color);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.rapor-action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-tahfiz-primary {
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    padding: 9px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 6px rgba(27, 107, 79, 0.2);
+    transition: all 0.2s ease;
+}
+
+.btn-tahfiz-primary:hover {
+    background: var(--primary-hover);
+    color: var(--white);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(27, 107, 79, 0.3);
+}
+
+.btn-tahfiz-secondary {
+    background: #F1EFE8;
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.2s ease;
+}
+
+.btn-tahfiz-secondary:hover {
+    background: #E8E5DD;
+}
+
+.btn-tahfiz-gold {
+    background: var(--gold);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 9px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.2s ease;
+}
+
+.btn-tahfiz-gold:hover {
+    background: #b59120;
+    color: #fff;
+}
+
+/* ======== DATA TABLE CARD ======== */
+.rapor-table-card {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xs);
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.rapor-table-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #FAF8F2;
+}
+
+.rapor-table-header h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rapor-search-box {
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 6px 12px;
+    gap: 8px;
+    min-width: 240px;
+}
+
+.rapor-search-box input {
+    border: none;
+    outline: none;
+    font-size: 12px;
+    width: 100%;
+    color: var(--text-dark);
+}
+
+.rapor-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+}
+
+.rapor-table th {
+    background: #F4F0E6;
+    padding: 12px 18px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--primary-dark);
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.rapor-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-dark);
+    vertical-align: middle;
+}
+
+.rapor-table tr:hover td {
+    background: #FDFBF7;
+}
+
+.rapor-student-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.rapor-student-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(27, 107, 79, 0.2);
+    flex-shrink: 0;
+}
+
+.rapor-student-meta h5 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 2px;
+}
+
+.rapor-student-meta span {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* ======== BADGES ======== */
+.rapor-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.rapor-badge.success {
+    background: var(--green-bg);
+    color: var(--green-text);
+    border: 1px solid rgba(27, 94, 32, 0.2);
+}
+
+.rapor-badge.warning {
+    background: var(--yellow-bg);
+    color: var(--yellow-text);
+    border: 1px solid rgba(245, 127, 23, 0.25);
+}
+
+.rapor-badge.neutral {
+    background: #EEEBE2;
+    color: #555;
+}
+
+.rapor-badge.bsh {
+    background: #E8F5E9;
+    color: #2E7D32;
+    font-weight: 700;
+}
+
+.rapor-badge.sb {
+    background: #FFF9C4;
+    color: #F57F17;
+    font-weight: 700;
+}
+
+.rapor-badge.mb {
+    background: #E3F2FD;
+    color: #1565C0;
+    font-weight: 700;
+}
+
+.rapor-badge.bb {
+    background: #FFEBEE;
+    color: #C62828;
+    font-weight: 700;
+}
+
+/* ==========================================================================
+   DETAIL & PRINT AREA STYLES (SESUAI FORMAT DOKUMEN ACUAN PENGGUNA)
+   ========================================================================== */
+.editor-panel-card {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-xs);
+}
+
+.editor-nav-tabs {
+    display: flex;
+    gap: 8px;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+.editor-nav-tab {
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    margin-bottom: -2px;
+}
+
+.editor-nav-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    font-weight: 700;
+}
+
+.editor-form-group {
+    margin-bottom: 16px;
+}
+
+.editor-form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+}
+
+.editor-form-control {
+    width: 100%;
+    padding: 9px 14px;
+    font-size: 13px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #FAF8F2;
+    color: var(--text-dark);
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s ease;
+}
+
+.editor-form-control:focus {
+    border-color: var(--primary-color);
+    background: var(--white);
+}
+
+/* P5 Predikat Radio Cards */
+.dimensi-item-card {
+    background: #FAF8F4;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+}
+
+.dimensi-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.dimensi-title {
+    font-weight: 700;
+    font-size: 13.5px;
+    color: var(--primary-dark);
+}
+
+.dimensi-subelemen {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.predikat-radios {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.predikat-radio-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.predikat-radio-label:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+}
+
+.predikat-radio-label input[type="radio"]:checked + span {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+/* ==========================================================================
+   OFFICIAL RAPOR SHEET (SESUAI DOKUMEN CETAK KELUARAN USER)
+   ========================================================================== */
+.rapor-print-container {
+    background: var(--white);
+    border: 1px solid #c9c3b6;
+    border-radius: var(--radius-md);
+    padding: 40px 48px;
+    max-width: 860px;
+    margin: 0 auto 40px auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    position: relative;
+    overflow: hidden;
+    color: #111111;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Watermark Overlay */
+.rapor-watermark-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    height: 320px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.08;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rapor-watermark-overlay img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: grayscale(20%);
+}
+
+.rapor-sheet-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Header Kop Rapor */
+.rapor-header-kop {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #222;
+    position: relative;
+}
+
+.rapor-kop-logo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.rapor-header-kop h2 {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #111;
+    margin: 0;
+}
+
+.rapor-header-kop h3 {
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #222;
+    margin: 4px 0 2px 0;
+}
+
+.rapor-header-kop p {
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    margin: 0;
+}
+
+/* Info Identitas Grid 2 Kolom Sesuai Kiriman Pengguna */
+.rapor-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 36px;
+    margin-bottom: 20px;
+    font-size: 12.5px;
+    border: 1px solid #333;
+    padding: 12px 18px;
+    background: #fff;
+}
+
+.meta-row {
+    display: flex;
+    margin-bottom: 4px;
+}
+
+.meta-row:last-child {
+    margin-bottom: 0;
+}
+
+.meta-label {
+    width: 125px;
+    font-weight: 600;
+    color: #222;
+    flex-shrink: 0;
+}
+
+.meta-colon {
+    margin-right: 8px;
+    font-weight: 600;
+}
+
+.meta-value {
+    color: #111;
+    font-weight: 500;
+}
+
+.meta-value.strong {
+    font-weight: 700;
+}
+
+/* Box Judul & Deskripsi Projek Sesuai Format User */
+.rapor-projek-box {
+    border: 1px solid #333;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    background: #fff;
+    font-size: 12.5px;
+    line-height: 1.5;
+}
+
+.rapor-projek-title {
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 6px;
+}
+
+.rapor-projek-desc {
+    color: #222;
+    text-align: justify;
+}
+
+/* Keterangan Kategori Penilaian (Legend 4 Skala) */
+.rapor-legend-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 18px;
+    font-size: 10.5px;
+    line-height: 1.35;
+}
+
+.rapor-legend-cell {
+    border: 1px solid #333;
+    padding: 8px 10px;
+    background: #fff;
+}
+
+.rapor-legend-cell strong {
+    display: block;
+    font-size: 11px;
+    margin-bottom: 3px;
+    color: #111;
+}
+
+/* Sub-Judul Aksi / Kegiatan */
+.rapor-subkegiatan-header {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #111;
+    margin: 16px 0 8px 0;
+    padding-left: 2px;
+}
+
+/* Tabel Penilaian P5 */
+.rapor-p5-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+    margin-bottom: 24px;
+    border: 1px solid #333;
+}
+
+.rapor-p5-table th {
+    border: 1px solid #333;
+    padding: 8px 6px;
+    background: #F4F0E6;
+    font-weight: 700;
+    text-align: center;
+    color: #111;
+}
+
+.rapor-p5-table td {
+    border: 1px solid #333;
+    padding: 8px 10px;
+    vertical-align: top;
+    color: #111;
+}
+
+.rapor-p5-table th.th-predikat,
+.rapor-p5-table td.td-predikat {
+    width: 48px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.check-mark {
+    font-size: 16px;
+    font-weight: 800;
+    color: #111;
+    display: inline-block;
+    line-height: 1;
+}
+
+/* Area Pengesahan / Tanda Tangan 3 Kolom */
+.rapor-signatures-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    text-align: center;
+    font-size: 11.5px;
+    margin-top: 24px;
+    page-break-inside: avoid;
+}
+
+.sig-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 140px;
+}
+
+.sig-header {
+    line-height: 1.4;
+    color: #222;
+}
+
+.sig-header .sig-location-date {
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.sig-space {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sig-image {
+    max-height: 60px;
+    max-width: 120px;
+    object-fit: contain;
+}
+
+.sig-name {
+    font-weight: 700;
+    text-decoration: underline;
+    color: #111;
+}
+
+.sig-nip {
+    font-size: 10.5px;
+    color: #444;
+    margin-top: 2px;
+}
+
+/* ======== PRINT MEDIA QUERY ======== */
+@media print {
+    /* Sembunyikan elemen dashboard & panel kustomisasi */
+    body {
+        background: #fff !important;
+        font-family: 'Poppins', sans-serif !important;
+        color: #000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .sidebar,
+    .topbar,
+    .no-print,
+    .editor-panel-card,
+    .rapor-toolbar-card,
+    .mobile-hamburger-btn,
+    .sidebar-overlay {
+        display: none !important;
+    }
+
+    .rapor-print-container {
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .page-break {
+        page-break-after: always !important;
+        break-after: page !important;
+    }
+
+    .rapor-watermark-overlay {
+        opacity: 0.08 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .rapor-p5-table th {
+        background: #F4F0E6 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
+
+
+/* ==========================================================================
+   KOMPONEN HALAMAN INPUT NILAI PROJEK & RAPOR TAHFIDZ
+   ========================================================================== */
+.input-nilai-card {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-xs);
+}
+
+.projek-setup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.batch-action-toolbar {
+    background: #FAF8F2;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.quick-fill-btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.quick-fill-btn.bsh {
+    background: #E8F5E9;
+    color: #2E7D32;
+    border-color: #A5D6A7;
+}
+
+.quick-fill-btn.bsh:hover {
+    background: #C8E6C9;
+}
+
+.quick-fill-btn.sb {
+    background: #FFF9C4;
+    color: #E65100;
+    border-color: #FFE082;
+}
+
+.quick-fill-btn.sb:hover {
+    background: #FFF59D;
+}
+
+.quick-fill-btn.reset {
+    background: #ECEFF1;
+    color: #455A64;
+    border-color: #CFD8DC;
+}
+
+.quick-fill-btn.reset:hover {
+    background: #CFD8DC;
+}
+
+/* Radio Button Matrix Cell */
+.pill-radio-group {
+    display: inline-flex;
+    background: #F1EFEA;
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    gap: 2px;
+}
+
+.pill-radio-item {
+    cursor: pointer;
+    margin: 0;
+}
+
+.pill-radio-item input[type="radio"] {
+    display: none;
+}
+
+.pill-radio-item span {
+    display: block;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 6px;
+    color: #555;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.pill-radio-item:hover span {
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.pill-radio-item input[type="radio"]:checked + span.label-bb {
+    background: #FFCDD2;
+    color: #B71C1C;
+    box-shadow: 0 1px 3px rgba(183, 28, 28, 0.2);
+}
+
+.pill-radio-item input[type="radio"]:checked + span.label-mb {
+    background: #BBDEFB;
+    color: #0D47A1;
+    box-shadow: 0 1px 3px rgba(13, 71, 161, 0.2);
+}
+
+.pill-radio-item input[type="radio"]:checked + span.label-bsh {
+    background: #C8E6C9;
+    color: #1B5E20;
+    box-shadow: 0 1px 3px rgba(27, 94, 32, 0.2);
+}
+
+.pill-radio-item input[type="radio"]:checked + span.label-sb {
+    background: #FFE082;
+    color: #E65100;
+    box-shadow: 0 1px 3px rgba(230, 81, 0, 0.2);
+}
+
+/* Floating Save Bar */
+.sticky-save-bar {
+    position: sticky;
+    bottom: 20px;
+    z-index: 99;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    padding: 12px 28px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+
+/* ==========================================================================
+   STYLE KHUSUS DOKUMEN RAPORT TAHFIZH AL-QUR'AN (FORMAT RESMI SDQU)
+   ========================================================================== */
+.tahfiz-doc-header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #222;
+}
+
+.tahfiz-doc-header h2 {
+    font-size: 18px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #111;
+    margin: 0 0 4px 0;
+}
+
+.tahfiz-doc-header h3 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #222;
+    margin: 0;
+}
+
+.tahfiz-bio-table {
+    width: 100%;
+    margin-bottom: 20px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #111;
+    border-collapse: collapse;
+}
+
+.tahfiz-bio-table td {
+    padding: 3px 0;
+    vertical-align: top;
+}
+
+.tahfiz-bio-label {
+    width: 170px;
+}
+
+.tahfiz-section-title {
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #111;
+    margin: 16px 0 6px 0;
+    letter-spacing: 0.5px;
+}
+
+.tahfiz-table-clean {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    color: #111;
+    margin-bottom: 14px;
+    border: 1.5px solid #222;
+}
+
+.tahfiz-table-clean th {
+    border: 1.5px solid #222;
+    padding: 7px 10px;
+    background: #FAF8F2;
+    font-weight: 800;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 11.5px;
+}
+
+.tahfiz-table-clean td {
+    border: 1.5px solid #222;
+    padding: 8px 10px;
+    vertical-align: middle;
+}
+
+.tahfiz-catatan-wrapper {
+    margin-top: 18px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #111;
+}
+
+.tahfiz-catatan-title {
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.tahfiz-catatan-sub {
+    font-weight: 700;
+    color: #111;
+    margin-top: 10px;
+    margin-bottom: 4px;
+}
+
+.tahfiz-catatan-text {
+    text-align: justify;
+    margin-bottom: 8px;
+    color: #222;
+    white-space: pre-line;
+}
+
+.tahfiz-predikat-legend {
+    margin-top: 24px;
+    padding: 8px 12px;
+    border: 1px solid #333;
+    font-size: 11px;
+    font-weight: 600;
+    color: #222;
+    background: #fff;
+}
