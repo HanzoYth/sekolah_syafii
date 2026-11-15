@@ -14,6 +14,7 @@ class evaluasi_rapor_siswa extends Model
         'semester',
         'catatan_walas',
         'evaluasi_kegiatan',
+        'catatan_mapel',
         'tanggal_rapor',
         'nama_kepsek',
         'nama_walas',
@@ -23,6 +24,7 @@ class evaluasi_rapor_siswa extends Model
 
     protected $casts = [
         'evaluasi_kegiatan' => 'array',
+        'catatan_mapel' => 'array',
         'semester' => 'integer',
     ];
 

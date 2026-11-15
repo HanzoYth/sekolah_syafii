@@ -70,34 +70,34 @@
 
     @if($isAdmin)
         <!-- Navigasi Pusat Rapor Admin (Pemisahan Jelas: Per Kelas vs Global Sekolah) -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-4 mb-6 shadow-xs flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 mb-6 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div class="flex flex-wrap items-center gap-2">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1.5 flex items-center gap-1">
-                    <i class="fa-solid fa-chalkboard-user text-emerald-600"></i> Per Kelas:
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-1.5 flex items-center gap-1 whitespace-nowrap">
+                    <i class="fa-solid fa-chalkboard-user text-emerald-700"></i> Per Kelas:
                 </span>
                 <div class="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200 gap-1">
-                    <button type="button" id="adminTabBtn-kelas" onclick="switchAdminRaporTab('kelas')" class="admin-rapor-tab-btn px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition-all cursor-pointer {{ $initialAdminTab === 'kelas' ? 'bg-white text-emerald-700 shadow-xs border border-slate-200/80' : 'text-slate-600 hover:text-slate-900' }}">
-                        <i class="fa-solid fa-file-contract"></i> Cetak &amp; TTD Kelas
+                    <button type="button" id="adminTabBtn-kelas" onclick="switchAdminRaporTab('kelas')" class="admin-rapor-tab-btn px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap {{ $initialAdminTab === 'kelas' ? 'bg-emerald-700 text-white shadow-xs' : 'text-slate-600 hover:text-emerald-800 hover:bg-white/80' }}">
+                        <i class="fa-solid fa-file-contract"></i> Rapor &amp; TTD
                     </button>
-                    <a href="/sk/rapor-walas?tab=nilai&kelas_id={{ $wallas->kelas_id ?? '' }}" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-2 transition-all">
-                        <i class="fa-solid fa-sliders"></i> Leger Nilai Kelas
+                    <a href="/sk/rapor-walas?tab=nilai&kelas_id={{ $wallas->kelas_id ?? '' }}" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-emerald-800 hover:bg-white/80 flex items-center gap-1.5 transition-all whitespace-nowrap">
+                        <i class="fa-solid fa-sliders"></i> Leger Nilai
                     </a>
                 </div>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600 px-1.5 flex items-center gap-1">
-                    <i class="fa-solid fa-globe"></i> Global Sekolah (Semua Kelas):
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 px-1.5 flex items-center gap-1 whitespace-nowrap">
+                    <i class="fa-solid fa-globe"></i> Global:
                 </span>
-                <div class="inline-flex flex-wrap p-1 rounded-xl bg-blue-50/60 border border-blue-200/70 gap-1">
-                    <button type="button" id="adminTabBtn-pengesahan" onclick="switchAdminRaporTab('pengesahan')" class="admin-rapor-tab-btn px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition-all cursor-pointer {{ $initialAdminTab === 'pengesahan' ? 'bg-blue-700 text-white shadow-xs' : 'text-slate-600 hover:text-blue-800 hover:bg-white/70' }}">
-                        <i class="fa-solid fa-file-signature"></i> Pengesahan &amp; TTD Kepsek
+                <div class="inline-flex flex-wrap p-1 rounded-xl bg-slate-100 border border-slate-200 gap-1">
+                    <button type="button" id="adminTabBtn-pengesahan" onclick="switchAdminRaporTab('pengesahan')" class="admin-rapor-tab-btn px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap {{ $initialAdminTab === 'pengesahan' ? 'bg-emerald-700 text-white shadow-xs' : 'text-slate-600 hover:text-emerald-800 hover:bg-white/80' }}">
+                        <i class="fa-solid fa-file-signature"></i> Pengesahan
                     </button>
-                    <button type="button" id="adminTabBtn-kegiatan" onclick="switchAdminRaporTab('kegiatan')" class="admin-rapor-tab-btn px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition-all cursor-pointer {{ $initialAdminTab === 'kegiatan' ? 'bg-violet-700 text-white shadow-xs' : 'text-slate-600 hover:text-violet-800 hover:bg-white/70' }}">
-                        <i class="fa-solid fa-mosque"></i> Program Kegiatan Sekolah
+                    <button type="button" id="adminTabBtn-kegiatan" onclick="switchAdminRaporTab('kegiatan')" class="admin-rapor-tab-btn px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap {{ $initialAdminTab === 'kegiatan' ? 'bg-emerald-700 text-white shadow-xs' : 'text-slate-600 hover:text-emerald-800 hover:bg-white/80' }}">
+                        <i class="fa-solid fa-mosque"></i> Kegiatan
                     </button>
-                    <button type="button" id="adminTabBtn-template_prestasi" onclick="switchAdminRaporTab('template_prestasi')" class="admin-rapor-tab-btn px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition-all cursor-pointer {{ $initialAdminTab === 'template_prestasi' ? 'bg-amber-600 text-white shadow-xs' : 'text-slate-600 hover:text-amber-800 hover:bg-white/70' }}">
-                        <i class="fa-solid fa-trophy"></i> Template Jenis Prestasi
+                    <button type="button" id="adminTabBtn-template_prestasi" onclick="switchAdminRaporTab('template_prestasi')" class="admin-rapor-tab-btn px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap {{ $initialAdminTab === 'template_prestasi' ? 'bg-emerald-700 text-white shadow-xs' : 'text-slate-600 hover:text-emerald-800 hover:bg-white/80' }}">
+                        <i class="fa-solid fa-trophy"></i> Prestasi
                     </button>
                 </div>
             </div>
@@ -106,22 +106,22 @@
 
     <!-- Admin Switcher Kelas (Hanya untuk Admin & Mode Per Kelas) -->
     @if($isAdmin && isset($daftar_semua_kelas) && $daftar_semua_kelas->isNotEmpty())
-        <div id="adminClassSwitcherWrapper" class="{{ $initialAdminTab === 'kelas' ? '' : 'hidden' }} bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-2xl p-5 mb-6 shadow-sm border border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div id="adminClassSwitcherWrapper" class="{{ $initialAdminTab === 'kelas' ? '' : 'hidden' }} bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-700 text-white rounded-2xl p-5 mb-6 shadow-sm border border-emerald-700/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 flex items-center justify-center text-lg">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-300/30 text-emerald-100 flex items-center justify-center text-lg">
                     <i class="fa-solid fa-user-shield"></i>
                 </div>
                 <div>
                     <h4 class="text-sm font-bold text-white flex items-center gap-2">
                         Mode Administrator Rapor
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Per Kelas</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-950/40 text-emerald-100 border border-emerald-400/30">Per Kelas</span>
                     </h4>
-                    <p class="text-xs text-slate-300 mt-0.5">Pilih rombongan belajar untuk mengelola catatan, prestasi, TTD Wali Kelas, dan cetak rapor siswa.</p>
+                    <p class="text-xs text-emerald-100/90 mt-0.5">Pilih rombongan belajar untuk mengelola catatan, prestasi, TTD Wali Kelas, dan cetak rapor siswa.</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
-                <label for="selectKelasAdmin" class="text-xs text-slate-300 font-medium whitespace-nowrap">Pilih Kelas:</label>
-                <select id="selectKelasAdmin" onchange="location.href='/sk/rapor-walas?kelas_id=' + this.value" class="text-xs bg-slate-800 border border-slate-600 text-white rounded-xl px-3.5 py-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold shadow-inner">
+                <label for="selectKelasAdmin" class="text-xs text-emerald-100 font-medium whitespace-nowrap">Pilih Kelas:</label>
+                <select id="selectKelasAdmin" onchange="location.href='/sk/rapor-walas?kelas_id=' + this.value" class="text-xs bg-emerald-950/60 border border-emerald-400/40 text-white rounded-xl px-3.5 py-2 focus:ring-emerald-400 focus:border-emerald-400 font-semibold shadow-inner">
                     @foreach($daftar_semua_kelas as $rk)
                         <option value="{{ $rk->id }}" {{ ($wallas->kelas_id ?? null) == $rk->id ? 'selected' : '' }}>
                             {{ $rk->nama_ruang }}
@@ -137,26 +137,27 @@
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         @if(!$isAdmin)
             <div class="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200">
-                <a href="/sk/rapor-walas?tab=nilai" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-2 transition-all">
+                <a href="/sk/rapor-walas?tab=nilai" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-2 transition-all whitespace-nowrap">
                     <i class="fa-solid fa-sliders"></i> Leger Nilai
                 </a>
-                <a href="/sk/rapor-walas" class="px-4 py-2 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-sm border border-slate-200/80 flex items-center gap-2 transition-all">
+                <a href="/sk/rapor-walas" class="px-4 py-2 rounded-lg text-xs font-bold bg-emerald-700 text-white shadow-sm flex items-center gap-2 transition-all whitespace-nowrap">
                     <i class="fa-solid fa-file-contract"></i> Cetak Rapor
                 </a>
             </div>
         @else
             <div class="flex items-center gap-2 text-xs text-slate-500 font-medium">
                 <i class="fa-solid fa-chalkboard text-emerald-600"></i>
-                <span>Kelas Aktif: <strong class="text-slate-800">{{ $wallas->kelas->nama_ruang ?? '-' }}</strong></span>
+                <span>Kelas Aktif: <strong class="text-slate-800">{{ $wallas->ruangKelas->nama_ruang ?? '-' }}</strong></span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">Jenjang {{ strtoupper($kelas_jenjang ?? 'smp') }}</span>
             </div>
         @endif
 
         <div class="flex items-center gap-2">
-            <a href="/sk/rapor-walas?print=massal{{ $isAdmin ? '&kelas_id='.($wallas->kelas_id ?? '') : '' }}" target="_blank" class="inline-flex items-center px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm gap-2">
-                <i class="fa-solid fa-print"></i> Cetak Seluruh Rapor Kelas (Massal)
+            <a href="/sk/rapor-walas?print=massal{{ $isAdmin ? '&kelas_id='.($wallas->kelas_id ?? '') : '' }}" target="_blank" class="inline-flex items-center px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-print"></i> Cetak Massal
             </a>
             @if(!$isAdmin)
-                <a href="/sk/rapor-walas?tab=nilai" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold transition-colors">
+                <a href="/sk/rapor-walas?tab=nilai" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-colors whitespace-nowrap">
                     <i class="fa-solid fa-sliders mr-1.5"></i> Leger Nilai
                 </a>
             @endif
@@ -205,15 +206,15 @@
         <div class="mb-8 bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold">
                         <i class="fa-solid fa-mosque"></i>
                     </div>
                     <div>
                         <h4 class="text-xs sm:text-sm font-bold text-slate-800">Master Program Kegiatan Sekolah (Rapor)</h4>
-                        <p class="text-[11px] text-slate-500">Daftar kegiatan resmi dari Admin yang dinilai pada lembar rapor santri. Klik <strong>Detail Rapor</strong> santri untuk mengevaluasi predikat & narasinya.</p>
+                        <p class="text-[11px] text-slate-500">Daftar kegiatan resmi dari Admin yang dinilai pada lembar rapor santri. Klik <strong>Detail Rapor</strong> santri untuk mengevaluasi predikat &amp; narasinya.</p>
                     </div>
                 </div>
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200/60 w-fit">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60 w-fit">
                     <i class="fa-solid fa-list-check mr-1.5"></i> {{ $daftar_kegiatan_sekolah->count() }} Kegiatan Aktif
                 </span>
             </div>
@@ -223,7 +224,7 @@
                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                         <strong class="text-slate-800">{{ $dkeg->nama_kegiatan }}</strong>
                         @if($dkeg->jenjang !== 'semua')
-                            <span class="text-[10px] uppercase font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200">{{ $dkeg->jenjang }}</span>
+                            <span class="text-[10px] uppercase font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">{{ $dkeg->jenjang }}</span>
                         @endif
                     </div>
                 @endforeach
@@ -281,7 +282,7 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <input type="file" id="walasCardFileTtd" accept="image/*" class="hidden" onchange="handleClassWalasSignatureUpload(this)">
-                            <button type="button" onclick="document.getElementById('walasCardFileTtd').click()" class="flex-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs">
+                            <button type="button" onclick="document.getElementById('walasCardFileTtd').click()" class="flex-1 px-3 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs whitespace-nowrap">
                                 <i class="fa-solid fa-arrow-up-from-bracket text-[11px]"></i> Upload TTD Wali Kelas
                             </button>
                             <button type="button" id="walasCardBtnHapus" onclick="removeClassWalasSignature()" class="px-3 py-2 bg-slate-200 hover:bg-rose-100 hover:text-rose-700 text-slate-600 rounded-lg text-xs font-semibold transition-colors cursor-pointer {{ !empty($currentTtdWalas) ? '' : 'hidden' }}" title="Hapus tanda tangan wali kelas">
@@ -304,12 +305,12 @@
                     <div class="flex items-center justify-between mb-1.5">
                         <label class="text-xs font-bold text-slate-700">Tanda Tangan Kepala Sekolah</label>
                         @if(!empty($currentTtdKepsek))
-                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-100 text-blue-800">Aktif dari Admin</span>
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">Aktif dari Admin</span>
                         @else
-                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-amber-100 text-amber-800">Belum Diunggah Admin</span>
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-200 text-slate-600">Belum Diunggah Admin</span>
                         @endif
                     </div>
-                    <p class="text-[11px] text-slate-500 mb-2.5 truncate">Kepala Sekolah: <strong class="text-slate-700">{{ $pengaturan_rapor->nama_kepsek ?? 'Rajihul Haq, S.Sos' }}</strong></p>
+                    <p class="text-[11px] text-slate-500 mb-2.5 truncate">Kepala Sekolah ({{ strtoupper($kelas_jenjang ?? 'smp') }}): <strong class="text-slate-700">{{ $pengaturan_rapor->nama_kepsek ?? 'Rajihul Haq, S.Sos' }}</strong></p>
 
                     <div class="h-24 rounded-lg border-2 border-dashed border-slate-300 bg-white flex items-center justify-center relative overflow-hidden mb-3">
                         @if(!empty($currentTtdKepsek))
@@ -325,9 +326,9 @@
 
                 <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1">
                     @if(session('role') === 'a')
-                        <span>Dikelola terpusat pada tab Pengesahan Rapor.</span>
-                        <button type="button" onclick="switchAdminRaporTab('pengesahan')" class="text-blue-600 hover:text-blue-800 font-bold whitespace-nowrap ml-2 cursor-pointer">
-                            Atur TTD Kepsek <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        <span>Dikelola per jenjang pada tab Pengesahan Rapor.</span>
+                        <button type="button" onclick="if (typeof selectAdminPengesahanJenjang === 'function') { selectAdminPengesahanJenjang('{{ $kelas_jenjang ?? 'tk' }}', false); } switchAdminRaporTab('pengesahan')" class="text-emerald-700 hover:text-emerald-800 font-bold whitespace-nowrap ml-2 cursor-pointer">
+                            Atur TTD Kepsek ({{ strtoupper($kelas_jenjang ?? 'smp') }}) <i class="fa-solid fa-arrow-right text-[10px]"></i>
                         </button>
                     @else
                         <span><i class="fa-solid fa-lock text-[10px] mr-1 text-slate-400"></i> Pratinjau resmi (hanya Admin yang dapat mengubah TTD Kepala Sekolah).</span>
@@ -431,7 +432,7 @@
                                         @endif
                                     </td>
                                     <td class="px-4 py-4 text-right whitespace-nowrap">
-                                        <a href="/sk/detail-rapor-walas/{{ $s->id }}" class="inline-flex items-center px-3.5 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-xs font-semibold transition-colors shadow-sm whitespace-nowrap">
+                                        <a href="/sk/detail-rapor-walas/{{ $s->id }}" class="inline-flex items-center px-3.5 py-1.5 rounded-lg bg-emerald-700 text-white hover:bg-emerald-800 text-xs font-semibold transition-colors shadow-sm whitespace-nowrap">
                                             <i class="fa-solid fa-print mr-1.5"></i> Cetak Rapor
                                         </a>
                                     </td>   
@@ -481,34 +482,23 @@
                 globalBanner.classList.toggle('hidden', tab === 'kelas');
             }
 
-            const btnStyles = {
-                kelas: {
-                    active: ['bg-white', 'text-emerald-700', 'shadow-xs', 'border', 'border-slate-200/80'],
-                    inactive: ['text-slate-600', 'hover:text-slate-900']
-                },
-                pengesahan: {
-                    active: ['bg-blue-700', 'text-white', 'shadow-xs'],
-                    inactive: ['text-slate-600', 'hover:text-blue-800', 'hover:bg-white/70']
-                },
-                kegiatan: {
-                    active: ['bg-violet-700', 'text-white', 'shadow-xs'],
-                    inactive: ['text-slate-600', 'hover:text-violet-800', 'hover:bg-white/70']
-                },
-                template_prestasi: {
-                    active: ['bg-amber-600', 'text-white', 'shadow-xs'],
-                    inactive: ['text-slate-600', 'hover:text-amber-800', 'hover:bg-white/70']
-                }
-            };
+            const activeClasses = ['bg-emerald-700', 'text-white', 'shadow-xs'];
+            const inactiveClasses = ['text-slate-600', 'hover:text-emerald-800', 'hover:bg-white/80'];
+            const validTabKeys = ['kelas', 'pengesahan', 'kegiatan', 'template_prestasi'];
 
-            Object.keys(btnStyles).forEach(key => {
+            validTabKeys.forEach(key => {
                 const btn = document.getElementById('adminTabBtn-' + key);
                 if (!btn) return;
-                const style = btnStyles[key];
-                btn.classList.remove(...style.active, ...style.inactive);
+                btn.classList.remove(
+                    'bg-white', 'text-emerald-700', 'border', 'border-slate-200/80',
+                    'bg-blue-700', 'bg-violet-700', 'bg-amber-600',
+                    'hover:text-blue-800', 'hover:text-violet-800', 'hover:text-amber-800',
+                    ...activeClasses, ...inactiveClasses
+                );
                 if (key === tab) {
-                    btn.classList.add(...style.active);
+                    btn.classList.add(...activeClasses);
                 } else {
-                    btn.classList.add(...style.inactive);
+                    btn.classList.add(...inactiveClasses);
                 }
             });
 
@@ -517,11 +507,26 @@
                     const url = new URL(window.location);
                     if (tab === 'kelas') {
                         url.searchParams.delete('tab');
+                        url.searchParams.delete('jenjang');
                     } else {
                         url.searchParams.set('tab', tab);
+                        if (tab === 'pengesahan') {
+                            const jVal = document.getElementById('adminPengaturanJenjangInput')?.value;
+                            if (jVal) url.searchParams.set('jenjang', jVal);
+                        } else if (tab === 'kegiatan' && window.__activeKegiatanFilter && window.__activeKegiatanFilter !== 'all') {
+                            url.searchParams.set('jenjang', window.__activeKegiatanFilter);
+                        } else if (tab === 'template_prestasi' && window.__activePrestasiFilter && window.__activePrestasiFilter !== 'all') {
+                            url.searchParams.set('jenjang', window.__activePrestasiFilter);
+                        } else {
+                            url.searchParams.delete('jenjang');
+                        }
                     }
                     window.history.replaceState({}, '', url);
                 } catch (e) {}
+            }
+
+            if (typeof window.refreshSiakadPagination === 'function') {
+                setTimeout(() => window.refreshSiakadPagination(), 20);
             }
         }
 

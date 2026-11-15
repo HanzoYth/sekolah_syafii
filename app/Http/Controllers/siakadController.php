@@ -2334,17 +2334,67 @@ class siakadController extends Controller
             ->get()
             ->groupBy('siswa_id');
 
-        $daftar_preset_prestasi = \App\Models\master_prestasi::where('aktif', true)->orderBy('urutan')->get();
-        $daftar_kegiatan_sekolah = \App\Models\kegiatan_sekolah::where('aktif', true)->orderBy('urutan')->get();
-        $pengaturan_rapor = \App\Models\pengaturan_rapor::first() ?? new \App\Models\pengaturan_rapor([
+        $kelas_jenjang = $this->resolveJenjang(
+            $wallas->ruangKelas->nama_ruang ?? ($wallas->ruangKelas->nama_kelas ?? null),
+            null,
+            'smp'
+        );
+
+        $daftar_preset_prestasi = \App\Models\master_prestasi::where('aktif', true)
+            ->where(function($q) use ($kelas_jenjang) {
+                $q->where('jenjang', 'semua')->orWhere('jenjang', $kelas_jenjang);
+            })
+            ->orderBy('urutan')
+            ->get();
+        $daftar_kegiatan_sekolah = \App\Models\kegiatan_sekolah::where('aktif', true)
+            ->where(function($q) use ($kelas_jenjang) {
+                $q->where('jenjang', 'semua')->orWhere('jenjang', $kelas_jenjang);
+            })
+            ->orderBy('urutan')
+            ->get();
+
+        $pengaturan_default = new \App\Models\pengaturan_rapor([
+            'jenjang' => 'semua',
             'tempat_rapor' => 'Tinggede',
             'tanggal_rapor' => '20 Desember 2025',
             'nama_kepsek' => 'Rajihul Haq, S.Sos',
             'nip_kepsek' => '-',
             'catatan_walas_template' => 'Alhamdulillah, ananda menunjukkan kemajuan yang luar biasa dalam hafalan Al-Qur\'an dan akhlak terpuji. Pertahankan dan terus istiqomah.'
         ]);
+        $pengaturan_rapor = $this->resolvePengaturanRaporByJenjang($kelas_jenjang, true) ?? $pengaturan_default;
+
+        $req_jenjang = strtolower(trim((string) $request->query('jenjang', '')));
+        $selected_filter_jenjang = in_array($req_jenjang, ['all', 'semua', 'tk', 'sd', 'smp', 'sma'], true) ? $req_jenjang : 'all';
+        $pengaturan_jenjang_list = ['tk', 'sd', 'smp'];
+        $default_pengaturan_jenjang = in_array($kelas_jenjang, $pengaturan_jenjang_list, true) ? $kelas_jenjang : 'tk';
+        $selected_pengaturan_jenjang = in_array($req_jenjang, $pengaturan_jenjang_list, true)
+            ? $req_jenjang
+            : $default_pengaturan_jenjang;
+
+        $pengaturan_per_jenjang = [];
+        $pengaturan_semua = $this->resolvePengaturanRaporByJenjang('semua', true) ?? $pengaturan_default;
+        if (session('role') === 'a') {
+            $pengaturan_rows = \App\Models\pengaturan_rapor::all()->keyBy(function($item) {
+                return strtolower(trim((string) ($item->jenjang ?: 'semua')));
+            });
+            foreach ($pengaturan_jenjang_list as $jKey) {
+                $exact = $pengaturan_rows->get($jKey);
+                $source = $exact ?? $pengaturan_semua;
+                $pengaturan_per_jenjang[$jKey] = [
+                    'jenjang' => $jKey,
+                    'is_custom' => (bool) $exact,
+                    'tempat_rapor' => $source->tempat_rapor ?? 'Tinggede',
+                    'tanggal_rapor' => $source->tanggal_rapor ?? '20 Desember 2025',
+                    'nama_kepsek' => $source->nama_kepsek ?? 'Rajihul Haq, S.Sos',
+                    'nip_kepsek' => $source->nip_kepsek ?? '-',
+                    'catatan_walas_template' => $source->catatan_walas_template ?? $pengaturan_default->catatan_walas_template,
+                    'ttd_kepsek' => $source->ttd_kepsek ?? null,
+                ];
+            }
+        }
+
         $data_kegiatan = session('role') === 'a'
-            ? \App\Models\kegiatan_sekolah::orderBy('urutan')->get()
+            ? \App\Models\kegiatan_sekolah::orderBy('urutan')->orderBy('id')->get()
             : collect();
         $data_prestasi = session('role') === 'a'
             ? \App\Models\master_prestasi::orderBy('urutan')->orderBy('id')->get()
@@ -2377,7 +2427,7 @@ class siakadController extends Controller
         }
 
         return view('modul.siakad.guru.raporWalas', compact(
-            'wallas', 'siswa', 'rekap_mapel', 'leger_siswa', 'stats_nilai', 'evaluasi_kelas', 'prestasi_kelas', 'tahun_aktif', 'daftar_semua_kelas', 'daftar_preset_prestasi', 'daftar_kegiatan_sekolah', 'pengaturan_rapor', 'data_kegiatan', 'data_prestasi'
+            'wallas', 'siswa', 'rekap_mapel', 'leger_siswa', 'stats_nilai', 'evaluasi_kelas', 'prestasi_kelas', 'tahun_aktif', 'daftar_semua_kelas', 'daftar_preset_prestasi', 'daftar_kegiatan_sekolah', 'pengaturan_rapor', 'data_kegiatan', 'data_prestasi', 'kelas_jenjang', 'selected_pengaturan_jenjang', 'selected_filter_jenjang', 'pengaturan_per_jenjang'
         ));
     }
 
@@ -2428,8 +2478,11 @@ class siakadController extends Controller
                 $d['nilai_akhir'] = round($d['nilai_akhir'], 1);
                 $total_nilai_akhir += $d['nilai_akhir'];
                 $mapel_dinilai++;
-                $d['deskripsi'] = $this->getCapaianKompetensiMapel($m, $d['nilai_akhir'], $d['kkm'] ?? 75);
+                $d['deskripsi_auto'] = $this->getCapaianKompetensiMapel($m, $d['nilai_akhir'], $d['kkm'] ?? 75);
+            } else {
+                $d['deskripsi_auto'] = 'Nilai belum diinput oleh Guru Pengajar.';
             }
+            $d['deskripsi'] = $d['deskripsi_auto'];
         }
         unset($d);
 
@@ -2449,6 +2502,16 @@ class siakadController extends Controller
         ];
 
         $raporMeta = $this->getRaporMetadata($siswa, $tahun_aktif, $rata_rata_rapor);
+
+        $catatanMapelDb = $raporMeta['catatan_mapel_db'] ?? [];
+        foreach ($rekap_nilai as $m => &$d) {
+            $manualDesc = isset($catatanMapelDb[$m]) && is_string($catatanMapelDb[$m])
+                ? trim($catatanMapelDb[$m])
+                : null;
+            $d['deskripsi_manual'] = ($manualDesc !== null && $manualDesc !== '') ? $manualDesc : null;
+            $d['deskripsi'] = $d['deskripsi_manual'] ?? $d['deskripsi_auto'];
+        }
+        unset($d);
 
         return compact('rekap_nilai', 'rekap_absensi', 'rata_rata_rapor', 'total_nilai_akhir', 'raporMeta');
     }
@@ -2997,7 +3060,9 @@ class siakadController extends Controller
             'aktif' => true,
         ]);
 
-        return redirect('/sk/rapor-walas?tab=kegiatan')->with('success', 'Master Program Kegiatan Sekolah berhasil ditambahkan.');
+        $filterJenjang = strtolower(trim((string) $request->input('filter_jenjang', '')));
+        $querySuffix = in_array($filterJenjang, ['semua', 'tk', 'sd', 'smp', 'sma'], true) ? '&jenjang=' . urlencode($filterJenjang) : '';
+        return redirect('/sk/rapor-walas?tab=kegiatan' . $querySuffix)->with('success', 'Master Program Kegiatan Sekolah berhasil ditambahkan.');
     }
 
     public function updateKegiatanSekolah(Request $request, $id) {
@@ -3018,7 +3083,9 @@ class siakadController extends Controller
             'aktif' => $request->has('aktif') ? (bool)$request->aktif : true,
         ]);
 
-        return redirect('/sk/rapor-walas?tab=kegiatan')->with('success', 'Master Program Kegiatan Sekolah berhasil diperbarui.');
+        $filterJenjang = strtolower(trim((string) $request->input('filter_jenjang', '')));
+        $querySuffix = in_array($filterJenjang, ['semua', 'tk', 'sd', 'smp', 'sma'], true) ? '&jenjang=' . urlencode($filterJenjang) : '';
+        return redirect('/sk/rapor-walas?tab=kegiatan' . $querySuffix)->with('success', 'Master Program Kegiatan Sekolah berhasil diperbarui.');
     }
 
     public function hapusKegiatanSekolah($id) {
@@ -3028,7 +3095,9 @@ class siakadController extends Controller
         $kegiatan = \App\Models\kegiatan_sekolah::findOrFail($id);
         $kegiatan->delete();
 
-        return redirect('/sk/rapor-walas?tab=kegiatan')->with('success', 'Master Program Kegiatan Sekolah berhasil dihapus.');
+        $filterJenjang = strtolower(trim((string) request()->input('filter_jenjang', '')));
+        $querySuffix = in_array($filterJenjang, ['semua', 'tk', 'sd', 'smp', 'sma'], true) ? '&jenjang=' . urlencode($filterJenjang) : '';
+        return redirect('/sk/rapor-walas?tab=kegiatan' . $querySuffix)->with('success', 'Master Program Kegiatan Sekolah berhasil dihapus.');
     }
 
     public function simpanMasterPrestasi(Request $request) {
@@ -3050,7 +3119,9 @@ class siakadController extends Controller
             'aktif' => true,
         ]);
 
-        return redirect('/sk/rapor-walas?tab=template_prestasi')->with('success', 'Template Jenis Prestasi berhasil ditambahkan ke database.');
+        $filterJenjang = strtolower(trim((string) $request->input('filter_jenjang', '')));
+        $querySuffix = in_array($filterJenjang, ['semua', 'tk', 'sd', 'smp', 'sma'], true) ? '&jenjang=' . urlencode($filterJenjang) : '';
+        return redirect('/sk/rapor-walas?tab=template_prestasi' . $querySuffix)->with('success', 'Template Jenis Prestasi berhasil ditambahkan ke database.');
     }
 
     public function updateMasterPrestasi(Request $request, $id) {
@@ -3071,7 +3142,9 @@ class siakadController extends Controller
             'aktif' => $request->has('aktif') ? (bool)$request->aktif : true,
         ]);
 
-        return redirect('/sk/rapor-walas?tab=template_prestasi')->with('success', 'Template Jenis Prestasi berhasil diperbarui.');
+        $filterJenjang = strtolower(trim((string) $request->input('filter_jenjang', '')));
+        $querySuffix = in_array($filterJenjang, ['semua', 'tk', 'sd', 'smp', 'sma'], true) ? '&jenjang=' . urlencode($filterJenjang) : '';
+        return redirect('/sk/rapor-walas?tab=template_prestasi' . $querySuffix)->with('success', 'Template Jenis Prestasi berhasil diperbarui.');
     }
 
     public function hapusMasterPrestasi($id) {
@@ -3081,14 +3154,28 @@ class siakadController extends Controller
         $prestasi = \App\Models\master_prestasi::findOrFail($id);
         $prestasi->delete();
 
-        return redirect('/sk/rapor-walas?tab=template_prestasi')->with('success', 'Template Jenis Prestasi berhasil dihapus.');
+        $filterJenjang = strtolower(trim((string) request()->input('filter_jenjang', '')));
+        $querySuffix = in_array($filterJenjang, ['semua', 'tk', 'sd', 'smp', 'sma'], true) ? '&jenjang=' . urlencode($filterJenjang) : '';
+        return redirect('/sk/rapor-walas?tab=template_prestasi' . $querySuffix)->with('success', 'Template Jenis Prestasi berhasil dihapus.');
     }
 
     public function simpanPengaturanRapor(Request $request) {
         $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
 
+        $masterAction = $request->input('_master_action');
+        if ($masterAction === 'simpan_master_prestasi') {
+            return $this->simpanMasterPrestasi($request);
+        }
+        if ($masterAction === 'update_master_prestasi') {
+            return $this->updateMasterPrestasi($request, $request->input('prestasi_id'));
+        }
+        if ($masterAction === 'hapus_master_prestasi') {
+            return $this->hapusMasterPrestasi($request->input('prestasi_id'));
+        }
+
         $request->validate([
+            'jenjang' => 'nullable|in:semua,tk,sd,smp,sma',
             'tempat_rapor' => 'required|string|max:100',
             'tanggal_rapor' => 'required|string|max:100',
             'nama_kepsek' => 'required|string|max:150',
@@ -3097,9 +3184,12 @@ class siakadController extends Controller
             'ttd_kepsek' => 'nullable|string'
         ]);
 
+        $jenjangInputProvided = $request->filled('jenjang');
+        $jenjang = strtolower(trim((string) ($request->input('jenjang') ?: 'semua')));
         $ttdKepsek = $request->filled('ttd_kepsek') ? trim($request->input('ttd_kepsek')) : null;
 
         $pengaturanData = [
+            'jenjang' => $jenjang,
             'tempat_rapor' => $request->tempat_rapor,
             'tanggal_rapor' => $request->tanggal_rapor,
             'nama_kepsek' => $request->nama_kepsek,
@@ -3111,14 +3201,40 @@ class siakadController extends Controller
             $pengaturanData['ttd_kepsek'] = $ttdKepsek;
         }
 
-        $pengaturan = \App\Models\pengaturan_rapor::first();
-        if ($pengaturan) {
-            $pengaturan->update($pengaturanData);
-        } else {
-            \App\Models\pengaturan_rapor::create($pengaturanData);
+        \App\Models\pengaturan_rapor::updateOrCreate(
+            ['jenjang' => $jenjang],
+            $pengaturanData
+        );
+
+        // Sinkronkan siswa di jenjang terkait agar tidak tertahan override nama_kepsek/tanggal_rapor lama
+        $customJenjangList = \App\Models\pengaturan_rapor::where('jenjang', '!=', 'semua')
+            ->pluck('jenjang')
+            ->map(fn($v) => strtolower(trim((string) $v)))
+            ->toArray();
+
+        $affectedSiswaIds = [];
+        foreach (\App\Models\siswa::with(['kelas', 'sekolah'])->get(['id', 'kelas_id', 'sekolah_id']) as $sItem) {
+            $sJenjang = $this->resolveJenjang(
+                $sItem->kelas->nama_ruang ?? ($sItem->kelas->nama_kelas ?? null),
+                $sItem->sekolah->jenis ?? null,
+                'smp'
+            );
+            if ($jenjang === 'semua') {
+                if (!in_array($sJenjang, $customJenjangList, true)) {
+                    $affectedSiswaIds[] = $sItem->id;
+                }
+            } elseif ($sJenjang === $jenjang) {
+                $affectedSiswaIds[] = $sItem->id;
+            }
+        }
+        if (!empty($affectedSiswaIds)) {
+            \App\Models\evaluasi_rapor_siswa::whereIn('siswa_id', $affectedSiswaIds)
+                ->update(['nama_kepsek' => null, 'tanggal_rapor' => null]);
         }
 
-        return redirect('/sk/rapor-walas?tab=pengesahan')->with('success', 'Pengaturan pengesahan, tanggal, dan tanda tangan rapor berhasil disimpan ke database.');
+        $redirectUrl = '/sk/rapor-walas?tab=pengesahan' . ($jenjangInputProvided ? '&jenjang=' . urlencode($jenjang) : '');
+        $labelJenjang = $jenjang === 'semua' ? 'Semua Jenjang (Default)' : 'Jenjang ' . strtoupper($jenjang);
+        return redirect($redirectUrl)->with('success', "Pengaturan pengesahan, tanggal, dan tanda tangan rapor ({$labelJenjang}) berhasil disimpan ke database.");
     }
 
     public function simpanTahunAjaran(Request $request) {
@@ -3728,6 +3844,25 @@ class siakadController extends Controller
         ];
 
         $raporMeta = $this->getRaporMetadata($siswa, $tahun_aktif, $rata_rata);
+        $catatanMapelDb = $raporMeta['catatan_mapel_db'] ?? [];
+        foreach ($rekap_nilai as $m_id => &$item) {
+            $namaMapel = $item['mata_pelajaran']->nama_mapel ?? 'Mata Pelajaran';
+            $item['deskripsi_auto'] = $item['deskripsi'];
+            $manualDesc = null;
+            if (isset($catatanMapelDb[$namaMapel]) && is_string($catatanMapelDb[$namaMapel])) {
+                $manualDesc = trim($catatanMapelDb[$namaMapel]);
+            } elseif (isset($catatanMapelDb[(string) $m_id]) && is_string($catatanMapelDb[(string) $m_id])) {
+                $manualDesc = trim($catatanMapelDb[(string) $m_id]);
+            }
+            if ($manualDesc !== null && $manualDesc !== '') {
+                $item['deskripsi_manual'] = $manualDesc;
+                $item['deskripsi'] = $manualDesc;
+            } else {
+                $item['deskripsi_manual'] = null;
+            }
+        }
+        unset($item);
+
         $rankingInfo = app(\App\Services\SiakadRankingService::class)
             ->buildClassRankingContext($siswa->kelas_id ? (int) $siswa->kelas_id : null, (int) $siswa->id)['ranking_siswa'];
 
@@ -3924,6 +4059,21 @@ class siakadController extends Controller
             'nama_walas' => $walas,
         ];
 
+        if ($request->exists('catatan_mapel')) {
+            $rawCatatanMapel = $request->input('catatan_mapel');
+            $cleanCatatanMapel = [];
+            if (is_array($rawCatatanMapel)) {
+                foreach ($rawCatatanMapel as $mapelKey => $descVal) {
+                    $cleanKey = trim((string) $mapelKey);
+                    $cleanVal = is_string($descVal) ? trim($descVal) : '';
+                    if ($cleanKey !== '' && $cleanVal !== '') {
+                        $cleanCatatanMapel[$cleanKey] = $cleanVal;
+                    }
+                }
+            }
+            $updateData['catatan_mapel'] = !empty($cleanCatatanMapel) ? $cleanCatatanMapel : null;
+        }
+
         $evaluasi = \App\Models\evaluasi_rapor_siswa::updateOrCreate(
             [
                 'siswa_id' => $siswa_id, 
@@ -4064,6 +4214,53 @@ class siakadController extends Controller
     }
 
     /**
+     * Resolusi jenjang sekolah (tk, sd, smp, sma) berdasarkan nama kelas/ruang dan fallback jenis sekolah.
+     */
+    protected function resolveJenjang(?string $namaRuang = null, ?string $jenisDb = null, string $default = 'smp'): string
+    {
+        $nama = strtolower(trim((string) $namaRuang));
+        $jenis = strtolower(trim((string) $jenisDb));
+
+        if ($nama !== '') {
+            if (preg_match('/\btk\b/', $nama)) return 'tk';
+            if (preg_match('/\bsd\b/', $nama)) return 'sd';
+            if (preg_match('/\bsmp\b/', $nama)) return 'smp';
+            if (preg_match('/\bsma\b/', $nama)) return 'sma';
+
+            if (preg_match('/\b(7|8|9)\b/', $nama)) return 'smp';
+            if (preg_match('/\b(1|2|3|4|5|6)\b/', $nama)) return 'sd';
+            if (preg_match('/\b(10|11|12)\b/', $nama)) return 'sma';
+        }
+
+        if (in_array($jenis, ['tk', 'sd', 'smp', 'sma'], true)) {
+            return $jenis;
+        }
+
+        return $default;
+    }
+
+    /**
+     * Ambil Pengaturan Rapor sesuai jenjang dengan fallback ke pengaturan 'semua'.
+     */
+    protected function resolvePengaturanRaporByJenjang(?string $jenjang = 'semua', bool $withFallback = true)
+    {
+        $jenjang = strtolower(trim((string) ($jenjang ?: 'semua')));
+
+        if ($jenjang !== 'semua') {
+            $specific = \App\Models\pengaturan_rapor::where('jenjang', $jenjang)->first();
+            if ($specific) {
+                return $specific;
+            }
+            if (!$withFallback) {
+                return null;
+            }
+        }
+
+        return \App\Models\pengaturan_rapor::where('jenjang', 'semua')->first()
+            ?? ($withFallback ? \App\Models\pengaturan_rapor::first() : null);
+    }
+
+    /**
      * Helper Metadata Rapor Siswa (Jenjang, Fase, Watermark Logo, Master Kegiatan & Database Values)
      */
     protected function getRaporMetadata($siswa, $tahun_aktif = null, $rata_rata_rapor = 0)
@@ -4071,19 +4268,7 @@ class siakadController extends Controller
         $nama_ruang = strtolower($siswa->kelas->nama_ruang ?? ($siswa->kelas->nama_kelas ?? ''));
         $jenis_db = strtolower($siswa->sekolah->jenis ?? '');
 
-        if (str_contains($nama_ruang, 'smp') || preg_match('/\b(7|8|9)\b/', $nama_ruang)) {
-            $jenjang = 'smp';
-        } elseif (str_contains($nama_ruang, 'sd') || preg_match('/\b(1|2|3|4|5|6)\b/', $nama_ruang)) {
-            $jenjang = 'sd';
-        } elseif (str_contains($nama_ruang, 'sma') || preg_match('/\b(10|11|12)\b/', $nama_ruang)) {
-            $jenjang = 'sma';
-        } elseif (str_contains($nama_ruang, 'tk')) {
-            $jenjang = 'tk';
-        } elseif ($jenis_db) {
-            $jenjang = $jenis_db;
-        } else {
-            $jenjang = 'smp';
-        }
+        $jenjang = $this->resolveJenjang($nama_ruang, $jenis_db, 'smp');
 
         $nama_sekolah = match($jenjang) {
             'sd' => "SD QUR'AN IMAM SYAFI'I",
@@ -4120,15 +4305,17 @@ class siakadController extends Controller
         $alamat_sekolah = "Jl. Rapolinja Tinggede, lrg. Imam Syafii, Kec. Marawola, Kab. Sigi";
         $tempat_rapor = "Tinggede";
         $nama_kepsek = "Rajihul Haq, S.Sos";
+        $nip_kepsek = "-";
         $tanggal_rapor = "20 Desember 2025";
         $nama_walas = null;
         $catatan_walas_default = "Alhamdulillah {$siswa->nama} mulai menunjukkan semangat belajar yang lebih baik dan keberanian untuk bertanya dalam memahami materi. Hasil belajar ananda semakin menunjukkan kemajuan.\n\nHarapan ustadzah, ananda dapat lebih fokus dan konsisten dalam belajar, memanfaatkan waktu dengan efektif, serta melibatkan Allah dalam proses belajar.\n\nBaarakAllahu fiik nak shalih";
 
-        // Ambil Pengaturan Rapor & Pengesahan yang dikelola Admin dari Database
-        $pengaturanRapor = \App\Models\pengaturan_rapor::first();
+        // Ambil Pengaturan Rapor & Pengesahan per jenjang yang dikelola Admin dari Database
+        $pengaturanRapor = $this->resolvePengaturanRaporByJenjang($jenjang, true);
         if ($pengaturanRapor) {
             if (!empty($pengaturanRapor->tanggal_rapor)) $tanggal_rapor = $pengaturanRapor->tanggal_rapor;
             if (!empty($pengaturanRapor->nama_kepsek)) $nama_kepsek = $pengaturanRapor->nama_kepsek;
+            if (!empty($pengaturanRapor->nip_kepsek)) $nip_kepsek = $pengaturanRapor->nip_kepsek;
             if (!empty($pengaturanRapor->tempat_rapor)) $tempat_rapor = $pengaturanRapor->tempat_rapor;
             if (!empty($pengaturanRapor->catatan_walas_template)) {
                 $catatan_walas_default = str_replace('{nama}', $siswa->nama, $pengaturanRapor->catatan_walas_template);
@@ -4232,6 +4419,8 @@ class siakadController extends Controller
         }
 
         $has_evaluasi_db = ($evaluasiDb && !empty($evaluasiDb->catatan_walas));
+        $catatan_mapel_db = ($evaluasiDb && is_array($evaluasiDb->catatan_mapel)) ? $evaluasiDb->catatan_mapel : [];
+        $has_catatan_mapel_db = !empty($catatan_mapel_db);
         $has_prestasi_db = $prestasiDb->isNotEmpty();
 
         $wallasKelas = $siswa->kelas_id ? \App\Models\wallas::where('kelas_id', $siswa->kelas_id)->first() : null;
@@ -4240,8 +4429,8 @@ class siakadController extends Controller
 
         return compact(
             'jenjang', 'nama_sekolah', 'watermark_logo', 'fase', 'kelas_label', 'alamat_sekolah', 'tempat_rapor',
-            'nama_kepsek', 'tanggal_rapor', 'nama_walas', 'kegiatan_sekolah_default', 'prestasi_default', 'catatan_walas_default', 'daftar_preset_prestasi',
-            'has_evaluasi_db', 'has_prestasi_db', 'ttd_walas', 'ttd_kepsek'
+            'nama_kepsek', 'nip_kepsek', 'tanggal_rapor', 'nama_walas', 'kegiatan_sekolah_default', 'prestasi_default', 'catatan_walas_default', 'daftar_preset_prestasi',
+            'has_evaluasi_db', 'has_prestasi_db', 'catatan_mapel_db', 'has_catatan_mapel_db', 'ttd_walas', 'ttd_kepsek'
         );
     }
 

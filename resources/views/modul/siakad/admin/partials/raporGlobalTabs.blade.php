@@ -33,113 +33,196 @@
 </style>
 
 <!-- Banner Mode Global (Muncul saat Admin membuka tab Global Sekolah) -->
-<div id="adminRaporGlobalBanner" class="hidden bg-gradient-to-r from-blue-950 via-slate-900 to-slate-800 text-white rounded-2xl p-5 mb-6 shadow-sm border border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div id="adminRaporGlobalBanner" class="hidden bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-700 text-white rounded-2xl p-5 mb-6 shadow-sm border border-emerald-700/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div class="flex items-start gap-3">
-        <div class="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/30 text-blue-300 flex items-center justify-center flex-shrink-0 text-lg">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-300/30 text-emerald-100 flex items-center justify-center flex-shrink-0 text-lg">
             <i class="fa-solid fa-globe"></i>
         </div>
         <div>
             <div class="flex items-center gap-2 mb-1">
-                <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px] font-bold uppercase tracking-wider border border-blue-400/30">Pengaturan Global Sekolah</span>
-                <span class="text-xs text-slate-300 font-medium">Berlaku Semua Kelas &amp; Jenjang</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-950/40 text-emerald-100 text-[10px] font-bold uppercase tracking-wider border border-emerald-400/30">Pengaturan Global Sekolah</span>
+                <span class="text-xs text-emerald-100/90 font-medium">Berlaku Semua Kelas &amp; Jenjang</span>
             </div>
             <h4 class="text-base font-bold text-white">Konfigurasi Standar Rapor Yayasan / Sekolah</h4>
-            <p class="text-xs text-slate-300 mt-0.5">Perubahan pada tab global ini otomatis berlaku untuk seluruh kelas, Wali Kelas, dan Siswa di semua jenjang.</p>
+            <p class="text-xs text-emerald-100/90 mt-0.5">Perubahan pada tab global ini otomatis berlaku untuk seluruh kelas, Wali Kelas, dan Siswa di semua jenjang.</p>
         </div>
     </div>
 
-    <button type="button" onclick="switchAdminRaporTab('kelas')" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition-colors flex items-center gap-2 whitespace-nowrap self-start md:self-center cursor-pointer">
-        <i class="fa-solid fa-arrow-left text-[11px]"></i> Kembali ke Mode Per Kelas
+    <button type="button" onclick="switchAdminRaporTab('kelas')" class="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white border border-white/25 text-xs font-bold transition-colors flex items-center gap-1.5 whitespace-nowrap self-start md:self-center cursor-pointer">
+        <i class="fa-solid fa-arrow-left text-[11px]"></i> Mode Kelas
     </button>
 </div>
 
 <!-- ======================================================== -->
 <!-- TAB GLOBAL 1: PENGESAHAN, TANGGAL & TTD KEPSEK           -->
 <!-- ======================================================== -->
+@php
+    $pengaturanMapAdminRaw = $pengaturan_per_jenjang ?? [];
+    $pengaturanMapAdmin = [];
+    foreach (['tk', 'sd', 'smp'] as $jKeyDefault) {
+        $pengaturanMapAdmin[$jKeyDefault] = $pengaturanMapAdminRaw[$jKeyDefault] ?? [
+            'jenjang' => $jKeyDefault,
+            'is_custom' => false,
+            'tempat_rapor' => $pengaturan_rapor->tempat_rapor ?? 'Tinggede',
+            'tanggal_rapor' => $pengaturan_rapor->tanggal_rapor ?? '20 Desember 2025',
+            'nama_kepsek' => $pengaturan_rapor->nama_kepsek ?? 'Rajihul Haq, S.Sos',
+            'nip_kepsek' => $pengaturan_rapor->nip_kepsek ?? '-',
+            'catatan_walas_template' => $pengaturan_rapor->catatan_walas_template ?? '',
+            'ttd_kepsek' => $pengaturan_rapor->ttd_kepsek ?? null,
+        ];
+    }
+    $activePengaturanJenjang = old('jenjang', $selected_pengaturan_jenjang ?? 'tk');
+    if (!array_key_exists($activePengaturanJenjang, $pengaturanMapAdmin)) {
+        $activePengaturanJenjang = in_array($kelas_jenjang ?? '', ['tk', 'sd', 'smp'], true) ? $kelas_jenjang : 'tk';
+    }
+    $activeConfig = $pengaturanMapAdmin[$activePengaturanJenjang];
+    $jenjangTabMeta = [
+        'tk' => ['label' => 'TK Qur\'an', 'short' => 'TK', 'icon' => 'fa-child-reaching'],
+        'sd' => ['label' => 'SD Qur\'an', 'short' => 'SD', 'icon' => 'fa-school'],
+        'smp' => ['label' => 'SMP Qur\'an', 'short' => 'SMP', 'icon' => 'fa-graduation-cap'],
+    ];
+    $initialFilterJenjang = $selected_filter_jenjang ?? 'all';
+    if (!in_array($initialFilterJenjang, ['all', 'tk', 'sd', 'smp', 'semua', 'sma'], true)) {
+        $initialFilterJenjang = 'all';
+    }
+@endphp
 <div id="adminRaporPane-pengesahan" class="admin-rapor-pane hidden">
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
         <div class="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg flex-shrink-0">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-lg flex-shrink-0">
                     <i class="fa-solid fa-file-signature"></i>
                 </div>
                 <div>
                     <h3 class="text-base font-bold text-slate-800">Pengaturan Pengesahan &amp; Tanggal Pembagian Rapor</h3>
-                    <p class="text-xs text-slate-500">Konfigurasi resmi titimangsa, tanggal cetak rapor, dan Kepala Sekolah yang berlaku global untuk seluruh lembar rapor siswa.</p>
+                    <p class="text-xs text-slate-500">Atur Kepala Sekolah, NIP, tanggal cetak rapor, dan TTD Kepsek secara terpisah untuk masing-masing jenjang (TK, SD, SMP).</p>
                 </div>
             </div>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200 w-fit">
-                <i class="fa-solid fa-globe text-[10px]"></i> Global Semua Kelas
+            <span id="adminPengaturanActiveBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 w-fit whitespace-nowrap">
+                <i class="fa-solid fa-layer-group text-[10px]"></i>
+                <span>Jenjang {{ strtoupper($activePengaturanJenjang) }}</span>
             </span>
         </div>
 
         <form id="formPengaturanRapor" action="/sk/simpan-pengaturan-rapor" method="POST" class="p-6">
             @csrf
-            <div class="p-4 mb-6 rounded-xl bg-blue-50/70 border border-blue-200 text-xs text-blue-900 flex items-start gap-3">
-                <i class="fa-solid fa-circle-info text-blue-600 text-base mt-0.5 flex-shrink-0"></i>
+            <input type="hidden" name="jenjang" id="adminPengaturanJenjangInput" value="{{ $activePengaturanJenjang }}">
+
+            <!-- Pemilih Jenjang Sekolah (TK / SD / SMP) -->
+            <div class="mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-filter text-emerald-700"></i> Pilih Jenjang Sekolah yang Diatur:
+                    </label>
+                    <span class="text-[11px] text-slate-500">Klik jenjang untuk mengatur Kepala Sekolah &amp; TTD khusus jenjang tersebut</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="adminPengaturanJenjangCards">
+                    @foreach($jenjangTabMeta as $jKey => $jInfo)
+                        @php
+                            $cfg = $pengaturanMapAdmin[$jKey] ?? [];
+                            $isSelected = ($activePengaturanJenjang === $jKey);
+                            $isCustom = !empty($cfg['is_custom']);
+                        @endphp
+                        <button type="button"
+                                onclick="selectAdminPengesahanJenjang('{{ $jKey }}', true)"
+                                id="pengesahanJenjangBtn-{{ $jKey }}"
+                                data-jenjang="{{ $jKey }}"
+                                class="text-left p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-2 {{ $isSelected ? 'bg-emerald-50/80 border-emerald-600 ring-2 ring-emerald-500/20 shadow-xs' : 'bg-white border-slate-200 hover:border-emerald-300 hover:bg-slate-50/70' }}">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="inline-flex items-center gap-1.5 text-xs font-bold {{ $isSelected ? 'text-emerald-800' : 'text-slate-800' }}">
+                                    <i class="fa-solid {{ $jInfo['icon'] }} text-emerald-700"></i>
+                                    {{ $jInfo['label'] }}
+                                </span>
+                                <span id="pengesahanJenjangStatus-{{ $jKey }}" class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase {{ $isCustom ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200' }}">
+                                    {{ $isCustom ? 'Khusus' : 'Belum Diatur' }}
+                                </span>
+                            </div>
+                            <div class="text-[11px] text-slate-500 truncate">
+                                Kepsek: <strong id="pengesahanJenjangKepsek-{{ $jKey }}" class="text-slate-700">{{ $cfg['nama_kepsek'] ?? '-' }}</strong>
+                            </div>
+                        </button>
+                    @endforeach
+                </div>
+            </div>
+
+            <div id="adminPengaturanStatusNote" class="p-4 mb-6 rounded-xl {{ $activeConfig['is_custom'] ? 'bg-emerald-50/70 border border-emerald-200 text-emerald-900' : 'bg-slate-50 border border-slate-200 text-slate-700' }} text-xs flex items-start gap-3">
+                <i class="fa-solid fa-circle-info {{ $activeConfig['is_custom'] ? 'text-emerald-700' : 'text-slate-500' }} text-base mt-0.5 flex-shrink-0"></i>
                 <div>
-                    <strong>Sinkronisasi Otomatis ke Wali Kelas &amp; Siswa:</strong>
-                    <p class="mt-0.5 text-blue-800">Nilai tanggal pembagian rapor, nama kepala sekolah, dan tanda tangan Kepala Sekolah di bawah ini otomatis menjadi standar baku pada lembar rapor semua siswa. Bila diperbarui di sini, rapor di akun walas dan siswa langsung mengikuti pengaturan ini.</p>
+                    <strong id="adminPengaturanStatusTitle">
+                        @if($activeConfig['is_custom'])
+                            Pengaturan Khusus Jenjang {{ strtoupper($activePengaturanJenjang) }} Aktif:
+                        @else
+                            Jenjang {{ strtoupper($activePengaturanJenjang) }} Belum Diatur Khusus:
+                        @endif
+                    </strong>
+                    <p id="adminPengaturanStatusDesc" class="mt-0.5">
+                        @if($activeConfig['is_custom'])
+                            Seluruh rapor siswa, cetak massal, dan leger kelas di jenjang {{ strtoupper($activePengaturanJenjang) }} otomatis memakai data Kepala Sekolah &amp; TTD di bawah ini.
+                        @else
+                            Kolom di bawah sementara menampilkan data awal. Ubah nama Kepala Sekolah / TTD sesuai pejabat jenjang {{ strtoupper($activePengaturanJenjang) }} lalu klik Simpan.
+                        @endif
+                    </p>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Tanggal Pembagian Rapor</label>
-                    <input type="text" name="tanggal_rapor" value="{{ old('tanggal_rapor', $pengaturan_rapor->tanggal_rapor ?? '20 Desember 2025') }}" class="ref-input font-medium" placeholder="Contoh: 20 Desember 2025" required>
-                    <span class="text-[11px] text-slate-400 mt-1 block">Format teks yang akan tercetak di bagian titi mangsa rapor (misal: Tinggede, 20 Desember 2025).</span>
+                    <input type="text" id="adminInputTanggalRapor" name="tanggal_rapor" value="{{ old('tanggal_rapor', $activeConfig['tanggal_rapor'] ?? '20 Desember 2025') }}" class="ref-input font-medium" placeholder="Contoh: 20 Desember 2025" required>
+                    <span class="text-[11px] text-slate-400 mt-1 block">Format teks yang akan tercetak di bagian titi mangsa rapor (misal: 20 Desember 2025).</span>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Tempat / Kota Penerbitan</label>
-                    <input type="text" name="tempat_rapor" value="{{ old('tempat_rapor', $pengaturan_rapor->tempat_rapor ?? 'Tinggede') }}" class="ref-input font-medium" placeholder="Contoh: Tinggede" required>
+                    <input type="text" id="adminInputTempatRapor" name="tempat_rapor" value="{{ old('tempat_rapor', $activeConfig['tempat_rapor'] ?? 'Tinggede') }}" class="ref-input font-medium" placeholder="Contoh: Tinggede" required>
                     <span class="text-[11px] text-slate-400 mt-1 block">Nama daerah / desa / kota lokasi madrasah / sekolah.</span>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Nama Kepala Sekolah &amp; Gelar</label>
-                    <input type="text" name="nama_kepsek" value="{{ old('nama_kepsek', $pengaturan_rapor->nama_kepsek ?? 'Rajihul Haq, S.Sos') }}" class="ref-input font-medium font-bold text-slate-800" placeholder="Contoh: Rajihul Haq, S.Sos" required>
-                    <span class="text-[11px] text-slate-400 mt-1 block">Nama pejabat kepala sekolah penandatangan dokumen hasil belajar.</span>
+                    <input type="text" id="adminInputNamaKepsek" name="nama_kepsek" value="{{ old('nama_kepsek', $activeConfig['nama_kepsek'] ?? 'Rajihul Haq, S.Sos') }}" oninput="syncAdminKepsekNamePreview(this.value)" class="ref-input font-medium font-bold text-slate-800" placeholder="Contoh: Ustadzah Aisyah, S.Pd" required>
+                    <span class="text-[11px] text-slate-400 mt-1 block">Nama pejabat kepala sekolah sesuai jenjang yang dipilih di atas.</span>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">NIP / Identitas Kepsek</label>
-                    <input type="text" name="nip_kepsek" value="{{ old('nip_kepsek', $pengaturan_rapor->nip_kepsek ?? '-') }}" class="ref-input font-medium" placeholder="Kosongkan atau beri tanda - jika tidak ada">
+                    <input type="text" id="adminInputNipKepsek" name="nip_kepsek" value="{{ old('nip_kepsek', $activeConfig['nip_kepsek'] ?? '-') }}" class="ref-input font-medium" placeholder="Kosongkan atau beri tanda - jika tidak ada">
                     <span class="text-[11px] text-slate-400 mt-1 block">Nomor Induk Pegawai kepala sekolah (opsional).</span>
                 </div>
 
                 <div class="md:col-span-2">
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Template Default Catatan Wali Kelas</label>
-                    <textarea name="catatan_walas_template" rows="3" class="ref-input font-normal leading-relaxed" placeholder="Tuliskan template pesan wali kelas default...">{{ old('catatan_walas_template', $pengaturan_rapor->catatan_walas_template ?? '') }}</textarea>
+                    <textarea id="adminInputTemplateCatatan" name="catatan_walas_template" rows="3" class="ref-input font-normal leading-relaxed" placeholder="Tuliskan template pesan wali kelas default...">{{ old('catatan_walas_template', $activeConfig['catatan_walas_template'] ?? '') }}</textarea>
                     <span class="text-[11px] text-slate-400 mt-1 block">Gunakan tag <code>{nama}</code> untuk menyisipkan nama siswa secara otomatis. Template ini akan menjadi teks saran awal saat guru membuka lembar rapor.</span>
                 </div>
             </div>
 
-            <!-- Bagian Upload Tanda Tangan Kepala Sekolah (Global Otomatis Hapus Background) -->
+            <!-- Bagian Upload Tanda Tangan Kepala Sekolah (Per Jenjang Otomatis Hapus Background) -->
             <div class="mb-6 pt-5 border-t border-slate-200">
-                <input type="hidden" name="ttd_kepsek" id="adminInputTtdKepsek" value="{{ old('ttd_kepsek', $pengaturan_rapor->ttd_kepsek ?? '') }}">
+                <input type="hidden" name="ttd_kepsek" id="adminInputTtdKepsek" value="{{ old('ttd_kepsek', $activeConfig['ttd_kepsek'] ?? '') }}">
 
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                     <div>
                         <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-signature text-emerald-600"></i> Tanda Tangan Digital Kepala Sekolah
+                            <i class="fa-solid fa-signature text-emerald-700"></i> Tanda Tangan Digital Kepala Sekolah (<span id="adminTtdJenjangLabel">{{ strtoupper($activePengaturanJenjang) }}</span>)
                         </h4>
                         <p class="text-[11px] text-slate-500 mt-0.5">Unggah foto atau hasil scan tanda tangan Kepala Sekolah berlatar kertas putih. Background otomatis dihapus transparan seketika di browser.</p>
                     </div>
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 w-fit flex-shrink-0">
-                        <i class="fa-solid fa-wand-magic-sparkles text-amber-500 text-[10px]"></i> Auto-Hapus Background Aktif
+                        <i class="fa-solid fa-wand-magic-sparkles text-emerald-600 text-[10px]"></i> Auto-Hapus Background Aktif
                     </span>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Kartu TTD Kepala Sekolah (Global) -->
+                    <!-- Kartu TTD Kepala Sekolah -->
                     <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col justify-between">
                         <div>
                             <div class="flex items-center justify-between mb-1.5">
                                 <label class="text-xs font-bold text-slate-700">Tanda Tangan Kepala Sekolah</label>
                                 <span id="adminStatusTtdKepsek" class="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-200 text-slate-600">Belum diunggah</span>
                             </div>
-                            <p class="text-[11px] text-slate-500 mb-2.5 truncate">Pejabat: <strong class="text-slate-700">{{ $pengaturan_rapor->nama_kepsek ?? 'Kepala Sekolah' }}</strong> (otomatis berlaku global)</p>
+                            <p class="text-[11px] text-slate-500 mb-2.5 truncate">Pejabat: <strong id="adminPreviewNamaKepsek" class="text-slate-700">{{ $activeConfig['nama_kepsek'] ?? 'Kepala Sekolah' }}</strong></p>
 
                             <div id="adminBoxPreviewTtdKepsek" class="h-24 rounded-lg border-2 border-dashed border-slate-300 bg-white flex items-center justify-center relative overflow-hidden mb-3">
                                 <img id="adminThumbTtdKepsek" src="" alt="TTD Kepala Sekolah" class="max-h-20 max-w-full object-contain hidden" style="mix-blend-mode: multiply;" />
@@ -152,7 +235,7 @@
 
                         <div class="flex items-center gap-2">
                             <input type="file" id="adminFileTtdKepsek" accept="image/*" class="hidden" onchange="handleAdminSignatureUpload(this)">
-                            <button type="button" onclick="document.getElementById('adminFileTtdKepsek').click()" class="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs">
+                            <button type="button" onclick="document.getElementById('adminFileTtdKepsek').click()" class="flex-1 px-3 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs whitespace-nowrap">
                                 <i class="fa-solid fa-arrow-up-from-bracket text-[11px]"></i> Upload TTD Kepsek
                             </button>
                             <button type="button" id="adminBtnHapusTtdKepsek" onclick="removeAdminSignature()" class="px-3 py-2 bg-slate-200 hover:bg-rose-100 hover:text-rose-700 text-slate-600 rounded-lg text-xs font-semibold transition-colors hidden cursor-pointer" title="Hapus tanda tangan kepala sekolah">
@@ -165,16 +248,16 @@
                     <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/40 flex flex-col justify-between">
                         <div>
                             <h5 class="text-xs font-bold text-slate-700 flex items-center gap-1.5 mb-1.5">
-                                <i class="fa-solid fa-circle-info text-blue-600"></i> Tata Kelola Tanda Tangan Rapor
+                                <i class="fa-solid fa-circle-info text-emerald-700"></i> Tata Kelola Pengesahan Per Jenjang
                             </h5>
                             <ul class="text-[11px] text-slate-600 space-y-1.5 leading-relaxed">
-                                <li><strong>TTD Kepala Sekolah:</strong> Dikelola terpusat oleh Admin di tab ini dan otomatis tampil sebagai pratinjau resmi pada seluruh rapor kelas &amp; siswa.</li>
-                                <li><strong>TTD Wali Kelas:</strong> Diunggah per kelas oleh masing-masing Wali Kelas (atau Admin via pemilih kelas) di tab <strong>Cetak &amp; TTD Kelas</strong>.</li>
+                                <li><strong>TTD &amp; Nama Kepsek Per Jenjang:</strong> Pilih jenjang TK, SD, atau SMP di atas untuk menetapkan masing-masing Kepala Sekolah dan TTD resminya.</li>
+                                <li><strong>TTD Wali Kelas:</strong> Diunggah per kelas oleh masing-masing Wali Kelas (atau Admin via pemilih kelas) di tab <strong>Rapor &amp; TTD</strong>.</li>
                             </ul>
                         </div>
                         <div class="mt-3 pt-3 border-t border-slate-200/70">
-                            <button type="button" onclick="switchAdminRaporTab('kelas')" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors cursor-pointer">
-                                <i class="fa-solid fa-pen-nib text-[11px]"></i> Atur TTD Wali Kelas per Kelas <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            <button type="button" onclick="switchAdminRaporTab('kelas')" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors cursor-pointer whitespace-nowrap">
+                                <i class="fa-solid fa-pen-nib text-[11px]"></i> TTD Wali Kelas <i class="fa-solid fa-arrow-right text-[10px]"></i>
                             </button>
                         </div>
                     </div>
@@ -182,8 +265,8 @@
             </div>
 
             <div class="flex justify-end pt-4 border-t border-slate-100">
-                <button type="submit" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer">
-                    <i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan Rapor
+                <button type="submit" id="btnSubmitPengaturanRapor" class="px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer whitespace-nowrap">
+                    <i class="fa-solid fa-floppy-disk"></i> Simpan (<span id="btnSavePengaturanJenjangText">{{ strtoupper($activePengaturanJenjang) }}</span>)
                 </button>
             </div>
         </form>
@@ -193,30 +276,74 @@
 <!-- ======================================================== -->
 <!-- TAB GLOBAL 2: MASTER PROGRAM KEGIATAN SEKOLAH (RAPOR)    -->
 <!-- ======================================================== -->
+@php
+    $kegiatanCounts = [
+        'all' => isset($data_kegiatan) ? count($data_kegiatan) : 0,
+        'tk' => isset($data_kegiatan) ? $data_kegiatan->where('jenjang', 'tk')->count() : 0,
+        'sd' => isset($data_kegiatan) ? $data_kegiatan->where('jenjang', 'sd')->count() : 0,
+        'smp' => isset($data_kegiatan) ? $data_kegiatan->where('jenjang', 'smp')->count() : 0,
+        'semua' => isset($data_kegiatan) ? $data_kegiatan->where('jenjang', 'semua')->count() : 0,
+    ];
+    $prestasiCounts = [
+        'all' => isset($data_prestasi) ? count($data_prestasi) : 0,
+        'tk' => isset($data_prestasi) ? $data_prestasi->where('jenjang', 'tk')->count() : 0,
+        'sd' => isset($data_prestasi) ? $data_prestasi->where('jenjang', 'sd')->count() : 0,
+        'smp' => isset($data_prestasi) ? $data_prestasi->where('jenjang', 'smp')->count() : 0,
+        'semua' => isset($data_prestasi) ? $data_prestasi->where('jenjang', 'semua')->count() : 0,
+    ];
+@endphp
 <div id="adminRaporPane-kegiatan" class="admin-rapor-pane hidden">
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8" id="sectionKegiatanSekolah">
         <div class="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-700 flex items-center justify-center text-lg flex-shrink-0">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-lg flex-shrink-0">
                     <i class="fa-solid fa-mosque"></i>
                 </div>
                 <div>
                     <div class="flex flex-wrap items-center gap-2">
                         <h3 class="text-base font-bold text-slate-800">Master Program Kegiatan Sekolah (Rapor)</h3>
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-violet-50 text-violet-700 border border-violet-200">Global Sekolah</span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">Per Jenjang &amp; Global</span>
                     </div>
-                    <p class="text-xs text-slate-500 mt-0.5">Daftar kegiatan resmi yayasan/sekolah yang wajib dinilai pada dokumen Rapor Siswa (Wali Kelas hanya menilai, kategori dikelola Admin).</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Daftar kegiatan resmi yang tampil otomatis sesuai jenjang TK, SD, SMP, atau semua jenjang pada dokumen Rapor Siswa.</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2">
-                <button type="button" onclick="openModal('addKegiatanModal')" style="background: #6d28d9; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; transition: background 0.2s;">
-                    <i class="fa-solid fa-plus"></i> Tambah Kegiatan
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <button type="button" onclick="openAddKegiatanModal()" class="px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold cursor-pointer inline-flex items-center gap-1.5 transition-colors shadow-xs whitespace-nowrap">
+                    <i class="fa-solid fa-plus"></i> Tambah
                 </button>
             </div>
         </div>
 
         <div class="p-6">
+            <!-- Filter Jenjang Program Kegiatan -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-2 border-b border-slate-100">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mr-1 flex items-center gap-1 whitespace-nowrap">
+                        <i class="fa-solid fa-filter text-emerald-700"></i> Filter Jenjang:
+                    </span>
+                    <button type="button" onclick="filterAdminJenjangTable('kegiatan', 'all')" data-kegiatan-filter="all" class="kegiatan-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer bg-emerald-700 text-white shadow-xs whitespace-nowrap">
+                        Semua ({{ $kegiatanCounts['all'] }})
+                    </button>
+                    <button type="button" onclick="filterAdminJenjangTable('kegiatan', 'tk')" data-kegiatan-filter="tk" class="kegiatan-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-800 whitespace-nowrap">
+                        TK ({{ $kegiatanCounts['tk'] }})
+                    </button>
+                    <button type="button" onclick="filterAdminJenjangTable('kegiatan', 'sd')" data-kegiatan-filter="sd" class="kegiatan-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-800 whitespace-nowrap">
+                        SD ({{ $kegiatanCounts['sd'] }})
+                    </button>
+                    <button type="button" onclick="filterAdminJenjangTable('kegiatan', 'smp')" data-kegiatan-filter="smp" class="kegiatan-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-800 whitespace-nowrap">
+                        SMP ({{ $kegiatanCounts['smp'] }})
+                    </button>
+                    <button type="button" onclick="filterAdminJenjangTable('kegiatan', 'semua')" data-kegiatan-filter="semua" class="kegiatan-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-800 whitespace-nowrap">
+                        Umum ({{ $kegiatanCounts['semua'] }})
+                    </button>
+                </div>
+                <label class="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-600 cursor-pointer select-none">
+                    <input type="checkbox" id="kegiatanIncludeGlobal" onchange="reapplyKegiatanFilter()" class="rounded border-slate-300 text-emerald-700 focus:ring-emerald-600">
+                    <span>Sertakan item Global (Semua) saat memfilter TK/SD/SMP</span>
+                </label>
+            </div>
+
             <div class="overflow-x-auto">
                 <x-siakad.ui.table id="tableKegiatanSekolah">
                     <x-slot name="thead">
@@ -232,14 +359,14 @@
 
                     @if(isset($data_kegiatan) && count($data_kegiatan) > 0)
                         @foreach($data_kegiatan as $idx => $keg)
-                            <tr>
-                                <td style="text-align: center; font-weight: 600;">{{ $idx + 1 }}</td>
+                            <tr class="kegiatan-row" data-jenjang="{{ strtolower(trim($keg->jenjang ?: 'semua')) }}">
+                                <td class="kegiatan-row-no" style="text-align: center; font-weight: 600;">{{ $idx + 1 }}</td>
                                 <td>
                                     <strong style="color: #1e293b; font-size: 14px;">{{ $keg->nama_kegiatan }}</strong>
                                 </td>
                                 <td style="text-align: center;">
                                     <span class="badge-jenjang {{ $keg->jenjang === 'sd' ? 'badge-sd' : ($keg->jenjang === 'smp' ? 'badge-smp' : ($keg->jenjang === 'tk' ? 'badge-tk' : ($keg->jenjang === 'sma' ? 'badge-sma' : 'badge-umum'))) }}">
-                                        {{ strtoupper($keg->jenjang) }}
+                                        {{ strtoupper($keg->jenjang === 'semua' ? 'SEMUA' : $keg->jenjang) }}
                                     </span>
                                 </td>
                                 <td>
@@ -270,6 +397,12 @@
                                 </td>
                             </tr>
                         @endforeach
+                        <tr id="kegiatanFilterEmptyRow" data-empty-state="true" style="display: none;">
+                            <td colspan="6" style="text-align: center; padding: 32px; color: #64748b;">
+                                <i class="fa-solid fa-filter-circle-xmark" style="font-size: 26px; margin-bottom: 8px; display: block; color: #cbd5e1;"></i>
+                                Belum ada program kegiatan khusus untuk filter jenjang ini.
+                            </td>
+                        </tr>
                     @else
                         <tr>
                             <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
@@ -291,26 +424,54 @@
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
         <div class="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-lg flex-shrink-0">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-lg flex-shrink-0">
                     <i class="fa-solid fa-trophy"></i>
                 </div>
                 <div>
                     <div class="flex flex-wrap items-center gap-2">
                         <h3 class="text-base font-bold text-slate-800">Master Jenis Prestasi (Template Rapor Siswa)</h3>
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Global Sekolah</span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">Per Jenjang &amp; Global</span>
                     </div>
-                    <p class="text-xs text-slate-500 mt-0.5">Daftar template capaian prestasi resmi yang otomatis muncul sebagai pilihan cepat bagi Wali Kelas saat mengisi rapor siswa.</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Daftar template capaian prestasi resmi sesuai jenjang (TK, SD, SMP, atau semua jenjang) yang otomatis tampil sebagai pilihan cepat Wali Kelas.</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2">
-                <button type="button" onclick="openModal('addPrestasiModal')" style="background: #d97706; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; transition: background 0.2s;">
-                    <i class="fa-solid fa-plus"></i> Tambah Template Prestasi
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <button type="button" onclick="openAddPrestasiModal()" class="px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold cursor-pointer inline-flex items-center gap-1.5 transition-colors shadow-xs whitespace-nowrap">
+                    <i class="fa-solid fa-plus"></i> Tambah
                 </button>
             </div>
         </div>
 
         <div class="p-6">
+            <!-- Filter Jenjang Template Jenis Prestasi -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-2 border-b border-slate-100">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mr-1 flex items-center gap-1 whitespace-nowrap">
+                        <i class="fa-solid fa-filter text-emerald-700"></i> Filter Jenjang:
+                    </span>
+                    <button type="button" onclick="filterAdminJenjangTable('prestasi', 'all')" data-prestasi-filter="all" class="prestasi-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer bg-emerald-700 text-white shadow-xs whitespace-nowrap">
+                        Semua ({{ $prestasiCounts['all'] }})
+                    </button>
+                    <button type="button" onclick="filterAdminJenjangTable('prestasi', 'tk')" data-prestasi-filter="tk" class="prestasi-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-800 whitespace-nowrap">
+                        TK ({{ $prestasiCounts['tk'] }})
+                    </button>
+                    <button type="button" onclick="filterAdminJenjangTable('prestasi', 'sd')" data-prestasi-filter="sd" class="prestasi-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-800 whitespace-nowrap">
+                        SD ({{ $prestasiCounts['sd'] }})
+                    </button>
+                    <button type="button" onclick="filterAdminJenjangTable('prestasi', 'smp')" data-prestasi-filter="smp" class="prestasi-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-800 whitespace-nowrap">
+                        SMP ({{ $prestasiCounts['smp'] }})
+                    </button>
+                    <button type="button" onclick="filterAdminJenjangTable('prestasi', 'semua')" data-prestasi-filter="semua" class="prestasi-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-800 whitespace-nowrap">
+                        Umum ({{ $prestasiCounts['semua'] }})
+                    </button>
+                </div>
+                <label class="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-600 cursor-pointer select-none">
+                    <input type="checkbox" id="prestasiIncludeGlobal" onchange="reapplyPrestasiFilter()" class="rounded border-slate-300 text-emerald-700 focus:ring-emerald-600">
+                    <span>Sertakan item Global (Semua) saat memfilter TK/SD/SMP</span>
+                </label>
+            </div>
+
             <div class="overflow-x-auto">
                 <x-siakad.ui.table id="tableMasterPrestasi">
                     <x-slot name="thead">
@@ -326,8 +487,8 @@
 
                     @if(isset($data_prestasi) && count($data_prestasi) > 0)
                         @foreach($data_prestasi as $pIdx => $pres)
-                            <tr>
-                                <td style="text-align: center; font-weight: 600;">{{ $pIdx + 1 }}</td>
+                            <tr class="prestasi-row" data-jenjang="{{ strtolower(trim($pres->jenjang ?: 'semua')) }}">
+                                <td class="prestasi-row-no" style="text-align: center; font-weight: 600;">{{ $pIdx + 1 }}</td>
                                 <td>
                                     <strong style="color: #1e293b; font-size: 14px;">{{ $pres->nama_prestasi }}</strong>
                                 </td>
@@ -338,7 +499,7 @@
                                 </td>
                                 <td style="text-align: center;">
                                     <span class="badge-jenjang {{ $pres->jenjang === 'sd' ? 'badge-sd' : ($pres->jenjang === 'smp' ? 'badge-smp' : ($pres->jenjang === 'tk' ? 'badge-tk' : ($pres->jenjang === 'sma' ? 'badge-sma' : 'badge-umum'))) }}">
-                                        {{ strtoupper($pres->jenjang) }}
+                                        {{ strtoupper($pres->jenjang === 'semua' ? 'SEMUA' : $pres->jenjang) }}
                                     </span>
                                 </td>
                                 <td style="text-align: center;">
@@ -364,6 +525,12 @@
                                 </td>
                             </tr>
                         @endforeach
+                        <tr id="prestasiFilterEmptyRow" data-empty-state="true" style="display: none;">
+                            <td colspan="6" style="text-align: center; padding: 32px; color: #64748b;">
+                                <i class="fa-solid fa-filter-circle-xmark" style="font-size: 26px; margin-bottom: 8px; display: block; color: #cbd5e1;"></i>
+                                Belum ada template jenis prestasi khusus untuk filter jenjang ini.
+                            </td>
+                        </tr>
                     @else
                         <tr>
                             <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
@@ -381,21 +548,22 @@
 <!-- ======================================================== -->
 <!-- MODAL KEGIATAN SEKOLAH & TEMPLATE PRESTASI               -->
 <!-- ======================================================== -->
-<x-siakad.ui.modal id="addKegiatanModal" title="Tambah Program Kegiatan Sekolah" icon="fa-mosque" iconColor="#6d28d9" iconBg="#ede9fe">
+<x-siakad.ui.modal id="addKegiatanModal" title="Tambah Program Kegiatan Sekolah" icon="fa-mosque" iconColor="#047857" iconBg="#ecfdf5">
     <form action="/sk/simpan-kegiatan-sekolah" method="POST">
         @csrf
+        <input type="hidden" name="filter_jenjang" id="addKegiatanFilterJenjang" value="">
         <div style="margin-bottom: 14px;">
             <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Nama Program Kegiatan</label>
             <input type="text" name="nama_kegiatan" class="ref-input" required maxlength="150" placeholder="Contoh: Sholat Berjamaah / Tahfidz Pagi">
         </div>
         <div style="margin-bottom: 14px;">
             <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Jenjang Sasaran</label>
-            <select name="jenjang" class="ref-input" required>
-                <option value="semua">Semua Jenjang (Global)</option>
+            <select name="jenjang" id="addKegiatanJenjang" class="ref-input" required>
+                <option value="semua">Semua Jenjang (TK, SD, SMP)</option>
+                <option value="tk">TK</option>
                 <option value="sd">SD</option>
                 <option value="smp">SMP</option>
                 <option value="sma">SMA</option>
-                <option value="tk">TK</option>
             </select>
         </div>
         <div style="margin-bottom: 20px;">
@@ -404,14 +572,15 @@
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px;">
             <button type="button" onclick="closeModal('addKegiatanModal')" style="padding: 10px 16px; border: none; background: #f1f5f9; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
-            <button type="submit" style="padding: 10px 16px; border: none; background: #6d28d9; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Simpan Kegiatan</button>
+            <button type="submit" style="padding: 10px 16px; border: none; background: #047857; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Simpan</button>
         </div>
     </form>
 </x-siakad.ui.modal>
 
-<x-siakad.ui.modal id="editKegiatanModal" title="Edit Program Kegiatan Sekolah" icon="fa-pen-to-square" iconColor="#3875c5" iconBg="#e9f2ff">
+<x-siakad.ui.modal id="editKegiatanModal" title="Edit Program Kegiatan Sekolah" icon="fa-pen-to-square" iconColor="#047857" iconBg="#ecfdf5">
     <form id="editKegiatanForm" method="POST">
         @csrf
+        <input type="hidden" name="filter_jenjang" id="editKegiatanFilterJenjang" value="">
         <div style="margin-bottom: 14px;">
             <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Nama Program Kegiatan</label>
             <input type="text" name="nama_kegiatan" id="ekNama" class="ref-input" required maxlength="150">
@@ -419,11 +588,11 @@
         <div style="margin-bottom: 14px;">
             <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Jenjang Sasaran</label>
             <select name="jenjang" id="ekJenjang" class="ref-input" required>
-                <option value="semua">Semua Jenjang (Global)</option>
+                <option value="semua">Semua Jenjang (TK, SD, SMP)</option>
+                <option value="tk">TK</option>
                 <option value="sd">SD</option>
                 <option value="smp">SMP</option>
                 <option value="sma">SMA</option>
-                <option value="tk">TK</option>
             </select>
         </div>
         <div style="margin-bottom: 14px;">
@@ -439,14 +608,16 @@
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px;">
             <button type="button" onclick="closeModal('editKegiatanModal')" style="padding: 10px 16px; border: none; background: #f1f5f9; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
-            <button type="submit" style="padding: 10px 16px; border: none; background: #1d4ed8; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Perbarui Kegiatan</button>
+            <button type="submit" style="padding: 10px 16px; border: none; background: #047857; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Perbarui</button>
         </div>
     </form>
 </x-siakad.ui.modal>
 
-<x-siakad.ui.modal id="addPrestasiModal" title="Tambah Template Jenis Prestasi" icon="fa-trophy" iconColor="#d97706" iconBg="#fef3c7">
-    <form action="/sk/simpan-master-prestasi" method="POST">
+<x-siakad.ui.modal id="addPrestasiModal" title="Tambah Template Jenis Prestasi" icon="fa-trophy" iconColor="#047857" iconBg="#ecfdf5">
+    <form id="addPrestasiForm" action="/sk/simpan-pengaturan-rapor" method="POST">
         @csrf
+        <input type="hidden" name="_master_action" value="simpan_master_prestasi">
+        <input type="hidden" name="filter_jenjang" id="addPrestasiFilterJenjang" value="">
         <div style="margin-bottom: 14px;">
             <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Nama Capaian / Template Prestasi</label>
             <input type="text" name="nama_prestasi" class="ref-input" required maxlength="200" placeholder="Contoh: Juara 1 MHQ Tingkat Sekolah">
@@ -465,25 +636,28 @@
             </div>
             <div style="flex: 1;">
                 <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Jenjang</label>
-                <select name="jenjang" class="ref-input" required>
-                    <option value="semua">Semua Jenjang</option>
+                <select name="jenjang" id="addPrestasiJenjang" class="ref-input" required>
+                    <option value="semua">Semua Jenjang (TK, SD, SMP)</option>
+                    <option value="tk">TK</option>
                     <option value="sd">SD</option>
                     <option value="smp">SMP</option>
                     <option value="sma">SMA</option>
-                    <option value="tk">TK</option>
                 </select>
             </div>
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px;">
             <button type="button" onclick="closeModal('addPrestasiModal')" style="padding: 10px 16px; border: none; background: #f1f5f9; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
-            <button type="submit" style="padding: 10px 16px; border: none; background: #d97706; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Simpan Template</button>
+            <button type="submit" style="padding: 10px 16px; border: none; background: #047857; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Simpan</button>
         </div>
     </form>
 </x-siakad.ui.modal>
 
-<x-siakad.ui.modal id="editPrestasiModal" title="Edit Template Jenis Prestasi" icon="fa-pen-to-square" iconColor="#3875c5" iconBg="#e9f2ff">
-    <form id="editPrestasiForm" method="POST">
+<x-siakad.ui.modal id="editPrestasiModal" title="Edit Template Jenis Prestasi" icon="fa-pen-to-square" iconColor="#047857" iconBg="#ecfdf5">
+    <form id="editPrestasiForm" action="/sk/simpan-pengaturan-rapor" method="POST">
         @csrf
+        <input type="hidden" name="_master_action" value="update_master_prestasi">
+        <input type="hidden" name="prestasi_id" id="epId" value="">
+        <input type="hidden" name="filter_jenjang" id="editPrestasiFilterJenjang" value="">
         <div style="margin-bottom: 14px;">
             <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Nama Capaian / Template Prestasi</label>
             <input type="text" name="nama_prestasi" id="epNama" class="ref-input" required maxlength="200">
@@ -503,11 +677,11 @@
             <div style="flex: 1;">
                 <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13.5px;">Jenjang</label>
                 <select name="jenjang" id="epJenjang" class="ref-input" required>
-                    <option value="semua">Semua Jenjang</option>
+                    <option value="semua">Semua Jenjang (TK, SD, SMP)</option>
+                    <option value="tk">TK</option>
                     <option value="sd">SD</option>
                     <option value="smp">SMP</option>
                     <option value="sma">SMA</option>
-                    <option value="tk">TK</option>
                 </select>
             </div>
         </div>
@@ -520,10 +694,17 @@
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px;">
             <button type="button" onclick="closeModal('editPrestasiModal')" style="padding: 10px 16px; border: none; background: #f1f5f9; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600;">Batal</button>
-            <button type="submit" style="padding: 10px 16px; border: none; background: #1d4ed8; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Perbarui Template</button>
+            <button type="submit" style="padding: 10px 16px; border: none; background: #047857; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Perbarui</button>
         </div>
     </form>
 </x-siakad.ui.modal>
+
+<form id="deleteMasterPrestasiForm" action="/sk/simpan-pengaturan-rapor" method="POST" class="hidden">
+    @csrf
+    <input type="hidden" name="_master_action" value="hapus_master_prestasi">
+    <input type="hidden" name="prestasi_id" id="delPrestasiIdInput" value="">
+    <input type="hidden" name="filter_jenjang" id="delPrestasiFilterJenjang" value="">
+</form>
 
 <x-siakad.ui.modal id="deleteAdminRaporModal" title="Konfirmasi Hapus" icon="fa-trash-can" iconColor="#b34d4d" iconBg="#f8e9e9">
     <p style="margin-top: -10px; margin-bottom: 20px; color: #475569; line-height: 1.5; font-size: 14px;">
@@ -538,7 +719,13 @@
 </x-siakad.ui.modal>
 
 <script>
+    const ADMIN_PENGATURAN_MAP = @json($pengaturanMapAdmin);
+    window.__activeKegiatanFilter = 'all';
+    window.__activePrestasiFilter = 'all';
+
     let deleteAdminRaporTargetUrl = '';
+    let deleteAdminRaporMode = '';
+    let deleteAdminPrestasiId = '';
 
     if (typeof window.openModal !== 'function') {
         window.openModal = function(id) {
@@ -554,8 +741,187 @@
         };
     }
 
+    function selectAdminPengesahanJenjang(jenjang, updateUrl = true) {
+        if (!['tk', 'sd', 'smp'].includes(jenjang)) {
+            jenjang = 'tk';
+        }
+        const cfg = ADMIN_PENGATURAN_MAP[jenjang] || ADMIN_PENGATURAN_MAP['tk'] || {};
+        const jInput = document.getElementById('adminPengaturanJenjangInput');
+        if (jInput) jInput.value = jenjang;
+
+        const elTanggal = document.getElementById('adminInputTanggalRapor');
+        const elTempat = document.getElementById('adminInputTempatRapor');
+        const elKepsek = document.getElementById('adminInputNamaKepsek');
+        const elNip = document.getElementById('adminInputNipKepsek');
+        const elCat = document.getElementById('adminInputTemplateCatatan');
+        const elTtd = document.getElementById('adminInputTtdKepsek');
+
+        if (elTanggal) elTanggal.value = cfg.tanggal_rapor || '20 Desember 2025';
+        if (elTempat) elTempat.value = cfg.tempat_rapor || 'Tinggede';
+        if (elKepsek) elKepsek.value = cfg.nama_kepsek || '';
+        if (elNip) elNip.value = cfg.nip_kepsek || '-';
+        if (elCat) elCat.value = cfg.catatan_walas_template || '';
+        if (elTtd) elTtd.value = cfg.ttd_kepsek || '';
+
+        syncAdminKepsekNamePreview(cfg.nama_kepsek || 'Kepala Sekolah');
+        syncAdminSignatureCard();
+
+        const upperLabel = jenjang.toUpperCase();
+        const badgeEl = document.getElementById('adminPengaturanActiveBadge');
+        if (badgeEl) {
+            const span = badgeEl.querySelector('span');
+            if (span) span.textContent = 'Jenjang ' + upperLabel;
+        }
+        const ttdLabelEl = document.getElementById('adminTtdJenjangLabel');
+        if (ttdLabelEl) ttdLabelEl.textContent = upperLabel;
+        const saveTextEl = document.getElementById('btnSavePengaturanJenjangText');
+        if (saveTextEl) saveTextEl.textContent = upperLabel;
+
+        // Highlight card buttons (satu tema hijau)
+        document.querySelectorAll('#adminPengaturanJenjangCards button[data-jenjang]').forEach(btn => {
+            const isSel = btn.getAttribute('data-jenjang') === jenjang;
+            btn.className = 'text-left p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-2 ' +
+                (isSel ? 'bg-emerald-50/80 border-emerald-600 ring-2 ring-emerald-500/20 shadow-xs' : 'bg-white border-slate-200 hover:border-emerald-300 hover:bg-slate-50/70');
+        });
+
+        // Update status info note
+        const noteEl = document.getElementById('adminPengaturanStatusNote');
+        const titleEl = document.getElementById('adminPengaturanStatusTitle');
+        const descEl = document.getElementById('adminPengaturanStatusDesc');
+        if (noteEl && titleEl && descEl) {
+            const icon = noteEl.querySelector('i');
+            if (cfg.is_custom) {
+                noteEl.className = 'p-4 mb-6 rounded-xl bg-emerald-50/70 border border-emerald-200 text-emerald-900 text-xs flex items-start gap-3';
+                if (icon) icon.className = 'fa-solid fa-circle-info text-emerald-700 text-base mt-0.5 flex-shrink-0';
+                titleEl.textContent = 'Pengaturan Khusus Jenjang ' + upperLabel + ' Aktif:';
+                descEl.textContent = 'Seluruh rapor siswa, cetak massal, dan leger kelas di jenjang ' + upperLabel + ' otomatis memakai data Kepala Sekolah & TTD di bawah ini.';
+            } else {
+                noteEl.className = 'p-4 mb-6 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-xs flex items-start gap-3';
+                if (icon) icon.className = 'fa-solid fa-circle-info text-slate-500 text-base mt-0.5 flex-shrink-0';
+                titleEl.textContent = 'Jenjang ' + upperLabel + ' Belum Diatur Khusus:';
+                descEl.textContent = 'Kolom di bawah sementara menampilkan data awal. Ubah nama Kepala Sekolah / TTD sesuai pejabat jenjang ' + upperLabel + ' lalu klik Simpan.';
+            }
+        }
+
+        if (updateUrl) {
+            try {
+                const url = new URL(window.location);
+                if (url.searchParams.get('tab') === 'pengesahan') {
+                    url.searchParams.set('jenjang', jenjang);
+                    window.history.replaceState({}, '', url);
+                }
+            } catch (e) {}
+        }
+    }
+
+    function syncAdminKepsekNamePreview(val) {
+        const preview = document.getElementById('adminPreviewNamaKepsek');
+        if (preview) {
+            preview.textContent = (val || '').trim() || 'Kepala Sekolah';
+        }
+    }
+
+    function filterAdminJenjangTable(type, filterVal, updateUrl = true) {
+        const isKegiatan = (type === 'kegiatan');
+        if (isKegiatan) {
+            window.__activeKegiatanFilter = filterVal;
+        } else {
+            window.__activePrestasiFilter = filterVal;
+        }
+
+        const includeGlobal = document.getElementById(isKegiatan ? 'kegiatanIncludeGlobal' : 'prestasiIncludeGlobal')?.checked || false;
+        const activeBg = 'bg-emerald-700 text-white shadow-xs font-bold';
+        const btnSelector = isKegiatan ? '.kegiatan-filter-btn' : '.prestasi-filter-btn';
+        const btnAttr = isKegiatan ? 'data-kegiatan-filter' : 'data-prestasi-filter';
+
+        document.querySelectorAll(btnSelector).forEach(btn => {
+            const val = btn.getAttribute(btnAttr);
+            btn.className = (isKegiatan ? 'kegiatan-filter-btn' : 'prestasi-filter-btn') +
+                ' px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer whitespace-nowrap ' +
+                (val === filterVal ? activeBg : 'font-semibold bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-800');
+        });
+
+        const rowSelector = isKegiatan ? '#tableKegiatanSekolah tr.kegiatan-row' : '#tableMasterPrestasi tr.prestasi-row';
+        const noSelector = isKegiatan ? '.kegiatan-row-no' : '.prestasi-row-no';
+        let visibleCount = 0;
+
+        document.querySelectorAll(rowSelector).forEach(row => {
+            const rowJenjang = (row.getAttribute('data-jenjang') || 'semua').toLowerCase();
+            const matchDirect = (filterVal === 'all') || (rowJenjang === filterVal);
+            const matchGlobal = includeGlobal && ['tk', 'sd', 'smp'].includes(filterVal) && rowJenjang === 'semua';
+
+            if (matchDirect || matchGlobal) {
+                row.removeAttribute('data-filtered-out');
+                visibleCount++;
+                const noCell = row.querySelector(noSelector);
+                if (noCell) noCell.textContent = visibleCount;
+            } else {
+                row.setAttribute('data-filtered-out', 'true');
+            }
+        });
+
+        const emptyRow = document.getElementById(isKegiatan ? 'kegiatanFilterEmptyRow' : 'prestasiFilterEmptyRow');
+        if (emptyRow) {
+            emptyRow.style.display = visibleCount === 0 ? 'table-row' : 'none';
+        }
+
+        if (updateUrl) {
+            try {
+                const url = new URL(window.location);
+                const expectedTab = isKegiatan ? 'kegiatan' : 'template_prestasi';
+                if (url.searchParams.get('tab') === expectedTab) {
+                    if (filterVal === 'all') {
+                        url.searchParams.delete('jenjang');
+                    } else {
+                        url.searchParams.set('jenjang', filterVal);
+                    }
+                    window.history.replaceState({}, '', url);
+                }
+            } catch (e) {}
+        }
+
+        if (typeof window.refreshSiakadPagination === 'function') {
+            window.refreshSiakadPagination();
+        }
+    }
+
+    function reapplyKegiatanFilter() {
+        filterAdminJenjangTable('kegiatan', window.__activeKegiatanFilter || 'all', false);
+    }
+
+    function reapplyPrestasiFilter() {
+        filterAdminJenjangTable('prestasi', window.__activePrestasiFilter || 'all', false);
+    }
+
+    function openAddKegiatanModal() {
+        const activeFilter = window.__activeKegiatanFilter || 'all';
+        const filterInput = document.getElementById('addKegiatanFilterJenjang');
+        if (filterInput) filterInput.value = activeFilter !== 'all' ? activeFilter : '';
+
+        const selectEl = document.getElementById('addKegiatanJenjang');
+        if (selectEl) {
+            selectEl.value = ['tk', 'sd', 'smp', 'semua'].includes(activeFilter) ? activeFilter : 'semua';
+        }
+        openModal('addKegiatanModal');
+    }
+
+    function openAddPrestasiModal() {
+        const activeFilter = window.__activePrestasiFilter || 'all';
+        const filterInput = document.getElementById('addPrestasiFilterJenjang');
+        if (filterInput) filterInput.value = activeFilter !== 'all' ? activeFilter : '';
+
+        const selectEl = document.getElementById('addPrestasiJenjang');
+        if (selectEl) {
+            selectEl.value = ['tk', 'sd', 'smp', 'semua'].includes(activeFilter) ? activeFilter : 'semua';
+        }
+        openModal('addPrestasiModal');
+    }
+
     function openEditKegiatan(id, nama, jenjang, ket, aktif) {
+        const activeFilter = window.__activeKegiatanFilter || 'all';
         document.getElementById('editKegiatanForm').action = '/sk/update-kegiatan-sekolah/' + id;
+        const filterInput = document.getElementById('editKegiatanFilterJenjang');
+        if (filterInput) filterInput.value = activeFilter !== 'all' ? activeFilter : '';
         document.getElementById('ekNama').value = nama || '';
         document.getElementById('ekJenjang').value = jenjang || 'semua';
         document.getElementById('ekKet').value = ket || '';
@@ -564,13 +930,19 @@
     }
 
     function openDeleteKegiatan(id, nama) {
-        deleteAdminRaporTargetUrl = '/sk/hapus-kegiatan-sekolah/' + id;
+        const activeFilter = window.__activeKegiatanFilter || 'all';
+        const suffix = (activeFilter && activeFilter !== 'all') ? ('?filter_jenjang=' + encodeURIComponent(activeFilter)) : '';
+        deleteAdminRaporMode = 'kegiatan';
+        deleteAdminRaporTargetUrl = '/sk/hapus-kegiatan-sekolah/' + id + suffix;
         document.getElementById('delAdminRaporName').textContent = 'Kegiatan: ' + nama;
         openModal('deleteAdminRaporModal');
     }
 
     function openEditPrestasi(id, nama, kategori, jenjang, aktif) {
-        document.getElementById('editPrestasiForm').action = '/sk/update-master-prestasi/' + id;
+        const activeFilter = window.__activePrestasiFilter || 'all';
+        document.getElementById('epId').value = id;
+        const filterInput = document.getElementById('editPrestasiFilterJenjang');
+        if (filterInput) filterInput.value = activeFilter !== 'all' ? activeFilter : '';
         document.getElementById('epNama').value = nama || '';
         document.getElementById('epKategori').value = kategori || 'Tahfidz';
         document.getElementById('epJenjang').value = jenjang || 'semua';
@@ -579,18 +951,26 @@
     }
 
     function openDeletePrestasi(id, nama) {
-        deleteAdminRaporTargetUrl = '/sk/hapus-master-prestasi/' + id;
+        deleteAdminRaporMode = 'prestasi';
+        deleteAdminPrestasiId = id;
         document.getElementById('delAdminRaporName').textContent = 'Template Prestasi: ' + nama;
         openModal('deleteAdminRaporModal');
     }
 
     document.getElementById('btnConfirmDeleteAdminRapor')?.addEventListener('click', function() {
+        if (deleteAdminRaporMode === 'prestasi' && deleteAdminPrestasiId) {
+            const activeFilter = window.__activePrestasiFilter || 'all';
+            document.getElementById('delPrestasiIdInput').value = deleteAdminPrestasiId;
+            document.getElementById('delPrestasiFilterJenjang').value = activeFilter !== 'all' ? activeFilter : '';
+            document.getElementById('deleteMasterPrestasiForm').submit();
+            return;
+        }
         if (deleteAdminRaporTargetUrl) {
             window.location.href = deleteAdminRaporTargetUrl;
         }
     });
 
-    // Manajemen TTD Kepala Sekolah (Global Admin)
+    // Manajemen TTD Kepala Sekolah (Per Jenjang)
     function syncAdminSignatureCard() {
         const val = document.getElementById('adminInputTtdKepsek')?.value || '';
         const img = document.getElementById('adminThumbTtdKepsek');
@@ -652,5 +1032,15 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         syncAdminSignatureCard();
+
+        const params = new URLSearchParams(window.location.search);
+        const tabParam = params.get('tab');
+        const initialFilter = @json($initialFilterJenjang);
+
+        if (tabParam === 'kegiatan' && initialFilter && initialFilter !== 'all') {
+            filterAdminJenjangTable('kegiatan', initialFilter, false);
+        } else if (tabParam === 'template_prestasi' && initialFilter && initialFilter !== 'all') {
+            filterAdminJenjangTable('prestasi', initialFilter, false);
+        }
     });
 </script>

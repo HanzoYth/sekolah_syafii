@@ -63,14 +63,18 @@
                 <button type="button" onclick="switchEditorTab('tab-catatan')" id="tabBtn-catatan" class="tab-btn active px-3.5 py-2 text-xs font-bold border-b-2 border-emerald-600 text-emerald-700 flex items-center gap-1.5 whitespace-nowrap">
                     <i class="fa-solid fa-comment-dots"></i> 1. Catatan Wali Kelas
                 </button>
+                <button type="button" onclick="switchEditorTab('tab-mapel')" id="tabBtn-mapel" class="tab-btn px-3.5 py-2 text-xs font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+                    <i class="fa-solid fa-book-open-reader"></i> 2. Catatan Mata Pelajaran
+                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"><?php echo e(count($rekap_nilai)); ?></span>
+                </button>
                 <button type="button" onclick="switchEditorTab('tab-kegiatan')" id="tabBtn-kegiatan" class="tab-btn px-3.5 py-2 text-xs font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
-                    <i class="fa-solid fa-mosque"></i> 2. Program Kegiatan Sekolah
+                    <i class="fa-solid fa-mosque"></i> 3. Program Kegiatan Sekolah
                 </button>
                 <button type="button" onclick="switchEditorTab('tab-prestasi')" id="tabBtn-prestasi" class="tab-btn px-3.5 py-2 text-xs font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
-                    <i class="fa-solid fa-trophy"></i> 3. Jenis Prestasi
+                    <i class="fa-solid fa-trophy"></i> 4. Jenis Prestasi
                 </button>
                 <button type="button" onclick="switchEditorTab('tab-pengesahan')" id="tabBtn-pengesahan" class="tab-btn px-3.5 py-2 text-xs font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
-                    <i class="fa-solid fa-file-signature"></i> 4. Pengesahan & Tanggal
+                    <i class="fa-solid fa-file-signature"></i> 5. Pengesahan & Tanggal
                 </button>
             </nav>
         </div>
@@ -140,7 +144,26 @@
             </div>
         </div>
 
-        <!-- Konten Tab 2: Program Kegiatan Sekolah -->
+        <!-- Konten Tab 2: Catatan / Capaian Kompetensi Mata Pelajaran -->
+        <div id="tabContent-mapel" class="tab-content hidden py-4">
+            <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-pen-to-square text-emerald-600"></i> Edit Manual Catatan / Capaian Kompetensi Mata Pelajaran
+                    </h4>
+                    <p class="text-xs text-slate-500 mt-0.5">Ubah catatan tiap mata pelajaran secara manual untuk santri ini. Perubahan langsung tersinkron ke pratinjau cetak, cetak massal, dan akun siswa.</p>
+                </div>
+                <button type="button" onclick="resetAllCatatanMapel()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-lg text-[11px] font-semibold transition-colors whitespace-nowrap self-start sm:self-center cursor-pointer">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> Reset Semua ke Teks Otomatis
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="mapelEditorList">
+                <!-- Di-render dinamis oleh JavaScript -->
+            </div>
+        </div>
+
+        <!-- Konten Tab 3: Program Kegiatan Sekolah -->
         <div id="tabContent-kegiatan" class="tab-content hidden py-4">
             <div class="mb-3 flex items-center justify-between">
                 <div>
@@ -391,8 +414,10 @@
 
                                     </td>
                                     <td class="border border-slate-800 px-3 py-2 text-xs sm:text-xs text-slate-800 leading-relaxed text-justify align-top">
-                                        <?php echo e($data['deskripsi']); ?>
-
+                                        <span class="mapel-desc-text" data-mapel-name="<?php echo e($mapel); ?>"><?php echo e($data['deskripsi']); ?></span>
+                                        <button type="button" onclick="editMapelCatatanInline(<?php echo e(\Illuminate\Support\Js::from($mapel)); ?>)" class="no-print inline-flex items-center gap-1 ml-1.5 px-1.5 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] font-semibold transition-colors cursor-pointer align-middle" title="Edit catatan mata pelajaran ini">
+                                            <i class="fa-solid fa-pen text-[9px]"></i> Edit
+                                        </button>
                                     </td>
                                 </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -547,7 +572,7 @@
                 <div class="flex flex-col justify-between h-44">
                     <div>
                         <p id="previewTanggalRapor" class="font-medium text-slate-800 leading-tight">
-                            Sigi, <?php echo e($raporMeta['tanggal_rapor']); ?>
+                            <?php echo e($raporMeta['tempat_rapor'] ?? 'Tinggede'); ?>, <?php echo e($raporMeta['tanggal_rapor']); ?>
 
                         </p>
                         <p class="font-medium text-slate-800 leading-tight">Kepala Sekolah,</p>
@@ -560,6 +585,9 @@
                             <?php echo e($raporMeta['nama_kepsek']); ?>
 
                         </p>
+                        <?php if(!empty($raporMeta['nip_kepsek']) && $raporMeta['nip_kepsek'] !== '-'): ?>
+                            <p class="text-[11px] text-slate-600 mt-0.5">NIP. <?php echo e($raporMeta['nip_kepsek']); ?></p>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -571,12 +599,27 @@
     <!-- ============================================================ -->
     <script>
         const SISWA_ID = <?php echo e($siswa->id); ?>;
+        <?php
+            $mapelEditorItems = [];
+            foreach ($rekap_nilai as $mKey => $mData) {
+                $mapelEditorItems[] = [
+                    'nama' => (string) $mKey,
+                    'ada_nilai' => !empty($mData['ada_nilai']),
+                    'nilai' => !empty($mData['ada_nilai']) ? round((float) ($mData['nilai_akhir'] ?? 0)) : null,
+                    'deskripsi_auto' => $mData['deskripsi_auto'] ?? ($mData['deskripsi'] ?? ''),
+                    'deskripsi_manual' => $mData['deskripsi_manual'] ?? null,
+                ];
+            }
+        ?>
         const SISWA_NAMA = <?php echo json_encode($siswa->nama, 15, 512) ?>;
+        const TEMPAT_RAPOR = <?php echo json_encode($raporMeta['tempat_rapor'] ?? 'Tinggede', 15, 512) ?>;
+        const MAPEL_META = <?php echo json_encode($mapelEditorItems, 15, 512) ?>;
         const STORAGE_KEY = 'siakad_rapor_custom_' + SISWA_ID;
 
         // Template Standar Baku
         const DEFAULT_STATE = {
             catatan: <?php echo json_encode($raporMeta['catatan_walas_default'], 15, 512) ?>,
+            catatan_mapel: <?php echo json_encode(!empty($raporMeta['catatan_mapel_db']) ? $raporMeta['catatan_mapel_db'] : new \stdClass(), 15, 512) ?>,
             tanggal: <?php echo json_encode($raporMeta['tanggal_rapor'], 15, 512) ?>,
             kepsek: <?php echo json_encode($raporMeta['nama_kepsek'], 15, 512) ?>,
             walas: <?php echo json_encode($wallas->guru->nama ?? 'Wali Kelas', 15, 512) ?>,
@@ -642,10 +685,18 @@
                     if (<?php echo json_encode(!empty($raporMeta['has_evaluasi_db']), 15, 512) ?>) {
                         state.catatan = DEFAULT_STATE.catatan;
                     }
+                    if (<?php echo json_encode(!empty($raporMeta['has_catatan_mapel_db']), 15, 512) ?>) {
+                        state.catatan_mapel = { ...(DEFAULT_STATE.catatan_mapel || {}) };
+                    }
+                    if (!state.catatan_mapel || typeof state.catatan_mapel !== 'object' || Array.isArray(state.catatan_mapel)) {
+                        state.catatan_mapel = {};
+                    }
                     if (<?php echo json_encode(!empty($raporMeta['has_prestasi_db']), 15, 512) ?>) {
                         state.prestasi = DEFAULT_STATE.prestasi;
                     }
-                    // Tanda tangan selalu mengikuti data otoritatif database (level Kelas & Admin)
+                    // Pengesahan & tanda tangan selalu mengikuti data otoritatif database (level Kelas & Admin per Jenjang)
+                    state.tanggal = DEFAULT_STATE.tanggal;
+                    state.kepsek = DEFAULT_STATE.kepsek;
                     state.ttd_walas = DEFAULT_STATE.ttd_walas;
                     state.ttd_kepsek = DEFAULT_STATE.ttd_kepsek;
 
@@ -705,6 +756,7 @@
                     body: JSON.stringify({
                         siswa_id: SISWA_ID,
                         catatan_walas: state.catatan,
+                        catatan_mapel: state.catatan_mapel || {},
                         kegiatan: state.kegiatan,
                         prestasi: state.prestasi,
                         tanggal_rapor: state.tanggal,
@@ -767,7 +819,10 @@
             const inputCatatan = document.getElementById('inputCatatanWalas');
             if (inputCatatan) inputCatatan.value = state.catatan;
 
-            // Tab 4: Pengesahan
+            // Tab 2: Catatan Mata Pelajaran
+            renderMapelEditor();
+
+            // Tab 5: Pengesahan
             const inputTanggal = document.getElementById('inputTanggalRapor');
             if (inputTanggal) inputTanggal.value = state.tanggal;
             const inputKepsek = document.getElementById('inputNamaKepsek');
@@ -775,11 +830,119 @@
             const inputWalas = document.getElementById('inputNamaWalas');
             if (inputWalas) inputWalas.value = state.walas;
 
-            // Tab 2: Kegiatan List
+            // Tab 3: Kegiatan List
             renderKegiatanEditor();
 
-            // Tab 3: Prestasi List
+            // Tab 4: Prestasi List
             renderPrestasiEditor();
+        }
+
+        // Render Editor Catatan Mata Pelajaran
+        function renderMapelEditor() {
+            const container = document.getElementById('mapelEditorList');
+            if (!container) return;
+
+            if (!Array.isArray(MAPEL_META) || MAPEL_META.length === 0) {
+                container.innerHTML = `
+                    <div class="md:col-span-2 p-4 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-center text-xs text-slate-400">
+                        Belum ada mata pelajaran yang tercatat pada kelas atau siswa ini.
+                    </div>
+                `;
+                return;
+            }
+
+            const mapelNotes = (state.catatan_mapel && typeof state.catatan_mapel === 'object') ? state.catatan_mapel : {};
+            container.innerHTML = MAPEL_META.map((item, idx) => {
+                const manualVal = mapelNotes[item.nama];
+                const hasManual = typeof manualVal === 'string' && manualVal.trim() !== '';
+                const currentText = hasManual ? manualVal : (item.deskripsi_auto || '');
+                const nilaiText = item.ada_nilai ? `Nilai: ${item.nilai}` : 'Belum Dinilai';
+
+                return `
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col gap-2" data-mapel-card="${idx}">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="text-xs font-bold text-slate-800 truncate">${idx + 1}. ${escapeHtml(item.nama)}</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-200/80 text-slate-700 text-[10px] font-bold flex-shrink-0">${nilaiText}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 flex-shrink-0">
+                                <span id="mapelModeBadge-${idx}" class="px-2 py-0.5 rounded text-[10px] font-bold ${hasManual ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-slate-200 text-slate-600'}">
+                                    ${hasManual ? 'Manual (Diedit)' : 'Otomatis'}
+                                </span>
+                                <button type="button" onclick="resetCatatanMapel(${idx})" class="px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 text-[10px] font-semibold transition-colors cursor-pointer" title="Kembalikan ke deskripsi otomatis sistem">
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                        <textarea data-mapel-idx="${idx}" id="inputMapelCatatan-${idx}" oninput="handleCatatanMapelInput(${idx}, this.value)" rows="3"
+                                  class="w-full text-xs px-2.5 py-2 bg-white border border-slate-200 rounded-lg text-slate-800 leading-relaxed focus:outline-none focus:border-emerald-500">${escapeHtml(currentText)}</textarea>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleCatatanMapelInput(idx, val) {
+            const item = MAPEL_META[idx];
+            if (!item) return;
+
+            if (!state.catatan_mapel || typeof state.catatan_mapel !== 'object' || Array.isArray(state.catatan_mapel)) {
+                state.catatan_mapel = {};
+            }
+
+            const cleanVal = String(val || '').trim();
+            const badge = document.getElementById('mapelModeBadge-' + idx);
+
+            if (cleanVal !== '' && cleanVal !== (item.deskripsi_auto || '').trim()) {
+                state.catatan_mapel[item.nama] = val;
+                if (badge) {
+                    badge.textContent = 'Manual (Diedit)';
+                    badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200';
+                }
+            } else if (cleanVal === '') {
+                state.catatan_mapel[item.nama] = '';
+                if (badge) {
+                    badge.textContent = 'Otomatis';
+                    badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-slate-200 text-slate-600';
+                }
+            } else {
+                delete state.catatan_mapel[item.nama];
+                if (badge) {
+                    badge.textContent = 'Otomatis';
+                    badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-slate-200 text-slate-600';
+                }
+            }
+
+            saveState();
+        }
+
+        function resetCatatanMapel(idx) {
+            const item = MAPEL_META[idx];
+            if (!item) return;
+            if (state.catatan_mapel && typeof state.catatan_mapel === 'object') {
+                delete state.catatan_mapel[item.nama];
+            }
+            renderMapelEditor();
+            saveState(true);
+        }
+
+        function resetAllCatatanMapel() {
+            state.catatan_mapel = {};
+            renderMapelEditor();
+            saveState(true);
+        }
+
+        function editMapelCatatanInline(mapelName) {
+            switchEditorTab('tab-mapel');
+            const idx = MAPEL_META.findIndex(m => m.nama === mapelName);
+            const target = idx !== -1 ? document.getElementById('inputMapelCatatan-' + idx) : null;
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => {
+                    target.focus();
+                    target.classList.add('ring-2', 'ring-emerald-400');
+                    setTimeout(() => target.classList.remove('ring-2', 'ring-emerald-400'), 1400);
+                }, 200);
+            }
         }
 
         // Render Editor Kegiatan
@@ -842,7 +1005,19 @@
             const boxCatatan = document.getElementById('previewCatatanWalas');
             if (boxCatatan) boxCatatan.textContent = state.catatan;
 
-            // 2. Kegiatan Table
+            // 2. Catatan / Capaian Kompetensi Mata Pelajaran
+            const mapelNotes = (state.catatan_mapel && typeof state.catatan_mapel === 'object') ? state.catatan_mapel : {};
+            document.querySelectorAll('.mapel-desc-text[data-mapel-name]').forEach(el => {
+                const mapelName = el.getAttribute('data-mapel-name');
+                const meta = MAPEL_META.find(m => m.nama === mapelName);
+                const manualVal = mapelNotes[mapelName];
+                const finalDesc = (typeof manualVal === 'string' && manualVal.trim() !== '')
+                    ? manualVal
+                    : (meta ? meta.deskripsi_auto : el.textContent);
+                el.textContent = finalDesc;
+            });
+
+            // 3. Kegiatan Table
             const bodyKegiatan = document.getElementById('previewKegiatanTableBody');
             if (bodyKegiatan) {
                 bodyKegiatan.innerHTML = state.kegiatan.map((item, idx) => `
@@ -876,7 +1051,7 @@
 
             // 4. Pengesahan
             const elTanggal = document.getElementById('previewTanggalRapor');
-            if (elTanggal) elTanggal.textContent = `Sigi, ${state.tanggal}`;
+            if (elTanggal) elTanggal.textContent = `${TEMPAT_RAPOR}, ${state.tanggal}`;
             const elKepsek = document.getElementById('previewKepsekNama');
             if (elKepsek) elKepsek.textContent = state.kepsek;
             const elWalas = document.getElementById('previewWalasNama');
@@ -1078,6 +1253,7 @@
             closeModal('resetTemplateModal');
             localStorage.removeItem(STORAGE_KEY);
             state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+            state.catatan_mapel = {};
             populateEditorFields();
             renderLivePreview();
             saveState(true);
