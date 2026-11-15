@@ -1,4 +1,4 @@
-﻿<?php if (isset($component)) { $__componentOriginal9a0c4a580c8c25bcd5a395abd953ea14 = $component; } ?>
+<?php if (isset($component)) { $__componentOriginal9a0c4a580c8c25bcd5a395abd953ea14 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal9a0c4a580c8c25bcd5a395abd953ea14 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad-layout','data' => ['title' => 'Absensi Mata Pelajaran','description' => 'Presensi masuk kelas dan pencatatan kehadiran siswa per mata pelajaran.','position' => 'Guru Pengajar','initials' => 'GP']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('siakad-layout'); ?>
@@ -683,16 +683,22 @@
                 const nama = (row.getAttribute('data-nama') || '').toLowerCase();
                 const nis = (row.getAttribute('data-nis') || '').toLowerCase();
                 if (!query || nama.includes(query) || nis.includes(query)) {
-                    row.style.setProperty('display', '', '');
+                    row.setAttribute('data-filtered-out', 'false');
+                    row.style.removeProperty('display');
                     matchCount++;
                 } else {
-                    row.style.setProperty('display', 'none', 'important');
+                    row.setAttribute('data-filtered-out', 'true');
+                    row.style.display = 'none';
                 }
             });
 
             const msgEmpty = document.getElementById('msgSearchEmpty');
             if (msgEmpty) {
                 msgEmpty.style.display = (matchCount === 0) ? 'block' : 'none';
+            }
+
+            if (typeof window.refreshSiakadPagination === 'function') {
+                window.refreshSiakadPagination();
             }
         }
 

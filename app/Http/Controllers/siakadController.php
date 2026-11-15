@@ -2310,176 +2310,14 @@ class siakadController extends Controller
             return redirect()->back()->with('error', 'Data kelas tidak ditemukan.');
         }
 
-        $siswa = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->orderBy('nama')->get();
-        $total_siswa = $siswa->count();
-
-        // Sinkronisasi kelas dengan tabel kelas untuk jadwal pelajaran
-        $nama_kelas = $wallas->ruangKelas->nama_ruang ?? '';
-        $kelas = \App\Models\kelas::where('nama_kelas', $nama_kelas)->first();
-        $kelas_id_jadwal = $kelas ? $kelas->id : $wallas->kelas_id;
-
-        $jadwal_kelas = \App\Models\jadwal_pelajaran::with(['mata_pelajaran', 'guru', 'jam_pelajaran', 'tahun_ajaran'])
-            ->where('kelas_id', $kelas_id_jadwal)
-            ->get();
-
-        // Daftar mata pelajaran unik di kelas perwalian ini
-        $daftar_jadwal_mapel = $jadwal_kelas->unique('mapel_id')->values();
-
-        $jenis_penilaian = \App\Models\jenis_penilaian::all();
-        if ($jenis_penilaian->isEmpty()) {
-            \App\Models\jenis_penilaian::insert([
-                ['nama_jenis' => 'Tugas', 'bobot' => 20],
-                ['nama_jenis' => 'Ulangan Harian', 'bobot' => 30],
-                ['nama_jenis' => 'UTS', 'bobot' => 20],
-                ['nama_jenis' => 'UAS', 'bobot' => 30]
-            ]);
-            $jenis_penilaian = \App\Models\jenis_penilaian::all();
-        }
-        $jumlah_komponen = $jenis_penilaian->count();
-
-        // Ambil seluruh nilai siswa di kelas ini
-        $nilai_db = \App\Models\nilai::with(['mata_pelajaran', 'jenis_penilaian'])
-            ->whereIn('siswa_id', $siswa->pluck('id'))
-            ->get();
-
-        // Kelompokkan nilai: $map_nilai[siswa_id][mapel_id][jenis_penilaian_id] = nilai
-        $map_nilai = [];
-        foreach ($nilai_db as $n) {
-            $map_nilai[$n->siswa_id][$n->mapel_id][$n->jenis_penilaian_id] = $n->nilai;
-        }
-
-        // 1. Rekap Per Mata Pelajaran (Untuk Manajemen Nilai Pengajar oleh Walas)
-        $rekap_mapel = collect();
-        foreach ($daftar_jadwal_mapel as $j) {
-            $mapel_id = $j->mapel_id;
-            $kkm = $j->getKkm();
-            $siswa_dinilai = 0;
-            $siswa_lengkap = 0;
-            $siswa_tuntas = 0;
-            $siswa_remedi = 0;
-            $total_na_mapel = 0;
-
-            foreach ($siswa as $s) {
-                $komponen_siswa = $map_nilai[$s->id][$mapel_id] ?? [];
-                if (count($komponen_siswa) > 0) {
-                    $siswa_dinilai++;
-                    if (count($komponen_siswa) >= $jumlah_komponen) {
-                        $siswa_lengkap++;
-                    }
-                    $na = 0;
-                    foreach ($jenis_penilaian as $jp) {
-                        $skor = $komponen_siswa[$jp->id] ?? 0;
-                        $na += ($skor * ($jp->bobot / 100));
-                    }
-                    $total_na_mapel += $na;
-                    if ($na >= $kkm) {
-                        $siswa_tuntas++;
-                    } else {
-                        $siswa_remedi++;
-                    }
-                }
-            }
-
-            $rata_mapel = $siswa_dinilai > 0 ? round($total_na_mapel / $siswa_dinilai, 1) : 0;
-
-            $rekap_mapel->push((object)[
-                'jadwal_id' => $j->id,
-                'mapel_id' => $mapel_id,
-                'nama_mapel' => $j->mata_pelajaran->nama_mapel ?? '-',
-                'kkm' => $kkm,
-                'guru_nama' => $j->guru->nama ?? '-',
-                'hari' => ucfirst($j->hari ?? '-'),
-                'jam_mulai' => substr($j->jam_pelajaran->jam_mulai ?? '', 0, 5),
-                'jam_selesai' => substr($j->jam_pelajaran->jam_selesai ?? '', 0, 5),
-                'total_siswa' => $total_siswa,
-                'siswa_dinilai' => $siswa_dinilai,
-                'siswa_lengkap' => $siswa_lengkap,
-                'siswa_tuntas' => $siswa_tuntas,
-                'siswa_remedi' => $siswa_remedi,
-                'rata_rata' => $rata_mapel,
-                'status_input' => $siswa_dinilai === 0 ? 'belum_input' : ($siswa_lengkap >= $total_siswa && $total_siswa > 0 ? 'lengkap' : 'sebagian')
-            ]);
-        }
-
-        // 2. Rekap Leger Nilai Per Siswa (Semua Mata Pelajaran)
-        $leger_temp = [];
-        $total_mapel_kelas = $daftar_jadwal_mapel->count();
-
-        foreach ($siswa as $s) {
-            $nilai_per_mapel = [];
-            $total_nilai_siswa = 0;
-            $jumlah_mapel_terisi = 0;
-
-            foreach ($daftar_jadwal_mapel as $j) {
-                $m_id = $j->mapel_id;
-                $kkm = $j->getKkm();
-                $komponen_siswa = $map_nilai[$s->id][$m_id] ?? [];
-
-                if (count($komponen_siswa) > 0) {
-                    $na = 0;
-                    foreach ($jenis_penilaian as $jp) {
-                        $skor = $komponen_siswa[$jp->id] ?? 0;
-                        $na += ($skor * ($jp->bobot / 100));
-                    }
-                    $na_round = round($na, 1);
-                    $nilai_per_mapel[$m_id] = [
-                        'ada' => true,
-                        'nilai_akhir' => $na_round,
-                        'tuntas' => $na_round >= $kkm,
-                        'lengkap' => count($komponen_siswa) >= $jumlah_komponen
-                    ];
-                    $total_nilai_siswa += $na_round;
-                    $jumlah_mapel_terisi++;
-                } else {
-                    $nilai_per_mapel[$m_id] = [
-                        'ada' => false,
-                        'nilai_akhir' => null,
-                        'tuntas' => false,
-                        'lengkap' => false
-                    ];
-                }
-            }
-
-            $rata_siswa = $jumlah_mapel_terisi > 0 ? round($total_nilai_siswa / $jumlah_mapel_terisi, 1) : 0;
-            $predikat = '-';
-            if ($jumlah_mapel_terisi > 0) {
-                if ($rata_siswa >= 90) $predikat = 'A';
-                elseif ($rata_siswa >= 80) $predikat = 'B';
-                elseif ($rata_siswa >= 75) $predikat = 'C';
-                else $predikat = 'D';
-            }
-
-            $leger_temp[] = [
-                'siswa' => $s,
-                'nilai_mapel' => $nilai_per_mapel,
-                'total_nilai' => round($total_nilai_siswa, 1),
-                'rata_rata' => $rata_siswa,
-                'mapel_terisi' => $jumlah_mapel_terisi,
-                'total_mapel' => $total_mapel_kelas,
-                'predikat' => $predikat
-            ];
-        }
-
-        // Hitung Peringkat Kelas berdasarkan rata_rata tertinggi
-        $sorted_by_score = collect($leger_temp)->sortByDesc('total_nilai')->values();
-        $rank_map = [];
-        foreach ($sorted_by_score as $idx => $item) {
-            $rank_map[$item['siswa']->id] = $item['mapel_terisi'] > 0 ? ($idx + 1) : '-';
-        }
-
-        $leger_siswa = collect($leger_temp)->map(function($item) use ($rank_map) {
-            $item['peringkat'] = $rank_map[$item['siswa']->id] ?? '-';
-            return (object)$item;
-        });
-
-        $stats_nilai = [
-            'total_mapel' => $total_mapel_kelas,
-            'mapel_sudah_input' => $rekap_mapel->where('siswa_dinilai', '>', 0)->count(),
-            'mapel_lengkap' => $rekap_mapel->where('status_input', 'lengkap')->count(),
-            'rata_kelas' => $rekap_mapel->where('siswa_dinilai', '>', 0)->count() > 0 
-                ? round($rekap_mapel->where('siswa_dinilai', '>', 0)->avg('rata_rata'), 1) 
-                : 0
-        ];
+        $rankingContext = app(\App\Services\SiakadRankingService::class)->buildClassRankingContext((int) $wallas->kelas_id);
+        $siswa = $rankingContext['siswa'];
+        $jadwal_kelas = $rankingContext['jadwal_kelas'];
+        $daftar_jadwal_mapel = $rankingContext['daftar_jadwal_mapel'];
+        $jenis_penilaian = $rankingContext['jenis_penilaian'];
+        $rekap_mapel = $rankingContext['rekap_mapel'];
+        $leger_siswa = $rankingContext['leger_siswa'];
+        $stats_nilai = $rankingContext['stats_nilai'];
 
         $tahun_aktif = \App\Models\tahun_ajaran::where('aktif', 1)->first() ?? \App\Models\tahun_ajaran::orderByDesc('id')->first();
         $siswa_ids = $siswa->pluck('id');
@@ -2498,10 +2336,22 @@ class siakadController extends Controller
 
         $daftar_preset_prestasi = \App\Models\master_prestasi::where('aktif', true)->orderBy('urutan')->get();
         $daftar_kegiatan_sekolah = \App\Models\kegiatan_sekolah::where('aktif', true)->orderBy('urutan')->get();
+        $pengaturan_rapor = \App\Models\pengaturan_rapor::first() ?? new \App\Models\pengaturan_rapor([
+            'tempat_rapor' => 'Tinggede',
+            'tanggal_rapor' => '20 Desember 2025',
+            'nama_kepsek' => 'Rajihul Haq, S.Sos',
+            'nip_kepsek' => '-',
+            'catatan_walas_template' => 'Alhamdulillah, ananda menunjukkan kemajuan yang luar biasa dalam hafalan Al-Qur\'an dan akhlak terpuji. Pertahankan dan terus istiqomah.'
+        ]);
+        $data_kegiatan = session('role') === 'a'
+            ? \App\Models\kegiatan_sekolah::orderBy('urutan')->get()
+            : collect();
+        $data_prestasi = session('role') === 'a'
+            ? \App\Models\master_prestasi::orderBy('urutan')->orderBy('id')->get()
+            : collect();
 
         // Fitur 1: Cetak Leger Nilai Kelas (Landscape)
         if ($request->query('print') === 'leger') {
-            $pengaturan_rapor = \App\Models\pengaturan_rapor::first();
             return view('modul.siakad.guru.cetakLegerWalas', compact(
                 'wallas', 'siswa', 'rekap_mapel', 'leger_siswa', 'stats_nilai', 'tahun_aktif', 'pengaturan_rapor', 'daftar_jadwal_mapel'
             ));
@@ -2522,12 +2372,12 @@ class siakadController extends Controller
 
         if ($request->query('tab') === 'nilai') {
             return view('modul.siakad.guru.manajemenNilaiWalas', compact(
-                'wallas', 'siswa', 'rekap_mapel', 'leger_siswa', 'stats_nilai', 'jenis_penilaian'
+                'wallas', 'siswa', 'rekap_mapel', 'leger_siswa', 'stats_nilai', 'jenis_penilaian', 'daftar_semua_kelas'
             ));
         }
 
         return view('modul.siakad.guru.raporWalas', compact(
-            'wallas', 'siswa', 'rekap_mapel', 'leger_siswa', 'stats_nilai', 'evaluasi_kelas', 'prestasi_kelas', 'tahun_aktif', 'daftar_semua_kelas', 'daftar_preset_prestasi', 'daftar_kegiatan_sekolah'
+            'wallas', 'siswa', 'rekap_mapel', 'leger_siswa', 'stats_nilai', 'evaluasi_kelas', 'prestasi_kelas', 'tahun_aktif', 'daftar_semua_kelas', 'daftar_preset_prestasi', 'daftar_kegiatan_sekolah', 'pengaturan_rapor', 'data_kegiatan', 'data_prestasi'
         ));
     }
 
@@ -3103,25 +2953,28 @@ class siakadController extends Controller
     // ==========================================
     // KELOLA REFERENSI AKADEMIK (Tahun & Jam)
     // ==========================================
-    public function kelolaReferensi() {
+    public function kelolaReferensi(Request $request) {
         $check = $this->guardRoles(['a'], 'akademik');
         if ($check) return $check;
+
+        // Kompatibilitas tautan lama: fitur rapor kini dipusatkan di halaman Rapor Siswa
+        $requestedTab = $request->query('tab');
+        if ($requestedTab === 'kegiatan') {
+            return redirect('/sk/rapor-walas?tab=kegiatan');
+        }
+        if ($requestedTab === 'prestasi') {
+            return redirect('/sk/rapor-walas?tab=template_prestasi');
+        }
+        if ($requestedTab === 'pengesahan') {
+            return redirect('/sk/rapor-walas?tab=pengesahan');
+        }
 
         $data_tahun = \App\Models\tahun_ajaran::orderBy('id', 'desc')->get();
         $data_jam = \App\Models\jam_pelajaran::with('sekolah')->orderBy('sekolah_id', 'asc')->orderBy('jam_mulai', 'asc')->get();
         $data_sekolah = \App\Models\jenis_sekolah::all();
-        $data_kegiatan = \App\Models\kegiatan_sekolah::orderBy('urutan')->get();
-        $data_prestasi = \App\Models\master_prestasi::orderBy('urutan')->orderBy('id')->get();
-        $pengaturan_rapor = \App\Models\pengaturan_rapor::first() ?? new \App\Models\pengaturan_rapor([
-            'tempat_rapor' => 'Tinggede',
-            'tanggal_rapor' => '20 Desember 2025',
-            'nama_kepsek' => 'Rajihul Haq, S.Sos',
-            'nip_kepsek' => '-',
-            'catatan_walas_template' => 'Alhamdulillah, ananda menunjukkan kemajuan yang luar biasa dalam hafalan Al-Qur\'an dan akhlak terpuji. Pertahankan dan terus istiqomah.'
-        ]);
 
         return view('modul.siakad.admin.kelolaReferensi', compact(
-            'data_tahun', 'data_jam', 'data_sekolah', 'data_kegiatan', 'data_prestasi', 'pengaturan_rapor'
+            'data_tahun', 'data_jam', 'data_sekolah'
         ));
     }
 
@@ -3144,7 +2997,7 @@ class siakadController extends Controller
             'aktif' => true,
         ]);
 
-        return redirect('/sk/referensi?tab=kegiatan')->with('success', 'Master Program Kegiatan Sekolah berhasil ditambahkan.');
+        return redirect('/sk/rapor-walas?tab=kegiatan')->with('success', 'Master Program Kegiatan Sekolah berhasil ditambahkan.');
     }
 
     public function updateKegiatanSekolah(Request $request, $id) {
@@ -3165,7 +3018,7 @@ class siakadController extends Controller
             'aktif' => $request->has('aktif') ? (bool)$request->aktif : true,
         ]);
 
-        return redirect('/sk/referensi?tab=kegiatan')->with('success', 'Master Program Kegiatan Sekolah berhasil diperbarui.');
+        return redirect('/sk/rapor-walas?tab=kegiatan')->with('success', 'Master Program Kegiatan Sekolah berhasil diperbarui.');
     }
 
     public function hapusKegiatanSekolah($id) {
@@ -3175,7 +3028,7 @@ class siakadController extends Controller
         $kegiatan = \App\Models\kegiatan_sekolah::findOrFail($id);
         $kegiatan->delete();
 
-        return redirect('/sk/referensi?tab=kegiatan')->with('success', 'Master Program Kegiatan Sekolah berhasil dihapus.');
+        return redirect('/sk/rapor-walas?tab=kegiatan')->with('success', 'Master Program Kegiatan Sekolah berhasil dihapus.');
     }
 
     public function simpanMasterPrestasi(Request $request) {
@@ -3197,7 +3050,7 @@ class siakadController extends Controller
             'aktif' => true,
         ]);
 
-        return redirect('/sk/referensi?tab=prestasi')->with('success', 'Template Jenis Prestasi berhasil ditambahkan ke database.');
+        return redirect('/sk/rapor-walas?tab=template_prestasi')->with('success', 'Template Jenis Prestasi berhasil ditambahkan ke database.');
     }
 
     public function updateMasterPrestasi(Request $request, $id) {
@@ -3218,7 +3071,7 @@ class siakadController extends Controller
             'aktif' => $request->has('aktif') ? (bool)$request->aktif : true,
         ]);
 
-        return redirect('/sk/referensi?tab=prestasi')->with('success', 'Template Jenis Prestasi berhasil diperbarui.');
+        return redirect('/sk/rapor-walas?tab=template_prestasi')->with('success', 'Template Jenis Prestasi berhasil diperbarui.');
     }
 
     public function hapusMasterPrestasi($id) {
@@ -3228,7 +3081,7 @@ class siakadController extends Controller
         $prestasi = \App\Models\master_prestasi::findOrFail($id);
         $prestasi->delete();
 
-        return redirect('/sk/referensi?tab=prestasi')->with('success', 'Template Jenis Prestasi berhasil dihapus.');
+        return redirect('/sk/rapor-walas?tab=template_prestasi')->with('success', 'Template Jenis Prestasi berhasil dihapus.');
     }
 
     public function simpanPengaturanRapor(Request $request) {
@@ -3240,29 +3093,32 @@ class siakadController extends Controller
             'tanggal_rapor' => 'required|string|max:100',
             'nama_kepsek' => 'required|string|max:150',
             'nip_kepsek' => 'nullable|string|max:50',
-            'catatan_walas_template' => 'nullable|string'
+            'catatan_walas_template' => 'nullable|string',
+            'ttd_kepsek' => 'nullable|string'
         ]);
+
+        $ttdKepsek = $request->filled('ttd_kepsek') ? trim($request->input('ttd_kepsek')) : null;
+
+        $pengaturanData = [
+            'tempat_rapor' => $request->tempat_rapor,
+            'tanggal_rapor' => $request->tanggal_rapor,
+            'nama_kepsek' => $request->nama_kepsek,
+            'nip_kepsek' => $request->nip_kepsek ?? '-',
+            'catatan_walas_template' => $request->catatan_walas_template,
+        ];
+
+        if ($request->exists('ttd_kepsek')) {
+            $pengaturanData['ttd_kepsek'] = $ttdKepsek;
+        }
 
         $pengaturan = \App\Models\pengaturan_rapor::first();
         if ($pengaturan) {
-            $pengaturan->update([
-                'tempat_rapor' => $request->tempat_rapor,
-                'tanggal_rapor' => $request->tanggal_rapor,
-                'nama_kepsek' => $request->nama_kepsek,
-                'nip_kepsek' => $request->nip_kepsek ?? '-',
-                'catatan_walas_template' => $request->catatan_walas_template
-            ]);
+            $pengaturan->update($pengaturanData);
         } else {
-            \App\Models\pengaturan_rapor::create([
-                'tempat_rapor' => $request->tempat_rapor,
-                'tanggal_rapor' => $request->tanggal_rapor,
-                'nama_kepsek' => $request->nama_kepsek,
-                'nip_kepsek' => $request->nip_kepsek ?? '-',
-                'catatan_walas_template' => $request->catatan_walas_template
-            ]);
+            \App\Models\pengaturan_rapor::create($pengaturanData);
         }
 
-        return redirect('/sk/referensi?tab=pengesahan')->with('success', 'Pengaturan pengesahan dan tanggal rapor berhasil disimpan ke database.');
+        return redirect('/sk/rapor-walas?tab=pengesahan')->with('success', 'Pengaturan pengesahan, tanggal, dan tanda tangan rapor berhasil disimpan ke database.');
     }
 
     public function simpanTahunAjaran(Request $request) {
@@ -3643,7 +3499,7 @@ class siakadController extends Controller
             return strtolower($j->hari ?? '');
         });
 
-        // Jadwal Hari Ini & Status Kehadiran Guru Pengajar
+        // Jadwal Hari Ini & Jurnal Materi
         $hari_ini = strtolower(now()->locale('id')->isoFormat('dddd'));
         $hari_ini_label = ucfirst(now()->locale('id')->isoFormat('dddd, D MMMM Y'));
         $jadwal_hari_ini = $jadwal_per_hari->get($hari_ini, collect());
@@ -3651,7 +3507,8 @@ class siakadController extends Controller
         $absensi_guru_hari_ini = collect();
         $absensi_siswa_hari_ini = collect();
         if ($jadwal_hari_ini->isNotEmpty()) {
-            $absensi_guru_hari_ini = \App\Models\absensi_mengajar_guru::whereIn('jadwal_pelajaran_id', $jadwal_hari_ini->pluck('id'))
+            $absensi_guru_hari_ini = \App\Models\absensi_mengajar_guru::select(['id', 'jadwal_pelajaran_id', 'materi', 'catatan'])
+                ->whereIn('jadwal_pelajaran_id', $jadwal_hari_ini->pluck('id'))
                 ->whereDate('tanggal', date('Y-m-d'))
                 ->get()
                 ->keyBy('jadwal_pelajaran_id');
@@ -3677,7 +3534,8 @@ class siakadController extends Controller
         $absensi_mapel_raw = $semua_absensi->whereNotNull('jadwal_pelajaran_id')->values();
         $jurnal_guru_map = collect();
         if ($absensi_mapel_raw->isNotEmpty()) {
-            $jurnal_list = \App\Models\absensi_mengajar_guru::whereIn('jadwal_pelajaran_id', $absensi_mapel_raw->pluck('jadwal_pelajaran_id')->unique())
+            $jurnal_list = \App\Models\absensi_mengajar_guru::select(['id', 'jadwal_pelajaran_id', 'tanggal', 'materi', 'catatan'])
+                ->whereIn('jadwal_pelajaran_id', $absensi_mapel_raw->pluck('jadwal_pelajaran_id')->unique())
                 ->get();
             foreach ($jurnal_list as $jg) {
                 $jurnal_guru_map[$jg->jadwal_pelajaran_id . '_' . $jg->tanggal] = $jg;
@@ -3688,8 +3546,6 @@ class siakadController extends Controller
             $jurnal = $jurnal_guru_map[$item->jadwal_pelajaran_id . '_' . $item->tanggal] ?? null;
             $item->jurnal_materi = $jurnal->materi ?? null;
             $item->jurnal_catatan = $jurnal->catatan ?? null;
-            $item->jam_masuk_guru = $jurnal->jam_masuk ?? null;
-            $item->status_masuk_guru = $jurnal->status ?? null;
             return $item;
         });
 
@@ -3872,9 +3728,11 @@ class siakadController extends Controller
         ];
 
         $raporMeta = $this->getRaporMetadata($siswa, $tahun_aktif, $rata_rata);
+        $rankingInfo = app(\App\Services\SiakadRankingService::class)
+            ->buildClassRankingContext($siswa->kelas_id ? (int) $siswa->kelas_id : null, (int) $siswa->id)['ranking_siswa'];
 
         return view('modul.siakad.siswa.raporSiswa', compact(
-            'siswa', 'wallas', 'tahun_aktif', 'rekap_nilai', 'jenis_penilaian', 'rekap_absen', 'stats_akademik', 'tab', 'raporMeta'
+            'siswa', 'wallas', 'tahun_aktif', 'rekap_nilai', 'jenis_penilaian', 'rekap_absen', 'stats_akademik', 'tab', 'raporMeta', 'rankingInfo'
         ));
     }
 
@@ -4026,7 +3884,7 @@ class siakadController extends Controller
 
             return (object)[
                 'id' => $p->id,
-                'tanggal' => $p->tanggal ? \Carbon\Carbon::parse($p->tanggal)->locale('id')->isoFormat('D MMMM Y') : now()->isoFormat('D MMMM Y'),
+                'tanggal' => $p->tanggal ? \Carbon\Carbon::parse($p->tanggal)->locale('id')->isoFormat('D MMMM Y') : now()->locale('id')->isoFormat('D MMMM Y'),
                 'judul' => $p->judul,
                 'penulis' => $p->penulis ?? 'Admin SIAKAD',
                 'ringkasan' => \Illuminate\Support\Str::limit(strip_tags($p->isi), 140),
@@ -4065,13 +3923,6 @@ class siakadController extends Controller
             'nama_kepsek' => $kepsek,
             'nama_walas' => $walas,
         ];
-
-        if ($request->has('ttd_walas')) {
-            $updateData['ttd_walas'] = $request->input('ttd_walas');
-        }
-        if ($request->has('ttd_kepsek')) {
-            $updateData['ttd_kepsek'] = $request->input('ttd_kepsek');
-        }
 
         $evaluasi = \App\Models\evaluasi_rapor_siswa::updateOrCreate(
             [
@@ -4118,6 +3969,58 @@ class siakadController extends Controller
     public function simpanMassalPrestasiWalas(Request $request) {
         $check = $this->guardRoles(['g', 'a']);
         if ($check) return $check;
+
+        if ($request->input('action') === 'simpan_ttd_walas') {
+            $request->validate([
+                'kelas_id' => 'nullable|integer',
+                'ttd_walas' => 'nullable|string',
+            ]);
+
+            if (session('role') === 'a') {
+                $kelasId = $request->input('kelas_id');
+                $wallas = $kelasId ? \App\Models\wallas::where('kelas_id', $kelasId)->first() : null;
+                if (!$wallas) {
+                    $msg = 'Kelas ini belum memiliki Wali Kelas yang ditugaskan. Silakan tugaskan Wali Kelas terlebih dahulu.';
+                    if ($request->ajax() || $request->wantsJson()) {
+                        return response()->json(['success' => false, 'message' => $msg], 422);
+                    }
+                    return redirect()->back()->with('error', $msg);
+                }
+            } else {
+                $wallas = \App\Models\wallas::where('guru_id', session('id'))->first();
+                if (!$wallas || ($request->filled('kelas_id') && (int)$request->input('kelas_id') !== (int)$wallas->kelas_id)) {
+                    $msg = 'Akses ditolak. Anda hanya dapat mengubah tanda tangan kelas perwalian Anda sendiri.';
+                    if ($request->ajax() || $request->wantsJson()) {
+                        return response()->json(['success' => false, 'message' => $msg], 403);
+                    }
+                    return redirect()->back()->with('error', $msg);
+                }
+            }
+
+            $ttdWalas = $request->filled('ttd_walas') ? trim($request->input('ttd_walas')) : null;
+            $wallas->update(['ttd_walas' => $ttdWalas]);
+
+            // Bersihkan override lama per-siswa di kelas ini agar seluruh siswa mengikuti TTD kelas terbaru
+            $siswaIds = \App\Models\siswa::where('kelas_id', $wallas->kelas_id)->pluck('id');
+            if ($siswaIds->isNotEmpty()) {
+                \App\Models\evaluasi_rapor_siswa::whereIn('siswa_id', $siswaIds)->update(['ttd_walas' => null]);
+            }
+
+            $msg = $ttdWalas
+                ? 'Tanda tangan Wali Kelas berhasil disimpan dan otomatis berlaku untuk seluruh siswa di kelas.'
+                : 'Tanda tangan Wali Kelas berhasil dihapus dari kelas ini.';
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $msg,
+                    'ttd_walas' => $ttdWalas,
+                ]);
+            }
+
+            $redirectUrl = '/sk/rapor-walas' . (session('role') === 'a' ? '?kelas_id=' . $wallas->kelas_id : '');
+            return redirect($redirectUrl)->with('success', $msg);
+        }
 
         $tahun_aktif = \App\Models\tahun_ajaran::where('aktif', 1)->first() ?? \App\Models\tahun_ajaran::orderByDesc('id')->first();
         $tahun_id = $tahun_aktif->id ?? null;
@@ -4331,8 +4234,9 @@ class siakadController extends Controller
         $has_evaluasi_db = ($evaluasiDb && !empty($evaluasiDb->catatan_walas));
         $has_prestasi_db = $prestasiDb->isNotEmpty();
 
-        $ttd_walas = $evaluasiDb->ttd_walas ?? $pengaturanRapor->ttd_walas ?? null;
-        $ttd_kepsek = $evaluasiDb->ttd_kepsek ?? $pengaturanRapor->ttd_kepsek ?? null;
+        $wallasKelas = $siswa->kelas_id ? \App\Models\wallas::where('kelas_id', $siswa->kelas_id)->first() : null;
+        $ttd_walas = !empty($wallasKelas->ttd_walas) ? $wallasKelas->ttd_walas : null;
+        $ttd_kepsek = !empty($pengaturanRapor->ttd_kepsek) ? $pengaturanRapor->ttd_kepsek : null;
 
         return compact(
             'jenjang', 'nama_sekolah', 'watermark_logo', 'fase', 'kelas_label', 'alamat_sekolah', 'tempat_rapor',

@@ -359,7 +359,7 @@
                     </div>
                     <div>
                         <h3 class="text-base font-bold text-slate-800">Presensi Terkonsolidasi: Kelas {{ $wallas->ruangKelas->nama_ruang ?? '-' }}</h3>
-                        <p class="text-xs text-slate-500">Tanggal: <strong>{{ \Carbon\Carbon::parse($tanggal)->isoFormat('dddd, D MMMM Y') }}</strong></p>
+                        <p class="text-xs text-slate-500">Tanggal: <strong>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM Y') }}</strong></p>
                     </div>
                 </div>
 
@@ -599,16 +599,22 @@
                 const nama = (row.getAttribute('data-nama') || '').toLowerCase();
                 const nis = (row.getAttribute('data-nis') || '').toLowerCase();
                 if (!query || nama.includes(query) || nis.includes(query)) {
-                    row.style.setProperty('display', '', '');
+                    row.setAttribute('data-filtered-out', 'false');
+                    row.style.removeProperty('display');
                     matchCount++;
                 } else {
-                    row.style.setProperty('display', 'none', 'important');
+                    row.setAttribute('data-filtered-out', 'true');
+                    row.style.display = 'none';
                 }
             });
 
             const msgEmpty = document.getElementById('msgSearchEmptyWalas');
             if (msgEmpty) {
                 msgEmpty.style.display = (matchCount === 0) ? 'block' : 'none';
+            }
+
+            if (typeof window.refreshSiakadPagination === 'function') {
+                window.refreshSiakadPagination();
             }
         }
 

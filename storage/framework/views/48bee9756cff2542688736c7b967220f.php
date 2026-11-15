@@ -186,12 +186,7 @@
                 </div>
 
                 
-                <div class="card-footer pagination-wrap" style="display: flex; justify-content: center; align-items: center; width: 100%;">
-                    <div class="pagination-container" style="display: flex; justify-content: center; align-items: center; margin: 0 auto;">
-                        <?php echo e($data_slip_pangkal->links()); ?>
-
-                    </div>
-                </div>
+                <?php echo $__env->make('components.siakad.server-pagination', ['paginator' => $data_slip_pangkal], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
             </div>
         </main>
     </div>
@@ -486,6 +481,8 @@
         }
     </script>
 
+    <?php echo $__env->make('components.siakad.flash-alert', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    <?php echo $__env->make('components.siakad.dialog-modal', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 </body>
 </html>
 

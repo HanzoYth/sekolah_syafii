@@ -48,7 +48,7 @@
 
     <?php if($kelas_id): ?>
         <?php if($siswa->count() > 0): ?>
-            <form method="POST" action="/sk/proses-kenaikan-kelas">
+            <form id="formKenaikanKelas" method="POST" action="/sk/proses-kenaikan-kelas">
                 <?php echo csrf_field(); ?>
                 <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap;">
                     <div style="flex: 1;">
@@ -160,6 +160,72 @@
                 }
                 // Run on load
                 toggleKelasTujuan();
+
+                const formKenaikan = document.getElementById('formKenaikanKelas');
+                if (formKenaikan) {
+                    formKenaikan.addEventListener('submit', function (e) {
+                        if (formKenaikan.dataset.siakadConfirmed === '1') {
+                            delete formKenaikan.dataset.siakadConfirmed;
+                            return;
+                        }
+
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+
+                        const selected = Array.from(formKenaikan.querySelectorAll('.check-siswa:checked'));
+                        if (selected.length === 0) {
+                            if (window.SiakadAlert) {
+                                window.SiakadAlert.warning('Belum Ada Siswa Dipilih', 'Silakan centang minimal 1 siswa yang akan diproses terlebih dahulu.');
+                            } else {
+                                alert('Silakan centang minimal 1 siswa yang akan diproses terlebih dahulu.');
+                            }
+                            return;
+                        }
+
+                        const aksiSelect = document.getElementById('aksi-select');
+                        const aksi = aksiSelect ? aksiSelect.value : 'naik';
+                        const tujuanSelect = document.getElementById('kelas-tujuan');
+                        const tujuanText = (tujuanSelect && tujuanSelect.selectedOptions && tujuanSelect.selectedOptions[0])
+                            ? tujuanSelect.selectedOptions[0].textContent.trim()
+                            : '';
+
+                        if (aksi !== 'lulus' && (!tujuanSelect || !tujuanSelect.value)) {
+                            if (window.SiakadAlert) {
+                                window.SiakadAlert.warning('Kelas Tujuan Belum Dipilih', 'Silakan pilih kelas tujuan untuk memproses kenaikan atau perpindahan kelas.');
+                            } else {
+                                alert('Silakan pilih kelas tujuan terlebih dahulu.');
+                            }
+                            return;
+                        }
+
+                        const title = aksi === 'lulus' ? 'Konfirmasi Kelulusan Siswa' : 'Konfirmasi Kenaikan / Pindah Kelas';
+                        const message = aksi === 'lulus'
+                            ? 'Yakin meluluskan ' + selected.length + ' siswa terpilih menjadi Alumni? Status siswa yang diproses akan berubah menjadi Lulus.'
+                            : 'Yakin memindahkan ' + selected.length + ' siswa terpilih ke kelas ' + tujuanText + '?';
+
+                        if (window.SiakadAlert) {
+                            window.SiakadAlert.confirm({
+                                title: title,
+                                message: message,
+                                variant: aksi === 'lulus' ? 'warning' : 'emerald',
+                                icon: aksi === 'lulus' ? 'fa-graduation-cap' : 'fa-arrow-up-right-dots',
+                                confirmText: aksi === 'lulus' ? 'Ya, Luluskan Siswa' : 'Ya, Proses Sekarang',
+                                cancelText: 'Batal',
+                                onConfirm: function () {
+                                    formKenaikan.dataset.siakadConfirmed = '1';
+                                    if (typeof formKenaikan.requestSubmit === 'function') {
+                                        formKenaikan.requestSubmit();
+                                    } else {
+                                        formKenaikan.submit();
+                                    }
+                                }
+                            });
+                        } else if (confirm(message)) {
+                            formKenaikan.dataset.siakadConfirmed = '1';
+                            formKenaikan.submit();
+                        }
+                    }, true);
+                }
             </script>
         <?php else: ?>
             <div style="text-align: center; padding: 40px; color: #64748b; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px;">

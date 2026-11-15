@@ -330,7 +330,7 @@
                         <span class="text-slate-400 text-[11px] font-normal" id="modalPeriodeLabel">-</span>
                     </h5>
                     <div class="max-h-64 overflow-y-auto border border-slate-200 rounded-xl">
-                        <table class="w-full text-left text-xs border-collapse">
+                        <table class="w-full text-left text-xs border-collapse" data-no-paginate="true">
                             <thead class="bg-slate-100 text-slate-600 font-semibold sticky top-0">
                                 <tr>
                                     <th class="px-3 py-2 text-center w-10">No</th>
@@ -443,8 +443,13 @@
         document.getElementById('searchGuruInput')?.addEventListener('input', function() {
             const query = this.value.toLowerCase().trim();
             document.querySelectorAll('#guruTableBody tr.teacher-row').forEach(row => {
-                row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
+                const match = row.innerText.toLowerCase().includes(query);
+                row.setAttribute('data-filtered-out', match ? 'false' : 'true');
+                row.style.display = match ? '' : 'none';
             });
+            if (typeof window.refreshSiakadPagination === 'function') {
+                window.refreshSiakadPagination();
+            }
         });
 
         // Buka Modal Detail Guru

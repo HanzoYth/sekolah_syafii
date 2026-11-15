@@ -300,7 +300,7 @@
                         </span>
                         <div>
                             <h3 class="text-sm font-bold text-slate-800">Jadwal Pelajaran Hari Ini (<?php echo e($hari_ini_label); ?>)</h3>
-                            <p class="text-xs text-slate-500">Status kehadiran guru pengajar, materi hari ini, dan presensi ananda di kelas</p>
+                            <p class="text-xs text-slate-500">Materi pembelajaran hari ini dan presensi ananda di kelas</p>
                         </div>
                     </div>
                 </div>
@@ -314,7 +314,6 @@
                                 <th class="px-5 py-3">Mata Pelajaran</th>
                                 <th class="px-5 py-3">Guru Pengajar</th>
                                 <th class="px-5 py-3">Materi Hari Ini</th>
-                                <th class="px-5 py-3 text-center">Status Guru</th>
                                 <th class="px-5 py-3 text-center">Presensi Siswa</th>
                             </tr>
                         </thead>
@@ -335,7 +334,7 @@
                                         <td class="px-5 py-2.5 font-mono text-xs font-bold text-amber-800 whitespace-nowrap">
                                             <?php echo e($jedaIstirahat['mulai']); ?> - <?php echo e($jedaIstirahat['selesai']); ?> WIB
                                         </td>
-                                        <td colspan="5" class="px-5 py-2.5 text-xs font-bold text-amber-800">
+                                        <td colspan="4" class="px-5 py-2.5 text-xs font-bold text-amber-800">
                                             <i class="fa-solid fa-mug-saucer mr-1"></i> JAM ISTIRAHAT (<?php echo e($jedaIstirahat['durasi']); ?> Menit)
                                         </td>
                                     </tr>
@@ -352,17 +351,6 @@
                                             <span class="font-semibold text-emerald-800"><?php echo e($ag->materi); ?></span>
                                         <?php else: ?>
                                             <span class="text-slate-400 italic">Belum diisi</span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td class="px-5 py-3.5 text-center">
-                                        <?php if($ag): ?>
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
-                                                <i class="fa-solid fa-check mr-1 text-[10px]"></i> Hadir (<?php echo e(substr($ag->jam_masuk, 0, 5)); ?>)
-                                            </span>
-                                        <?php else: ?>
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
-                                                Terjadwal
-                                            </span>
                                         <?php endif; ?>
                                     </td>
                                     <td class="px-5 py-3.5 text-center">

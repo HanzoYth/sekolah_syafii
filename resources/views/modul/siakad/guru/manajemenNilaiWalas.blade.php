@@ -1,37 +1,129 @@
+@php
+    $isAdmin = session('role') === 'a';
+@endphp
+
 <x-siakad-layout 
-    title="Manajemen Nilai Kelas" 
-    description="Pantau, tinjau, dan atur nilai seluruh mata pelajaran yang diinput oleh guru pengajar di kelas perwalian Anda." 
-    position="Guru Wali Kelas" 
-    initials="WK">
+    title="{{ $isAdmin ? 'Monitoring Leger Nilai Kelas' : 'Manajemen Nilai Kelas' }}" 
+    description="{{ $isAdmin ? 'Pantau progres penginputan nilai guru pengajar, rekap nilai seluruh siswa, peringkat, dan cetak dokumen leger kelas.' : 'Pantau, tinjau, dan atur nilai seluruh mata pelajaran yang diinput oleh guru pengajar di kelas perwalian Anda.' }}" 
+    position="{{ $isAdmin ? 'Administrator SIAKAD' : 'Guru Wali Kelas' }}" 
+    initials="{{ $isAdmin ? 'AD' : 'WK' }}">
 
     <x-slot name="breadcrumb">
         <li class="flex items-center">
-            <a href="/sk/dsg" class="text-slate-500 hover:text-emerald-600 transition-colors">Dashboard</a>
+            <a href="{{ $isAdmin ? '/sk/das' : '/sk/dsg' }}" class="text-slate-500 hover:text-emerald-600 transition-colors">Dashboard</a>
             <i class="fa-solid fa-chevron-right text-[10px] mx-2 text-slate-400"></i>
         </li>
-        <li class="flex items-center">
-            <span class="text-slate-700 font-medium">Manajemen Nilai Kelas</span>
-        </li>
+        @if($isAdmin)
+            <li class="flex items-center">
+                <a href="/sk/rapor-walas?kelas_id={{ $wallas->kelas_id ?? '' }}" class="text-slate-500 hover:text-emerald-600 transition-colors">Rapor Siswa</a>
+                <i class="fa-solid fa-chevron-right text-[10px] mx-2 text-slate-400"></i>
+            </li>
+            <li class="flex items-center">
+                <span class="text-slate-700 font-medium">Leger Nilai Kelas</span>
+            </li>
+        @else
+            <li class="flex items-center">
+                <span class="text-slate-700 font-medium">Manajemen Nilai Kelas</span>
+            </li>
+        @endif
     </x-slot>
 
-    <!-- Tab Switcher: Manajemen Nilai vs Cetak Rapor -->
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-        <div class="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200">
-            <a href="/sk/rapor-walas?tab=nilai{{ session('role') === 'a' ? '&kelas_id='.($wallas->kelas_id ?? '') : '' }}" class="px-4 py-2 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-sm border border-slate-200/80 flex items-center gap-2 transition-all">
-                <i class="fa-solid fa-sliders"></i> Leger Nilai
-            </a>
-            <a href="/sk/rapor-walas{{ session('role') === 'a' ? '?kelas_id='.($wallas->kelas_id ?? '') : '' }}" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-2 transition-all">
-                <i class="fa-solid fa-file-contract"></i> Cetak Rapor
-            </a>
+    @if($isAdmin)
+        <!-- Navigasi Pusat Rapor Admin (Konsisten dengan halaman Rapor Siswa) -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 mb-6 shadow-xs flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1.5 flex items-center gap-1">
+                    <i class="fa-solid fa-chalkboard-user text-emerald-600"></i> Per Kelas:
+                </span>
+                <div class="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200 gap-1">
+                    <a href="/sk/rapor-walas?kelas_id={{ $wallas->kelas_id ?? '' }}" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-file-contract"></i> Cetak &amp; TTD Kelas
+                    </a>
+                    <span class="px-3.5 py-2 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-xs border border-slate-200/80 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders"></i> Leger Nilai Kelas
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600 px-1.5 flex items-center gap-1">
+                    <i class="fa-solid fa-globe"></i> Global Sekolah (Semua Kelas):
+                </span>
+                <div class="inline-flex flex-wrap p-1 rounded-xl bg-blue-50/60 border border-blue-200/70 gap-1">
+                    <a href="/sk/rapor-walas?tab=pengesahan" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-blue-800 hover:bg-white/70 flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-file-signature"></i> Pengesahan &amp; TTD Kepsek
+                    </a>
+                    <a href="/sk/rapor-walas?tab=kegiatan" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-violet-800 hover:bg-white/70 flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-mosque"></i> Program Kegiatan Sekolah
+                    </a>
+                    <a href="/sk/rapor-walas?tab=template_prestasi" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-amber-800 hover:bg-white/70 flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-trophy"></i> Template Jenis Prestasi
+                    </a>
+                </div>
+            </div>
         </div>
 
+        @if(isset($daftar_semua_kelas) && $daftar_semua_kelas->isNotEmpty())
+            <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-2xl p-5 mb-6 shadow-sm border border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-chart-simple"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                            Mode Monitoring Leger Nilai Admin
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/20 text-blue-300 border border-blue-400/30">Read-Only</span>
+                        </h4>
+                        <p class="text-xs text-slate-300 mt-0.5">Pilih kelas untuk memantau kelengkapan input nilai guru pengajar dan mencetak dokumen leger kelas.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <label for="selectKelasAdminLeger" class="text-xs text-slate-300 font-medium whitespace-nowrap">Pilih Kelas:</label>
+                    <select id="selectKelasAdminLeger" onchange="location.href='/sk/rapor-walas?tab=nilai&kelas_id=' + this.value" class="text-xs bg-slate-800 border border-slate-600 text-white rounded-xl px-3.5 py-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold shadow-inner">
+                        @foreach($daftar_semua_kelas as $rk)
+                            <option value="{{ $rk->id }}" {{ ($wallas->kelas_id ?? null) == $rk->id ? 'selected' : '' }}>
+                                {{ $rk->nama_ruang }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        @endif
+    @endif
+
+    <!-- Tab Switcher & Action Bar -->
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        @if(!$isAdmin)
+            <div class="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200">
+                <a href="/sk/rapor-walas?tab=nilai" class="px-4 py-2 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-sm border border-slate-200/80 flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-sliders"></i> Leger Nilai
+                </a>
+                <a href="/sk/rapor-walas" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-file-contract"></i> Cetak Rapor
+                </a>
+            </div>
+        @else
+            <div class="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                <i class="fa-solid fa-chalkboard text-emerald-600"></i>
+                <span>Kelas Aktif: <strong class="text-slate-800">{{ $wallas->ruangKelas->nama_ruang ?? '-' }}</strong></span>
+                <span class="text-slate-300">&bull;</span>
+                <span>Wali Kelas: <strong class="text-slate-700">{{ $wallas->guru->nama ?? '-' }}</strong></span>
+            </div>
+        @endif
+
         <div class="flex items-center gap-2.5">
-            <a href="/sk/rapor-walas?tab=nilai&print=leger{{ session('role') === 'a' ? '&kelas_id='.($wallas->kelas_id ?? '') : '' }}" target="_blank" class="inline-flex items-center px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm gap-2">
+            <a href="/sk/rapor-walas?tab=nilai&print=leger{{ $isAdmin ? '&kelas_id='.($wallas->kelas_id ?? '') : '' }}" target="_blank" class="inline-flex items-center px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm gap-2">
                 <i class="fa-solid fa-print"></i> Cetak Leger Nilai (Landscape)
             </a>
-            <span class="hidden sm:inline-flex items-center px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
-                <i class="fa-solid fa-shield-halved mr-1.5 text-emerald-600"></i> Akses Wali Kelas
-            </span>
+            @if($isAdmin)
+                <span class="hidden sm:inline-flex items-center px-3 py-1.5 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 text-xs font-semibold">
+                    <i class="fa-solid fa-eye mr-1.5 text-blue-600"></i> Mode Monitoring Admin
+                </span>
+            @else
+                <span class="hidden sm:inline-flex items-center px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
+                    <i class="fa-solid fa-shield-halved mr-1.5 text-emerald-600"></i> Akses Wali Kelas
+                </span>
+            @endif
         </div>
     </div>
 
@@ -42,7 +134,7 @@
                 <i class="fa-solid fa-school text-xl"></i>
             </div>
             <div class="min-w-0 flex-1">
-                <p class="text-sm font-medium text-slate-500 truncate">Kelas Perwalian</p>
+                <p class="text-sm font-medium text-slate-500 truncate">{{ $isAdmin ? 'Kelas Terpilih' : 'Kelas Perwalian' }}</p>
                 <h3 class="text-xl font-bold text-slate-800 break-words leading-snug mt-0.5">{{ $wallas->ruangKelas->nama_ruang ?? '-' }}</h3>
                 <p class="text-xs text-slate-400 mt-1 truncate">{{ count($siswa) }} siswa aktif</p>
             </div>
@@ -91,7 +183,11 @@
                 </div>
                 <div>
                     <h3 class="text-base font-bold text-slate-800">Daftar Nilai Mata Pelajaran (Inputan Guru Pengajar)</h3>
-                    <p class="text-xs text-slate-500">Klik tombol <strong>Atur / Edit Nilai</strong> untuk memeriksa atau menyesuaikan rincian nilai siswa pada mata pelajaran terkait</p>
+                    @if($isAdmin)
+                        <p class="text-xs text-slate-500">Pantau progres kelengkapan penginputan nilai oleh masing-masing guru pengajar (mode monitoring read-only)</p>
+                    @else
+                        <p class="text-xs text-slate-500">Klik tombol <strong>Atur / Edit Nilai</strong> untuk memeriksa atau menyesuaikan rincian nilai siswa pada mata pelajaran terkait</p>
+                    @endif
                 </div>
             </div>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 self-start sm:self-auto">
@@ -110,7 +206,7 @@
                         <th class="px-5 py-3.5">Progres Input Nilai</th>
                         <th class="px-5 py-3.5 text-center">Rata-Rata</th>
                         <th class="px-5 py-3.5 text-center">Ketuntasan</th>
-                        <th class="px-5 py-3.5 text-center w-44">Aksi Wali Kelas</th>
+                        <th class="px-5 py-3.5 text-center w-44">{{ $isAdmin ? 'Status Monitoring' : 'Aksi Wali Kelas' }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-sm">
@@ -179,10 +275,26 @@
                                     @endif
                                 </td>
                                 <td class="px-5 py-4 text-center">
-                                    <a href="/sk/input-nilai-detail/{{ $m->jadwal_id }}?from=walas" 
-                                       class="inline-flex items-center px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-sm">
-                                        <i class="fa-solid fa-pen-to-square mr-1.5"></i> Edit Nilai
-                                    </a>
+                                    @if($isAdmin)
+                                        @if($m->status_input === 'lengkap')
+                                            <span class="inline-flex items-center px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
+                                                <i class="fa-solid fa-circle-check mr-1.5"></i> Selesai Diinput
+                                            </span>
+                                        @elseif($m->status_input === 'sebagian')
+                                            <span class="inline-flex items-center px-3 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold">
+                                                <i class="fa-solid fa-clock mr-1.5"></i> Proses Pengisian
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-3 py-1 rounded-lg bg-slate-100 text-slate-600 border border-slate-200 text-xs font-semibold">
+                                                <i class="fa-solid fa-hourglass-start mr-1.5"></i> Belum Diinput
+                                            </span>
+                                        @endif
+                                    @else
+                                        <a href="/sk/input-nilai-detail/{{ $m->jadwal_id }}?from=walas" 
+                                           class="inline-flex items-center px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-sm">
+                                            <i class="fa-solid fa-pen-to-square mr-1.5"></i> Edit Nilai
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -204,7 +316,7 @@
 
     <!-- BAGIAN 2: TABEL LEGER NILAI KELAS (REKAPITULASI SEMUA MATA PELAJARAN) -->
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-        <div class="px-6 py-5 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="px-6 py-5 border-b border-slate-200 bg-slate-50/50 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg flex-shrink-0">
                     <i class="fa-solid fa-table-list"></i>
@@ -215,10 +327,23 @@
                 </div>
             </div>
 
-            <div class="relative w-full sm:w-64">
-                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                <input type="text" id="searchLeger" onkeyup="filterLeger()" placeholder="Cari nama atau NIS siswa..." 
-                       class="w-full pl-9 pr-3 py-2 text-xs bg-white border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:border-emerald-500 transition-colors">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 w-full lg:w-auto flex-shrink-0 justify-end">
+                <div class="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200 gap-1 flex-shrink-0 self-start sm:self-auto" role="group" aria-label="Urutkan Leger Siswa">
+                    <button type="button" data-sort-table="tableLeger" data-sort-mode="name" onclick="window.sortSiakadRankingTable('tableLeger', 'name', this)"
+                            class="leger-sort-btn px-3 py-1.5 rounded-lg text-[11px] font-bold bg-white text-emerald-700 shadow-sm border border-slate-200/80 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-arrow-down-a-z"></i> Nama
+                    </button>
+                    <button type="button" data-sort-table="tableLeger" data-sort-mode="rank" onclick="window.sortSiakadRankingTable('tableLeger', 'rank', this)"
+                            class="leger-sort-btn px-3 py-1.5 rounded-lg text-[11px] font-semibold text-slate-600 hover:text-amber-700 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-crown text-amber-500"></i> Peringkat
+                    </button>
+                </div>
+
+                <div class="relative w-full sm:w-56">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="searchLeger" onkeyup="filterLeger()" placeholder="Cari nama atau NIS siswa..." 
+                           class="w-full pl-9 pr-3 py-2 text-xs bg-white border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:border-emerald-500 transition-colors">
+                </div>
             </div>
         </div>
 
@@ -244,15 +369,30 @@
                 <tbody class="divide-y divide-slate-100 text-sm">
                     @if($leger_siswa->count() > 0)
                         @foreach($leger_siswa as $row)
-                            <tr class="leger-row hover:bg-slate-50/70 transition-colors" data-search="{{ strtolower($row->siswa->nama . ' ' . ($row->siswa->nis ?? '')) }}">
-                                <td class="px-4 py-3.5 text-center text-slate-400 font-medium">{{ $loop->iteration }}</td>
+                            @php
+                                $rankNum = is_numeric($row->peringkat) ? (int) $row->peringkat : 999999;
+                                $isTop3Row = $rankNum <= 3;
+                                $rowRankClass = $rankNum === 1
+                                    ? 'siakad-rank-row-1'
+                                    : ($rankNum === 2 ? 'siakad-rank-row-2' : ($rankNum === 3 ? 'siakad-rank-row-3' : ''));
+                                $avatarRankClass = $rankNum === 1
+                                    ? 'bg-gradient-to-br from-amber-300 to-amber-500 text-amber-950 ring-1 ring-amber-400/70'
+                                    : ($rankNum === 2 ? 'bg-gradient-to-br from-slate-200 to-slate-400 text-slate-900 ring-1 ring-slate-400/60'
+                                    : ($rankNum === 3 ? 'bg-gradient-to-br from-orange-200 to-orange-400 text-orange-950 ring-1 ring-orange-400/60'
+                                    : 'bg-slate-100 text-slate-700'));
+                            @endphp
+                            <tr class="leger-row {{ $rowRankClass }} hover:bg-slate-50/70 transition-colors"
+                                data-orig-index="{{ $loop->iteration }}"
+                                data-rank="{{ $rankNum }}"
+                                data-search="{{ strtolower($row->siswa->nama . ' ' . ($row->siswa->nis ?? '')) }}">
+                                <td class="px-4 py-3.5 text-center text-slate-400 font-medium" data-row-number="true">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-3.5">
                                     <div class="flex items-center space-x-2.5">
-                                        <div class="w-7 h-7 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs uppercase flex-shrink-0">
+                                        <div class="w-7 h-7 rounded-full {{ $avatarRankClass }} flex items-center justify-center font-bold text-xs uppercase flex-shrink-0">
                                             {{ substr($row->siswa->nama, 0, 2) }}
                                         </div>
                                         <div>
-                                            <span class="font-bold text-slate-800 block leading-tight">{{ $row->siswa->nama }}</span>
+                                            <span class="font-bold {{ $isTop3Row ? 'text-slate-900' : 'text-slate-800' }} block leading-tight">{{ $row->siswa->nama }}</span>
                                             <span class="text-[11px] font-mono text-slate-400">NIS: {{ $row->siswa->nis ?? '-' }}</span>
                                         </div>
                                     </div>
@@ -289,14 +429,7 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-3.5 text-center">
-                                    @if($row->peringkat !== '-')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold {{ $row->peringkat <= 3 ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-700' }}">
-                                            @if($row->peringkat == 1) <i class="fa-solid fa-crown text-amber-500 mr-1 text-[10px]"></i> @endif
-                                            #{{ $row->peringkat }}
-                                        </span>
-                                    @else
-                                        <span class="text-xs text-slate-400">-</span>
-                                    @endif
+                                    <x-siakad.rank-badge :rank="$row->peringkat" variant="table" />
                                 </td>
                                 <td class="px-4 py-3.5 text-center">
                                     <a href="/sk/detail-rapor-walas/{{ $row->siswa->id }}" 

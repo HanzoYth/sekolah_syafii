@@ -141,7 +141,7 @@
                         @endforeach
                     @else
                         @php
-                            $bulanSekarang = \Carbon\Carbon::now()->translatedFormat('F Y');
+                            $bulanSekarang = \Carbon\Carbon::now()->locale('id')->isoFormat('MMMM Y');
                             $statusPegawai = ($guru && $guru->guru_tetap) ? 'Guru Tetap' : (($guru && $guru->guru_honor) ? 'Guru Honor' : 'Guru Pengajar');
                         @endphp
                         <tr class="hover:bg-slate-50/70 transition-colors">
@@ -246,8 +246,13 @@
         document.getElementById('slipSearch')?.addEventListener('input', function() {
             const query = this.value.toLowerCase();
             document.querySelectorAll('#slipRows tr').forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+                const match = row.textContent.toLowerCase().includes(query);
+                row.setAttribute('data-filtered-out', match ? 'false' : 'true');
+                row.style.display = match ? '' : 'none';
             });
+            if (typeof window.refreshSiakadPagination === 'function') {
+                window.refreshSiakadPagination();
+            }
         });
 
         function cetakSlipPeriode(periode, totalSesi, tepatWaktu, terlambat, indeks, statusPegawai) {

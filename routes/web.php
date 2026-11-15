@@ -298,6 +298,10 @@ Route::get('/sk/hapus-kegiatan-sekolah/{id}', [App\Http\Controllers\siakadContro
 Route::post('/sk/simpan-evaluasi-rapor', [App\Http\Controllers\siakadController::class, 'simpanEvaluasiRapor']);
 Route::post('/sk/simpan-massal-prestasi-walas', [App\Http\Controllers\siakadController::class, 'simpanMassalPrestasiWalas']);
 
+Route::post('/sk/simpan-pengaturan-rapor', [siakadController::class, 'simpanPengaturanRapor']);
+
+Route::post('/page-editor/simpan', [PageController::class, 'simpanKontenEditor']);
+Route::post('/page-editor/reset', [PageController::class, 'resetKontenEditor']);
 
 
 //siswa

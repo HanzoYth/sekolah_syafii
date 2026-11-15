@@ -107,7 +107,7 @@
                                     <span class="text-xs font-bold text-slate-700 block">
                                         {{ \Carbon\Carbon::parse($item->tanggal)->locale('id')->isoFormat('D MMM Y') }}
                                     </span>
-                                    <span class="text-[11px] text-slate-400">{{ \Carbon\Carbon::parse($item->tanggal)->diffForHumans() }}</span>
+                                    <span class="text-[11px] text-slate-400">{{ \Carbon\Carbon::parse($item->tanggal)->locale('id')->diffForHumans() }}</span>
                                 </td>
                                 <td class="px-5 py-4">
                                     <h4 class="font-bold text-slate-800 text-sm mb-1 leading-snug">{{ $item->judul }}</h4>
@@ -183,13 +183,7 @@
             </table>
         </div>
 
-        @if($pengumuman_list->hasPages())
-            <div class="px-6 py-4 bg-slate-50/50 border-t border-slate-200 flex justify-center items-center">
-                <div class="pagination-container" style="display: flex; justify-content: center; align-items: center; margin: 0 auto;">
-                    {{ $pengumuman_list->links() }}
-                </div>
-            </div>
-        @endif
+        @include('components.siakad.server-pagination', ['paginator' => $pengumuman_list])
     </div>
 
     <!-- MODAL BUAT PENGUMUMAN BARU -->

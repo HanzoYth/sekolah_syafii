@@ -647,4 +647,99 @@ class SiakadAbsensiDanInvalTest extends TestCase
         $this->assertEquals('diambil', $slot->fresh()->status);
         $this->assertEquals($this->guruB->id, $slot->fresh()->guru_pengganti_id);
     }
+
+    /**
+     * 17. UI Alert Pengambilan & Pembatalan Jadwal Pengganti memakai modal SIAKAD (tanpa native confirm) + Flash Toast
+     */
+    public function test_dashboard_guru_inval_slot_renders_custom_siakad_confirm_modal_and_flash_alert()
+    {
+        guru_pengganti::where('jadwal_pelajaran_id', $this->jadwalA->id)
+            ->where('tanggal', Carbon::today()->toDateString())
+            ->delete();
+
+        $slotKosong = guru_pengganti::create([
+            'jadwal_pelajaran_id' => $this->jadwalA->id,
+            'guru_asli_id' => $this->guruA->id,
+            'tanggal' => Carbon::today()->toDateString(),
+            'status' => 'kosong',
+            'alasan_izin' => 'Izin Pengujian Alert',
+        ]);
+
+        // Pastikan Guru B tidak memiliki jadwal bentrok pada jam uji agar tombol Ambil muncul
+        jadwal_pelajaran::where('guru_id', $this->guruB->id)
+            ->where('jam_pelajaran_id', $this->jadwalA->jam_pelajaran_id)
+            ->delete();
+
+        $resKosong = $this->withSession(array_merge($this->sessionGuruB, [
+            'success' => 'Simulasi Notifikasi Sukses SIAKAD',
+        ]))->get('/sk/dsg');
+
+        $resKosong->assertStatus(200);
+        $resKosong->assertSee('data-siakad-confirm=', false);
+        $resKosong->assertSee('Konfirmasi Ambil Jadwal Pengganti', false);
+        $resKosong->assertSee('siakadDialogOverlay', false);
+        $resKosong->assertSee('siakad-flash-card is-success', false);
+        $resKosong->assertSee('Simulasi Notifikasi Sukses SIAKAD', false);
+        $resKosong->assertDontSee('onsubmit="return confirm(', false);
+
+        // Sekarang ubah slot menjadi diambil oleh Guru B agar tombol Batalkan muncul
+        $slotKosong->update([
+            'status' => 'diambil',
+            'guru_pengganti_id' => $this->guruB->id,
+            'taken_at' => now(),
+        ]);
+
+        $resDiambil = $this->withSession($this->sessionGuruB)->get('/sk/dsg');
+        $resDiambil->assertStatus(200);
+        $resDiambil->assertSee('Batalkan Jadwal Pengganti', false);
+        $resDiambil->assertSee('data-siakad-confirm=', false);
+        $resDiambil->assertDontSee('onsubmit="return confirm(', false);
+
+        $slotKosong->delete();
+    }
+
+    /**
+     * 18. Infrastruktur Pagination & Alert SIAKAD terpasang pada halaman utama Admin, Guru & Keuangan
+     */
+    public function test_siakad_pages_render_universal_pagination_and_alert_infrastructure()
+    {
+        $adminUser = admin::first();
+        $adminSession = [
+            'role' => 'a',
+            'id' => $adminUser ? $adminUser->id : 1,
+            'id_akun' => $adminUser ? $adminUser->user_id : 1,
+            'nama' => $adminUser ? $adminUser->nama : 'Admin Siakad',
+            'hasLogin' => true,
+        ];
+
+        // Buat Tagihan (halaman standalone non-layout)
+        $resBt = $this->withSession($adminSession)->get('/sk/bt');
+        $resBt->assertStatus(200);
+        $resBt->assertSee('initSiakadUniversalTablePagination', false);
+        $resBt->assertSee('refreshSiakadPagination', false);
+        $resBt->assertSee('siakad-flash-stack', false);
+        $resBt->assertSee('siakadDialogOverlay', false);
+
+        // Data Siswa (menggunakan x-siakad-layout)
+        $resDs = $this->withSession($adminSession)->get('/sk/ds');
+        $resDs->assertStatus(200);
+        $resDs->assertSee('initSiakadUniversalTablePagination', false);
+        $resDs->assertSee('siakad-flash-stack', false);
+        $resDs->assertSee('siakadDialogOverlay', false);
+
+        // Pembayaran IPP (server-side pagination component + alert SIAKAD)
+        $resPb = $this->withSession($adminSession)->get('/sk/pb');
+        $resPb->assertStatus(200);
+        $resPb->assertSee('siakad-flash-stack', false);
+        $resPb->assertSee('siakadDialogOverlay', false);
+        if (preg_match('/<tbody>\s*(?!<tr>\s*<td colspan).*<tr/is', $resPb->getContent())) {
+            $resPb->assertSee('siakad-server-pagination', false);
+        }
+
+        // Uang Pangkal & Pendidikan
+        $this->withSession($adminSession)->get('/sk/pp')->assertStatus(200)->assertSee('siakadDialogOverlay', false);
+        $this->withSession($adminSession)->get('/sk/pd')->assertStatus(200)->assertSee('siakadDialogOverlay', false);
+        $this->withSession($adminSession)->get('/sk/kelola-pengumuman')->assertStatus(200)->assertSee('initSiakadUniversalTablePagination', false);
+        $this->withSession($adminSession)->get('/sk/ppl')->assertStatus(200);
+    }
 }

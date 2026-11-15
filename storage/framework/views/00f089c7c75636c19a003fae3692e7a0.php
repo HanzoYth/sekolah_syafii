@@ -229,22 +229,23 @@
                 </div>
             </div>
 
-            <!-- Bagian Upload Tanda Tangan Digital Resmi (Otomatis Transparan) -->
+            <!-- Bagian Status & Pratinjau Tanda Tangan Digital Resmi (Read-Only dari Pengaturan Kelas & Admin) -->
             <div class="mt-6 pt-5 border-t border-slate-200">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                     <div>
                         <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-signature text-emerald-600"></i> Upload Tanda Tangan Digital
+                            <i class="fa-solid fa-signature text-emerald-600"></i> Pratinjau Tanda Tangan Pengesahan
                         </h4>
-                        <p class="text-[11px] text-slate-500 mt-0.5">Unggah foto/scan tanda tangan. Latar belakang kertas otomatis dihapus transparan seketika.</p>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Tanda tangan otomatis diambil dari pengaturan kelas (Wali Kelas) dan pengaturan sekolah (Admin) sehingga tidak perlu diunggah per siswa.</p>
                     </div>
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 w-fit">
-                        <i class="fa-solid fa-wand-magic-sparkles text-amber-500 text-[10px]"></i> Auto-Hapus Background Aktif
-                    </span>
+                    <a href="/sk/rapor-walas<?php echo e(session('role') === 'a' ? '?kelas_id='.($wallas->kelas_id ?? '') : ''); ?>" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 w-fit transition-colors">
+                        <i class="fa-solid fa-pen-to-square text-[10px]"></i> Atur TTD Kelas di <?php echo e(session('role') === 'a' ? 'Rapor Siswa' : 'Cetak Rapor'); ?>
+
+                    </a>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Kartu TTD Wali Kelas -->
+                    <!-- Pratinjau TTD Wali Kelas -->
                     <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col justify-between">
                         <div>
                             <div class="flex items-center justify-between mb-1.5">
@@ -253,55 +254,39 @@
                             </div>
                             <p class="text-[11px] text-slate-500 mb-2.5 truncate">Wali Kelas: <strong class="text-slate-700"><?php echo e($wallas->guru->nama ?? 'Wali Kelas'); ?></strong></p>
 
-                            <!-- Pratinjau TTD Walas -->
-                            <div id="boxPreviewTtdWalas" class="h-24 rounded-lg border-2 border-dashed border-slate-300 bg-white flex items-center justify-center relative overflow-hidden mb-3">
+                            <div class="h-24 rounded-lg border-2 border-dashed border-slate-300 bg-white flex items-center justify-center relative overflow-hidden mb-2">
                                 <img id="thumbTtdWalas" src="" alt="TTD Walas" class="max-h-20 max-w-full object-contain hidden" style="mix-blend-mode: multiply;" />
                                 <div id="placeholderTtdWalas" class="text-center text-slate-400">
                                     <i class="fa-solid fa-file-signature text-2xl mb-1 text-slate-300 block"></i>
-                                    <span class="text-[11px]">Belum ada tanda tangan</span>
+                                    <span class="text-[11px]">Belum diunggah di halaman <?php echo e(session('role') === 'a' ? 'Rapor Siswa' : 'Cetak Rapor'); ?></span>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="flex items-center gap-2">
-                            <input type="file" id="fileTtdWalas" accept="image/*" class="hidden" onchange="handleSignatureUpload(this, 'walas')">
-                            <button type="button" onclick="document.getElementById('fileTtdWalas').click()" class="flex-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs">
-                                <i class="fa-solid fa-arrow-up-from-bracket text-[11px]"></i> Upload TTD Walas
-                            </button>
-                            <button type="button" id="btnHapusTtdWalas" onclick="removeSignature('walas')" class="px-3 py-2 bg-slate-200 hover:bg-rose-100 hover:text-rose-700 text-slate-600 rounded-lg text-xs font-semibold transition-colors hidden cursor-pointer" title="Hapus tanda tangan">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
+                        <p class="text-[10px] text-slate-400">Unggah 1 kali di menu <a href="/sk/rapor-walas<?php echo e(session('role') === 'a' ? '?kelas_id='.($wallas->kelas_id ?? '') : ''); ?>" class="text-emerald-700 font-semibold underline"><?php echo e(session('role') === 'a' ? 'Rapor Siswa' : 'Cetak Rapor'); ?></a> agar berlaku sekelas.</p>
                     </div>
 
-                    <!-- Kartu TTD Kepala Sekolah -->
+                    <!-- Pratinjau TTD Kepala Sekolah -->
                     <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col justify-between">
                         <div>
                             <div class="flex items-center justify-between mb-1.5">
                                 <label class="text-xs font-bold text-slate-700">Tanda Tangan Kepala Sekolah</label>
-                                <span id="statusTtdKepsek" class="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-200 text-slate-600">Belum diunggah</span>
+                                <span id="statusTtdKepsek" class="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-200 text-slate-600">Belum diunggah Admin</span>
                             </div>
                             <p class="text-[11px] text-slate-500 mb-2.5 truncate">Kepala Sekolah: <strong class="text-slate-700"><?php echo e($raporMeta['nama_kepsek']); ?></strong></p>
 
-                            <!-- Pratinjau TTD Kepsek -->
-                            <div id="boxPreviewTtdKepsek" class="h-24 rounded-lg border-2 border-dashed border-slate-300 bg-white flex items-center justify-center relative overflow-hidden mb-3">
+                            <div class="h-24 rounded-lg border-2 border-dashed border-slate-300 bg-white flex items-center justify-center relative overflow-hidden mb-2">
                                 <img id="thumbTtdKepsek" src="" alt="TTD Kepsek" class="max-h-20 max-w-full object-contain hidden" style="mix-blend-mode: multiply;" />
                                 <div id="placeholderTtdKepsek" class="text-center text-slate-400">
-                                    <i class="fa-solid fa-file-signature text-2xl mb-1 text-slate-300 block"></i>
-                                    <span class="text-[11px]">Belum ada tanda tangan</span>
+                                    <i class="fa-solid fa-stamp text-2xl mb-1 text-slate-300 block"></i>
+                                    <span class="text-[11px]">Menunggu TTD Kepala Sekolah dari Admin</span>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="flex items-center gap-2">
-                            <input type="file" id="fileTtdKepsek" accept="image/*" class="hidden" onchange="handleSignatureUpload(this, 'kepsek')">
-                            <button type="button" onclick="document.getElementById('fileTtdKepsek').click()" class="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs">
-                                <i class="fa-solid fa-arrow-up-from-bracket text-[11px]"></i> Upload TTD Kepsek
-                            </button>
-                            <button type="button" id="btnHapusTtdKepsek" onclick="removeSignature('kepsek')" class="px-3 py-2 bg-slate-200 hover:bg-rose-100 hover:text-rose-700 text-slate-600 rounded-lg text-xs font-semibold transition-colors hidden cursor-pointer" title="Hapus tanda tangan">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
+                        <?php if(session('role') === 'a'): ?>
+                            <p class="text-[10px] text-slate-400">Kelola global di <a href="/sk/rapor-walas?tab=pengesahan" class="text-blue-600 font-semibold underline">Rapor Siswa &rarr; Pengesahan</a>.</p>
+                        <?php else: ?>
+                            <p class="text-[10px] text-slate-400"><i class="fa-solid fa-lock text-[9px] mr-1"></i> Dikelola terpusat oleh Admin Sekolah.</p>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -660,20 +645,19 @@
                     if (<?php echo json_encode(!empty($raporMeta['has_prestasi_db']), 15, 512) ?>) {
                         state.prestasi = DEFAULT_STATE.prestasi;
                     }
-                }
+                    // Tanda tangan selalu mengikuti data otoritatif database (level Kelas & Admin)
+                    state.ttd_walas = DEFAULT_STATE.ttd_walas;
+                    state.ttd_kepsek = DEFAULT_STATE.ttd_kepsek;
 
-                // Fallback TTD bersama satu kelas/sekolah jika belum di-set khusus
-                if (!state.ttd_walas) {
+                    // Bersihkan entri dummy atau data uji coba seperti 'test'
+                    if (Array.isArray(state.prestasi)) {
+                        state.prestasi = state.prestasi.filter(p => typeof p === 'string' && p.trim().toLowerCase() !== 'test' && p.trim() !== '');
+                    }
+
+                    // Sinkronkan kembali localStorage agar bersih dari residu data uji coba
                     try {
-                        const sharedWalas = localStorage.getItem('siakad_shared_ttd_walas_<?php echo e($wallas->kelas_id ?? "0"); ?>');
-                        if (sharedWalas) state.ttd_walas = sharedWalas;
-                    } catch(e){}
-                }
-                if (!state.ttd_kepsek) {
-                    try {
-                        const sharedKepsek = localStorage.getItem('siakad_shared_ttd_kepsek');
-                        if (sharedKepsek) state.ttd_kepsek = sharedKepsek;
-                    } catch(e){}
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                    } catch (err) {}
                 }
             } catch (e) {
                 console.error('Error loading state:', e);
@@ -726,8 +710,6 @@
                         tanggal_rapor: state.tanggal,
                         nama_kepsek: state.kepsek,
                         nama_walas: state.walas,
-                        ttd_walas: state.ttd_walas,
-                        ttd_kepsek: state.ttd_kepsek,
                         tahun_ajaran_id: <?php echo e($tahun_aktif->id ?? 'null'); ?>,
                         semester: <?php echo e(($tahun_aktif->semester ?? 1) == 2 ? 2 : 1); ?>
 
@@ -948,137 +930,48 @@
             saveState();
         }
 
-        // Update UI Kartu Upload TTD di Tab 4
+        // Update UI Pratinjau TTD di Tab 4 (Read-Only dari Pengaturan Kelas & Admin)
         function updateSignatureUI() {
-            // Walas
-            const thumbWalas = document.getElementById('thumbTtdWalas');
-            const placeholderWalas = document.getElementById('placeholderTtdWalas');
-            const statusWalas = document.getElementById('statusTtdWalas');
-            const btnHapusWalas = document.getElementById('btnHapusTtdWalas');
-
-            if (state.ttd_walas) {
-                if (thumbWalas) { thumbWalas.src = state.ttd_walas; thumbWalas.classList.remove('hidden'); }
-                if (placeholderWalas) placeholderWalas.classList.add('hidden');
-                if (statusWalas) {
-                    statusWalas.textContent = 'Aktif (Transparan)';
-                    statusWalas.className = 'text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800';
+            const previews = [
+                {
+                    dataUrl: state.ttd_walas,
+                    thumbId: 'thumbTtdWalas',
+                    placeholderId: 'placeholderTtdWalas',
+                    statusId: 'statusTtdWalas',
+                    activeLabel: 'Aktif (Dari Kelas)',
+                    emptyLabel: 'Belum diunggah'
+                },
+                {
+                    dataUrl: state.ttd_kepsek,
+                    thumbId: 'thumbTtdKepsek',
+                    placeholderId: 'placeholderTtdKepsek',
+                    statusId: 'statusTtdKepsek',
+                    activeLabel: 'Aktif (Dari Admin)',
+                    emptyLabel: 'Belum diunggah Admin'
                 }
-                if (btnHapusWalas) btnHapusWalas.classList.remove('hidden');
-            } else {
-                if (thumbWalas) { thumbWalas.src = ''; thumbWalas.classList.add('hidden'); }
-                if (placeholderWalas) placeholderWalas.classList.remove('hidden');
-                if (statusWalas) {
-                    statusWalas.textContent = 'Belum diunggah';
-                    statusWalas.className = 'text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-200 text-slate-600';
-                }
-                if (btnHapusWalas) btnHapusWalas.classList.add('hidden');
-            }
+            ];
 
-            // Kepsek
-            const thumbKepsek = document.getElementById('thumbTtdKepsek');
-            const placeholderKepsek = document.getElementById('placeholderTtdKepsek');
-            const statusKepsek = document.getElementById('statusTtdKepsek');
-            const btnHapusKepsek = document.getElementById('btnHapusTtdKepsek');
+            previews.forEach(item => {
+                const thumb = document.getElementById(item.thumbId);
+                const placeholder = document.getElementById(item.placeholderId);
+                const statusEl = document.getElementById(item.statusId);
 
-            if (state.ttd_kepsek) {
-                if (thumbKepsek) { thumbKepsek.src = state.ttd_kepsek; thumbKepsek.classList.remove('hidden'); }
-                if (placeholderKepsek) placeholderKepsek.classList.add('hidden');
-                if (statusKepsek) {
-                    statusKepsek.textContent = 'Aktif (Transparan)';
-                    statusKepsek.className = 'text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800';
-                }
-                if (btnHapusKepsek) btnHapusKepsek.classList.remove('hidden');
-            } else {
-                if (thumbKepsek) { thumbKepsek.src = ''; thumbKepsek.classList.add('hidden'); }
-                if (placeholderKepsek) placeholderKepsek.classList.remove('hidden');
-                if (statusKepsek) {
-                    statusKepsek.textContent = 'Belum diunggah';
-                    statusKepsek.className = 'text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-200 text-slate-600';
-                }
-                if (btnHapusKepsek) btnHapusKepsek.classList.add('hidden');
-            }
-        }
-
-        // Algoritma Penghapus Background Tanda Tangan Otomatis (HTML5 Canvas Pixel Filter)
-        // Kecepatan proses: ~10-30 milidetik (instan) di browser pengguna
-        function removeSignatureBackground(file, callback) {
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    let width = img.width;
-                    let height = img.height;
-                    const maxW = 600;
-                    if (width > maxW) {
-                        height = Math.round((height * maxW) / width);
-                        width = maxW;
+                if (item.dataUrl) {
+                    if (thumb) { thumb.src = item.dataUrl; thumb.classList.remove('hidden'); }
+                    if (placeholder) placeholder.classList.add('hidden');
+                    if (statusEl) {
+                        statusEl.textContent = item.activeLabel;
+                        statusEl.className = 'text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800';
                     }
-
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    const imgData = ctx.getImageData(0, 0, width, height);
-                    const d = imgData.data;
-
-                    // Nilai threshold kecerahan (0-255). Kertas putih/terang biasanya > 195
-                    const threshold = 205;
-
-                    for (let i = 0; i < d.length; i += 4) {
-                        const r = d[i];
-                        const g = d[i + 1];
-                        const b = d[i + 2];
-                        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
-
-                        if (luminance >= threshold) {
-                            // Latar belakang kertas putih/krem diubah menjadi 100% transparan
-                            d[i + 3] = 0;
-                        } else {
-                            // Goresan tinta gelap: buat transparan bertingkat halus (antialiased)
-                            const factor = (threshold - luminance) / threshold;
-                            d[i + 3] = Math.min(255, Math.max(0, Math.round(factor * 340)));
-                        }
+                } else {
+                    if (thumb) { thumb.src = ''; thumb.classList.add('hidden'); }
+                    if (placeholder) placeholder.classList.remove('hidden');
+                    if (statusEl) {
+                        statusEl.textContent = item.emptyLabel;
+                        statusEl.className = 'text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-200 text-slate-600';
                     }
-
-                    ctx.putImageData(imgData, 0, 0);
-                    callback(canvas.toDataURL('image/png'));
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function handleSignatureUpload(inputEl, role) {
-            const file = inputEl.files && inputEl.files[0];
-            if (!file) return;
-
-            removeSignatureBackground(file, function(pngDataUrl) {
-                if (role === 'walas') {
-                    state.ttd_walas = pngDataUrl;
-                    try { localStorage.setItem('siakad_shared_ttd_walas_<?php echo e($wallas->kelas_id ?? "0"); ?>', pngDataUrl); } catch(e){}
-                } else if (role === 'kepsek') {
-                    state.ttd_kepsek = pngDataUrl;
-                    try { localStorage.setItem('siakad_shared_ttd_kepsek', pngDataUrl); } catch(e){}
                 }
-                updateSignatureUI();
-                saveState();
             });
-            inputEl.value = '';
-        }
-
-        function removeSignature(role) {
-            if (role === 'walas') {
-                state.ttd_walas = null;
-                try { localStorage.removeItem('siakad_shared_ttd_walas_<?php echo e($wallas->kelas_id ?? "0"); ?>'); } catch(e){}
-            } else if (role === 'kepsek') {
-                state.ttd_kepsek = null;
-                try { localStorage.removeItem('siakad_shared_ttd_kepsek'); } catch(e){}
-            }
-            updateSignatureUI();
-            saveState();
         }
 
         // Template Catatan Picker

@@ -124,7 +124,7 @@ class siswaController extends Controller
             'persentase' => $total_absen > 0 ? round(($hadir_absen / $total_absen) * 100) : 100,
         ];
 
-        // 2. Jadwal Pelajaran Hari Ini & Status Kehadiran Guru Pengajar
+        // 2. Jadwal Pelajaran Hari Ini & Jurnal Materi
         $nama_ruang = $data_kelas->nama_ruang ?? '';
         $kelas_jadwal = $nama_ruang ? kelas::where('nama_kelas', $nama_ruang)->first() : null;
         $kelas_id_jadwal = $kelas_jadwal ? $kelas_jadwal->id : ($data_siswa->kelas_id ?? null);
@@ -145,7 +145,8 @@ class siswaController extends Controller
                 ->values();
 
             if ($jadwal_hari_ini->isNotEmpty()) {
-                $absensi_guru_hari_ini = absensi_mengajar_guru::whereIn('jadwal_pelajaran_id', $jadwal_hari_ini->pluck('id'))
+                $absensi_guru_hari_ini = absensi_mengajar_guru::select(['id', 'jadwal_pelajaran_id', 'materi', 'catatan'])
+                    ->whereIn('jadwal_pelajaran_id', $jadwal_hari_ini->pluck('id'))
                     ->whereDate('tanggal', date('Y-m-d'))
                     ->get()
                     ->keyBy('jadwal_pelajaran_id');
@@ -196,7 +197,7 @@ class siswaController extends Controller
         $pengumuman_db = pengumuman::orderByDesc('tanggal')->orderByDesc('id')->take(4)->get();
         $list_pengumuman = $pengumuman_db->map(function ($p) {
             return (object)[
-                'tanggal' => $p->tanggal ? Carbon::parse($p->tanggal)->locale('id')->isoFormat('D MMM Y') : now()->isoFormat('D MMM Y'),
+                'tanggal' => $p->tanggal ? Carbon::parse($p->tanggal)->locale('id')->isoFormat('D MMM Y') : now()->locale('id')->isoFormat('D MMM Y'),
                 'judul' => $p->judul,
                 'ringkasan' => \Illuminate\Support\Str::limit(strip_tags($p->isi), 100),
                 'isi' => $p->isi,
@@ -204,10 +205,13 @@ class siswaController extends Controller
             ];
         });
 
+        $rankingInfo = app(\App\Services\SiakadRankingService::class)
+            ->buildClassRankingContext(($data_siswa && $data_siswa->kelas_id) ? (int) $data_siswa->kelas_id : null, $data_siswa ? (int) $data_siswa->id : null)['ranking_siswa'];
+
         return view('/modul/siakad/siswa/dashboardSiswa', compact(
             "data_siswa", "data_kelas", "wallas", "tahun_aktif",
             "rekap_absen", "jadwal_hari_ini", "hari_ini_label", "absensi_guru_hari_ini",
-            "nilai_terbaru", "rata_rata_nilai", "ringkasan_pembayaran", "list_pengumuman"
+            "nilai_terbaru", "rata_rata_nilai", "ringkasan_pembayaran", "list_pengumuman", "rankingInfo"
         ));
     }
 
@@ -310,7 +314,7 @@ class siswaController extends Controller
 
             return (object)[
                 'id' => $p->id,
-                'tanggal' => $p->tanggal ? Carbon::parse($p->tanggal)->locale('id')->isoFormat('D MMMM Y') : now()->isoFormat('D MMMM Y'),
+                'tanggal' => $p->tanggal ? Carbon::parse($p->tanggal)->locale('id')->isoFormat('D MMMM Y') : now()->locale('id')->isoFormat('D MMMM Y'),
                 'judul' => $p->judul,
                 'penulis' => $p->penulis ?? 'Admin SIAKAD',
                 'ringkasan' => \Illuminate\Support\Str::limit(strip_tags($p->isi), 140),

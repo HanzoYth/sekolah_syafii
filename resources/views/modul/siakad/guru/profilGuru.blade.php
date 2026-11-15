@@ -87,7 +87,7 @@
                 <div>
                     <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Tempat, Tanggal Lahir</span>
                     <p class="font-semibold text-slate-700">
-                        {{ $guru->tempat_lahir ?? '-' }}, {{ !empty($guru->tanggal_lahir) ? \Carbon\Carbon::parse($guru->tanggal_lahir)->translatedFormat('d F Y') : '-' }}
+                        {{ $guru->tempat_lahir ?? '-' }}, {{ !empty($guru->tanggal_lahir) ? \Carbon\Carbon::parse($guru->tanggal_lahir)->locale('id')->isoFormat('D MMMM Y') : '-' }}
                     </p>
                 </div>
                 <div>

@@ -41,10 +41,44 @@
             <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl flex-shrink-0">
                 <i class="fa-solid fa-chart-line"></i>
             </div>
-            <div>
+            <div class="min-w-0 flex-1">
                 <p class="text-xs font-medium text-slate-500">Rata-rata Nilai Akhir</p>
-                <h3 class="text-xl font-bold text-emerald-600"><?php echo e(($stats_akademik['rata_rata'] ?? 0) > 0 ? number_format($stats_akademik['rata_rata'], 1) : '-'); ?></h3>
-                <p class="text-[11px] text-emerald-700 font-semibold mt-0.5">Predikat: <?php echo e($stats_akademik['predikat_umum'] ?? '-'); ?></p>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="text-xl font-bold text-emerald-600"><?php echo e(($stats_akademik['rata_rata'] ?? 0) > 0 ? number_format($stats_akademik['rata_rata'], 1) : '-'); ?></h3>
+                    <?php if(($rankingInfo['final_ready'] ?? false) && !empty($rankingInfo['peringkat_siswa'])): ?>
+                        <?php if (isset($component)) { $__componentOriginal857dd9638daa2acd55509dbe6d317237 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal857dd9638daa2acd55509dbe6d317237 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.rank-badge','data' => ['rank' => $rankingInfo['peringkat_siswa'],'variant' => 'compact']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('siakad.rank-badge'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['rank' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($rankingInfo['peringkat_siswa']),'variant' => 'compact']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal857dd9638daa2acd55509dbe6d317237)): ?>
+<?php $attributes = $__attributesOriginal857dd9638daa2acd55509dbe6d317237; ?>
+<?php unset($__attributesOriginal857dd9638daa2acd55509dbe6d317237); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal857dd9638daa2acd55509dbe6d317237)): ?>
+<?php $component = $__componentOriginal857dd9638daa2acd55509dbe6d317237; ?>
+<?php unset($__componentOriginal857dd9638daa2acd55509dbe6d317237); ?>
+<?php endif; ?>
+                    <?php endif; ?>
+                </div>
+                <?php if(($rankingInfo['final_ready'] ?? false) && !empty($rankingInfo['peringkat_siswa'])): ?>
+                    <p class="text-[11px] text-emerald-700 font-semibold mt-0.5">Peringkat #<?php echo e($rankingInfo['peringkat_siswa']); ?> dari <?php echo e($rankingInfo['total_siswa']); ?> siswa • Predikat <?php echo e($stats_akademik['predikat_umum'] ?? '-'); ?></p>
+                <?php else: ?>
+                    <p class="text-[11px] text-emerald-700 font-semibold mt-0.5">
+                        Predikat: <?php echo e($stats_akademik['predikat_umum'] ?? '-'); ?>
+
+                        <?php if(($rankingInfo['total_mapel'] ?? 0) > 0): ?>
+                            <span class="text-slate-400 font-normal">• Peringkat menunggu <?php echo e($rankingInfo['mapel_lengkap'] ?? 0); ?>/<?php echo e($rankingInfo['total_mapel']); ?> mapel</span>
+                        <?php endif; ?>
+                    </p>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -368,8 +402,36 @@
                 try {
                     const saved = localStorage.getItem('siakad_rapor_custom_<?php echo e($siswa->id); ?>');
                     const hasDbCatatan = <?php echo json_encode(!empty($raporMeta['has_evaluasi_db']), 15, 512) ?>;
+                    const hasDbPrestasi = <?php echo json_encode(!empty($raporMeta['has_prestasi_db']), 15, 512) ?>;
                     if (saved) {
                         const data = JSON.parse(saved);
+                        let storageNeedsUpdate = false;
+
+                        // Bersihkan cache draft 'test' atau draft yang sudah resmi disimpan di database MySQL
+                        if (data.prestasi && Array.isArray(data.prestasi)) {
+                            if (hasDbPrestasi) {
+                                delete data.prestasi;
+                                storageNeedsUpdate = true;
+                            } else {
+                                const cleanPrestasi = data.prestasi.filter(p => typeof p === 'string' && p.trim().toLowerCase() !== 'test' && p.trim() !== '');
+                                if (cleanPrestasi.length !== data.prestasi.length) {
+                                    data.prestasi = cleanPrestasi;
+                                    storageNeedsUpdate = true;
+                                }
+                            }
+                        }
+
+                        if (hasDbCatatan && data.catatan) {
+                            delete data.catatan;
+                            storageNeedsUpdate = true;
+                        }
+
+                        if (storageNeedsUpdate) {
+                            try {
+                                localStorage.setItem('siakad_rapor_custom_<?php echo e($siswa->id); ?>', JSON.stringify(data));
+                            } catch (e) {}
+                        }
+
                         if (data.catatan && !hasDbCatatan) {
                             const c = document.getElementById('studentCatatanWalas');
                             if (c) c.textContent = data.catatan;
@@ -385,14 +447,6 @@
                         if (data.walas) {
                             const w = document.getElementById('studentWalasNama');
                             if (w) w.textContent = data.walas;
-                        }
-                        if (data.ttd_walas) {
-                            const tw = document.getElementById('studentTtdWalas');
-                            if (tw) { tw.src = data.ttd_walas; tw.classList.remove('hidden'); }
-                        }
-                        if (data.ttd_kepsek) {
-                            const tk = document.getElementById('studentTtdKepsek');
-                            if (tk) { tk.src = data.ttd_kepsek; tk.classList.remove('hidden'); }
                         }
                         if (data.kegiatan && Array.isArray(data.kegiatan)) {
                             const kb = document.getElementById('studentKegiatanBody');
@@ -417,7 +471,8 @@
                                 `).join('');
                             }
                         }
-                        if (data.prestasi && Array.isArray(data.prestasi)) {
+                        // Prioritaskan selalu data resmi database. Jangan menimpa jika sudah ada di database atau jika berisi data tidak valid
+                        if (!hasDbPrestasi && data.prestasi && Array.isArray(data.prestasi)) {
                             const pb = document.getElementById('studentPrestasiBody');
                             if (pb) {
                                 if (data.prestasi.length === 0) {
@@ -437,6 +492,27 @@
             });
         </script>
     <?php else: ?>
+        <?php if (isset($component)) { $__componentOriginal1691daaddf24c87a01d5d05d69175a06 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal1691daaddf24c87a01d5d05d69175a06 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.top3-siswa-strip','data' => ['ranking' => $rankingInfo ?? [],'currentSiswaId' => $siswa->id ?? null,'kelasNama' => $siswa->kelas->nama_ruang ?? '','showPendingHint' => true]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('siakad.top3-siswa-strip'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['ranking' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($rankingInfo ?? []),'current-siswa-id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($siswa->id ?? null),'kelas-nama' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($siswa->kelas->nama_ruang ?? ''),'show-pending-hint' => true]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal1691daaddf24c87a01d5d05d69175a06)): ?>
+<?php $attributes = $__attributesOriginal1691daaddf24c87a01d5d05d69175a06; ?>
+<?php unset($__attributesOriginal1691daaddf24c87a01d5d05d69175a06); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal1691daaddf24c87a01d5d05d69175a06)): ?>
+<?php $component = $__componentOriginal1691daaddf24c87a01d5d05d69175a06; ?>
+<?php unset($__componentOriginal1691daaddf24c87a01d5d05d69175a06); ?>
+<?php endif; ?>
+
         <!-- TAB 1: TRANSKRIP RINCIAN NILAI KOMPONEN -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
             <div class="px-6 py-5 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">

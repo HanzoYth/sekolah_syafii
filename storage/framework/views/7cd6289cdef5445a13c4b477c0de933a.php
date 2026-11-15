@@ -114,6 +114,12 @@
                                 <span>Wali Kelas</span>
                             </a>
                         </li>
+                        <li class="menu-item <?php echo e(request()->is('sk/rapor-walas', 'sk/detail-rapor-walas/*') ? 'active' : ''); ?>">
+                            <a href="/sk/rapor-walas">
+                                <i class="fa-solid fa-file-contract"></i>
+                                <span>Rapor Siswa</span>
+                            </a>
+                        </li>
                         <li class="menu-item <?php echo e(request()->is('sk/kenaikan-kelas') ? 'active' : ''); ?>">
                             <a href="/sk/kenaikan-kelas">
                                 <i class="fa-solid fa-graduation-cap"></i>
