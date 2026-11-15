@@ -71,10 +71,40 @@
             <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
                 <i class="fa-solid fa-star text-xl"></i>
             </div>
-            <div>
+            <div class="min-w-0 flex-1">
                 <p class="text-sm font-medium text-slate-500">Rata-rata Nilai</p>
-                <h3 class="text-2xl font-bold text-slate-800"><?php echo e(($rata_rata_nilai ?? 0) > 0 ? $rata_rata_nilai : '-'); ?></h3>
-                <p class="text-xs text-slate-400 mt-1"><?php echo e(isset($nilai_terbaru) ? $nilai_terbaru->count() : 0); ?> Mata pelajaran dinilai</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="text-2xl font-bold text-slate-800"><?php echo e(($rata_rata_nilai ?? 0) > 0 ? $rata_rata_nilai : '-'); ?></h3>
+                    <?php if(($rankingInfo['final_ready'] ?? false) && !empty($rankingInfo['peringkat_siswa'])): ?>
+                        <?php if (isset($component)) { $__componentOriginal857dd9638daa2acd55509dbe6d317237 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal857dd9638daa2acd55509dbe6d317237 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.rank-badge','data' => ['rank' => $rankingInfo['peringkat_siswa'],'variant' => 'compact']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('siakad.rank-badge'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['rank' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($rankingInfo['peringkat_siswa']),'variant' => 'compact']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal857dd9638daa2acd55509dbe6d317237)): ?>
+<?php $attributes = $__attributesOriginal857dd9638daa2acd55509dbe6d317237; ?>
+<?php unset($__attributesOriginal857dd9638daa2acd55509dbe6d317237); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal857dd9638daa2acd55509dbe6d317237)): ?>
+<?php $component = $__componentOriginal857dd9638daa2acd55509dbe6d317237; ?>
+<?php unset($__componentOriginal857dd9638daa2acd55509dbe6d317237); ?>
+<?php endif; ?>
+                    <?php endif; ?>
+                </div>
+                <?php if(($rankingInfo['final_ready'] ?? false) && !empty($rankingInfo['peringkat_siswa'])): ?>
+                    <p class="text-xs text-emerald-700 font-semibold mt-1">Peringkat #<?php echo e($rankingInfo['peringkat_siswa']); ?> dari <?php echo e($rankingInfo['total_siswa']); ?> siswa</p>
+                <?php elseif(($rankingInfo['total_mapel'] ?? 0) > 0): ?>
+                    <p class="text-xs text-slate-400 mt-1">Menunggu nilai lengkap (<?php echo e($rankingInfo['mapel_lengkap'] ?? 0); ?>/<?php echo e($rankingInfo['total_mapel']); ?> mapel)</p>
+                <?php else: ?>
+                    <p class="text-xs text-slate-400 mt-1"><?php echo e(isset($nilai_terbaru) ? $nilai_terbaru->count() : 0); ?> Mata pelajaran dinilai</p>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -104,7 +134,7 @@
             $namaSiswa = $data_siswa->nama ?? 'Siswa';
             $nisSiswa = $data_siswa->nis ?? '-';
             $ruangKelasNama = $data_kelas->nama_ruang ?? '-';
-            $tanggalHariIni = \Carbon\Carbon::now()->isoFormat('dddd, D MMMM Y');
+            $tanggalHariIni = \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y');
         ?>
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
             <div class="flex items-start space-x-4">
@@ -135,7 +165,7 @@
             <div class="px-6 py-5 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
                 <div>
                     <h3 class="text-base font-bold text-slate-800">Jadwal & Aktivitas Kelas Hari Ini</h3>
-                    <p class="text-xs text-slate-500"><?php echo e($hari_ini_label ?? date('d M Y')); ?> &bull; <?php echo e($data_kelas->nama_ruang ?? '-'); ?></p>
+                    <p class="text-xs text-slate-500"><?php echo e($hari_ini_label ?? \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM Y')); ?> &bull; <?php echo e($data_kelas->nama_ruang ?? '-'); ?></p>
                 </div>
                 <a href="/sk/jadwal-siswa" class="text-xs font-bold text-emerald-600 hover:text-emerald-700">
                     Jadwal Lengkap <i class="fa-solid fa-arrow-right ml-1"></i>
@@ -165,11 +195,6 @@
                                     <div>
                                         <div class="flex items-center gap-2">
                                             <h4 class="text-sm font-bold text-slate-800"><?php echo e($j->mata_pelajaran->nama_mapel ?? '-'); ?></h4>
-                                            <?php if($absen_guru): ?>
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                                                    <i class="fa-solid fa-chalkboard-user mr-1"></i> Guru Masuk (<?php echo e(substr($absen_guru->jam_masuk, 0, 5)); ?>)
-                                                </span>
-                                            <?php endif; ?>
                                         </div>
                                         <p class="text-xs text-slate-500 mt-0.5">
                                             <i class="fa-solid fa-user-tie text-[10px] mr-1 text-slate-400"></i> <?php echo e($j->guru->nama ?? '-'); ?>
@@ -268,12 +293,33 @@
                 <?php endif; ?>
 
                 <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                    <span class="text-slate-500">Rata-rata Nilai Akhir Sementara:</span>
+                    <span class="text-slate-500"><?php echo e(($rankingInfo['final_ready'] ?? false) ? 'Rata-rata Nilai Akhir:' : 'Rata-rata Nilai Akhir Sementara:'); ?></span>
                     <span class="font-bold text-slate-800 text-sm"><?php echo e(($rata_rata_nilai ?? 0) > 0 ? $rata_rata_nilai : '-'); ?></span>
                 </div>
             </div>
         </div>
     </div>
+
+    <?php if (isset($component)) { $__componentOriginal1691daaddf24c87a01d5d05d69175a06 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal1691daaddf24c87a01d5d05d69175a06 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.top3-siswa-strip','data' => ['ranking' => $rankingInfo ?? [],'currentSiswaId' => $data_siswa->id ?? null,'kelasNama' => $data_kelas->nama_ruang ?? '']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('siakad.top3-siswa-strip'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['ranking' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($rankingInfo ?? []),'current-siswa-id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($data_siswa->id ?? null),'kelas-nama' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($data_kelas->nama_ruang ?? '')]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal1691daaddf24c87a01d5d05d69175a06)): ?>
+<?php $attributes = $__attributesOriginal1691daaddf24c87a01d5d05d69175a06; ?>
+<?php unset($__attributesOriginal1691daaddf24c87a01d5d05d69175a06); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal1691daaddf24c87a01d5d05d69175a06)): ?>
+<?php $component = $__componentOriginal1691daaddf24c87a01d5d05d69175a06; ?>
+<?php unset($__componentOriginal1691daaddf24c87a01d5d05d69175a06); ?>
+<?php endif; ?>
 
     <!-- Lower Grid: Administrasi Pembayaran & Pengumuman -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -348,8 +394,8 @@
             <div class="divide-y divide-slate-100 flex-1">
                 <?php
                     $daftar_info = (isset($list_pengumuman) && count($list_pengumuman) > 0) ? $list_pengumuman : collect([
-                        (object)['tanggal' => now()->isoFormat('D MMM Y'), 'judul' => 'Monitoring Akademik & Kehadiran Real-Time', 'ringkasan' => 'Orang tua dan siswa kini dapat memantau kehadiran harian, jurnal materi guru, dan nilai rapor secara langsung melalui portal SIAKAD.'],
-                        (object)['tanggal' => now()->subDays(3)->isoFormat('D MMM Y'), 'judul' => 'Ketertiban Waktu Masuk Kelas', 'ringkasan' => 'Kegiatan belajar mengajar dimulai tepat waktu sesuai jadwal pelajaran kelas masing-masing.'],
+                        (object)['tanggal' => now()->locale('id')->isoFormat('D MMM Y'), 'judul' => 'Monitoring Akademik & Kehadiran Real-Time', 'ringkasan' => 'Orang tua dan siswa kini dapat memantau kehadiran harian, jurnal materi guru, dan nilai rapor secara langsung melalui portal SIAKAD.'],
+                        (object)['tanggal' => now()->subDays(3)->locale('id')->isoFormat('D MMM Y'), 'judul' => 'Ketertiban Waktu Masuk Kelas', 'ringkasan' => 'Kegiatan belajar mengajar dimulai tepat waktu sesuai jadwal pelajaran kelas masing-masing.'],
                     ]);
                 ?>
                 <?php $__currentLoopData = $daftar_info; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $info): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -467,7 +513,11 @@
             const previewArea = document.getElementById('previewPesanWa');
             const text = previewArea ? previewArea.value : '';
             if (!waConfig.noWa) {
-                alert('Nomor WhatsApp Wali Kelas belum tercatat.');
+                if (window.SiakadAlert) {
+                    window.SiakadAlert.warning('Nomor WhatsApp Belum Tersedia', 'Nomor WhatsApp Wali Kelas belum tercatat.');
+                } else {
+                    alert('Nomor WhatsApp Wali Kelas belum tercatat.');
+                }
                 return;
             }
             const url = `https://wa.me/${waConfig.noWa}?text=${encodeURIComponent(text)}`;

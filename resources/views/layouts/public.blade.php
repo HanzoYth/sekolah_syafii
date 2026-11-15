@@ -183,6 +183,7 @@
     </div>
 
     <!-- ======== SCRIPTS ======== -->
+    @include('components.home-editor-hydrate')
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
@@ -320,19 +321,26 @@
                 requestAnimationFrame(animateMouseParallax);
             }
 
-            // F. 3D Card Tilt pada Kartu Program
-            var tiltCards = document.querySelectorAll('.tilt-card');
+            // F. 3D Card Tilt pada Kartu Program (Delegated untuk kartu statis & dinamis)
             if (window.matchMedia('(hover: hover)').matches) {
-                tiltCards.forEach(function (card) {
-                    card.addEventListener('mousemove', function (e) {
-                        var r = card.getBoundingClientRect();
-                        var x = (e.clientX - r.left) / r.width - 0.5;
-                        var y = (e.clientY - r.top) / r.height - 0.5;
-                        card.style.transform = 'perspective(700px) rotateY(' + (x * 10).toFixed(1) + 'deg) rotateX(' + (-y * 10).toFixed(1) + 'deg) translateY(-8px)';
-                    });
-                    card.addEventListener('mouseleave', function () {
+                document.addEventListener('mousemove', function (e) {
+                    var card = e.target.closest ? e.target.closest('.tilt-card') : null;
+                    if (!card) return;
+                    if (document.body.classList.contains('editor-mode-active')) {
                         card.style.transform = '';
-                    });
+                        return;
+                    }
+                    var r = card.getBoundingClientRect();
+                    var x = (e.clientX - r.left) / r.width - 0.5;
+                    var y = (e.clientY - r.top) / r.height - 0.5;
+                    card.style.transform = 'perspective(700px) rotateY(' + (x * 10).toFixed(1) + 'deg) rotateX(' + (-y * 10).toFixed(1) + 'deg) translateY(-8px)';
+                });
+                document.addEventListener('mouseout', function (e) {
+                    var card = e.target.closest ? e.target.closest('.tilt-card') : null;
+                    if (!card) return;
+                    if (!e.relatedTarget || !card.contains(e.relatedTarget)) {
+                        card.style.transform = '';
+                    }
                 });
             }
         })();
@@ -387,34 +395,59 @@
         // ===== 4. FILTER KATEGORI GALERI & LIGHTBOX =====
         (function () {
             var filterBtns = [].slice.call(document.querySelectorAll('.galeri-filter-btn'));
-            var galeriItems = [].slice.call(document.querySelectorAll('#galeriGrid .galeri-item'));
+
+            function applyGalleryFilter(cat) {
+                var galeriItems = [].slice.call(document.querySelectorAll('#galeriGrid .galeri-item:not(.editor-removed-item)'));
+                galeriItems.forEach(function (item) {
+                    var match = (cat === 'all' || item.getAttribute('data-category') === cat);
+                    item.style.display = match ? '' : 'none';
+                });
+                if (typeof AOS !== 'undefined') AOS.refresh();
+            }
 
             filterBtns.forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     var cat = btn.getAttribute('data-filter');
                     filterBtns.forEach(function (b) { b.classList.toggle('active', b === btn); });
-                    galeriItems.forEach(function (item) {
-                        var match = (cat === 'all' || item.getAttribute('data-category') === cat);
-                        item.style.display = match ? '' : 'none';
-                    });
-                    if (typeof AOS !== 'undefined') AOS.refresh();
+                    applyGalleryFilter(cat);
                 });
             });
 
-            var items = [].slice.call(document.querySelectorAll('[data-lightbox]'));
+            window.SyafiiRefreshDynamicHooks = function () {
+                var activeBtn = document.querySelector('.galeri-filter-btn.active');
+                if (activeBtn) {
+                    applyGalleryFilter(activeBtn.getAttribute('data-filter') || 'all');
+                }
+            };
+
             var box = document.getElementById('lightbox');
-            if (!box || !items.length) return;
+            if (!box) return;
             var img = box.querySelector('img');
             var cap = box.querySelector('.lb-caption');
+            var activeList = [];
             var idx = 0;
 
-            function show(i) {
-                idx = (i + items.length) % items.length;
-                img.src = items[idx].getAttribute('data-full');
-                img.alt = items[idx].getAttribute('data-caption') || '';
-                cap.textContent = items[idx].getAttribute('data-caption') || '';
+            function getLightboxItems() {
+                return [].slice.call(document.querySelectorAll('[data-lightbox]')).filter(function (el) {
+                    var parentItem = el.closest('.galeri-item');
+                    if (parentItem && (parentItem.classList.contains('editor-removed-item') || parentItem.style.display === 'none')) {
+                        return false;
+                    }
+                    return true;
+                });
             }
-            function open(i) {
+
+            function show(i) {
+                if (!activeList.length) activeList = getLightboxItems();
+                if (!activeList.length) return;
+                idx = (i + activeList.length) % activeList.length;
+                img.src = activeList[idx].getAttribute('data-full');
+                img.alt = activeList[idx].getAttribute('data-caption') || '';
+                cap.textContent = activeList[idx].getAttribute('data-caption') || '';
+            }
+            function open(i, list) {
+                activeList = list || getLightboxItems();
+                if (!activeList.length) return;
                 show(i);
                 box.hidden = false;
                 document.body.classList.add('mobile-nav-locked');
@@ -426,7 +459,15 @@
                 document.body.classList.remove('mobile-nav-locked');
             }
 
-            items.forEach(function (el, i) { el.addEventListener('click', function () { open(i); }); });
+            document.addEventListener('click', function (e) {
+                if (document.body.classList.contains('editor-mode-active')) return;
+                if (e.target.closest && e.target.closest('.admin-item-actions, .btn-admin-change-img, .admin-img-overlay')) return;
+                var trigger = e.target.closest ? e.target.closest('[data-lightbox]') : null;
+                if (!trigger) return;
+                var items = getLightboxItems();
+                var pos = items.indexOf(trigger);
+                if (pos !== -1) open(pos, items);
+            });
             box.querySelector('.lb-close').addEventListener('click', close);
             box.querySelector('.lb-prev').addEventListener('click', function () { show(idx - 1); });
             box.querySelector('.lb-next').addEventListener('click', function () { show(idx + 1); });

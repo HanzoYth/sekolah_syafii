@@ -24,7 +24,7 @@
         <div class="siakad-topbar-actions">
             <div class="siakad-date" aria-label="Tanggal hari ini">
                 <i class="fa-regular fa-calendar-days"></i>
-                <span>{{ now()->translatedFormat('l, d F Y') }}</span>
+                <span>{{ now()->locale('id')->isoFormat('dddd, D MMMM Y') }}</span>
             </div>
 
             <!-- ============================================== -->

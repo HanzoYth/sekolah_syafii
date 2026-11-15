@@ -66,10 +66,21 @@
             <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
                 <i class="fa-solid fa-star text-xl"></i>
             </div>
-            <div>
+            <div class="min-w-0 flex-1">
                 <p class="text-sm font-medium text-slate-500">Rata-rata Nilai</p>
-                <h3 class="text-2xl font-bold text-slate-800">{{ ($rata_rata_nilai ?? 0) > 0 ? $rata_rata_nilai : '-' }}</h3>
-                <p class="text-xs text-slate-400 mt-1">{{ isset($nilai_terbaru) ? $nilai_terbaru->count() : 0 }} Mata pelajaran dinilai</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="text-2xl font-bold text-slate-800">{{ ($rata_rata_nilai ?? 0) > 0 ? $rata_rata_nilai : '-' }}</h3>
+                    @if(($rankingInfo['final_ready'] ?? false) && !empty($rankingInfo['peringkat_siswa']))
+                        <x-siakad.rank-badge :rank="$rankingInfo['peringkat_siswa']" variant="compact" />
+                    @endif
+                </div>
+                @if(($rankingInfo['final_ready'] ?? false) && !empty($rankingInfo['peringkat_siswa']))
+                    <p class="text-xs text-emerald-700 font-semibold mt-1">Peringkat #{{ $rankingInfo['peringkat_siswa'] }} dari {{ $rankingInfo['total_siswa'] }} siswa</p>
+                @elseif(($rankingInfo['total_mapel'] ?? 0) > 0)
+                    <p class="text-xs text-slate-400 mt-1">Menunggu nilai lengkap ({{ $rankingInfo['mapel_lengkap'] ?? 0 }}/{{ $rankingInfo['total_mapel'] }} mapel)</p>
+                @else
+                    <p class="text-xs text-slate-400 mt-1">{{ isset($nilai_terbaru) ? $nilai_terbaru->count() : 0 }} Mata pelajaran dinilai</p>
+                @endif
             </div>
         </div>
 
@@ -99,7 +110,7 @@
             $namaSiswa = $data_siswa->nama ?? 'Siswa';
             $nisSiswa = $data_siswa->nis ?? '-';
             $ruangKelasNama = $data_kelas->nama_ruang ?? '-';
-            $tanggalHariIni = \Carbon\Carbon::now()->isoFormat('dddd, D MMMM Y');
+            $tanggalHariIni = \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y');
         @endphp
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
             <div class="flex items-start space-x-4">
@@ -130,7 +141,7 @@
             <div class="px-6 py-5 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
                 <div>
                     <h3 class="text-base font-bold text-slate-800">Jadwal & Aktivitas Kelas Hari Ini</h3>
-                    <p class="text-xs text-slate-500">{{ $hari_ini_label ?? date('d M Y') }} &bull; {{ $data_kelas->nama_ruang ?? '-' }}</p>
+                    <p class="text-xs text-slate-500">{{ $hari_ini_label ?? \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM Y') }} &bull; {{ $data_kelas->nama_ruang ?? '-' }}</p>
                 </div>
                 <a href="/sk/jadwal-siswa" class="text-xs font-bold text-emerald-600 hover:text-emerald-700">
                     Jadwal Lengkap <i class="fa-solid fa-arrow-right ml-1"></i>
@@ -160,11 +171,6 @@
                                     <div>
                                         <div class="flex items-center gap-2">
                                             <h4 class="text-sm font-bold text-slate-800">{{ $j->mata_pelajaran->nama_mapel ?? '-' }}</h4>
-                                            @if($absen_guru)
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                                                    <i class="fa-solid fa-chalkboard-user mr-1"></i> Guru Masuk ({{ substr($absen_guru->jam_masuk, 0, 5) }})
-                                                </span>
-                                            @endif
                                         </div>
                                         <p class="text-xs text-slate-500 mt-0.5">
                                             <i class="fa-solid fa-user-tie text-[10px] mr-1 text-slate-400"></i> {{ $j->guru->nama ?? '-' }}
@@ -260,12 +266,18 @@
                 @endif
 
                 <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                    <span class="text-slate-500">Rata-rata Nilai Akhir Sementara:</span>
+                    <span class="text-slate-500">{{ ($rankingInfo['final_ready'] ?? false) ? 'Rata-rata Nilai Akhir:' : 'Rata-rata Nilai Akhir Sementara:' }}</span>
                     <span class="font-bold text-slate-800 text-sm">{{ ($rata_rata_nilai ?? 0) > 0 ? $rata_rata_nilai : '-' }}</span>
                 </div>
             </div>
         </div>
     </div>
+
+    <x-siakad.top3-siswa-strip
+        :ranking="$rankingInfo ?? []"
+        :current-siswa-id="$data_siswa->id ?? null"
+        :kelas-nama="$data_kelas->nama_ruang ?? ''"
+    />
 
     <!-- Lower Grid: Administrasi Pembayaran & Pengumuman -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -339,8 +351,8 @@
             <div class="divide-y divide-slate-100 flex-1">
                 @php
                     $daftar_info = (isset($list_pengumuman) && count($list_pengumuman) > 0) ? $list_pengumuman : collect([
-                        (object)['tanggal' => now()->isoFormat('D MMM Y'), 'judul' => 'Monitoring Akademik & Kehadiran Real-Time', 'ringkasan' => 'Orang tua dan siswa kini dapat memantau kehadiran harian, jurnal materi guru, dan nilai rapor secara langsung melalui portal SIAKAD.'],
-                        (object)['tanggal' => now()->subDays(3)->isoFormat('D MMM Y'), 'judul' => 'Ketertiban Waktu Masuk Kelas', 'ringkasan' => 'Kegiatan belajar mengajar dimulai tepat waktu sesuai jadwal pelajaran kelas masing-masing.'],
+                        (object)['tanggal' => now()->locale('id')->isoFormat('D MMM Y'), 'judul' => 'Monitoring Akademik & Kehadiran Real-Time', 'ringkasan' => 'Orang tua dan siswa kini dapat memantau kehadiran harian, jurnal materi guru, dan nilai rapor secara langsung melalui portal SIAKAD.'],
+                        (object)['tanggal' => now()->subDays(3)->locale('id')->isoFormat('D MMM Y'), 'judul' => 'Ketertiban Waktu Masuk Kelas', 'ringkasan' => 'Kegiatan belajar mengajar dimulai tepat waktu sesuai jadwal pelajaran kelas masing-masing.'],
                     ]);
                 @endphp
                 @foreach($daftar_info as $info)
@@ -458,7 +470,11 @@
             const previewArea = document.getElementById('previewPesanWa');
             const text = previewArea ? previewArea.value : '';
             if (!waConfig.noWa) {
-                alert('Nomor WhatsApp Wali Kelas belum tercatat.');
+                if (window.SiakadAlert) {
+                    window.SiakadAlert.warning('Nomor WhatsApp Belum Tersedia', 'Nomor WhatsApp Wali Kelas belum tercatat.');
+                } else {
+                    alert('Nomor WhatsApp Wali Kelas belum tercatat.');
+                }
                 return;
             }
             const url = `https://wa.me/${waConfig.noWa}?text=${encodeURIComponent(text)}`;

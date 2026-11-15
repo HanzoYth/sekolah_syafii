@@ -444,7 +444,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            <?php $__currentLoopData = $siswa_belum_ada_kelas->take(10); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $idx => $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php $__currentLoopData = $siswa_belum_ada_kelas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $idx => $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr class="hover:bg-slate-50/80 transition-colors">
                                     <td class="py-2.5 px-4 text-center text-slate-400 font-mono"><?php echo e($idx + 1); ?></td>
                                     <td class="py-2.5 px-4 font-bold text-slate-800"><?php echo e($s->nama); ?></td>
@@ -463,13 +463,6 @@
                                     </td>
                                 </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            <?php if(count($siswa_belum_ada_kelas) > 10): ?>
-                                <tr>
-                                    <td colspan="6" class="py-3 px-4 text-center text-slate-500 bg-slate-50/50 italic">
-                                        ...dan <?php echo e(count($siswa_belum_ada_kelas) - 10); ?> siswa lainnya. Silakan pilih ruang kelas di form atas untuk membagi siswa ke dalam rombel.
-                                    </td>
-                                </tr>
-                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>

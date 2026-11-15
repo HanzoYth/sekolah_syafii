@@ -114,7 +114,7 @@
                                         <?php echo e(\Carbon\Carbon::parse($item->tanggal)->locale('id')->isoFormat('D MMM Y')); ?>
 
                                     </span>
-                                    <span class="text-[11px] text-slate-400"><?php echo e(\Carbon\Carbon::parse($item->tanggal)->diffForHumans()); ?></span>
+                                    <span class="text-[11px] text-slate-400"><?php echo e(\Carbon\Carbon::parse($item->tanggal)->locale('id')->diffForHumans()); ?></span>
                                 </td>
                                 <td class="px-5 py-4">
                                     <h4 class="font-bold text-slate-800 text-sm mb-1 leading-snug"><?php echo e($item->judul); ?></h4>
@@ -195,14 +195,7 @@
             </table>
         </div>
 
-        <?php if($pengumuman_list->hasPages()): ?>
-            <div class="px-6 py-4 bg-slate-50/50 border-t border-slate-200 flex justify-center items-center">
-                <div class="pagination-container" style="display: flex; justify-content: center; align-items: center; margin: 0 auto;">
-                    <?php echo e($pengumuman_list->links()); ?>
-
-                </div>
-            </div>
-        <?php endif; ?>
+        <?php echo $__env->make('components.siakad.server-pagination', ['paginator' => $pengumuman_list], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     </div>
 
     <!-- MODAL BUAT PENGUMUMAN BARU -->

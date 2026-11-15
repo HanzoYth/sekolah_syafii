@@ -62,6 +62,7 @@ unset($__defined_vars, $__key, $__value); ?>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <?php echo $__env->make('components.siakad.styles', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    <?php echo $__env->make('components.siakad.rank-styles', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     <style>
         .page-container { 
             padding: 24px; 
@@ -202,7 +203,8 @@ unset($__defined_vars, $__key, $__value); ?>
 <?php endif; ?>
 
             <div class="page-container">
-                <?php echo $__env->make('components.warning', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                <?php echo $__env->make('components.siakad.flash-alert', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                <?php echo $__env->make('components.siakad.dialog-modal', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
                 <?php echo e($slot); ?>
 
@@ -213,213 +215,60 @@ unset($__defined_vars, $__key, $__value); ?>
     <?php echo e($scripts ?? ''); ?>
 
 
-    <!-- Universal Centered Table Pagination (Max 5 Data per Table) -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            initSiakadUniversalTablePagination();
-        });
+    <?php echo $__env->make('components.siakad.table-pagination-script', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
-        window.refreshSiakadPagination = function() {
-            if (window._siakadPagRenderers) {
-                window._siakadPagRenderers.forEach(fn => fn());
+    <script>
+
+        window.sortSiakadRankingTable = function(tableId, mode, triggerBtn) {
+            const table = document.getElementById(tableId);
+            if (!table) return;
+            const tbody = table.querySelector('tbody');
+            if (!tbody) return;
+
+            const rows = Array.from(tbody.querySelectorAll('tr[data-orig-index]'));
+            if (rows.length === 0) return;
+
+            rows.sort((a, b) => {
+                if (mode === 'rank') {
+                    const ra = parseInt(a.getAttribute('data-rank') || '999999', 10);
+                    const rb = parseInt(b.getAttribute('data-rank') || '999999', 10);
+                    if (ra !== rb) return ra - rb;
+                }
+                const oa = parseInt(a.getAttribute('data-orig-index') || '0', 10);
+                const ob = parseInt(b.getAttribute('data-orig-index') || '0', 10);
+                return oa - ob;
+            });
+
+            rows.forEach((tr, idx) => {
+                tbody.appendChild(tr);
+                const noCell = tr.querySelector('td[data-row-number="true"]');
+                if (noCell) {
+                    noCell.textContent = idx + 1;
+                }
+            });
+
+            if (triggerBtn) {
+                const group = triggerBtn.closest('[role="group"]');
+                if (group) {
+                    group.querySelectorAll('button').forEach(btn => {
+                        const isActive = btn === triggerBtn;
+                        btn.classList.toggle('bg-white', isActive);
+                        btn.classList.toggle('font-bold', isActive);
+                        btn.classList.toggle('shadow-sm', isActive);
+                        btn.classList.toggle('border', isActive);
+                        btn.classList.toggle('border-slate-200/80', isActive);
+                        btn.classList.toggle('text-emerald-700', isActive && mode !== 'rank');
+                        btn.classList.toggle('text-amber-700', isActive && mode === 'rank');
+                        btn.classList.toggle('font-semibold', !isActive);
+                        btn.classList.toggle('text-slate-600', !isActive);
+                    });
+                }
+            }
+
+            if (window.refreshSiakadPagination) {
+                window.refreshSiakadPagination();
             }
         };
-
-        function initSiakadUniversalTablePagination() {
-            window._siakadPagRenderers = [];
-            const tables = document.querySelectorAll('table');
-
-            tables.forEach((table, tableIndex) => {
-                if (table.hasAttribute('data-no-paginate')) return;
-                if (table.closest('.modal-card, .flatpickr-calendar, .dropdown-menu, .modal-overlay, #modalEditPembayaran, #modalPengumuman')) return;
-
-                // Jangan pernah terapkan paginasi pada dokumen lembar rapor santri (seluruh nilai, kegiatan & prestasi harus utuh saat dilihat/dicetak)
-                if (table.closest('.print-area, .rapor-content-container, .rapor-paper, .rapor-sheet, .rapor-container, .cetak-rapor, .rapor-santri-sheet, #raporContent, #printArea, [data-no-paginate="true"]')) return;
-                if (window.location.pathname.includes('detail-rapor') || window.location.pathname.includes('cetak-rapor') || window.location.pathname.includes('lembar-rapor')) {
-                    if (table.closest('.print-area, .rapor-content-container, .border-slate-800, #printArea')) return;
-                }
-
-                // Cek jika parent card sudah memiliki pagination server-side (misal: pembayaran IPP links())
-                const parentCard = table.closest('.table-card, .card') || table.parentElement;
-                if (parentCard && parentCard.querySelector('.pagination-wrap, .pagination-container') && !table.hasAttribute('data-force-paginate')) {
-                    const pagWrap = parentCard.querySelector('.pagination-wrap, .pagination-container');
-                    if (pagWrap) {
-                        pagWrap.style.display = 'flex';
-                        pagWrap.style.justifyContent = 'center';
-                        pagWrap.style.alignItems = 'center';
-                    }
-                    return;
-                }
-
-                const tbody = table.querySelector('tbody');
-                if (!tbody) return;
-
-                const PAGE_SIZE = parseInt(table.getAttribute('data-page-size') || 5, 10);
-                let currentPage = 1;
-                const pagContainerId = 'siakad-pag-table-' + (table.id || tableIndex);
-
-                function isEmptyStateRow(tr) {
-                    if (tr.classList.contains('empty-row')) return true;
-                    if (tr.hasAttribute('data-empty-state')) return true;
-                    if (tr.id && (tr.id === 'filterEmpty' || tr.id.toLowerCase().includes('empty'))) return true;
-                    return false;
-                }
-
-                function isControlRow(tr) {
-                    if (isEmptyStateRow(tr)) return false;
-                    const td = tr.querySelector('td[colspan]');
-                    return td && tr.children.length === 1 && !tr.querySelector('input.check-siswa, input.siswa-checkbox');
-                }
-
-                function getActiveRows() {
-                    return Array.from(tbody.querySelectorAll('tr')).filter(tr => {
-                        if (isEmptyStateRow(tr)) return false;
-                        if (isControlRow(tr)) return false;
-                        if (tr.getAttribute('data-filtered-out') === 'true') return false;
-                        return true;
-                    });
-                }
-
-                const allDataRows = Array.from(tbody.querySelectorAll('tr')).filter(tr => !isEmptyStateRow(tr) && !isControlRow(tr));
-                if (allDataRows.length <= PAGE_SIZE && !table.hasAttribute('data-force-paginate')) {
-                    return;
-                }
-
-                let pagWrapper = document.getElementById(pagContainerId);
-                if (!pagWrapper) {
-                    pagWrapper = document.createElement('div');
-                    pagWrapper.id = pagContainerId;
-                    pagWrapper.className = 'siakad-pagination-wrapper w-full flex flex-col items-center justify-center pt-4 pb-2 my-2 border-t border-slate-100';
-                    const overflowWrapper = table.closest('.overflow-x-auto, [style*="overflow-x: auto"]') || table.parentElement || table;
-                    overflowWrapper.parentNode.insertBefore(pagWrapper, overflowWrapper.nextSibling);
-                }
-
-                function renderTablePagination() {
-                    const allRows = Array.from(tbody.querySelectorAll('tr')).filter(tr => !isEmptyStateRow(tr));
-                    const activeRows = getActiveRows();
-                    const totalRows = activeRows.length;
-                    const totalPages = Math.ceil(totalRows / PAGE_SIZE) || 1;
-
-                    if (currentPage > totalPages) currentPage = totalPages;
-                    if (currentPage < 1) currentPage = 1;
-
-                    const startIdx = (currentPage - 1) * PAGE_SIZE;
-                    const endIdx = startIdx + PAGE_SIZE;
-
-                    // Pastikan baris kontrol/header khusus (seperti Pilih Semua) tetap terlihat
-                    Array.from(tbody.querySelectorAll('tr')).forEach(tr => {
-                        if (isControlRow(tr)) tr.style.display = '';
-                    });
-
-                    // Sembunyikan semua row yang filtered out
-                    allRows.forEach(row => {
-                        if (row.getAttribute('data-filtered-out') === 'true') {
-                            row.style.display = 'none';
-                        }
-                    });
-
-                    // Tampilkan row aktif sesuai halaman saat ini
-                    activeRows.forEach((row, idx) => {
-                        if (idx >= startIdx && idx < endIdx) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-
-                    if (totalRows <= PAGE_SIZE) {
-                        if (totalRows === 0) {
-                            pagWrapper.innerHTML = '';
-                            return;
-                        }
-                        pagWrapper.innerHTML = `
-                            <div class="text-xs text-slate-500 font-medium my-1 text-center">
-                                Menampilkan <span class="font-bold text-slate-700">${totalRows}</span> data
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    const showingStart = totalRows === 0 ? 0 : startIdx + 1;
-                    const showingEnd = Math.min(endIdx, totalRows);
-
-                    let buttonsHtml = '';
-                    buttonsHtml += `
-                        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                            <button type="button" class="page-link" ${currentPage === 1 ? 'disabled' : ''} data-target-page="${currentPage - 1}" title="Halaman Sebelumnya">
-                                <i class="fa-solid fa-chevron-left text-[11px]"></i>
-                            </button>
-                        </li>
-                    `;
-
-                    let startPage = Math.max(1, currentPage - 2);
-                    let endPage = Math.min(totalPages, currentPage + 2);
-
-                    if (startPage > 1) {
-                        buttonsHtml += `<li class="page-item"><button type="button" class="page-link" data-target-page="1">1</button></li>`;
-                        if (startPage > 2) buttonsHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                    }
-
-                    for (let p = startPage; p <= endPage; p++) {
-                        buttonsHtml += `
-                            <li class="page-item ${p === currentPage ? 'active' : ''}">
-                                <button type="button" class="page-link ${p === currentPage ? 'active' : ''}" data-target-page="${p}">${p}</button>
-                            </li>
-                        `;
-                    }
-
-                    if (endPage < totalPages) {
-                        if (endPage < totalPages - 1) buttonsHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                        buttonsHtml += `<li class="page-item"><button type="button" class="page-link" data-target-page="${totalPages}">${totalPages}</button></li>`;
-                    }
-
-                    buttonsHtml += `
-                        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                            <button type="button" class="page-link" ${currentPage === totalPages ? 'disabled' : ''} data-target-page="${currentPage + 1}" title="Halaman Selanjutnya">
-                                <i class="fa-solid fa-chevron-right text-[11px]"></i>
-                            </button>
-                        </li>
-                    `;
-
-                    pagWrapper.innerHTML = `
-                        <div class="text-xs text-slate-500 mb-2 font-medium text-center">
-                            Menampilkan <span class="font-bold text-slate-700">${showingStart}</span> - <span class="font-bold text-slate-700">${showingEnd}</span> dari <span class="font-bold text-slate-700">${totalRows}</span> data
-                        </div>
-                        <nav class="flex justify-center items-center">
-                            <ul class="pagination">
-                                ${buttonsHtml}
-                            </ul>
-                        </nav>
-                    `;
-
-                    pagWrapper.querySelectorAll('button[data-target-page]').forEach(btn => {
-                        btn.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            currentPage = parseInt(this.getAttribute('data-target-page'));
-                            renderTablePagination();
-                        });
-                    });
-                }
-
-                renderTablePagination();
-                window._siakadPagRenderers.push(() => {
-                    currentPage = 1;
-                    renderTablePagination();
-                });
-            });
-        }
-        
-        // Auto refresh pagination on search/filter input or select change
-        document.addEventListener('input', function(e) {
-            if (e.target && (e.target.matches('input[type="text"], input[type="search"]') || (e.target.id && e.target.id.toLowerCase().includes('search')))) {
-                setTimeout(window.refreshSiakadPagination, 50);
-            }
-        });
-        document.addEventListener('change', function(e) {
-            if (e.target && e.target.matches('select')) {
-                setTimeout(window.refreshSiakadPagination, 50);
-            }
-        });
     </script>
 </body>
 </html>

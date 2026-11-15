@@ -231,26 +231,9 @@
 
         </div>
     </div>
-    <?php if (isset($component)) { $__componentOriginal0681b545d180d4f9d8ad2ed4614031e2 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2 = $attributes; } ?>
-<?php $component = App\View\Components\Warning::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('warning'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\App\View\Components\Warning::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes([]); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2)): ?>
-<?php $attributes = $__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2; ?>
-<?php unset($__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal0681b545d180d4f9d8ad2ed4614031e2)): ?>
-<?php $component = $__componentOriginal0681b545d180d4f9d8ad2ed4614031e2; ?>
-<?php unset($__componentOriginal0681b545d180d4f9d8ad2ed4614031e2); ?>
-<?php endif; ?>
+    <?php echo $__env->make('components.siakad.flash-alert', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    <?php echo $__env->make('components.siakad.dialog-modal', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    <?php echo $__env->make('components.siakad.table-pagination-script', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     <!-- JavaScript Handling Modal, Filter & Dummy Action -->
     <script>
         const inputNama = document.getElementById('filterNama');
@@ -270,12 +253,16 @@
 
             studentRows.forEach((row) => {
                 const tampil = row.dataset.search.includes(keyword) && (!kelas || row.dataset.kelas === kelas);
+                row.setAttribute('data-filtered-out', tampil ? 'false' : 'true');
                 row.hidden = !tampil;
                 if (tampil) visible++;
             });
 
             resultCounter.textContent = `${visible} siswa`;
             filterEmpty.hidden = visible !== 0 || studentRows.length === 0;
+            if (window.refreshSiakadPagination) {
+                window.refreshSiakadPagination();
+            }
         }
 
         inputNama.addEventListener('input', filterSiswa);

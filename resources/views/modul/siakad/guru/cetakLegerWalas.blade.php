@@ -53,6 +53,7 @@
             border: 1px solid #334155;
         }
     </style>
+    @include('components.siakad.rank-styles')
 </head>
 <body class="p-4 sm:p-6 lg:p-8">
 
@@ -166,8 +167,12 @@
                 </thead>
                 <tbody class="divide-y divide-slate-300">
                     @forelse($leger_siswa as $idx => $row)
-                        @php $s = $row->siswa; @endphp
-                        <tr class="hover:bg-slate-50 {{ $idx % 2 == 1 ? 'bg-slate-50/50' : 'bg-white' }}">
+                        @php
+                            $s = $row->siswa;
+                            $rankNum = is_numeric($row->peringkat) ? (int) $row->peringkat : 999999;
+                            $printRankCellBg = $rankNum === 1 ? 'bg-amber-50' : ($rankNum === 2 ? 'bg-slate-100' : ($rankNum === 3 ? 'bg-orange-50' : 'bg-emerald-50'));
+                        @endphp
+                        <tr class="hover:bg-slate-50 {{ $rankNum === 1 ? 'bg-amber-50/40' : ($idx % 2 == 1 ? 'bg-slate-50/50' : 'bg-white') }}">
                             <td class="border border-slate-800 px-2 py-1.5 font-semibold text-slate-700">{{ $idx + 1 }}</td>
                             <td class="border border-slate-800 px-2 py-1.5 font-mono text-slate-600">{{ $s->nis ?? '-' }}</td>
                             <td class="border border-slate-800 px-3 py-1.5 text-left font-semibold text-slate-900 whitespace-nowrap">{{ $s->nama }}</td>
@@ -187,7 +192,9 @@
                             <td class="border border-slate-800 px-2 py-1.5 font-bold text-slate-900 bg-slate-50">{{ number_format($row->total_nilai, 1) }}</td>
                             <td class="border border-slate-800 px-2 py-1.5 font-bold text-slate-900 bg-slate-50">{{ number_format($row->rata_rata, 1) }}</td>
                             <td class="border border-slate-800 px-2 py-1.5 font-bold {{ $row->predikat === 'A' ? 'text-emerald-700' : ($row->predikat === 'B' ? 'text-blue-700' : ($row->predikat === 'C' ? 'text-amber-700' : 'text-rose-700')) }} bg-slate-50">{{ $row->predikat }}</td>
-                            <td class="border border-slate-800 px-2 py-1.5 font-black text-emerald-900 bg-emerald-50">#{{ $row->peringkat }}</td>
+                            <td class="border border-slate-800 px-2 py-1.5 font-black text-emerald-900 {{ $printRankCellBg }}">
+                                <x-siakad.rank-badge :rank="$row->peringkat" variant="print" />
+                            </td>
                         </tr>
                     @empty
                         <tr>
@@ -232,7 +239,7 @@
 
             <div class="text-right">
                 <p class="font-medium text-slate-600">
-                    {{ $pengaturan_rapor->tempat_rapor ?? 'Sigi' }}, {{ $pengaturan_rapor->tanggal_rapor ?? date('d F Y') }}
+                    {{ $pengaturan_rapor->tempat_rapor ?? 'Sigi' }}, {{ $pengaturan_rapor->tanggal_rapor ?? \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM Y') }}
                 </p>
                 <p class="font-bold text-slate-800">Wali Kelas {{ $wallas->ruangKelas->nama_ruang ?? 'Kelas' }},</p>
                 <div class="h-20"></div>

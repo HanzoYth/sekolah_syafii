@@ -160,25 +160,24 @@
 
         <?php if (isset($component)) { $__componentOriginalb451ae0a4b2a0f57d42f1e2fea2cf880 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalb451ae0a4b2a0f57d42f1e2fea2cf880 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.table','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.ui.table','data' => ['id' => 'tableDaftarSiswa']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('siakad.ui.table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes([]); ?>
-            <thead>
+<?php $component->withAttributes(['id' => 'tableDaftarSiswa']); ?>
+             <?php $__env->slot('thead', null, []); ?> 
                 <tr>
-                    <th style="width: 50px; text-align: center;">No.</th>
-                    <th style="min-width: 220px;">Siswa</th>
-                    <th style="width: 150px;">Jenis Kelamin</th>
-                    <th style="width: 150px;">Kelas</th>
-                    <th style="width: 120px; text-align: center;">Status</th>
-                    <th style="width: 120px; text-align: center;">Aksi</th>
+                    <th style="width: 50px; text-align: center; background: #f0fdf4; padding: 12px 16px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7;">No.</th>
+                    <th style="min-width: 220px; background: #f0fdf4; padding: 12px 16px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7;">Siswa</th>
+                    <th style="width: 150px; background: #f0fdf4; padding: 12px 16px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7;">Jenis Kelamin</th>
+                    <th style="width: 150px; background: #f0fdf4; padding: 12px 16px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7;">Kelas</th>
+                    <th style="width: 120px; text-align: center; background: #f0fdf4; padding: 12px 16px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7;">Status</th>
+                    <th style="width: 120px; text-align: center; background: #f0fdf4; padding: 12px 16px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7;">Aksi</th>
                 </tr>
-            </thead>
-            <tbody id="studentRows">
+             <?php $__env->endSlot(); ?>
                 <?php if(count($data_siswa) > 0): ?>
                     <?php $__currentLoopData = $data_siswa; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $siswa): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <?php
@@ -268,7 +267,6 @@
                         <p style="margin: 0; font-size: 14px;">Data siswa tidak ditemukan.</p>
                     </td>
                 </tr>
-            </tbody>
          <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginalb451ae0a4b2a0f57d42f1e2fea2cf880)): ?>

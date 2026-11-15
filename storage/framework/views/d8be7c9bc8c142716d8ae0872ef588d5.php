@@ -318,7 +318,7 @@
             <?php echo csrf_field(); ?>
             
             <div style="overflow-x: auto;">
-                <table class="table-grading" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+                <table class="table-grading" data-page-size="10" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
                     <thead>
                         <tr>
                             <th style="background: #f0fdf4; padding: 14px 12px; font-weight: 700; color: #166534; border-bottom: 2px solid #bbf7d0; text-align: center; width: 50px;">No</th>
@@ -715,6 +715,10 @@
 
                     const nextInput = document.querySelector(`.input-score-cell[data-row="${targetRow}"][data-col="${targetCol}"]`);
                     if (nextInput) {
+                        const targetTr = nextInput.closest('tr');
+                        if (targetTr && typeof window.goToSiakadTablePageForRow === 'function') {
+                            window.goToSiakadTablePageForRow(targetTr);
+                        }
                         nextInput.focus();
                         nextInput.select();
                     }
@@ -759,11 +763,17 @@
                 }
 
                 if (matchesSearch && matchesStatus) {
+                    row.removeAttribute('data-filtered-out');
                     row.style.display = '';
                 } else {
+                    row.setAttribute('data-filtered-out', 'true');
                     row.style.display = 'none';
                 }
             });
+
+            if (typeof window.refreshSiakadPagination === 'function') {
+                window.refreshSiakadPagination();
+            }
         }
 
         // Quick Fill Blank Inputs with KKM Modal Handler

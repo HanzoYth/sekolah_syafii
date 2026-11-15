@@ -558,6 +558,9 @@
                     row.style.display = 'none';
                 }
             });
+            if (typeof window.refreshSiakadPagination === 'function') {
+                window.refreshSiakadPagination();
+            }
         }
     </script>
  <?php echo $__env->renderComponent(); ?>

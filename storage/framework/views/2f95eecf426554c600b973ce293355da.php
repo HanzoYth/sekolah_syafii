@@ -665,12 +665,7 @@
                 </div>
 
                 
-                <?php if($paginated_records->hasPages()): ?>
-                    <div class="card-footer pagination-wrap" style="display: flex; justify-content: center; align-items: center; width: 100%; padding: 20px;">
-                        <?php echo e($paginated_records->appends(request()->query())->links()); ?>
-
-                    </div>
-                <?php endif; ?>
+                <?php echo $__env->make('components.siakad.server-pagination', ['paginator' => $paginated_records->appends(request()->query())], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
             </div>
         </main>
     </div>
@@ -982,7 +977,7 @@
                         </div>
 
                         <div class="invoice-ttd-box">
-                            <div>Manado, <span id="inv-ttd-tgl"><?php echo e(date('d M Y')); ?></span></div>
+                            <div>Manado, <span id="inv-ttd-tgl"><?php echo e(\Carbon\Carbon::now()->locale('id')->isoFormat('D MMM Y')); ?></span></div>
                             <div style="font-size: 0.75rem; color: #64748b;">Petugas / Bendahara Sekolah</div>
                             <div class="invoice-ttd-space"></div>
                             <div style="font-weight: 700; text-decoration: underline;">
@@ -1228,7 +1223,7 @@
             document.getElementById('inv-total-terima').textContent = 'Rp ' + dibayarNum.toLocaleString('id-ID');
             document.getElementById('inv-total-sisa').textContent = 'Rp ' + sisaNum.toLocaleString('id-ID');
             document.getElementById('inv-ttd-nama').textContent = nama;
-            document.getElementById('inv-ttd-tgl').textContent = tanggal || '<?php echo e(date("d M Y")); ?>';
+            document.getElementById('inv-ttd-tgl').textContent = tanggal || '<?php echo e(\Carbon\Carbon::now()->locale("id")->isoFormat("D MMM Y")); ?>';
             document.getElementById('inv-btn-pdf').href = '/sk/ssp?id=' + id + '&type=' + tipe;
 
             // Terbilang dalam Rupiah

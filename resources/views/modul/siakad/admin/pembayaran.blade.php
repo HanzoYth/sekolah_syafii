@@ -402,7 +402,7 @@
                                     $nama_siswa = $data_siswa->nama ?? 'Siswa #' . $value->siswa_id;
                                     $nama_kelas = $data_kelas->nama_ruang ?? 'Belum Ditentukan';
                                     $nama_sekolah = $data_sekolah->jenis ?? '-';
-                                    $bulan = $value->tanggal_awal ? Carbon\Carbon::parse($value->tanggal_awal)->translatedFormat("F Y") : '-';
+                                    $bulan = $value->tanggal_awal ? Carbon\Carbon::parse($value->tanggal_awal)->locale('id')->isoFormat('MMMM Y') : '-';
                                     $sisa_bayar = max(0, $value->nominal - ($value->jumlah_dibayar ?? 0));
                                 @endphp
                                 <tr>
@@ -436,12 +436,7 @@
                 </div>
 
                 {{-- FOOTER CARD / PAGINATION --}}
-                <div class="card-footer pagination-wrap" style="display: flex; justify-content: center; align-items: center; width: 100%;">
-                    {{-- Laravel Pagination Link --}}
-                    <div class="pagination-container" style="display: flex; justify-content: center; align-items: center; margin: 0 auto;">
-                        {{ $data_slip_ipp->links() }}
-                    </div>
-                </div>
+                @include('components.siakad.server-pagination', ['paginator' => $data_slip_ipp])
             </div>
         </main>
     </div>
@@ -691,7 +686,8 @@
     </script>
 
 
-    <x-warning />
+    @include('components.siakad.flash-alert')
+    @include('components.siakad.dialog-modal')
 </body>
 </html>
 

@@ -440,7 +440,7 @@
                                     $nama_siswa = $data_siswa->nama ?? 'Siswa #' . $value->siswa_id;
                                     $nama_kelas = $data_kelas->nama_ruang ?? 'Belum Ditentukan';
                                     $nama_sekolah = $data_sekolah->jenis ?? '-';
-                                    $bulan = $value->tanggal_awal ? Carbon\Carbon::parse($value->tanggal_awal)->translatedFormat("F Y") : '-';
+                                    $bulan = $value->tanggal_awal ? Carbon\Carbon::parse($value->tanggal_awal)->locale('id')->isoFormat('MMMM Y') : '-';
                                     $sisa_bayar = max(0, $value->nominal - ($value->jumlah_dibayar ?? 0));
                                 ?>
                                 <tr>
@@ -474,13 +474,7 @@
                 </div>
 
                 
-                <div class="card-footer pagination-wrap" style="display: flex; justify-content: center; align-items: center; width: 100%;">
-                    
-                    <div class="pagination-container" style="display: flex; justify-content: center; align-items: center; margin: 0 auto;">
-                        <?php echo e($data_slip_ipp->links()); ?>
-
-                    </div>
-                </div>
+                <?php echo $__env->make('components.siakad.server-pagination', ['paginator' => $data_slip_ipp], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
             </div>
         </main>
     </div>
@@ -730,26 +724,8 @@
     </script>
 
 
-    <?php if (isset($component)) { $__componentOriginal0681b545d180d4f9d8ad2ed4614031e2 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2 = $attributes; } ?>
-<?php $component = App\View\Components\Warning::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('warning'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\App\View\Components\Warning::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes([]); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2)): ?>
-<?php $attributes = $__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2; ?>
-<?php unset($__attributesOriginal0681b545d180d4f9d8ad2ed4614031e2); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal0681b545d180d4f9d8ad2ed4614031e2)): ?>
-<?php $component = $__componentOriginal0681b545d180d4f9d8ad2ed4614031e2; ?>
-<?php unset($__componentOriginal0681b545d180d4f9d8ad2ed4614031e2); ?>
-<?php endif; ?>
+    <?php echo $__env->make('components.siakad.flash-alert', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    <?php echo $__env->make('components.siakad.dialog-modal', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 </body>
 </html>
 

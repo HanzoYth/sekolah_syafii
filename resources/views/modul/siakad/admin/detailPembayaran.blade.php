@@ -52,7 +52,7 @@
                 $sekolah_siswa = ($siswa && $siswa->sekolah) ? $siswa->sekolah->jenis : 'SMAIT Imam Syafii';
                 $tahun_ajaran = ($siswa && $siswa->tahunAjaran) ? $siswa->tahunAjaran->nama : '2026/2027';
                 $invoice = $invoice_no ?? ('INV/SKD/' . date('Ym') . '/' . str_pad($slip->id ?? 1, 4, '0', STR_PAD_LEFT));
-                $tgl_bayar = ($slip && $slip->created_at) ? \Carbon\Carbon::parse($slip->created_at)->locale('id')->isoFormat('D MMMM Y (HH:mm [WITA])') : date('d M Y');
+                $tgl_bayar = ($slip && $slip->created_at) ? \Carbon\Carbon::parse($slip->created_at)->locale('id')->isoFormat('D MMMM Y (HH:mm [WITA])') : \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM Y');
                 $nom = $nominal ?? ($slip->nominal ?? 0);
                 $bayar = $dibayar ?? ($slip->jumlah_dibayar ?? ($slip->jumlah_di_bayar ?? 0));
                 $sisa_tagihan = max(0, $nom - $bayar);

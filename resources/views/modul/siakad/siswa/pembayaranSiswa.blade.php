@@ -295,8 +295,13 @@
         document.getElementById('paymentSearch')?.addEventListener('input', function() {
             const query = this.value.toLowerCase();
             document.querySelectorAll('#paymentRows tr').forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+                const match = row.textContent.toLowerCase().includes(query);
+                row.setAttribute('data-filtered-out', match ? 'false' : 'true');
+                row.style.display = match ? '' : 'none';
             });
+            if (typeof window.refreshSiakadPagination === 'function') {
+                window.refreshSiakadPagination();
+            }
         });
 
         function cetakKwitansi(id, tanggal, nama, jenis, nominal, dibayar, status) {

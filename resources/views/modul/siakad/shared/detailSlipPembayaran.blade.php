@@ -120,5 +120,6 @@
 
 </div>
 
+@include('components.siakad.table-pagination-script')
 </body>
 </html>

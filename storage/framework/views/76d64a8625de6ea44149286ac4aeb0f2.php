@@ -24,7 +24,7 @@
         <div class="siakad-topbar-actions">
             <div class="siakad-date" aria-label="Tanggal hari ini">
                 <i class="fa-regular fa-calendar-days"></i>
-                <span><?php echo e(now()->translatedFormat('l, d F Y')); ?></span>
+                <span><?php echo e(now()->locale('id')->isoFormat('dddd, D MMMM Y')); ?></span>
             </div>
 
             <!-- ============================================== -->

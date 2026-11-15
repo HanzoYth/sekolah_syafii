@@ -53,6 +53,7 @@
             border: 1px solid #334155;
         }
     </style>
+    <?php echo $__env->make('components.siakad.rank-styles', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 </head>
 <body class="p-4 sm:p-6 lg:p-8">
 
@@ -170,8 +171,12 @@
                 </thead>
                 <tbody class="divide-y divide-slate-300">
                     <?php $__empty_1 = true; $__currentLoopData = $leger_siswa; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $idx => $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                        <?php $s = $row->siswa; ?>
-                        <tr class="hover:bg-slate-50 <?php echo e($idx % 2 == 1 ? 'bg-slate-50/50' : 'bg-white'); ?>">
+                        <?php
+                            $s = $row->siswa;
+                            $rankNum = is_numeric($row->peringkat) ? (int) $row->peringkat : 999999;
+                            $printRankCellBg = $rankNum === 1 ? 'bg-amber-50' : ($rankNum === 2 ? 'bg-slate-100' : ($rankNum === 3 ? 'bg-orange-50' : 'bg-emerald-50'));
+                        ?>
+                        <tr class="hover:bg-slate-50 <?php echo e($rankNum === 1 ? 'bg-amber-50/40' : ($idx % 2 == 1 ? 'bg-slate-50/50' : 'bg-white')); ?>">
                             <td class="border border-slate-800 px-2 py-1.5 font-semibold text-slate-700"><?php echo e($idx + 1); ?></td>
                             <td class="border border-slate-800 px-2 py-1.5 font-mono text-slate-600"><?php echo e($s->nis ?? '-'); ?></td>
                             <td class="border border-slate-800 px-3 py-1.5 text-left font-semibold text-slate-900 whitespace-nowrap"><?php echo e($s->nama); ?></td>
@@ -192,7 +197,28 @@
                             <td class="border border-slate-800 px-2 py-1.5 font-bold text-slate-900 bg-slate-50"><?php echo e(number_format($row->total_nilai, 1)); ?></td>
                             <td class="border border-slate-800 px-2 py-1.5 font-bold text-slate-900 bg-slate-50"><?php echo e(number_format($row->rata_rata, 1)); ?></td>
                             <td class="border border-slate-800 px-2 py-1.5 font-bold <?php echo e($row->predikat === 'A' ? 'text-emerald-700' : ($row->predikat === 'B' ? 'text-blue-700' : ($row->predikat === 'C' ? 'text-amber-700' : 'text-rose-700'))); ?> bg-slate-50"><?php echo e($row->predikat); ?></td>
-                            <td class="border border-slate-800 px-2 py-1.5 font-black text-emerald-900 bg-emerald-50">#<?php echo e($row->peringkat); ?></td>
+                            <td class="border border-slate-800 px-2 py-1.5 font-black text-emerald-900 <?php echo e($printRankCellBg); ?>">
+                                <?php if (isset($component)) { $__componentOriginal857dd9638daa2acd55509dbe6d317237 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal857dd9638daa2acd55509dbe6d317237 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.siakad.rank-badge','data' => ['rank' => $row->peringkat,'variant' => 'print']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('siakad.rank-badge'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['rank' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($row->peringkat),'variant' => 'print']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal857dd9638daa2acd55509dbe6d317237)): ?>
+<?php $attributes = $__attributesOriginal857dd9638daa2acd55509dbe6d317237; ?>
+<?php unset($__attributesOriginal857dd9638daa2acd55509dbe6d317237); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal857dd9638daa2acd55509dbe6d317237)): ?>
+<?php $component = $__componentOriginal857dd9638daa2acd55509dbe6d317237; ?>
+<?php unset($__componentOriginal857dd9638daa2acd55509dbe6d317237); ?>
+<?php endif; ?>
+                            </td>
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr>
@@ -238,7 +264,7 @@
 
             <div class="text-right">
                 <p class="font-medium text-slate-600">
-                    <?php echo e($pengaturan_rapor->tempat_rapor ?? 'Sigi'); ?>, <?php echo e($pengaturan_rapor->tanggal_rapor ?? date('d F Y')); ?>
+                    <?php echo e($pengaturan_rapor->tempat_rapor ?? 'Sigi'); ?>, <?php echo e($pengaturan_rapor->tanggal_rapor ?? \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM Y')); ?>
 
                 </p>
                 <p class="font-bold text-slate-800">Wali Kelas <?php echo e($wallas->ruangKelas->nama_ruang ?? 'Kelas'); ?>,</p>

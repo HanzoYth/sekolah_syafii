@@ -220,7 +220,27 @@
                                         <i class="fa-solid fa-ban mr-1.5"></i> Jam Bentrok (Anda Mengajar)
                                     </span>
                                 @else
-                                    <form method="POST" action="/sk/ambil-jadwal-pengganti" onsubmit="return confirm('Apakah Anda bersedia mengambil jadwal mengajar pengganti kelas {{ $slot->jadwal->kelas->nama_kelas ?? '' }} mapel {{ $slot->jadwal->mata_pelajaran->nama_mapel ?? '' }} di jam ini?')">
+                                    @php
+                                        $slotMapel = $slot->jadwal->mata_pelajaran->nama_mapel ?? 'Mata Pelajaran';
+                                        $slotKelas = $slot->jadwal->kelas->nama_kelas ?? ($slot->jadwal->kelas->nama_ruang ?? '-');
+                                        $slotJamMulai = substr($slot->jadwal->jam_pelajaran->jam_mulai ?? '00:00', 0, 5);
+                                        $slotJamSelesai = substr($slot->jadwal->jam_pelajaran->jam_selesai ?? '00:00', 0, 5);
+                                        $slotGuruAsli = $slot->guruAsli->nama ?? 'Guru';
+                                        $ambilDetailHtml = '<div style="display:flex;flex-direction:column;gap:4px;">'
+                                            . '<div><strong>Mata Pelajaran:</strong> ' . e($slotMapel) . '</div>'
+                                            . '<div><strong>Kelas / Jam:</strong> ' . e($slotKelas) . ' (' . e($slotJamMulai) . ' - ' . e($slotJamSelesai) . ' WIB)</div>'
+                                            . '<div><strong>Guru Asli:</strong> ' . e($slotGuruAsli) . '</div>'
+                                            . '</div>';
+                                        $ambilMessage = "Apakah Anda bersedia mengambil jadwal mengajar pengganti mata pelajaran {$slotMapel} di kelas {$slotKelas} pada jam {$slotJamMulai} - {$slotJamSelesai} WIB?";
+                                    @endphp
+                                    <form method="POST" action="/sk/ambil-jadwal-pengganti"
+                                        data-siakad-confirm="{{ $ambilMessage }}"
+                                        data-confirm-title="Konfirmasi Ambil Jadwal Pengganti"
+                                        data-confirm-detail="{{ $ambilDetailHtml }}"
+                                        data-confirm-variant="emerald"
+                                        data-confirm-icon="fa-hand-holding-hand"
+                                        data-confirm-ok="Ya, Ambil Jadwal"
+                                        data-confirm-cancel="Batal">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $slot->id }}">
                                         <button type="submit" class="text-xs font-semibold px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors flex items-center shadow-xs">
@@ -230,7 +250,24 @@
                                 @endif
                             @elseif($slot->isDiambil())
                                 @if($slot->is_guru_pengganti)
-                                    <form method="POST" action="/sk/batalkan-jadwal-pengganti" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan tugas guru pengganti ini? Status jadwal akan kembali menjadi KOSONG.')">
+                                    @php
+                                        $batalMapel = $slot->jadwal->mata_pelajaran->nama_mapel ?? 'Mata Pelajaran';
+                                        $batalKelas = $slot->jadwal->kelas->nama_kelas ?? ($slot->jadwal->kelas->nama_ruang ?? '-');
+                                        $batalJamMulai = substr($slot->jadwal->jam_pelajaran->jam_mulai ?? '00:00', 0, 5);
+                                        $batalJamSelesai = substr($slot->jadwal->jam_pelajaran->jam_selesai ?? '00:00', 0, 5);
+                                        $batalDetailHtml = '<div style="display:flex;flex-direction:column;gap:4px;">'
+                                            . '<div><strong>Mata Pelajaran:</strong> ' . e($batalMapel) . '</div>'
+                                            . '<div><strong>Kelas / Jam:</strong> ' . e($batalKelas) . ' (' . e($batalJamMulai) . ' - ' . e($batalJamSelesai) . ' WIB)</div>'
+                                            . '</div>';
+                                    @endphp
+                                    <form method="POST" action="/sk/batalkan-jadwal-pengganti"
+                                        data-siakad-confirm="Apakah Anda yakin ingin membatalkan tugas guru pengganti ini? Status jadwal akan kembali menjadi KOSONG agar dapat diambil guru lain."
+                                        data-confirm-title="Batalkan Jadwal Pengganti"
+                                        data-confirm-detail="{{ $batalDetailHtml }}"
+                                        data-confirm-variant="danger"
+                                        data-confirm-icon="fa-rotate-left"
+                                        data-confirm-ok="Ya, Batalkan"
+                                        data-confirm-cancel="Kembali">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $slot->id }}">
                                         <button type="submit" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-slate-600 border border-slate-200 transition-colors flex items-center">

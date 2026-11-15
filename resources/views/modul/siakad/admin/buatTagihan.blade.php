@@ -193,7 +193,9 @@
 
         </div>
     </div>
-    <x-warning />
+    @include('components.siakad.flash-alert')
+    @include('components.siakad.dialog-modal')
+    @include('components.siakad.table-pagination-script')
     <!-- JavaScript Handling Modal, Filter & Dummy Action -->
     <script>
         const inputNama = document.getElementById('filterNama');
@@ -213,12 +215,16 @@
 
             studentRows.forEach((row) => {
                 const tampil = row.dataset.search.includes(keyword) && (!kelas || row.dataset.kelas === kelas);
+                row.setAttribute('data-filtered-out', tampil ? 'false' : 'true');
                 row.hidden = !tampil;
                 if (tampil) visible++;
             });
 
             resultCounter.textContent = `${visible} siswa`;
             filterEmpty.hidden = visible !== 0 || studentRows.length === 0;
+            if (window.refreshSiakadPagination) {
+                window.refreshSiakadPagination();
+            }
         }
 
         inputNama.addEventListener('input', filterSiswa);

@@ -148,11 +148,7 @@
                 </div>
 
                 {{-- FOOTER CARD / PAGINATION --}}
-                <div class="card-footer pagination-wrap" style="display: flex; justify-content: center; align-items: center; width: 100%;">
-                    <div class="pagination-container" style="display: flex; justify-content: center; align-items: center; margin: 0 auto;">
-                        {{ $data_slip_pangkal->links() }}
-                    </div>
-                </div>
+                @include('components.siakad.server-pagination', ['paginator' => $data_slip_pangkal])
             </div>
         </main>
     </div>
@@ -447,6 +443,8 @@
         }
     </script>
 
+    @include('components.siakad.flash-alert')
+    @include('components.siakad.dialog-modal')
 </body>
 </html>
 

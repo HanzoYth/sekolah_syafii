@@ -149,18 +149,17 @@
             </div>
         </div>
 
-        <x-siakad.ui.table>
-            <thead>
+        <x-siakad.ui.table id="tableDaftarSiswa">
+            <x-slot:thead>
                 <tr>
-                    <th style="width: 50px; text-align: center;">No.</th>
-                    <th style="min-width: 220px;">Siswa</th>
-                    <th style="width: 150px;">Jenis Kelamin</th>
-                    <th style="width: 150px;">Kelas</th>
-                    <th style="width: 120px; text-align: center;">Status</th>
-                    <th style="width: 120px; text-align: center;">Aksi</th>
+                    <th style="width: 50px; text-align: center; background: #f0fdf4; padding: 12px 16px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7;">No.</th>
+                    <th style="min-width: 220px; background: #f0fdf4; padding: 12px 16px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7;">Siswa</th>
+                    <th style="width: 150px; background: #f0fdf4; padding: 12px 16px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7;">Jenis Kelamin</th>
+                    <th style="width: 150px; background: #f0fdf4; padding: 12px 16px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7;">Kelas</th>
+                    <th style="width: 120px; text-align: center; background: #f0fdf4; padding: 12px 16px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7;">Status</th>
+                    <th style="width: 120px; text-align: center; background: #f0fdf4; padding: 12px 16px; font-weight: 600; color: #166534; border-bottom: 2px solid #dcfce7;">Aksi</th>
                 </tr>
-            </thead>
-            <tbody id="studentRows">
+            </x-slot:thead>
                 @if(count($data_siswa) > 0)
                     @foreach ($data_siswa as $index => $siswa)
                         @php
@@ -249,7 +248,6 @@
                         <p style="margin: 0; font-size: 14px;">Data siswa tidak ditemukan.</p>
                     </td>
                 </tr>
-            </tbody>
         </x-siakad.ui.table>
     </div>
 

@@ -1,4 +1,4 @@
-﻿<x-siakad-layout 
+<x-siakad-layout 
     title="Absensi Mata Pelajaran" 
     description="Presensi masuk kelas dan pencatatan kehadiran siswa per mata pelajaran." 
     position="Guru Pengajar" 
@@ -674,16 +674,22 @@
                 const nama = (row.getAttribute('data-nama') || '').toLowerCase();
                 const nis = (row.getAttribute('data-nis') || '').toLowerCase();
                 if (!query || nama.includes(query) || nis.includes(query)) {
-                    row.style.setProperty('display', '', '');
+                    row.setAttribute('data-filtered-out', 'false');
+                    row.style.removeProperty('display');
                     matchCount++;
                 } else {
-                    row.style.setProperty('display', 'none', 'important');
+                    row.setAttribute('data-filtered-out', 'true');
+                    row.style.display = 'none';
                 }
             });
 
             const msgEmpty = document.getElementById('msgSearchEmpty');
             if (msgEmpty) {
                 msgEmpty.style.display = (matchCount === 0) ? 'block' : 'none';
+            }
+
+            if (typeof window.refreshSiakadPagination === 'function') {
+                window.refreshSiakadPagination();
             }
         }
 

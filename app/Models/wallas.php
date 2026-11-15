@@ -10,7 +10,8 @@ class wallas extends Model
     public $timestamps = false;
     protected $fillable = [
         "guru_id",
-        "kelas_id"
+        "kelas_id",
+        "ttd_walas"
     ];
     public function guru() {
         return $this->belongsTo(guru::class, 'guru_id');
