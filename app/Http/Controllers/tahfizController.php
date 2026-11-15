@@ -213,6 +213,11 @@ class tahfizController extends Controller
             'semuaSiswaKelas'
         ));
     }
+    public function detail_rapor_testing()
+    {
+
+        return view('modul.tahfiz.guru.raporSementara');
+    }
 
     /**
      * Cetak Seluruh Rapor Kelas Sekaligus (Massal)

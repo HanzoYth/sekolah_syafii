@@ -107,6 +107,7 @@
                     </div>
                 </div>
                 
+
                 @if (session('role') == "a")
                     @if (!$data_guru->bendahara && !$data_guru->operator && !$data_guru->satpam)
                         <!-- SECTION 3: JABATAN & PENUGASAN -->
@@ -157,6 +158,7 @@
                                 </label>
                             </div>
                         </div>
+                    @endif
 
                         <!-- SECTION 4: CABANG & SEKOLAH -->
                         <div class="form-section">
@@ -197,8 +199,8 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-
+                        </div>  
+                    @if (!$data_guru->bendahara && !$data_guru->operator && !$data_guru->satpam)
                         <!-- SECTION 5: TUGAS WALI KELAS -->
                         <div class="form-section">
                             <div class="section-title">

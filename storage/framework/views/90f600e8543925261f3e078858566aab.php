@@ -80,6 +80,12 @@
                                 <span>Rapor Santri</span>
                             </a>
                         </li>
+                        <li class="menu-item <?php echo e((str_starts_with($route, '/tf/gr/detail-rapor-testing') || str_starts_with($route, '/tf/gr/detail-rapor-testing') || request('view') === 'rapor-testing') ? 'active' : ''); ?>">
+                            <a href="/tf/gr/detail-rapor-testing">
+                                <i class="fa-solid fa-file-contract"></i>
+                                <span>Rapor Santri Sementara</span>
+                            </a>
+                        </li>
                         <li class="menu-item <?php echo e($route == '/tf/lh' ? 'active' : ''); ?>">
                             <a href="/tf/gr/pr">
                                 <i class="fa-solid fa-file-lines"></i>

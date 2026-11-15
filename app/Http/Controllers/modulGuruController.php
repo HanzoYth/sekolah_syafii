@@ -27,6 +27,7 @@ use App\Models\tunjangan_bonus;
 use App\Models\tunjangan_potongan;
 use App\Services\FonteService;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;  
@@ -1654,5 +1655,21 @@ class modulGuruController extends Controller
 
     function LeaderBoardKedisiplinan(){
         return view("modul/guru/g/leaderboardGuru");
+    }
+
+    function TakeKedisiplinan(Request $request){
+        $data_guru = guru::all();
+        $data = [
+            "data_guru" => $data_guru,
+            "data_absen" => null
+        ];
+        if ($request->mode == "bulan"){
+            $data["data_absen"] = master_absen_guru::select(
+                "guru_id",
+                DB::raw('SUM(terlambat_menit) as terlambat'),
+            )->groupBy("guru_id")->orderBy("guru_id", "asc")->get();
+        }
+
+        return response()->json($data);
     }
 }

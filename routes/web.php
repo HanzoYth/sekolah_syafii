@@ -114,6 +114,7 @@ Route::post("/gr/otp",[otpController::class,"createOtp"]);
 Route::post("/gr/ckotp",[otpController::class,"cekOtp"]);
 
 Route::get("/gr/ldkdgr",[modulGuruController::class,"LeaderBoardKedisiplinan"]);
+Route::get("/gr/khdspgr",[modulGuruController::class,"TakeKedisiplinan"]);
 
 //ini setting absen
 Route::post('/gr/crtabs/{id}',[MasterAbsenController::class,"SettingAbsenGuru"]);
@@ -330,6 +331,7 @@ Route::post('/tf/gr/simpan-massal-nilai', [\App\Http\Controllers\tahfizControlle
 // Rapor Walas & Projek P5 / Tahfidz (Role Guru)
 Route::get('/tf/gr/rapor', [\App\Http\Controllers\tahfizController::class, 'rapor_guru']);
 Route::get('/tf/gr/detail-rapor/{siswa_id}', [\App\Http\Controllers\tahfizController::class, 'detail_rapor']);
+Route::get('/tf/gr/detail-rapor-testing', [\App\Http\Controllers\tahfizController::class, 'detail_rapor_testing']);
 Route::get('/tf/gr/cetak-rapor-massal', [\App\Http\Controllers\tahfizController::class, 'cetak_rapor_massal']);
 Route::post('/tf/gr/simpan-evaluasi-rapor', [\App\Http\Controllers\tahfizController::class, 'simpan_evaluasi_rapor']);
 

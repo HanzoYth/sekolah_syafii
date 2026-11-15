@@ -57,8 +57,7 @@
                                 : url('/tf/gr/rp?view=rapor&kelas_id='.$siswa->kelas_id);
                         ?>
                         <a href="<?php echo e($backUrl); ?>" class="btn-tahfiz-secondary" style="padding: 10px 14px;" title="Kembali ke Daftar Rapor">
-                            <i class="fa-solid fa-arrow-left"></i>
-                        </a>
+                            <i class="fa-solid fa-arrow-left"></i> 
                         <div>
                             <h3 style="font-size: 18px; font-weight: 700; color: var(--text-dark); margin: 0;">
                                 Raport Tahfizh Al-Qur'an: <?php echo e($siswa->nama); ?>
