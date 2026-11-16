@@ -557,21 +557,25 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 320px;
-    height: 320px;
+    width: 90%;
+    height: 90%;
+    max-width: 760px;
+    max-height: 960px;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.08;
+    opacity: 0.09;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .rapor-watermark-overlay img {
+    width: 100%;
+    height: 100%;
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    filter: grayscale(20%);
+    filter: grayscale(10%);
 }
 
 .rapor-sheet-content {
@@ -853,13 +857,34 @@
     }
 
     .rapor-watermark-overlay {
-        opacity: 0.08 !important;
+        width: 90% !important;
+        height: 90% !important;
+        opacity: 0.09 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
-    .rapor-p5-table th {
-        background: #F4F0E6 !important;
+    .rapor-watermark-overlay img {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        object-fit: contain !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .tahfiz-section-title,
+    .tahfiz-catatan-title {
+        background-color: #D1E7DD !important;
+        color: #064E3B !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .tahfiz-table-clean th {
+        background-color: #D1E7DD !important;
+        color: #064E3B !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
@@ -1064,12 +1089,18 @@
 }
 
 .tahfiz-section-title {
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 800;
     text-transform: uppercase;
-    color: #111;
+    color: #064E3B;
+    background-color: #D1E7DD;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border-left: 4px solid #10B981;
     margin: 16px 0 6px 0;
     letter-spacing: 0.5px;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
 }
 
 .tahfiz-table-clean {
@@ -1084,11 +1115,14 @@
 .tahfiz-table-clean th {
     border: 1.5px solid #222;
     padding: 7px 10px;
-    background: #FAF8F2;
+    background-color: #D1E7DD !important;
+    color: #064E3B;
     font-weight: 800;
     text-align: center;
     text-transform: uppercase;
     font-size: 11.5px;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
 }
 
 .tahfiz-table-clean td {
@@ -1105,10 +1139,17 @@
 }
 
 .tahfiz-catatan-title {
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 800;
     text-transform: uppercase;
+    color: #064E3B;
+    background-color: #D1E7DD;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border-left: 4px solid #10B981;
     margin-bottom: 8px;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
 }
 
 .tahfiz-catatan-sub {

@@ -13,6 +13,9 @@ class evaluasi_rapor_tahfidz extends Model
 
     protected $fillable = [
         'siswa_id',
+        'is_manual',
+        'kelas_id',
+        'nama_lengkap',
         'guru_id',
         'halaqah_id',
         'tahun_ajaran_id',
@@ -32,12 +35,23 @@ class evaluasi_rapor_tahfidz extends Model
         'kenaikan_juz_tanggal',
         'kenaikan_juz_nomor',
         'kenaikan_juz_predikat',
+        'bulan_1_label',
+        'bulan_2_label',
+        'bulan_3_label',
+        'bulan_4_label',
+        'nilai_bulan_1',
+        'nilai_bulan_2',
+        'nilai_bulan_3',
+        'nilai_bulan_4',
         'ujian_1',
         'ujian_2',
         'ujian_akhir',
         'ujian_jumlah',
         'ujian_rata_rata',
         'ujian_predikat',
+        'ujian_terbuka_tanggal',
+        'ujian_terbuka_jumlah_juz',
+        'ujian_terbuka_predikat',
         'tasmi_tanggal',
         'tasmi_jumlah_juz',
         'tasmi_predikat',
@@ -56,14 +70,22 @@ class evaluasi_rapor_tahfidz extends Model
         'ttd_pengampu',
         'nama_walas',
         'role_pengampu_label',
+        'role_walas_label',
         'nama_kepsek',
+        'role_kepsek_label',
         'ttd_walas',
         'ttd_kepsek'
     ];
 
     protected $casts = [
+        'is_manual' => 'boolean',
+        'kelas_id' => 'integer',
         'penilaian_dimensi' => 'array',
         'semester' => 'integer',
+        'nilai_bulan_1' => 'float',
+        'nilai_bulan_2' => 'float',
+        'nilai_bulan_3' => 'float',
+        'nilai_bulan_4' => 'float',
         'ujian_1' => 'float',
         'ujian_2' => 'float',
         'ujian_akhir' => 'float',
@@ -129,7 +151,7 @@ class evaluasi_rapor_tahfidz extends Model
     public static function getDefaultTemplate($siswa = null)
     {
         $kelasNama = 'VI (ENAM)';
-        if ($siswa && $siswa->kelas) {
+        if ($siswa && !empty($siswa->kelas)) {
             $raw = $siswa->kelas->nama_ruang ?? $siswa->kelas->nama_kelas ?? '';
             if (preg_match('/(\d+)/', $raw, $m)) {
                 $angka = (int) $m[1];
@@ -143,11 +165,12 @@ class evaluasi_rapor_tahfidz extends Model
             }
         }
 
-        $umur = $siswa ? self::calculateAge($siswa->tanggal_lahir) : '12 TAHUN';
+        $umur = ($siswa && !empty($siswa->tanggal_lahir)) ? self::calculateAge($siswa->tanggal_lahir) : '12 TAHUN';
 
         return [
-            'judul_rapor' => 'RAPORT TAHFIZH AL-QUR’AN SEMESTER GANJIL 2025',
+            'judul_rapor' => 'RAPORT TAHFIZH AL-QUR’AN SEMESTER GANJIL 2026',
             'nama_sekolah' => 'SEKOLAH DASAR AL-QUR’AN IMAM SYAFI’I TINGGEDE',
+            'nama_lengkap' => $siswa->nama ?? 'MOH. IBNU MUNDZIR',
             'nama_siswa' => $siswa->nama ?? 'MOH. IBNU MUNDZIR',
             'kelas_label' => $kelasNama,
             'umur' => $umur,
@@ -158,15 +181,26 @@ class evaluasi_rapor_tahfidz extends Model
             'kenaikan_juz_nomor' => '25',
             'kenaikan_juz_predikat' => 'Jayyid/C',
 
-            // B. Ujian Tahfidzh
+            // B. Ujian Tasmi’ (4 Bulan & Nilai Akhir)
+            'bulan_1_label' => 'AGUSTUS',
+            'bulan_2_label' => 'SEPTEMBER',
+            'bulan_3_label' => 'OKTOBER',
+            'bulan_4_label' => 'NOVEMBER',
+            'nilai_bulan_1' => null,
+            'nilai_bulan_2' => null,
+            'nilai_bulan_3' => null,
+            'nilai_bulan_4' => null,
             'ujian_1' => 75.0,
             'ujian_2' => 92.0,
             'ujian_akhir' => 75.0,
-            'ujian_jumlah' => 317.0,
-            'ujian_rata_rata' => 79.2,
-            'ujian_predikat' => 'Jayyid/C',
+            'ujian_jumlah' => null,
+            'ujian_rata_rata' => null,
+            'ujian_predikat' => '-',
 
-            // C. Tasmi' Akhir Semester
+            // C. Ujian Tahfiz Terbuka
+            'ujian_terbuka_tanggal' => '-',
+            'ujian_terbuka_jumlah_juz' => '-',
+            'ujian_terbuka_predikat' => '-',
             'tasmi_tanggal' => '-',
             'tasmi_jumlah_juz' => '-',
             'tasmi_predikat' => '-',
@@ -186,11 +220,13 @@ class evaluasi_rapor_tahfidz extends Model
 
             // Tanda Tangan & Titimangsa (3 TTD: Kiri Pengampu, Kanan Wali Kelas, Tengah Bawah Kepsek)
             'tempat_rapor' => 'Sigi',
-            'tanggal_rapor' => '20 Desember 2025',
-            'nama_pengampu' => 'USTADZAH PENGAMPU HALAQAH',
+            'tanggal_rapor' => '19 Desember 2026',
+            'nama_pengampu' => 'NURUL ZHAFIRAH PUTRI',
+            'role_pengampu_label' => 'Pengampu Halaqah & Wali Kelas 5A',
             'nama_walas' => 'NURUL ZHAFIRAH PUTRI',
-            'role_pengampu_label' => 'Wali Kelas 6',
+            'role_walas_label' => 'Wali Kelas',
             'nama_kepsek' => 'NABILAH TUL ISLAMIYAH S.Pd.,S.Q',
+            'role_kepsek_label' => 'Kepala Sekolah SDQU Imam Syafi’i',
             'watermark_logo' => asset('img/logo_sd.jpg')
         ];
     }
