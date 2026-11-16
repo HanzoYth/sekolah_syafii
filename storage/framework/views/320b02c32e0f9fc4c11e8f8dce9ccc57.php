@@ -16,6 +16,9 @@
     <link rel="icon" type="image/png" href="<?php echo e(asset('img/logo_sklh.png')); ?>?v=<?php echo e(time()); ?>">
 </head>
 <body>
+<?php
+    $default_template = $default_template ?? \App\Models\evaluasi_rapor_tahfidz::getDefaultTemplate();
+?>
 
     <div class="dashboard-container">
 
@@ -49,7 +52,7 @@
                 <div>
                     <h2>Input Nilai Raport Tahfizh Al-Qur'an</h2>
                     <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
-                        Form input nilai ujian tahfidzh (Ujian 1, Ujian 2, Ujian Akhir x2), kenaikan juz, capaian target hafalan, dan catatan pengampu halaqah.
+                        Input massal ujian tasmi' (4 bulan), kenaikan juz, ujian tahfiz terbuka, capaian target hafalan, dan data santri manual.
                     </p>
                 </div>
                 <div class="topbar-icons">
@@ -58,7 +61,7 @@
                             ? url('/tf/gr/rapor?kelas_id='.$kelas_id)
                             : url('/tf/gr/rp?view=rapor&kelas_id='.$kelas_id);
                     ?>
-                    <a href="<?php echo e($raporUrl); ?>" title="Ke Halaman Cetak Rapor" class="btn-tahfiz-secondary" style="padding: 6px 12px; font-size: 12px;">
+                    <a href="<?php echo e($raporUrl); ?>" title="Ke Halaman Cetak Rapor" class="btn-tahfiz-secondary" style="padding: 6px 14px; font-size: 12px;">
                         <i class="fa-solid fa-file-contract"></i> Cetak Rapor
                     </a>
                     <a href="/tf/gr/dash" title="Dashboard Guru" style="color: var(--text-muted); text-decoration: none;">
@@ -87,7 +90,7 @@
             <div class="rapor-toolbar-card">
                 <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                     <label for="selectKelas" style="font-size: 13px; font-weight: 700; color: var(--primary-dark);">
-                        <i class="fa-solid fa-school"></i> Pilih Rombongan Belajar:
+                        <i class="fa-solid fa-school text-emerald-600"></i> Pilih Rombongan Belajar:
                     </label>
                     <select id="selectKelas" onchange="changeKelas(this.value)" style="padding: 8px 16px; border-radius: 10px; border: 1.5px solid var(--primary-color); font-size: 13px; background: #FAF8F2; font-weight: 700; color: var(--text-dark);">
                         <?php $__currentLoopData = $daftar_semua_kelas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -102,9 +105,9 @@
                 <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-muted);">
                     <span><i class="fa-solid fa-calendar-check text-emerald-600"></i> Semester: <strong><?php echo e(($tahun_aktif->semester ?? 1) == 1 ? '1 (Ganjil)' : '2 (Genap)'); ?></strong></span>
                     <span>•</span>
-                    <span>Tahun: <strong><?php echo e($tahun_aktif->nama ?? '2025/2026'); ?></strong></span>
+                    <span>Tahun: <strong><?php echo e($tahun_aktif->nama ?? '2026'); ?></strong></span>
                     <span>•</span>
-                    <span>Lembaga: <strong>SDQU Imam Syafi’i</strong></span>
+                    <span>Lembaga: <strong>SDQU Imam Syafi’i Tinggede</strong></span>
                 </div>
             </div>
 
@@ -113,60 +116,92 @@
                 $formAction = request()->is('tf/gr/input-nilai*')
                     ? url('/tf/gr/simpan-massal-nilai')
                     : url('/tf/gr/simpan-massal-nilai');
+                
+                $sampleEval = $evaluasi_list->first();
+                $b1Val = $sampleEval->bulan_1_label ?? $default_template['bulan_1_label'] ?? 'AGUSTUS';
+                $b2Val = $sampleEval->bulan_2_label ?? $default_template['bulan_2_label'] ?? 'SEPTEMBER';
+                $b3Val = $sampleEval->bulan_3_label ?? $default_template['bulan_3_label'] ?? 'OKTOBER';
+                $b4Val = $sampleEval->bulan_4_label ?? $default_template['bulan_4_label'] ?? 'NOVEMBER';
             ?>
             <form action="<?php echo e($formAction); ?>" method="POST" id="formInputNilai">
                 <?php echo csrf_field(); ?>
                 <input type="hidden" name="kelas_id" value="<?php echo e($kelas_id); ?>">
 
                 <!-- ============================================================ -->
-                <!-- SECTION 1: MASTER PENGATURAN TARGET & PENGESAHAN KELAS       -->
+                <!-- SECTION 1: MASTER PENGATURAN TEKS 4 BULAN, TARGET & PENGESAHAN-->
                 <!-- ============================================================ -->
-                <div class="input-nilai-card">
-                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">
+                <div class="input-nilai-card" style="margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
                         <h4 style="font-size: 15px; font-weight: 700; color: var(--primary-dark); margin: 0; display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-book-quran text-emerald-600"></i> Pengaturan Target Tahfidz & Pengesahan Dokumen
+                            <i class="fa-solid fa-sliders text-emerald-600"></i> Pengaturan Format Kelas (Teks 4 Bulan, Target & Pengesahan)
                         </h4>
-                        <span style="font-size: 11px; background: var(--gold-light); color: var(--gold); padding: 3px 10px; border-radius: 6px; font-weight: 700;">
-                            Berlaku untuk Rombel Ini
+                        <span style="font-size: 11px; background: #D1E7DD; color: #064E3B; padding: 4px 12px; border-radius: 6px; font-weight: 700;">
+                            Otomatis Diterapkan ke Seluruh Santri di Rombel Ini
                         </span>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 14px;">
+                    <!-- Teks 4 Bulan Bagian B -->
+                    <div style="background: #FAF8F2; padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 14px;">
+                        <label style="font-size: 12px; font-weight: 700; color: var(--primary-dark); display: block; margin-bottom: 8px;">
+                            <i class="fa-solid fa-calendar-days text-emerald-600"></i> Teks Header 4 Bulan Bagian B (Bisa Diedit Bebas):
+                        </label>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
+                            <div>
+                                <label style="font-size: 11px; color: #555;">Bulan 1:</label>
+                                <input type="text" name="bulan_1_label" id="masterBulan1" class="editor-form-control" value="<?php echo e($b1Val); ?>" oninput="updateTableMonthHeaders()" style="font-weight: 700; text-transform: uppercase;">
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; color: #555;">Bulan 2:</label>
+                                <input type="text" name="bulan_2_label" id="masterBulan2" class="editor-form-control" value="<?php echo e($b2Val); ?>" oninput="updateTableMonthHeaders()" style="font-weight: 700; text-transform: uppercase;">
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; color: #555;">Bulan 3:</label>
+                                <input type="text" name="bulan_3_label" id="masterBulan3" class="editor-form-control" value="<?php echo e($b3Val); ?>" oninput="updateTableMonthHeaders()" style="font-weight: 700; text-transform: uppercase;">
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; color: #555;">Bulan 4:</label>
+                                <input type="text" name="bulan_4_label" id="masterBulan4" class="editor-form-control" value="<?php echo e($b4Val); ?>" oninput="updateTableMonthHeaders()" style="font-weight: 700; text-transform: uppercase;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 14px;">
                         <div class="editor-form-group" style="margin: 0;">
                             <label>Target Hafalan Semester:</label>
-                            <input type="text" name="target_semester" class="editor-form-control" value="1 Juz" required>
+                            <input type="text" name="target_semester" class="editor-form-control" value="<?php echo e($sampleEval->target_semester ?? $default_template['target_semester'] ?? '1 Juz'); ?>" required>
                         </div>
                         <div class="editor-form-group" style="margin: 0;">
-                            <label>Target Total Hafalan:</label>
-                            <input type="text" name="target_total" class="editor-form-control" value="9 Juz" required>
+                            <label>Target Total Hafalan Kelas:</label>
+                            <input type="text" name="target_total" class="editor-form-control" value="<?php echo e($sampleEval->target_total ?? $default_template['target_total'] ?? '9 Juz'); ?>" required>
                         </div>
                         <div class="editor-form-group" style="margin: 0;">
                             <label>Tempat & Tanggal Titimangsa:</label>
                             <div style="display: flex; gap: 6px;">
-                                <input type="text" name="tempat_rapor" class="editor-form-control" style="width: 90px;" value="Sigi" required>
-                                <input type="text" name="tanggal_rapor" class="editor-form-control" value="20 Desember 2025" required>
+                                <input type="text" name="tempat_rapor" class="editor-form-control" style="width: 85px;" value="<?php echo e($sampleEval->tempat_rapor ?? $default_template['tempat_rapor'] ?? 'Sigi'); ?>" required>
+                                <input type="text" name="tanggal_rapor" class="editor-form-control" value="<?php echo e($sampleEval->tanggal_rapor ?? $default_template['tanggal_rapor'] ?? '19 Desember 2026'); ?>" required>
                             </div>
                         </div>
                         <div class="editor-form-group" style="margin: 0;">
                             <label>Pengampu Halaqah (Kiri):</label>
-                            <input type="text" name="nama_pengampu" class="editor-form-control" value="<?php echo e($default_template['nama_pengampu'] ?? 'USTADZAH PENGAMPU HALAQAH'); ?>" required>
+                            <input type="text" name="nama_pengampu" class="editor-form-control" value="<?php echo e($sampleEval->nama_pengampu ?? $default_template['nama_pengampu'] ?? 'NURUL ZHAFIRAH PUTRI'); ?>" required>
+                            <input type="text" name="role_pengampu_label" class="editor-form-control" style="margin-top: 4px; font-size: 11px;" value="<?php echo e($sampleEval->role_pengampu_label ?? $default_template['role_pengampu_label'] ?? 'Pengampu Halaqah & Wali Kelas 5A'); ?>">
                         </div>
                         <div class="editor-form-group" style="margin: 0;">
                             <label>Wali Kelas (Kanan):</label>
-                            <input type="text" name="nama_walas" class="editor-form-control" value="<?php echo e($default_template['nama_walas'] ?? 'NURUL ZHAFIRAH PUTRI'); ?>" required>
-                            <input type="hidden" name="role_pengampu_label" value="Wali Kelas 6">
+                            <input type="text" name="nama_walas" class="editor-form-control" value="<?php echo e($sampleEval->nama_walas ?? $default_template['nama_walas'] ?? 'NURUL ZHAFIRAH PUTRI'); ?>" required>
+                            <input type="text" name="role_walas_label" class="editor-form-control" style="margin-top: 4px; font-size: 11px;" value="<?php echo e($sampleEval->role_walas_label ?? $default_template['role_walas_label'] ?? 'Wali Kelas'); ?>" placeholder="Jabatan / Label (Contoh: Wali Kelas 6)">
                         </div>
                         <div class="editor-form-group" style="margin: 0;">
                             <label>Kepala Sekolah (Tengah Bawah):</label>
-                            <input type="text" name="nama_kepsek" class="editor-form-control" value="<?php echo e($default_template['nama_kepsek'] ?? 'NABILAH TUL ISLAMIYAH S.Pd.,S.Q'); ?>" required>
+                            <input type="text" name="nama_kepsek" class="editor-form-control" value="<?php echo e($sampleEval->nama_kepsek ?? $default_template['nama_kepsek'] ?? 'NABILAH TUL ISLAMIYAH S.Pd.,S.Q'); ?>" required>
+                            <input type="text" name="role_kepsek_label" class="editor-form-control" style="margin-top: 4px; font-size: 11px;" value="<?php echo e($sampleEval->role_kepsek_label ?? $default_template['role_kepsek_label'] ?? 'Kepala Sekolah SDQU Imam Syafi’i'); ?>" placeholder="Jabatan / Label (Contoh: Kepala Sekolah SDQU Imam Syafi’i)">
                         </div>
                     </div>
 
-                    <!-- Keterangan Standar Predikat Sesuai Format Resmi -->
-                    <div style="background: #F4F0E6; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; font-size: 11.5px; color: #222;">
-                        <strong style="color: var(--primary-dark);"><i class="fa-solid fa-scale-balanced"></i> Rumus & Skala Predikat Resmi SDQU:</strong><br>
-                        <span>Jumlah = Ujian 1 + Ujian 2 + (Ujian Akhir × 2) &nbsp;•&nbsp; Nilai Rata-rata = Jumlah ÷ 4</span><br>
-                        <span style="font-weight: 700; color: #333; margin-top: 3px; display: inline-block;">
+                    <!-- Keterangan Rumus & Skala Predikat Resmi -->
+                    <div style="background: #D1E7DD; border: 1px solid #A5D6A7; border-radius: 8px; padding: 10px 14px; font-size: 11.5px; color: #064E3B;">
+                        <strong style="color: #064E3B;"><i class="fa-solid fa-scale-balanced"></i> Skala Predikat Resmi SDQU Imam Syafi'i:</strong>
+                        <span style="font-weight: 700; margin-left: 8px;">
                             Mumtaz/A: 91–100 &nbsp;|&nbsp; Jayyid Jiddan/B: 83–90 &nbsp;|&nbsp; Jayyid/C: 72–82 &nbsp;|&nbsp; Maqbul/D: 61–71 &nbsp;|&nbsp; Dha’if/E: &lt;60
                         </span>
                     </div>
@@ -180,10 +215,10 @@
                         <span style="font-size: 12px; font-weight: 700; color: var(--text-dark);">
                             <i class="fa-solid fa-wand-magic-sparkles text-emerald-600"></i> Aksi Cepat:
                         </span>
-                        <button type="button" onclick="setTemplateValues()" class="quick-fill-btn bsh" title="Isi semua dengan contoh nilai standar">
-                            <i class="fa-solid fa-fill-drip"></i> Isi Nilai Standar (75, 92, 75)
+                        <button type="button" onclick="setTemplateValues()" class="quick-fill-btn bsh" title="Isi nilai contoh standar">
+                            <i class="fa-solid fa-fill-drip"></i> Isi Nilai Standar (80, 85, 90, 85)
                         </button>
-                        <button type="button" onclick="recalcAllRows()" class="quick-fill-btn sb" title="Hitung ulang semua rata-rata & predikat">
+                        <button type="button" onclick="recalcAllRows()" class="quick-fill-btn sb" title="Hitung ulang seluruh rata-rata & predikat">
                             <i class="fa-solid fa-calculator"></i> Hitung Ulang Semua
                         </button>
                     </div>
@@ -204,7 +239,7 @@
                             Daftar Santri — <?php echo e($currentKelas->nama_ruang ?? 'Kelas 6'); ?> (<?php echo e(count($siswa)); ?> Santri)
                         </h4>
                         <div style="font-size: 12px; color: var(--text-muted);">
-                            Nilai Rata-rata dan Predikat akan otomatis dihitung saat Anda mengetik nilai ujian.
+                            Data Nama, Kelas, Umur, Orang Tua, dan 4 Nilai Bulan dapat diisi langsung pada tabel.
                         </div>
                     </div>
 
@@ -213,28 +248,31 @@
                             <thead>
                                 <tr>
                                     <th style="width: 35px; text-align: center;">No</th>
-                                    <th style="min-width: 170px;">Santri & Orang Tua</th>
-                                    <th style="min-width: 80px; text-align: center;">Ujian 1</th>
-                                    <th style="min-width: 80px; text-align: center;">Ujian 2</th>
-                                    <th style="min-width: 95px; text-align: center;">Ujian Akhir (×2)</th>
-                                    <th style="min-width: 120px; text-align: center;">Rata-rata & Predikat</th>
-                                    <th style="min-width: 130px; text-align: center;">Kenaikan Juz</th>
-                                    <th style="min-width: 170px;">Pencapaian Semester</th>
-                                    <th style="min-width: 150px;">Total Hafalan</th>
-                                    <th style="min-width: 110px; text-align: center;">Target Tercapai?</th>
-                                    <th style="width: 65px; text-align: right;">Cetak</th>
+                                    <th style="min-width: 220px;">Data Santri (Nama, Kelas, Umur, Ortu)</th>
+                                    <th style="min-width: 75px; text-align: center;" id="thBulan1"><?php echo e($b1Val); ?></th>
+                                    <th style="min-width: 75px; text-align: center;" id="thBulan2"><?php echo e($b2Val); ?></th>
+                                    <th style="min-width: 75px; text-align: center;" id="thBulan3"><?php echo e($b3Val); ?></th>
+                                    <th style="min-width: 75px; text-align: center;" id="thBulan4"><?php echo e($b4Val); ?></th>
+                                    <th style="min-width: 110px; text-align: center;">Total & Rata-rata</th>
+                                    <th style="min-width: 120px; text-align: center;">Kenaikan Juz</th>
+                                    <th style="min-width: 120px; text-align: center;">Tahfiz Terbuka</th>
+                                    <th style="min-width: 140px;">Pencapaian Semester</th>
+                                    <th style="min-width: 90px; text-align: center;">Target?</th>
+                                    <th style="width: 60px; text-align: right;">Cetak</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php $__empty_1 = true; $__currentLoopData = $siswa; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                     <?php
                                         $eval = $evaluasi_list->get($s->id);
-                                        $u1 = $eval->ujian_1 ?? 75.0;
-                                        $u2 = $eval->ujian_2 ?? 92.0;
-                                        $ua = $eval->ujian_akhir ?? 75.0;
-                                        $jml = $u1 + $u2 + ($ua * 2);
-                                        $rata = round($jml / 4, 1);
-                                        $pred = \App\Models\evaluasi_rapor_tahfidz::calculatePredikat($rata);
+                                        $nb1 = $eval->nilai_bulan_1 ?? ($eval->ujian_1 ?? null);
+                                        $nb2 = $eval->nilai_bulan_2 ?? ($eval->ujian_2 ?? null);
+                                        $nb3 = $eval->nilai_bulan_3 ?? ($eval->ujian_akhir ?? null);
+                                        $nb4 = $eval->nilai_bulan_4 ?? null;
+                                        $hasScores = ($nb1 !== null || $nb2 !== null || $nb3 !== null || $nb4 !== null);
+                                        $jml = $eval->ujian_jumlah ?? ($hasScores ? (($nb1 ?? 0) + ($nb2 ?? 0) + ($nb3 ?? 0) + ($nb4 ?? 0)) : null);
+                                        $rata = $eval->ujian_rata_rata ?? ($hasScores ? round($jml / 4, 1) : null);
+                                        $pred = $eval->ujian_predikat ?? ($rata !== null ? \App\Models\evaluasi_rapor_tahfidz::calculatePredikat($rata) : '-');
 
                                         $initials = collect(explode(' ', $s->nama))->map(fn($part) => substr($part, 0, 1))->take(2)->join('');
 
@@ -247,40 +285,47 @@
                                             <?php echo e($loop->iteration); ?>
 
                                         </td>
-                                        <td>
-                                            <div class="rapor-student-cell">
-                                                <div class="rapor-student-avatar">
-                                                    <?php echo e(strtoupper($initials)); ?>
 
+                                        <!-- DATA SANTRI MANUAL (NAMA, KELAS, UMUR, ORTU) -->
+                                        <td>
+                                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                                <input type="text" name="nilai[<?php echo e($s->id); ?>][nama_lengkap]" class="editor-form-control" style="font-size: 12px; font-weight: 700; padding: 4px 8px;" value="<?php echo e($eval->nama_lengkap ?? $s->nama); ?>" placeholder="Nama Lengkap">
+                                                <div style="display: flex; gap: 4px;">
+                                                    <input type="text" name="nilai[<?php echo e($s->id); ?>][kelas_label]" class="editor-form-control" style="font-size: 10.5px; padding: 3px 6px; width: 85px;" value="<?php echo e($eval->kelas_label ?? 'VI (ENAM)'); ?>" placeholder="Kelas">
+                                                    <input type="text" name="nilai[<?php echo e($s->id); ?>][umur]" class="editor-form-control" style="font-size: 10.5px; padding: 3px 6px; width: 75px;" value="<?php echo e($eval->umur ?? '12 TAHUN'); ?>" placeholder="Umur">
                                                 </div>
-                                                <div class="rapor-student-meta">
-                                                    <h5 style="margin: 0; font-size: 13px;"><?php echo e($s->nama); ?></h5>
-                                                    <div style="margin-top: 3px;">
-                                                        <input type="text" name="nilai[<?php echo e($s->id); ?>][orang_tua]" class="editor-form-control" style="font-size: 11px; padding: 3px 6px;" value="<?php echo e($eval->orang_tua ?? 'Bpk. ZULFIKAR ABDUN & Ibu NAZMA SYAWIE'); ?>" placeholder="Nama Orang Tua/Wali">
-                                                    </div>
-                                                </div>
+                                                <input type="text" name="nilai[<?php echo e($s->id); ?>][orang_tua]" class="editor-form-control" style="font-size: 10.5px; padding: 3px 6px;" value="<?php echo e($eval->orang_tua ?? 'Bpk. ZULFIKAR ABDUN & Ibu NAZMA SYAWIE'); ?>" placeholder="Orang Tua/Wali">
                                             </div>
                                         </td>
 
-                                        <!-- Ujian 1 -->
+                                        <!-- Bulan 1 -->
                                         <td style="text-align: center;">
-                                            <input type="number" step="0.1" name="nilai[<?php echo e($s->id); ?>][ujian_1]" id="u1_<?php echo e($s->id); ?>" class="editor-form-control row-u1" style="text-align: center; font-weight: 700; width: 70px; padding: 6px 4px;" value="<?php echo e($u1); ?>" oninput="recalcRow(<?php echo e($s->id); ?>)">
+                                            <input type="number" step="0.1" name="nilai[<?php echo e($s->id); ?>][nilai_bulan_1]" id="nb1_<?php echo e($s->id); ?>" class="editor-form-control row-nb1" style="text-align: center; font-weight: 700; width: 65px; padding: 6px 3px;" value="<?php echo e($nb1); ?>" oninput="recalcRow(<?php echo e($s->id); ?>)">
                                         </td>
 
-                                        <!-- Ujian 2 -->
+                                        <!-- Bulan 2 -->
                                         <td style="text-align: center;">
-                                            <input type="number" step="0.1" name="nilai[<?php echo e($s->id); ?>][ujian_2]" id="u2_<?php echo e($s->id); ?>" class="editor-form-control row-u2" style="text-align: center; font-weight: 700; width: 70px; padding: 6px 4px;" value="<?php echo e($u2); ?>" oninput="recalcRow(<?php echo e($s->id); ?>)">
+                                            <input type="number" step="0.1" name="nilai[<?php echo e($s->id); ?>][nilai_bulan_2]" id="nb2_<?php echo e($s->id); ?>" class="editor-form-control row-nb2" style="text-align: center; font-weight: 700; width: 65px; padding: 6px 3px;" value="<?php echo e($nb2); ?>" oninput="recalcRow(<?php echo e($s->id); ?>)">
                                         </td>
 
-                                        <!-- Ujian Akhir (x 2) -->
+                                        <!-- Bulan 3 -->
                                         <td style="text-align: center;">
-                                            <input type="number" step="0.1" name="nilai[<?php echo e($s->id); ?>][ujian_akhir]" id="ua_<?php echo e($s->id); ?>" class="editor-form-control row-ua" style="text-align: center; font-weight: 700; width: 75px; padding: 6px 4px;" value="<?php echo e($ua); ?>" oninput="recalcRow(<?php echo e($s->id); ?>)">
+                                            <input type="number" step="0.1" name="nilai[<?php echo e($s->id); ?>][nilai_bulan_3]" id="nb3_<?php echo e($s->id); ?>" class="editor-form-control row-nb3" style="text-align: center; font-weight: 700; width: 65px; padding: 6px 3px;" value="<?php echo e($nb3); ?>" oninput="recalcRow(<?php echo e($s->id); ?>)">
                                         </td>
 
-                                        <!-- Rata-rata & Predikat Auto -->
+                                        <!-- Bulan 4 -->
+                                        <td style="text-align: center;">
+                                            <input type="number" step="0.1" name="nilai[<?php echo e($s->id); ?>][nilai_bulan_4]" id="nb4_<?php echo e($s->id); ?>" class="editor-form-control row-nb4" style="text-align: center; font-weight: 700; width: 65px; padding: 6px 3px;" value="<?php echo e($nb4); ?>" oninput="recalcRow(<?php echo e($s->id); ?>)">
+                                        </td>
+
+                                        <!-- Total & Rata-rata & Predikat -->
                                         <td style="text-align: center;">
                                             <div style="font-weight: 800; font-size: 13px; color: var(--primary-dark);" id="rataText_<?php echo e($s->id); ?>">
-                                                <?php echo e(number_format($rata, 1, ',', '')); ?>
+                                                <?php echo e($rata !== null ? number_format($rata, 1, ',', '') : '-'); ?>
+
+                                            </div>
+                                            <div style="font-size: 10px; color: #777;" id="totalText_<?php echo e($s->id); ?>">
+                                                Tot: <?php echo e($jml !== null ? number_format($jml, 0) : '-'); ?>
 
                                             </div>
                                             <span class="rapor-badge bsh" style="margin-top: 2px;" id="predBadge_<?php echo e($s->id); ?>"><?php echo e($pred); ?></span>
@@ -288,20 +333,26 @@
 
                                         <!-- Kenaikan Juz -->
                                         <td>
-                                            <div style="display: flex; gap: 4px;">
-                                                <input type="text" name="nilai[<?php echo e($s->id); ?>][kenaikan_juz_nomor]" class="editor-form-control" style="font-size: 11px; padding: 5px; width: 55px;" value="<?php echo e($eval->kenaikan_juz_nomor ?? '25'); ?>" placeholder="Juz">
-                                                <input type="text" name="nilai[<?php echo e($s->id); ?>][kenaikan_juz_predikat]" class="editor-form-control" style="font-size: 11px; padding: 5px;" value="<?php echo e($eval->kenaikan_juz_predikat ?? 'Jayyid/C'); ?>" placeholder="Predikat">
+                                            <div style="display: flex; flex-direction: column; gap: 3px;">
+                                                <input type="text" name="nilai[<?php echo e($s->id); ?>][kenaikan_juz_nomor]" class="editor-form-control" style="font-size: 11px; padding: 4px;" value="<?php echo e($eval->kenaikan_juz_nomor ?? '25'); ?>" placeholder="Juz">
+                                                <input type="text" name="nilai[<?php echo e($s->id); ?>][kenaikan_juz_predikat]" class="editor-form-control" style="font-size: 11px; padding: 4px;" value="<?php echo e($eval->kenaikan_juz_predikat ?? 'Jayyid/C'); ?>" placeholder="Predikat">
                                             </div>
                                         </td>
 
-                                        <!-- Pencapaian Semester -->
+                                        <!-- Ujian Terbuka -->
                                         <td>
-                                            <input type="text" name="nilai[<?php echo e($s->id); ?>][tercapai_semester]" class="editor-form-control" style="font-size: 11px; padding: 5px;" value="<?php echo e($eval->tercapai_semester ?? '<1 Juz (19 Hal) (Az-Zukhruf 32 – Az-Zumar 22)'); ?>">
+                                            <div style="display: flex; flex-direction: column; gap: 3px;">
+                                                <input type="text" name="nilai[<?php echo e($s->id); ?>][ujian_terbuka_jumlah_juz]" class="editor-form-control" style="font-size: 11px; padding: 4px;" value="<?php echo e($eval->ujian_terbuka_jumlah_juz ?? ($eval->tasmi_jumlah_juz ?? '-')); ?>" placeholder="Jml Juz">
+                                                <input type="text" name="nilai[<?php echo e($s->id); ?>][ujian_terbuka_predikat]" class="editor-form-control" style="font-size: 11px; padding: 4px;" value="<?php echo e($eval->ujian_terbuka_predikat ?? ($eval->tasmi_predikat ?? '-')); ?>" placeholder="Predikat">
+                                            </div>
                                         </td>
 
-                                        <!-- Total Hafalan -->
+                                        <!-- Pencapaian Semester & Total -->
                                         <td>
-                                            <input type="text" name="nilai[<?php echo e($s->id); ?>][tercapai_total]" class="editor-form-control" style="font-size: 11px; padding: 5px;" value="<?php echo e($eval->tercapai_total ?? '6,5 Juz (An-nas – Az-Zumar 22)'); ?>">
+                                            <div style="display: flex; flex-direction: column; gap: 3px;">
+                                                <input type="text" name="nilai[<?php echo e($s->id); ?>][tercapai_semester]" class="editor-form-control" style="font-size: 10.5px; padding: 4px;" value="<?php echo e($eval->tercapai_semester ?? '<1 Juz (19 Hal)'); ?>" placeholder="Capaian Semester">
+                                                <input type="text" name="nilai[<?php echo e($s->id); ?>][tercapai_total]" class="editor-form-control" style="font-size: 10.5px; padding: 4px;" value="<?php echo e($eval->tercapai_total ?? '6,5 Juz'); ?>" placeholder="Total Capaian">
+                                            </div>
                                         </td>
 
                                         <!-- Target Tercapai? -->
@@ -311,32 +362,32 @@
                                                 $klsIya = ($eval->tercapai_target_kelas ?? false);
                                             ?>
                                             <div style="display: flex; flex-direction: column; gap: 4px; align-items: center;">
-                                                <label style="cursor: pointer; display: flex; align-items: center; gap: 3px;" title="Target Semester Tercapai">
+                                                <label style="cursor: pointer; display: flex; align-items: center; gap: 3px;" title="Target Semester">
                                                     <input type="checkbox" name="nilai[<?php echo e($s->id); ?>][tercapai_target_semester]" value="1" <?php echo e($semIya ? 'checked' : ''); ?>>
-                                                    <span>Target Sem</span>
+                                                    <span>Sem</span>
                                                 </label>
-                                                <label style="cursor: pointer; display: flex; align-items: center; gap: 3px;" title="Target Kelas Tercapai">
+                                                <label style="cursor: pointer; display: flex; align-items: center; gap: 3px;" title="Target Kelas">
                                                     <input type="checkbox" name="nilai[<?php echo e($s->id); ?>][tercapai_target_kelas]" value="1" <?php echo e($klsIya ? 'checked' : ''); ?>>
-                                                    <span>Target Kls</span>
+                                                    <span>Kls</span>
                                                 </label>
                                             </div>
                                         </td>
 
-                                        <!-- Hidden Inputs untuk Catatan agar tetap aman jika tidak diubah di modal -->
+                                        <!-- Catatan Default -->
                                         <input type="hidden" name="nilai[<?php echo e($s->id); ?>][catatan_bacaan]" value="<?php echo e($eval->catatan_bacaan ?? $default_template['catatan_bacaan']); ?>">
                                         <input type="hidden" name="nilai[<?php echo e($s->id); ?>][catatan_hafalan]" value="<?php echo e($eval->catatan_hafalan ?? $default_template['catatan_hafalan']); ?>">
                                         <input type="hidden" name="nilai[<?php echo e($s->id); ?>][catatan_akhlak]" value="<?php echo e($eval->catatan_akhlak ?? $default_template['catatan_akhlak']); ?>">
 
                                         <!-- Aksi Rapor -->
                                         <td style="text-align: right; white-space: nowrap;">
-                                            <a href="<?php echo e($detailUrl); ?>" target="_blank" class="btn-tahfiz-secondary" style="padding: 6px 10px; font-size: 11px;" title="Lihat & Cetak Raport">
+                                            <a href="<?php echo e($detailUrl); ?>" target="_blank" class="btn-tahfiz-secondary" style="padding: 6px 10px; font-size: 11px;" title="Buka Detail Rapor">
                                                 <i class="fa-solid fa-print"></i>
                                             </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                     <tr>
-                                        <td colspan="11" style="text-align: center; padding: 40px; color: #888;">
+                                        <td colspan="12" style="text-align: center; padding: 40px; color: #888;">
                                             Belum ada data santri pada rombel ini.
                                         </td>
                                     </tr>
@@ -355,7 +406,7 @@
                             <i class="fa-solid fa-layer-group text-emerald-600"></i> Total: <?php echo e(count($siswa)); ?> Santri Rombel
                         </span>
                         <span style="font-size: 12px; color: var(--text-muted);">
-                            Data ujian, target, dan capaian hafalan akan otomatis masuk ke lembar cetak raport tahfizh.
+                            Data nilai 4 bulan, data santri manual, target, dan pengesahan akan tersimpan langsung.
                         </span>
                     </div>
 
@@ -382,7 +433,20 @@
             window.location.href = url.toString();
         }
 
+        function updateTableMonthHeaders() {
+            const b1 = (document.getElementById('masterBulan1').value || 'AGUSTUS').toUpperCase();
+            const b2 = (document.getElementById('masterBulan2').value || 'SEPTEMBER').toUpperCase();
+            const b3 = (document.getElementById('masterBulan3').value || 'OKTOBER').toUpperCase();
+            const b4 = (document.getElementById('masterBulan4').value || 'NOVEMBER').toUpperCase();
+
+            document.getElementById('thBulan1').innerText = b1;
+            document.getElementById('thBulan2').innerText = b2;
+            document.getElementById('thBulan3').innerText = b3;
+            document.getElementById('thBulan4').innerText = b4;
+        }
+
         function calculatePredikat(num) {
+            if (num === null || isNaN(num) || num === '') return '-';
             if (num >= 91) return 'Mumtaz/A';
             if (num >= 83) return 'Jayyid Jiddan/B';
             if (num >= 72) return 'Jayyid/C';
@@ -391,15 +455,23 @@
         }
 
         function recalcRow(siswaId) {
-            const u1 = parseFloat(document.getElementById(`u1_${siswaId}`).value) || 0;
-            const u2 = parseFloat(document.getElementById(`u2_${siswaId}`).value) || 0;
-            const ua = parseFloat(document.getElementById(`ua_${siswaId}`).value) || 0;
+            const v1 = document.getElementById(`nb1_${siswaId}`).value;
+            const v2 = document.getElementById(`nb2_${siswaId}`).value;
+            const v3 = document.getElementById(`nb3_${siswaId}`).value;
+            const v4 = document.getElementById(`nb4_${siswaId}`).value;
 
-            const jumlah = u1 + u2 + (ua * 2);
-            const rata = Math.round((jumlah / 4) * 10) / 10;
-            const predikat = calculatePredikat(rata);
+            const n1 = v1 !== '' ? parseFloat(v1) : null;
+            const n2 = v2 !== '' ? parseFloat(v2) : null;
+            const n3 = v3 !== '' ? parseFloat(v3) : null;
+            const n4 = v4 !== '' ? parseFloat(v4) : null;
 
-            document.getElementById(`rataText_${siswaId}`).innerText = rata.toFixed(1).replace('.', ',');
+            const hasAny = (n1 !== null || n2 !== null || n3 !== null || n4 !== null);
+            const total = (n1 || 0) + (n2 || 0) + (n3 || 0) + (n4 || 0);
+            const rata = hasAny ? Math.round((total / 4) * 10) / 10 : null;
+            const predikat = rata !== null ? calculatePredikat(rata) : '-';
+
+            document.getElementById(`totalText_${siswaId}`).innerText = hasAny ? 'Tot: ' + total : 'Tot: -';
+            document.getElementById(`rataText_${siswaId}`).innerText = rata !== null ? rata.toFixed(1).replace('.', ',') : '-';
             const badge = document.getElementById(`predBadge_${siswaId}`);
             badge.innerText = predikat;
 
@@ -411,9 +483,10 @@
         }
 
         function setTemplateValues() {
-            document.querySelectorAll('.row-u1').forEach(i => i.value = 75);
-            document.querySelectorAll('.row-u2').forEach(i => i.value = 92);
-            document.querySelectorAll('.row-ua').forEach(i => i.value = 75);
+            document.querySelectorAll('.row-nb1').forEach(i => i.value = 80);
+            document.querySelectorAll('.row-nb2').forEach(i => i.value = 85);
+            document.querySelectorAll('.row-nb3').forEach(i => i.value = 90);
+            document.querySelectorAll('.row-nb4').forEach(i => i.value = 85);
             recalcAllRows();
         }
 
@@ -436,7 +509,7 @@
         document.getElementById('formInputNilai').addEventListener('submit', function(e) {
             const btn = document.getElementById('btnSimpanMassal');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan Nilai...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan Seluruh Nilai...';
         });
     </script>
 </body>

@@ -1,3 +1,0 @@
-
-<?php echo $__env->make('components.siakad.sidebar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
-<?php /**PATH D:\laragon\www\sekolahsyafii\resources\views/components/sidebar_siakad.blade.php ENDPATH**/ ?>
