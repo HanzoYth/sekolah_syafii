@@ -30,56 +30,56 @@
 
     @if($isAdmin)
         <!-- Navigasi Pusat Rapor Admin (Konsisten dengan halaman Rapor Siswa) -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-4 mb-6 shadow-xs flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 mb-6 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div class="flex flex-wrap items-center gap-2">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1.5 flex items-center gap-1">
-                    <i class="fa-solid fa-chalkboard-user text-emerald-600"></i> Per Kelas:
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-1.5 flex items-center gap-1 whitespace-nowrap">
+                    <i class="fa-solid fa-chalkboard-user text-emerald-700"></i> Per Kelas:
                 </span>
                 <div class="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200 gap-1">
-                    <a href="/sk/rapor-walas?kelas_id={{ $wallas->kelas_id ?? '' }}" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-2 transition-all">
-                        <i class="fa-solid fa-file-contract"></i> Cetak &amp; TTD Kelas
+                    <a href="/sk/rapor-walas?kelas_id={{ $wallas->kelas_id ?? '' }}" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-emerald-800 hover:bg-white/80 flex items-center gap-1.5 transition-all whitespace-nowrap">
+                        <i class="fa-solid fa-file-contract"></i> Rapor &amp; TTD
                     </a>
-                    <span class="px-3.5 py-2 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-xs border border-slate-200/80 flex items-center gap-2">
-                        <i class="fa-solid fa-sliders"></i> Leger Nilai Kelas
+                    <span class="px-3.5 py-2 rounded-lg text-xs font-bold bg-emerald-700 text-white shadow-xs flex items-center gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-sliders"></i> Leger Nilai
                     </span>
                 </div>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600 px-1.5 flex items-center gap-1">
-                    <i class="fa-solid fa-globe"></i> Global Sekolah (Semua Kelas):
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 px-1.5 flex items-center gap-1 whitespace-nowrap">
+                    <i class="fa-solid fa-globe"></i> Global:
                 </span>
-                <div class="inline-flex flex-wrap p-1 rounded-xl bg-blue-50/60 border border-blue-200/70 gap-1">
-                    <a href="/sk/rapor-walas?tab=pengesahan" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-blue-800 hover:bg-white/70 flex items-center gap-2 transition-all">
-                        <i class="fa-solid fa-file-signature"></i> Pengesahan &amp; TTD Kepsek
+                <div class="inline-flex flex-wrap p-1 rounded-xl bg-slate-100 border border-slate-200 gap-1">
+                    <a href="/sk/rapor-walas?tab=pengesahan" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-emerald-800 hover:bg-white/80 flex items-center gap-1.5 transition-all whitespace-nowrap">
+                        <i class="fa-solid fa-file-signature"></i> Pengesahan
                     </a>
-                    <a href="/sk/rapor-walas?tab=kegiatan" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-violet-800 hover:bg-white/70 flex items-center gap-2 transition-all">
-                        <i class="fa-solid fa-mosque"></i> Program Kegiatan Sekolah
+                    <a href="/sk/rapor-walas?tab=kegiatan" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-emerald-800 hover:bg-white/80 flex items-center gap-1.5 transition-all whitespace-nowrap">
+                        <i class="fa-solid fa-mosque"></i> Kegiatan
                     </a>
-                    <a href="/sk/rapor-walas?tab=template_prestasi" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-amber-800 hover:bg-white/70 flex items-center gap-2 transition-all">
-                        <i class="fa-solid fa-trophy"></i> Template Jenis Prestasi
+                    <a href="/sk/rapor-walas?tab=template_prestasi" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-emerald-800 hover:bg-white/80 flex items-center gap-1.5 transition-all whitespace-nowrap">
+                        <i class="fa-solid fa-trophy"></i> Prestasi
                     </a>
                 </div>
             </div>
         </div>
 
         @if(isset($daftar_semua_kelas) && $daftar_semua_kelas->isNotEmpty())
-            <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-2xl p-5 mb-6 shadow-sm border border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-700 text-white rounded-2xl p-5 mb-6 shadow-sm border border-emerald-700/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 flex items-center justify-center text-lg">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-300/30 text-emerald-100 flex items-center justify-center text-lg">
                         <i class="fa-solid fa-chart-simple"></i>
                     </div>
                     <div>
                         <h4 class="text-sm font-bold text-white flex items-center gap-2">
                             Mode Monitoring Leger Nilai Admin
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/20 text-blue-300 border border-blue-400/30">Read-Only</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-950/40 text-emerald-100 border border-emerald-400/30">Read-Only</span>
                         </h4>
-                        <p class="text-xs text-slate-300 mt-0.5">Pilih kelas untuk memantau kelengkapan input nilai guru pengajar dan mencetak dokumen leger kelas.</p>
+                        <p class="text-xs text-emerald-100/90 mt-0.5">Pilih kelas untuk memantau kelengkapan input nilai guru pengajar dan mencetak dokumen leger kelas.</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <label for="selectKelasAdminLeger" class="text-xs text-slate-300 font-medium whitespace-nowrap">Pilih Kelas:</label>
-                    <select id="selectKelasAdminLeger" onchange="location.href='/sk/rapor-walas?tab=nilai&kelas_id=' + this.value" class="text-xs bg-slate-800 border border-slate-600 text-white rounded-xl px-3.5 py-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold shadow-inner">
+                    <label for="selectKelasAdminLeger" class="text-xs text-emerald-100 font-medium whitespace-nowrap">Pilih Kelas:</label>
+                    <select id="selectKelasAdminLeger" onchange="location.href='/sk/rapor-walas?tab=nilai&kelas_id=' + this.value" class="text-xs bg-emerald-950/60 border border-emerald-400/40 text-white rounded-xl px-3.5 py-2 focus:ring-emerald-400 focus:border-emerald-400 font-semibold shadow-inner">
                         @foreach($daftar_semua_kelas as $rk)
                             <option value="{{ $rk->id }}" {{ ($wallas->kelas_id ?? null) == $rk->id ? 'selected' : '' }}>
                                 {{ $rk->nama_ruang }}

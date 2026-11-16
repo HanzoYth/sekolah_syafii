@@ -377,7 +377,7 @@
                     <div class="flex flex-col justify-between h-44">
                         <div>
                             <p id="studentTanggalRapor" class="font-medium text-slate-800 leading-tight">
-                                Sigi, <?php echo e($raporMeta['tanggal_rapor']); ?>
+                                <?php echo e($raporMeta['tempat_rapor'] ?? 'Tinggede'); ?>, <?php echo e($raporMeta['tanggal_rapor']); ?>
 
                             </p>
                             <p class="font-medium text-slate-800 leading-tight">Kepala Sekolah,</p>
@@ -390,6 +390,9 @@
                                 <?php echo e($raporMeta['nama_kepsek']); ?>
 
                             </p>
+                            <?php if(!empty($raporMeta['nip_kepsek']) && $raporMeta['nip_kepsek'] !== '-'): ?>
+                                <p class="text-[11px] text-slate-600 mt-0.5">NIP. <?php echo e($raporMeta['nip_kepsek']); ?></p>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -425,6 +428,14 @@
                             delete data.catatan;
                             storageNeedsUpdate = true;
                         }
+                        if (data.tanggal) {
+                            delete data.tanggal;
+                            storageNeedsUpdate = true;
+                        }
+                        if (data.kepsek) {
+                            delete data.kepsek;
+                            storageNeedsUpdate = true;
+                        }
 
                         if (storageNeedsUpdate) {
                             try {
@@ -435,14 +446,6 @@
                         if (data.catatan && !hasDbCatatan) {
                             const c = document.getElementById('studentCatatanWalas');
                             if (c) c.textContent = data.catatan;
-                        }
-                        if (data.tanggal) {
-                            const t = document.getElementById('studentTanggalRapor');
-                            if (t) t.textContent = 'Sigi, ' + data.tanggal;
-                        }
-                        if (data.kepsek) {
-                            const k = document.getElementById('studentKepsekNama');
-                            if (k) k.textContent = data.kepsek;
                         }
                         if (data.walas) {
                             const w = document.getElementById('studentWalasNama');

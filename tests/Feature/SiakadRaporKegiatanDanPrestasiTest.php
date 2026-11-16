@@ -933,4 +933,259 @@ class SiakadRaporKegiatanDanPrestasiTest extends TestCase
         $responseWalas->assertDontSee('>test<', false);
         $responseWalas->assertSee("p.trim().toLowerCase() !== 'test'", false);
     }
+
+    /**
+     * Test 25: Admin can configure different Kepsek/TTD/Dates per jenjang (TK, SD, SMP) & filter UI renders cleanly
+     */
+    public function test_admin_can_configure_pengesahan_per_jenjang_and_filter_ui_renders()
+    {
+        \Illuminate\Support\Facades\DB::beginTransaction();
+        try {
+            // 1. UI Tab Admin memuat pemilih jenjang TK/SD/SMP (tanpa filter Semua Jenjang di Pengesahan) serta filter Kegiatan & Prestasi
+            $respPengesahan = $this->withSession($this->adminSession)->get('/sk/rapor-walas?tab=pengesahan&jenjang=tk');
+            $respPengesahan->assertStatus(200);
+            $respPengesahan->assertSee('selectAdminPengesahanJenjang', false);
+            $respPengesahan->assertSee('pengesahanJenjangBtn-tk', false);
+            $respPengesahan->assertSee('pengesahanJenjangBtn-sd', false);
+            $respPengesahan->assertSee('pengesahanJenjangBtn-smp', false);
+            $respPengesahan->assertDontSee('pengesahanJenjangBtn-semua', false);
+            $respPengesahan->assertDontSee('Default (Semua Jenjang)', false);
+            $respPengesahan->assertSee('bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-700', false);
+            $respPengesahan->assertSee('filterAdminJenjangTable', false);
+            $respPengesahan->assertSee('kegiatanIncludeGlobal', false);
+            $respPengesahan->assertSee('prestasiIncludeGlobal', false);
+
+            // Jika parameter jenjang=semua dikirim pada tab Pengesahan, UI tetap memilih jenjang kelas aktif (TK/SD/SMP), bukan 'semua'
+            $respFallbackSem = $this->withSession($this->adminSession)->get('/sk/rapor-walas?tab=pengesahan&jenjang=semua');
+            $respFallbackSem->assertStatus(200);
+            $respFallbackSem->assertDontSee('id="adminPengaturanJenjangInput" value="semua"', false);
+
+            $ttdTk = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+            $ttdSd = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+            $ttdSmp = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==';
+
+            // 2. Admin menyimpan pengesahan terpisah untuk TK, SD, dan SMP lewat endpoint POST resmi
+            $this->withSession($this->adminSession)->post('/sk/simpan-pengaturan-rapor', [
+                'jenjang' => 'tk',
+                'tempat_rapor' => 'Tinggede TK',
+                'tanggal_rapor' => '18 Desember 2026',
+                'nama_kepsek' => 'Ustadzah Khadijah, S.Pd.AUD',
+                'nip_kepsek' => 'TK-1001',
+                'catatan_walas_template' => 'Ananda {nama} ceria di TK.',
+                'ttd_kepsek' => $ttdTk,
+            ])->assertRedirect('/sk/rapor-walas?tab=pengesahan&jenjang=tk');
+
+            $this->withSession($this->adminSession)->post('/sk/simpan-pengaturan-rapor', [
+                'jenjang' => 'sd',
+                'tempat_rapor' => 'Tinggede SD',
+                'tanggal_rapor' => '19 Desember 2026',
+                'nama_kepsek' => 'Ustadz Sulaiman, S.Pd.SD',
+                'nip_kepsek' => 'SD-2002',
+                'catatan_walas_template' => 'Ananda {nama} tekun di SD.',
+                'ttd_kepsek' => $ttdSd,
+            ])->assertRedirect('/sk/rapor-walas?tab=pengesahan&jenjang=sd');
+
+            $this->withSession($this->adminSession)->post('/sk/simpan-pengaturan-rapor', [
+                'jenjang' => 'smp',
+                'tempat_rapor' => 'Tinggede SMP',
+                'tanggal_rapor' => '20 Desember 2026',
+                'nama_kepsek' => 'Ustadz Ibrahim, M.Pd',
+                'nip_kepsek' => 'SMP-3003',
+                'catatan_walas_template' => 'Ananda {nama} berprestasi di SMP.',
+                'ttd_kepsek' => $ttdSmp,
+            ])->assertRedirect('/sk/rapor-walas?tab=pengesahan&jenjang=smp');
+
+            // 3. Verifikasi masing-masing jenjang tersimpan terpisah
+            $this->assertDatabaseHas('pengaturan_rapor', ['jenjang' => 'tk', 'nama_kepsek' => 'Ustadzah Khadijah, S.Pd.AUD']);
+            $this->assertDatabaseHas('pengaturan_rapor', ['jenjang' => 'sd', 'nama_kepsek' => 'Ustadz Sulaiman, S.Pd.SD']);
+            $this->assertDatabaseHas('pengaturan_rapor', ['jenjang' => 'smp', 'nama_kepsek' => 'Ustadz Ibrahim, M.Pd']);
+
+            // 4. Resolusi metadata siswa otomatis mengikuti jenjang masing-masing
+            $metaMethod = (new \ReflectionClass($this->controller))->getMethod('getRaporMetadata');
+            $metaMethod->setAccessible(true);
+
+            $mockTk = (object) [
+                'id' => 99991,
+                'nama' => 'Murid TK',
+                'kelas_id' => null,
+                'kelas' => (object) ['nama_ruang' => 'TK Kelas 2 A'],
+                'sekolah' => (object) ['jenis' => 'tk'],
+            ];
+            $mockSd = (object) [
+                'id' => 99992,
+                'nama' => 'Murid SD',
+                'kelas_id' => null,
+                'kelas' => (object) ['nama_ruang' => 'SD Kelas 2B'],
+                'sekolah' => (object) ['jenis' => 'sd'],
+            ];
+            $mockSmp = (object) [
+                'id' => 99993,
+                'nama' => 'Murid SMP',
+                'kelas_id' => null,
+                'kelas' => (object) ['nama_ruang' => 'SMP Kelas 8B'],
+                'sekolah' => (object) ['jenis' => 'smp'],
+            ];
+
+            $metaTk = $metaMethod->invoke($this->controller, $mockTk);
+            $metaSd = $metaMethod->invoke($this->controller, $mockSd);
+            $metaSmp = $metaMethod->invoke($this->controller, $mockSmp);
+
+            $this->assertEquals('tk', $metaTk['jenjang']);
+            $this->assertEquals('Ustadzah Khadijah, S.Pd.AUD', $metaTk['nama_kepsek']);
+            $this->assertEquals('TK-1001', $metaTk['nip_kepsek']);
+            $this->assertEquals('18 Desember 2026', $metaTk['tanggal_rapor']);
+            $this->assertEquals($ttdTk, $metaTk['ttd_kepsek']);
+
+            $this->assertEquals('sd', $metaSd['jenjang']);
+            $this->assertEquals('Ustadz Sulaiman, S.Pd.SD', $metaSd['nama_kepsek']);
+            $this->assertEquals('SD-2002', $metaSd['nip_kepsek']);
+            $this->assertEquals($ttdSd, $metaSd['ttd_kepsek']);
+
+            $this->assertEquals('smp', $metaSmp['jenjang']);
+            $this->assertEquals('Ustadz Ibrahim, M.Pd', $metaSmp['nama_kepsek']);
+            $this->assertEquals('SMP-3003', $metaSmp['nip_kepsek']);
+            $this->assertEquals($ttdSmp, $metaSmp['ttd_kepsek']);
+        } finally {
+            \Illuminate\Support\Facades\DB::rollBack();
+        }
+    }
+
+    /**
+     * Test 26: Admin can manage Master Prestasi CRUD via existing POST /sk/simpan-pengaturan-rapor dispatch without route edits
+     */
+    public function test_admin_can_manage_master_prestasi_via_existing_pengaturan_post_dispatch()
+    {
+        \Illuminate\Support\Facades\DB::beginTransaction();
+        try {
+            // 1. Create lewat /sk/simpan-pengaturan-rapor
+            $this->withSession($this->adminSession)->post('/sk/simpan-pengaturan-rapor', [
+                '_master_action' => 'simpan_master_prestasi',
+                'nama_prestasi' => 'Juara 1 Hafalan Hadits Arba\'in',
+                'kategori' => 'Tahfidz',
+                'jenjang' => 'sd',
+                'filter_jenjang' => 'sd',
+            ])->assertRedirect('/sk/rapor-walas?tab=template_prestasi&jenjang=sd');
+
+            $created = master_prestasi::where('nama_prestasi', 'Juara 1 Hafalan Hadits Arba\'in')->first();
+            $this->assertNotNull($created);
+            $this->assertEquals('sd', $created->jenjang);
+
+            // 2. Update lewat /sk/simpan-pengaturan-rapor
+            $this->withSession($this->adminSession)->post('/sk/simpan-pengaturan-rapor', [
+                '_master_action' => 'update_master_prestasi',
+                'prestasi_id' => $created->id,
+                'nama_prestasi' => 'Juara 1 Hafalan Hadits Tingkat TK',
+                'kategori' => 'Tahfidz',
+                'jenjang' => 'tk',
+                'aktif' => '1',
+                'filter_jenjang' => 'tk',
+            ])->assertRedirect('/sk/rapor-walas?tab=template_prestasi&jenjang=tk');
+
+            $this->assertDatabaseHas('master_prestasi', [
+                'id' => $created->id,
+                'nama_prestasi' => 'Juara 1 Hafalan Hadits Tingkat TK',
+                'jenjang' => 'tk',
+            ]);
+
+            // 3. Delete lewat /sk/simpan-pengaturan-rapor
+            $this->withSession($this->adminSession)->post('/sk/simpan-pengaturan-rapor', [
+                '_master_action' => 'hapus_master_prestasi',
+                'prestasi_id' => $created->id,
+                'filter_jenjang' => 'tk',
+            ])->assertRedirect('/sk/rapor-walas?tab=template_prestasi&jenjang=tk');
+
+            $this->assertDatabaseMissing('master_prestasi', ['id' => $created->id]);
+        } finally {
+            \Illuminate\Support\Facades\DB::rollBack();
+        }
+    }
+
+    /**
+     * Test 27: Wali Kelas can edit subject notes (catatan_mapel) manually and sync across Detail Rapor, Cetak Massal & Rapor Siswa
+     */
+    public function test_walas_can_edit_and_persist_catatan_mapel_manually_across_all_rapor_views()
+    {
+        $siswa = siswa::with('kelas')->find(2) ?? siswa::whereNotNull('kelas_id')->first();
+        $this->assertNotNull($siswa);
+
+        $tahun = tahun_ajaran::where('aktif', 1)->first() ?? tahun_ajaran::orderByDesc('id')->first();
+        $wallas = wallas::with('guru')->where('kelas_id', $siswa->kelas_id)->first();
+        $sessionActor = $wallas && $wallas->guru ? [
+            'role' => 'g',
+            'id' => $wallas->guru->id,
+            'id_akun' => $wallas->guru->user_id,
+            'nama' => $wallas->guru->nama,
+            'hasLogin' => true,
+        ] : $this->adminSession;
+
+        \Illuminate\Support\Facades\DB::beginTransaction();
+        try {
+            // 1. Detail Rapor Walas memuat tab editor Catatan Mata Pelajaran
+            $respEditor = $this->withSession($sessionActor)->get('/sk/detail-rapor-walas/' . $siswa->id);
+            $respEditor->assertStatus(200);
+            $respEditor->assertSee('2. Catatan Mata Pelajaran', false);
+            $respEditor->assertSee('tabContent-mapel', false);
+            $respEditor->assertSee('handleCatatanMapelInput', false);
+
+            // 2. Simpan catatan manual mata pelajaran via /sk/simpan-evaluasi-rapor
+            $customNote = 'Ananda sangat menguasai tajwid madd dan makharijul huruf dengan sangat fasih.';
+            $targetMapel = "Tahfidz & Tahsin Al-Qur'an";
+
+            $respSave = $this->withSession($sessionActor)->postJson('/sk/simpan-evaluasi-rapor', [
+                'siswa_id' => $siswa->id,
+                'tahun_ajaran_id' => $tahun->id ?? null,
+                'semester' => ($tahun->semester ?? 1) == 2 ? 2 : 1,
+                'catatan_walas' => 'Catatan wali kelas uji manual mapel.',
+                'catatan_mapel' => [
+                    $targetMapel => $customNote,
+                    'Mapel Kosong' => '   ',
+                ],
+                'tanggal_rapor' => '24 Desember 2025',
+                'nama_kepsek' => 'Rajihul Haq, S.Sos, M.Pd',
+                'nama_walas' => $wallas->guru->nama ?? 'Wali Kelas',
+            ]);
+            $respSave->assertStatus(200);
+
+            $evaluasi = \App\Models\evaluasi_rapor_siswa::where('siswa_id', $siswa->id)->first();
+            $this->assertNotNull($evaluasi);
+            $this->assertIsArray($evaluasi->catatan_mapel);
+            $this->assertEquals($customNote, $evaluasi->catatan_mapel[$targetMapel] ?? null);
+            $this->assertArrayNotHasKey('Mapel Kosong', $evaluasi->catatan_mapel);
+
+            // 3. Tampil di Detail Rapor Walas, Cetak Massal, dan Rapor Siswa
+            $respDetailAfter = $this->withSession($sessionActor)->get('/sk/detail-rapor-walas/' . $siswa->id);
+            $respDetailAfter->assertStatus(200);
+            $respDetailAfter->assertSee($customNote, false);
+
+            $respMassal = $this->withSession($this->adminSession)->get('/sk/rapor-walas?print=massal&kelas_id=' . $siswa->kelas_id);
+            $respMassal->assertStatus(200);
+            $respMassal->assertSee($customNote, false);
+
+            $siswaSession = [
+                'role' => 's',
+                'id' => $siswa->id,
+                'id_akun' => $siswa->user_id,
+                'nama' => $siswa->nama,
+                'hasLogin' => true,
+            ];
+            $respSiswa = $this->withSession($siswaSession)->get('/sk/rapor-siswa?tab=rapor');
+            $respSiswa->assertStatus(200);
+            $respSiswa->assertSee($customNote, false);
+
+            // 4. Mengosongkan catatan_mapel mengembalikan deskripsi otomatis sistem
+            $this->withSession($sessionActor)->postJson('/sk/simpan-evaluasi-rapor', [
+                'siswa_id' => $siswa->id,
+                'tahun_ajaran_id' => $tahun->id ?? null,
+                'semester' => ($tahun->semester ?? 1) == 2 ? 2 : 1,
+                'catatan_walas' => 'Catatan wali kelas uji manual mapel.',
+                'catatan_mapel' => [],
+            ])->assertStatus(200);
+
+            $respDetailReset = $this->withSession($sessionActor)->get('/sk/detail-rapor-walas/' . $siswa->id);
+            $respDetailReset->assertStatus(200);
+            $respDetailReset->assertDontSee($customNote, false);
+        } finally {
+            \Illuminate\Support\Facades\DB::rollBack();
+        }
+    }
 }
