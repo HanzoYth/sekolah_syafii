@@ -420,7 +420,7 @@
                         <span class="text-xs font-medium text-slate-700 text-center leading-snug">Cetak Rapor</span>
                     </a>
                 @else
-                    <a href="/sk/gsp" class="flex flex-col items-center justify-center p-3 sm:p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-colors group">
+                    <a href="/sk/pr" class="flex flex-col items-center justify-center p-3 sm:p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-colors group">
                         <i class="fa-solid fa-id-badge text-xl sm:text-2xl text-slate-600 mb-1.5 group-hover:scale-110 transition-transform"></i>
                         <span class="text-xs font-medium text-slate-700 text-center leading-snug">Profil Guru</span>
                     </a>

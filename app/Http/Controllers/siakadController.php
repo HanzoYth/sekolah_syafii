@@ -94,6 +94,14 @@ class siakadController extends Controller
                 return redirect('/sk/dsg')->with('error', 'Akses dialihkan ke Portal Guru.');
             }
 
+            // Scope Khusus Admin: Kepala Sekolah, Wakil Kepala Sekolah, Bendahara, & Guru dilarang
+            if ($scope === 'admin_only') {
+                if ($isKepsek || $isBendahara) {
+                    return redirect('/sk/das')->with('error', 'Akses tidak diizinkan. Menu ini hanya dapat diakses oleh Administrator.');
+                }
+                return redirect('/sk/dsg')->with('error', 'Akses dialihkan ke Portal Guru.');
+            }
+
             // General role check
             if (!in_array('g', $allowedRoles)) {
                 if ($isKepsek || $isBendahara) {
@@ -1073,7 +1081,7 @@ class siakadController extends Controller
     }
 
     function slipPembayaranGuru(Request $request){
-        $check = $this->guardRoles(['a'], 'akademik');
+        $check = $this->guardRoles(['a'], 'admin_only');
         if ($check) return $check;
 
         $bulan = $request->query('bulan', date('Y-m'));
