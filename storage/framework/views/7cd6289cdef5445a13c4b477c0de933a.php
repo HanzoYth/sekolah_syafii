@@ -132,12 +132,14 @@
                                 <span>Kehadiran Guru</span>
                             </a>
                         </li>
-                        <li class="menu-item <?php echo e(request()->is('sk/gsp*') ? 'active' : ''); ?>">
-                            <a href="/sk/gsp">
-                                <i class="fa-solid fa-file-invoice-dollar"></i>
-                                <span>Slip Pembayaran Guru</span>
-                            </a>
-                        </li>
+                        <?php if($isAdmin): ?>
+                            <li class="menu-item <?php echo e(request()->is('sk/gsp*') ? 'active' : ''); ?>">
+                                <a href="/sk/gsp">
+                                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                                    <span>Slip Pembayaran Guru</span>
+                                </a>
+                            </li>
+                        <?php endif; ?>
                         <li class="menu-item <?php echo e(request()->is('sk/kelola-pengumuman') ? 'active' : ''); ?>">
                             <a href="/sk/kelola-pengumuman">
                                 <i class="fa-solid fa-bullhorn"></i>

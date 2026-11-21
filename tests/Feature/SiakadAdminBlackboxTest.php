@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\admin;
+use App\Models\guru;
 use App\Models\mata_pelajaran;
 use App\Models\siswa;
 
@@ -140,6 +141,7 @@ class SiakadAdminBlackboxTest extends TestCase
     {
         $response = $this->withSession($this->adminSession)->get('/sk/gsp');
         $response->assertStatus(200);
+        $response->assertSee('Slip Pembayaran Guru', false);
     }
 
     /** 13. Kelola Pengumuman */
@@ -293,5 +295,101 @@ class SiakadAdminBlackboxTest extends TestCase
     {
         $response = $this->get('/sk/das');
         $response->assertRedirect('/');
+    }
+
+    /** 23. Security: Role Kepala Sekolah & Wakil Kepala Sekolah cannot access or view Slip Pembayaran Guru */
+    public function test_kepala_sekolah_and_wakil_cannot_access_or_see_slip_pembayaran_guru()
+    {
+        $guruKepsek = guru::where('kepala_sekolah', 1)->first() ?? guru::first();
+        $this->assertNotNull($guruKepsek);
+        $originalKepsek = $guruKepsek->kepala_sekolah;
+        $originalWakil = $guruKepsek->wakil_sekolah;
+
+        try {
+            // Case 1: Kepala Sekolah
+            $guruKepsek->update(['kepala_sekolah' => 1, 'wakil_sekolah' => 0]);
+            $kepsekSession = [
+                'role' => 'g',
+                'id' => $guruKepsek->id,
+                'id_akun' => $guruKepsek->user_id,
+                'nama' => $guruKepsek->nama,
+                'hasLogin' => true,
+            ];
+
+            $respKepsekGsp = $this->withSession($kepsekSession)->get('/sk/gsp');
+            $respKepsekGsp->assertRedirect('/sk/das');
+            $respKepsekGsp->assertSessionHas('error');
+
+            $respKepsekDas = $this->withSession($kepsekSession)->get('/sk/das');
+            $respKepsekDas->assertStatus(200);
+            $respKepsekDas->assertDontSee('Slip Pembayaran Guru', false);
+            $respKepsekDas->assertDontSee('/sk/gsp', false);
+
+            // Case 2: Wakil Kepala Sekolah
+            $guruKepsek->update(['kepala_sekolah' => 0, 'wakil_sekolah' => 1]);
+            $wakilSession = [
+                'role' => 'g',
+                'id' => $guruKepsek->id,
+                'id_akun' => $guruKepsek->user_id,
+                'nama' => $guruKepsek->nama,
+                'hasLogin' => true,
+            ];
+
+            $respWakilGsp = $this->withSession($wakilSession)->get('/sk/gsp');
+            $respWakilGsp->assertRedirect('/sk/das');
+            $respWakilGsp->assertSessionHas('error');
+
+            $respWakilDas = $this->withSession($wakilSession)->get('/sk/das');
+            $respWakilDas->assertStatus(200);
+            $respWakilDas->assertDontSee('Slip Pembayaran Guru', false);
+            $respWakilDas->assertDontSee('/sk/gsp', false);
+        } finally {
+            $guruKepsek->update([
+                'kepala_sekolah' => $originalKepsek,
+                'wakil_sekolah' => $originalWakil
+            ]);
+        }
+    }
+
+    /** 24. Security: Regular Guru & Siswa cannot access or view Slip Pembayaran Guru */
+    public function test_regular_guru_and_siswa_cannot_access_or_see_slip_pembayaran_guru()
+    {
+        $guruReg = guru::where('kepala_sekolah', 0)->where('wakil_sekolah', 0)->first();
+        if ($guruReg) {
+            $regGuruSession = [
+                'role' => 'g',
+                'id' => $guruReg->id,
+                'id_akun' => $guruReg->user_id,
+                'nama' => $guruReg->nama,
+                'hasLogin' => true,
+            ];
+
+            $respGuruGsp = $this->withSession($regGuruSession)->get('/sk/gsp');
+            $respGuruGsp->assertRedirect('/sk/dsg');
+
+            $respGuruDsg = $this->withSession($regGuruSession)->get('/sk/dsg');
+            $respGuruDsg->assertStatus(200);
+            $respGuruDsg->assertDontSee('Slip Pembayaran Guru', false);
+            $respGuruDsg->assertDontSee('/sk/gsp', false);
+        }
+
+        $siswa = siswa::first();
+        if ($siswa) {
+            $siswaSession = [
+                'role' => 's',
+                'id' => $siswa->id,
+                'id_akun' => $siswa->user_id,
+                'nama' => $siswa->nama,
+                'hasLogin' => true,
+            ];
+
+            $respSiswaGsp = $this->withSession($siswaSession)->get('/sk/gsp');
+            $respSiswaGsp->assertRedirect('/sk/dbs');
+
+            $respSiswaDbs = $this->withSession($siswaSession)->get('/sk/dbs');
+            $respSiswaDbs->assertStatus(200);
+            $respSiswaDbs->assertDontSee('Slip Pembayaran Guru', false);
+            $respSiswaDbs->assertDontSee('/sk/gsp', false);
+        }
     }
 }
